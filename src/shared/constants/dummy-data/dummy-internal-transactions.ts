@@ -6,13 +6,13 @@ import type {
 } from "@/features/internal/statistik-pesanan/types/internal.transaction-statistic.type";
 
 export const DUMMY_INTERNAL_TRANSACTION_STATISTICS: InternalTransactionStatistics = {
-  activeOrders: 14,
-  settledTransactions: 86,
-  netWorth: 1845000000,
-  wmsPotential: 28,
-  wmsProcessing: 6,
-  wmsActive: 14,
-  wmsExpired: 9,
+  revenueWmsBidang: 18075000,
+  revenueWmsKawasan: 103200000,
+  netWorth: 121275000,
+  wmsPotential: 14,
+  wmsProcessing: 2,
+  wmsActive: 45,
+  wmsExpired: 5,
 };
 
 export const DUMMY_INTERNAL_TRANSACTIONS: InternalTransactionItem[] = [

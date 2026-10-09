@@ -11,6 +11,7 @@ import { Switch } from "@/design-system/components/input/ui/switch";
 import { HStack, VStack } from "@/design-system/components/layout/ui/flex-box";
 import { Separator } from "@/design-system/components/layout/ui/separator";
 import { Tooltip } from "@/design-system/components/overlay/ui/tooltip";
+import { List } from "@/design-system/components/typography/ui/list";
 import { P, TNum } from "@/design-system/components/typography/ui/p";
 import { FormatNumber } from "@/design-system/components/utilities/ui/fornat-number";
 import { usePricingPolicy } from "@/features/mitra/data-request/hooks/use-pricing-policy";
@@ -383,16 +384,30 @@ export const MitraDataRequestSpatialSummary = memo(
             variant={"subtle"}
             mt={1}
           >
-            <AppIcon icon={ShieldAlertIcon} />
+            <AppIcon icon={ShieldAlertIcon} mt={"1px"} />
+
             <Alert.Description>
-              <VStack align={"start"} gap={"2xs"} fontSize={"xs"}>
+              <List.Root
+                variant={"plain"}
+                fontSize={"xs"}
+                color={"fg.error"}
+                align={"start"}
+                gap={"2xs"}
+              >
                 {!isBidangValid && (
-                  <P>{`• Minimum pembelian bidang: ${formatNumber(effectiveMinBidangCount)} bidang (saat ini: ${formatNumber(totalBidangCount)} bidang)`}</P>
+                  <List.Item>
+                    <List.Indicator color={"fg.error"}>{"•"}</List.Indicator>
+                    {`Minimum pembelian bidang: ${formatNumber(effectiveMinBidangCount)} bidang (saat ini: ${formatNumber(totalBidangCount)} bidang)`}
+                  </List.Item>
                 )}
+
                 {!isKawasanValid && (
-                  <P>{`• Minimum pembelian kawasan: ${formatNumber(effectiveMinKawasanHa)} ha (saat ini: ${formatNumber(totalKawasanAreaHa, { maximumFractionDigits: 2 })} ha)`}</P>
+                  <List.Item>
+                    <List.Indicator color={"fg.error"}>{"•"}</List.Indicator>
+                    {`Minimum pembelian kawasan: ${formatNumber(effectiveMinKawasanHa)} ha (saat ini: ${formatNumber(totalKawasanAreaHa, { maximumFractionDigits: 2 })} ha)`}
+                  </List.Item>
                 )}
-              </VStack>
+              </List.Root>
             </Alert.Description>
           </Alert.Root>
         )}

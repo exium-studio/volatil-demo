@@ -202,8 +202,12 @@ export const fetchWfs = async (
   let url = buildWfsUrl(params, true);
   let res: Response;
 
-  // Use POST when URL is too long to avoid HTTP 414
-  const usePost = url.toString().length > 2000;
+  // Use POST when explicitly requested, when method is not GET, when cqlFilter is present, or when URL is too long
+  const usePost =
+    params.method === "POST" ||
+    params.method !== "GET" ||
+    Boolean(params.cqlFilter) ||
+    url.toString().length > 2000;
 
   try {
     res = usePost

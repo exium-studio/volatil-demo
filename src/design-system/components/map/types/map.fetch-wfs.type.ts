@@ -23,6 +23,7 @@ export type FetchWfsParams = {
   startIndex?: number;
   propertyName?: string;
   resultType?: "results" | "hits";
+  method?: "GET" | "POST";
   signal?: AbortSignal;
 };
 

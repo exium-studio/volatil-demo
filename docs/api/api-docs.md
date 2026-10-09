@@ -2065,11 +2065,38 @@ type UpdateMasterIgtLayerRequest = {
 
 ## 4.6 Monitoring & Statistik Transaksi Internal
 
-### Ringkasan Statistik Transaksi
+### Ringkasan Statistik Transaksi & Layanan WMS
 
 - **Endpoint**: `GET /api/internal/transactions/statistics`
 - **Akses**: `Internal Only`
-- **Response (200 OK)**: `{ activeOrders: number, settledTransactions: number, netWorth: number }`
+- **Request Header**: `Authorization: Bearer <TOKEN_INTERNAL>`
+- **Response (200 OK)**:
+
+```json
+{
+  "success": true,
+  "code": 200,
+  "message": "Statistik transaksi dan layanan WMS berhasil dimuat",
+  "data": {
+    "revenueWmsBidang": 18075000,
+    "revenueWmsKawasan": 103200000,
+    "netWorth": 121275000,
+    "wmsPotential": 14,
+    "wmsProcessing": 2,
+    "wmsActive": 45,
+    "wmsExpired": 5
+  }
+}
+```
+
+**Deskripsi Field Data**:
+- `revenueWmsBidang` _(number)_: Akumulasi total pendapatan PNBP dari transaksi penjualan layanan WMS ber-basis Bidang (Rupiah).
+- `revenueWmsKawasan` _(number)_: Akumulasi total pendapatan PNBP dari transaksi penjualan layanan WMS ber-basis Kawasan (Rupiah).
+- `netWorth` _(number)_: Akumulasi total seluruh pendapatan PNBP dari transaksi lunas/settled (Rupiah).
+- `wmsPotential` _(number)_: Total item layer IGT yang ada di keranjang aktif seluruh mitra.
+- `wmsProcessing` _(number)_: Total pesanan/layanan yang sedang dalam proses provisioning.
+- `wmsActive` _(number)_: Total pesanan/layanan aktif yang siap digunakan oleh mitra.
+- `wmsExpired` _(number)_: Total pesanan/layanan yang sudah kedaluwarsa.
 
 ### Daftar Transaksi Global Internal
 

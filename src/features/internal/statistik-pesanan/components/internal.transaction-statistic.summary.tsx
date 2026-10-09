@@ -13,7 +13,6 @@ import { useInternalTransactionStatisticsQuery } from "@/features/internal/stati
 import {
   CheckCircleIcon,
   CircleDollarSignIcon,
-  ListIcon,
   LoaderIcon,
   ShoppingCartIcon,
   TimerOffIcon,
@@ -76,18 +75,22 @@ const InternalTransactionStatsGrid = () => {
 
   const STATS = [
     {
-      icon: ListIcon,
-      label: "Total Pesanan Aktif",
-      value: statistics.activeOrders,
-      suffix: "layanan",
-      tooltip: "Layanan data IGT yang dibeli mitra berstatus aktif/beroperasi",
+      icon: CircleDollarSignIcon,
+      label: "Revenue WMS Bidang",
+      value: statistics.revenueWmsBidang,
+      isCurrency: true,
+      color: "purple.fg",
+      tooltip:
+        "Akumulasi total pendapatan PNBP dari transaksi penjualan layanan WMS ber-basis Bidang",
     },
     {
-      icon: CheckCircleIcon,
-      label: "Total Pesanan Selesai",
-      value: statistics.settledTransactions,
-      suffix: "transaksi",
-      tooltip: "Total transaksi yang telah settled dan lunas terbayar",
+      icon: CircleDollarSignIcon,
+      label: "Revenue WMS Kawasan",
+      value: statistics.revenueWmsKawasan,
+      isCurrency: true,
+      color: "teal.fg",
+      tooltip:
+        "Akumulasi total pendapatan PNBP dari transaksi penjualan layanan WMS ber-basis Kawasan",
     },
     {
       icon: CircleDollarSignIcon,
@@ -95,7 +98,8 @@ const InternalTransactionStatsGrid = () => {
       value: statistics.netWorth,
       isCurrency: true,
       color: "blue.fg",
-      tooltip: "Total akumulasi penerimaan PNBP dari seluruh transaksi",
+      tooltip:
+        "Akumulasi total seluruh pendapatan PNBP dari transaksi lunas/settled",
     },
   ];
 
@@ -111,7 +115,6 @@ const InternalTransactionStatsGrid = () => {
 
             <StatGrid.Value
               value={isLoading ? 0 : stat.value}
-              suffix={stat.suffix}
               isCurrency={stat.isCurrency}
               color={stat.color}
             />

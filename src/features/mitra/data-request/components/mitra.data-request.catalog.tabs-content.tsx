@@ -121,8 +121,15 @@ export const MitraDataRequestCatalogTabsContent = (
   const handleApplyInitialFilter = (
     filters: FilterAdministrativeAreaValues,
   ) => {
-    useMitraDataRequestStore.getState().resetCalculation();
-    setAppliedAdministrativeFilters(filters);
+    const currentApplied =
+      useMitraDataRequestStore.getState().appliedAdministrativeFilters;
+    const isSame =
+      JSON.stringify(filters ?? {}) === JSON.stringify(currentApplied ?? {});
+
+    if (!isSame) {
+      useMitraDataRequestStore.getState().resetCalculation();
+      setAppliedAdministrativeFilters(filters);
+    }
     setDraftFilters(filters);
   };
 

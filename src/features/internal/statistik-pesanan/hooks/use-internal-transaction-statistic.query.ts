@@ -23,8 +23,8 @@ export const useInternalTransactionStatisticsQuery = () => {
   return {
     ...query,
     statistics: query.data ?? {
-      activeOrders: 0,
-      settledTransactions: 0,
+      revenueWmsBidang: 0,
+      revenueWmsKawasan: 0,
       netWorth: 0,
       wmsPotential: 0,
       wmsProcessing: 0,

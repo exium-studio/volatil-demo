@@ -104,6 +104,7 @@ export const useBidangAoiFeatures = (
             cqlFilter: aoiCqlFilter,
             version: "1.0.0",
             srsName: "EPSG:4326",
+            method: "POST",
             signal,
           });
 
