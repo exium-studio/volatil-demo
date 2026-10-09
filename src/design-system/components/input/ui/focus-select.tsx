@@ -295,7 +295,7 @@ export function FocusSelectInput(props: FocusSelectInputProps) {
           pointerEvents={"auto"}
         >
           {isFetchingLoading ? (
-            <Loader size={"xs"} color={"fg.subtle"} />
+            <Loader />
           ) : clearable && currentValue && !disabled ? (
             <AppIcon
               icon={XIcon}
