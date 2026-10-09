@@ -21,6 +21,7 @@ import { ActionHeaderScrollContainer } from "@/design-system/components/layout/u
 import { Center } from "@/design-system/components/layout/ui/center";
 import { HStack, VStack } from "@/design-system/components/layout/ui/flex-box";
 import { Separator } from "@/design-system/components/layout/ui/separator";
+import { NavLink } from "@/design-system/components/navigation/ui/link";
 import { ClampedP, P } from "@/design-system/components/typography/ui/p";
 import { Url } from "@/design-system/components/typography/ui/url";
 import { useDebouncedValue } from "@/design-system/hooks/use-debounced-value";
@@ -109,19 +110,31 @@ export const MitraMyDataWorkspacesDataView = (_props: MitraMyDataViewProps) => {
             {
               value: item.workspaceName,
               td: (
-                <VStack align={"start"} gap={0}>
-                  <ClampedP
-                    fontSize={"sm"}
-                    fontFamily={"mono"}
-                    color={"fg"}
-                    maxW={"220px"}
-                  >
-                    {item.workspaceName}
-                  </ClampedP>
-                  <P fontSize={"xs"} color={"fg.subtle"} fontFamily={"mono"}>
-                    {`ID: ${item.id}`}
-                  </P>
-                </VStack>
+                <NavLink
+                  to={"/mitra/my-data/$workspaceId"}
+                  params={{ workspaceId: item.id }}
+                >
+                  <VStack align={"start"} w={"300px"} className={"group"}>
+                    <ClampedP
+                      fontFamily={"mono"}
+                      color={"fg"}
+                      _groupHover={{
+                        fontWeight: "bold",
+                        color: "blue.fg",
+                      }}
+                    >
+                      {item.workspaceName}
+                    </ClampedP>
+
+                    <ClampedP
+                      fontSize={"sm"}
+                      color={"fg.subtle"}
+                      fontFamily={"mono"}
+                    >
+                      {`ID: ${item.id}`}
+                    </ClampedP>
+                  </VStack>
+                </NavLink>
               ),
               align: "start" as const,
             },

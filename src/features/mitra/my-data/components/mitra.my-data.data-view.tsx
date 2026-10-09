@@ -161,7 +161,13 @@ export const MitraMyDataDataView = (_props: MitraMyDataViewProps) => {
             {
               value: layerDisplayName,
               td: (
-                <ClampedP fontSize={"sm"} w={"220px"}>
+                <ClampedP
+                  fontSize={"sm"}
+                  w={"220px"}
+                  cursor={"pointer"}
+                  _hover={{ textDecoration: "underline", color: "blue.fg" }}
+                  onClick={() => setSelectedAttributeLayer(item)}
+                >
                   {layerDisplayName}
                 </ClampedP>
               ),
