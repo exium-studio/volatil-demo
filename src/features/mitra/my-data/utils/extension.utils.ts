@@ -1,16 +1,13 @@
 // src/features/mitra/my-data/utils/extension.utils.ts
 
 import type { SystemPolicies } from "@/features/mitra/data-request/types/mitra.data-request.pricing-policy.type";
-import type { MitraWorkspaceItem } from "@/features/mitra/my-data/types/my-data.type";
+import type {
+  ExtensionEligibility,
+  MitraWorkspaceItem,
+} from "@/features/mitra/my-data/types/my-data.type";
 
 const DEFAULT_EXTENSION_WINDOW_DAYS = 7;
 const DEFAULT_MAX_EXTENSION_COUNT = 1;
-
-export type ExtensionEligibility = {
-  canExtend: boolean;
-  daysRemaining: number;
-  reason?: string;
-};
 
 /**
  * Validates whether a workspace order can be extended based on system policies and H-7 extension window.

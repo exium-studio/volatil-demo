@@ -1,7 +1,7 @@
 // src/features/internal/home/types/internal.home.pricing.type.ts
 
 import type { StackProps } from "@/design-system/components/layout/types/flex-box.type";
-import type { serviceRateFormSchema } from "@/features/internal/home/schemas/service-rate.schema";
+import type { internalHomePricingFormSchema } from "@/features/internal/home/schemas/internal.home.pricing.schema";
 import type { ComponentType, ReactNode } from "react";
 import type { z } from "zod";
 
@@ -19,7 +19,7 @@ export type InternalHomePricingItem = {
   colorPalette?: string;
 };
 
-export type PricingFormValues = z.infer<typeof serviceRateFormSchema>;
+export type PricingFormValues = z.infer<typeof internalHomePricingFormSchema>;
 
 export type InternalHomePricingModalTriggerProps = {
   modalKey?: string;

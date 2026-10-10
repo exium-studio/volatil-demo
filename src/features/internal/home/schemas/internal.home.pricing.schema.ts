@@ -1,14 +1,13 @@
-// src/features/internal/home/schemas/service-rate.schema.ts
+// src/features/internal/home/schemas/internal.home.pricing.schema.ts
 
 import type { FieldErrors } from "react-hook-form";
 import { z } from "zod";
 
-export const serviceRateFormSchema = z.object({
+export const internalHomePricingFormSchema = z.object({
   price: z.coerce.number().min(0, "Tarif tidak boleh kurang dari 0"),
-  minPurchase: z.coerce.number().min(1, "Minimal pembelian minimal 1"),
-  kodePnbp: z.string().min(1, "Kode akun PNBP wajib diisi"),
+  minimumPurchase: z.coerce.number().min(1, "Minimal pembelian minimal 1"),
+  pnbpCode: z.string().min(1, "Kode akun PNBP wajib diisi"),
 });
-
 
 export const zodResolver = <T extends z.ZodTypeAny>(schema: T) => {
   return async (values: Record<string, unknown>) => {

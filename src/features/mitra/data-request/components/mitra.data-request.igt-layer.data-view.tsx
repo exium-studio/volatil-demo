@@ -39,7 +39,6 @@ import type {
   MitraDataRequestIgtLayerDataViewProps,
 } from "@/features/mitra/data-request/types/mitra.data-request.igt-layer-view.type";
 import { highlightFeatureOnMap } from "@/features/mitra/data-request/utils/highlight-feature-on-map";
-import { CART_CONFIG } from "@/features/mitra/home/constants/cart.config";
 import { IgtBasisBadge } from "@/features/shared/components/igt-basis.badge";
 import { IGT_BASIS_MAP } from "@/features/shared/constants/volatil.ssot-map";
 import { queryKeys } from "@/shared/libs/tanstack-query/query.keys";
@@ -567,67 +566,16 @@ export const MitraDataRequestIgtLayerDataView = memo(
     const minKawasanHa =
       calculationResult?.policy?.minimumKawasanHa ?? pricingPolicy.minKawasanHa;
 
-    const isBidangBelowMin =
-      totalBidangCount > 0 &&
-      minBidangCount > 0 &&
-      totalBidangCount < minBidangCount;
-
-    const isKawasanBelowMin =
-      totalKawasanAreaHa > 0 &&
-      minKawasanHa > 0 &&
-      totalKawasanAreaHa < minKawasanHa;
-
     const isShowLoading =
       isLoadingLayers ||
       (showFilter && adminBoundaryQuery.isLoading) ||
       isCalculating;
     const hasIntersectingLayers = !isEmptyArray(intersectingLayers);
     const hasFilteredLayers = !isEmptyArray(filteredLayers);
-    const isPurchaseLimitValid =
-      calculationResult?.isPurchaseLimitValid ?? true;
-    // Per Integration Guide: Transaksi LAYAK jika salah satu basis (Bidang ATAU Kawasan) memenuhi minimumPurchase.
-    const isBidangEligible =
-      bidangLayers.length > 0 && totalBidangCount > 0 && !isBidangBelowMin;
-    const isKawasanEligible =
-      kawasanLayers.length > 0 &&
-      totalKawasanAreaHa > 0 &&
-      !isKawasanBelowMin;
 
-    const isAtLeastOneBasisEligible = isBidangEligible || isKawasanEligible;
-
-    const isCartDisabled =
-      !hasFilteredLayers ||
-      addToCartMultipleMutation.isPending ||
-      isShowLoading ||
-      isCalculating ||
-      !isAtLeastOneBasisEligible;
-
-    const isBidangDisabled =
-      !hasFilteredLayers ||
-      addToCartMultipleMutation.isPending ||
-      isShowLoading ||
-      isCalculating ||
-      !isBidangEligible;
-
-    const isKawasanDisabled =
-      !hasFilteredLayers ||
-      addToCartMultipleMutation.isPending ||
-      isShowLoading ||
-      isCalculating ||
-      !isKawasanEligible;
-
-    const cartLimitTooltip =
-      !isAtLeastOneBasisEligible && hasFilteredLayers
-        ? "Batas minimum pembelian belum terpenuhi untuk seluruh basis IGT yang dipilih."
-        : undefined;
-
-    const bidangLimitTooltip = isBidangBelowMin
-      ? `Minimum pembelian untuk bidang tanah adalah ${formatNumber(minBidangCount)} bidang (saat ini: ${formatNumber(totalBidangCount)} bidang).`
-      : undefined;
-
-    const kawasanLimitTooltip = isKawasanBelowMin
-      ? `Minimum pembelian untuk kawasan adalah ${formatNumber(minKawasanHa)} ha (saat ini: ${formatNumber(totalKawasanAreaHa, { maximumFractionDigits: 2 })} ha).`
-      : undefined;
+    // Derived Values
+    const isBidangValid = totalBidangCount >= minBidangCount;
+    const isKawasanValid = totalKawasanAreaHa >= minKawasanHa;
 
     return (
       <VStack
@@ -659,8 +607,7 @@ export const MitraDataRequestIgtLayerDataView = memo(
                     ? calculationResult.subtotalBidangPrice
                     : totalBidangCount *
                       (calculationResult?.policy?.pricePerBidang ??
-                        pricingPolicy.pricePerBidang ??
-                        CART_CONFIG.pricePerBidang)
+                        pricingPolicy.pricePerBidang)
                 }
                 subtotalKawasanPrice={
                   calculationResult?.subtotalKawasanPrice ?? 0
@@ -680,8 +627,6 @@ export const MitraDataRequestIgtLayerDataView = memo(
                 estimatedTotalPrice={
                   calculationResult?.estimatedTotalPrice ?? 0
                 }
-                isPurchaseLimitValid={isPurchaseLimitValid}
-                purchaseLimitMessage={calculationResult?.validation?.message}
                 hasCoveragePolygon={Boolean(calculationResult?.coveragePolygon)}
                 hasBidangLayer={bidangLayers.length > 0 || totalBidangCount > 0}
                 hasKawasanLayer={
@@ -883,103 +828,141 @@ export const MitraDataRequestIgtLayerDataView = memo(
         {/* Action Bar Footer */}
         <VStack gap={"sm"} w={"full"} p={"md"} bg={"bg.body"} flexShrink={0}>
           {/* Action Buttons */}
-            {cartLimitTooltip ? (
-              <Tooltip content={cartLimitTooltip}>
-                <VStack w={"full"} align={"stretch"}>
+          {!isBidangValid || !isKawasanValid ? (
+            <Tooltip
+              content={
+                "Batas minimum pembelian belum terpenuhi untuk semua basis IGT yang dipilih."
+              }
+            >
+              <VStack w={"full"} align={"stretch"}>
+                <Button
+                  primary
+                  w={"full"}
+                  disabled={
+                    !hasFilteredLayers ||
+                    addToCartMultipleMutation.isPending ||
+                    isShowLoading ||
+                    !isBidangValid ||
+                    !isKawasanValid
+                  }
+                  loading={addToCartMultipleMutation.isPending}
+                  onClick={handleAddToCartSelected}
+                >
+                  <AppIcon icon={ShoppingCartIcon} />
+                  {`Tambah semua layer ke keranjang (${formatNumber(filteredLayers.length)})`}
+                </Button>
+              </VStack>
+            </Tooltip>
+          ) : (
+            <Button
+              primary
+              w={"full"}
+              disabled={
+                !hasFilteredLayers ||
+                addToCartMultipleMutation.isPending ||
+                isShowLoading
+              }
+              loading={addToCartMultipleMutation.isPending}
+              onClick={handleAddToCartSelected}
+            >
+              <AppIcon icon={ShoppingCartIcon} />
+              {`Tambah semua layer ke keranjang (${formatNumber(filteredLayers.length)})`}
+            </Button>
+          )}
+
+          <HStack w={"full"} gap={"xs"}>
+            {!isBidangValid && totalBidangCount > 0 ? (
+              <Tooltip
+                content={`Minimum pembelian untuk bidang tanah adalah ${formatNumber(minBidangCount)} bidang (saat ini: ${formatNumber(totalBidangCount)} bidang).`}
+              >
+                <VStack flex={1} minW={0} align={"stretch"}>
                   <Button
                     primary
+                    variant={"outline"}
                     w={"full"}
-                    disabled={isCartDisabled}
-                    loading={addToCartMultipleMutation.isPending}
-                    onClick={handleAddToCartSelected}
+                    disabled={
+                      !hasFilteredLayers ||
+                      addToCartMultipleMutation.isPending ||
+                      isShowLoading ||
+                      !isBidangValid
+                    }
+                    onClick={handleAddToCartBidangOnly}
                   >
-                    <AppIcon icon={ShoppingCartIcon} />
-                    {`Tambah semua layer ke keranjang (${formatNumber(filteredLayers.length)})`}
+                    {IGT_BASIS_MAP.bidang.icon && (
+                      <AppIcon icon={IGT_BASIS_MAP.bidang.icon} />
+                    )}
+                    {"Semua Bidang"} ({formatNumber(bidangLayers.length)})
                   </Button>
                 </VStack>
               </Tooltip>
             ) : (
               <Button
                 primary
-                w={"full"}
-                disabled={isCartDisabled}
-                loading={addToCartMultipleMutation.isPending}
-                onClick={handleAddToCartSelected}
+                variant={"outline"}
+                flex={1}
+                minW={0}
+                disabled={
+                  !hasFilteredLayers ||
+                  addToCartMultipleMutation.isPending ||
+                  isShowLoading ||
+                  !isBidangValid
+                }
+                onClick={handleAddToCartBidangOnly}
               >
-                <AppIcon icon={ShoppingCartIcon} />
-                {`Tambah semua layer ke keranjang (${formatNumber(filteredLayers.length)})`}
+                {IGT_BASIS_MAP.bidang.icon && (
+                  <AppIcon icon={IGT_BASIS_MAP.bidang.icon} />
+                )}
+                {"Semua Bidang"} ({formatNumber(bidangLayers.length)})
               </Button>
             )}
 
-            <HStack w={"full"} gap={"xs"}>
-              {bidangLimitTooltip ? (
-                <Tooltip content={bidangLimitTooltip}>
-                  <VStack flex={1} minW={0} align={"stretch"}>
-                    <Button
-                      primary
-                      variant={"outline"}
-                      w={"full"}
-                      disabled={isBidangDisabled}
-                      onClick={handleAddToCartBidangOnly}
-                    >
-                      {IGT_BASIS_MAP.bidang.icon && (
-                        <AppIcon icon={IGT_BASIS_MAP.bidang.icon} />
-                      )}
-                      {"Semua Bidang"} ({formatNumber(bidangLayers.length)})
-                    </Button>
-                  </VStack>
-                </Tooltip>
-              ) : (
-                <Button
-                  primary
-                  variant={"outline"}
-                  flex={1}
-                  minW={0}
-                  disabled={isBidangDisabled}
-                  onClick={handleAddToCartBidangOnly}
-                >
-                  {IGT_BASIS_MAP.bidang.icon && (
-                    <AppIcon icon={IGT_BASIS_MAP.bidang.icon} />
-                  )}
-                  {"Semua Bidang"} ({formatNumber(bidangLayers.length)})
-                </Button>
-              )}
-
-              {kawasanLimitTooltip ? (
-                <Tooltip content={kawasanLimitTooltip}>
-                  <VStack flex={1} minW={0} align={"stretch"}>
-                    <Button
-                      primary
-                      variant={"outline"}
-                      w={"full"}
-                      disabled={isKawasanDisabled}
-                      onClick={handleAddToCartKawasanOnly}
-                    >
-                      {IGT_BASIS_MAP.kawasan.icon && (
-                        <AppIcon icon={IGT_BASIS_MAP.kawasan.icon} />
-                      )}
-                      {"Semua Kawasan"} ({formatNumber(kawasanLayers.length)})
-                    </Button>
-                  </VStack>
-                </Tooltip>
-              ) : (
-                <Button
-                  primary
-                  variant={"outline"}
-                  flex={1}
-                  minW={0}
-                  disabled={isKawasanDisabled}
-                  onClick={handleAddToCartKawasanOnly}
-                >
-                  {IGT_BASIS_MAP.kawasan.icon && (
-                    <AppIcon icon={IGT_BASIS_MAP.kawasan.icon} />
-                  )}
-                  {"Semua Kawasan"} ({formatNumber(kawasanLayers.length)})
-                </Button>
-              )}
-            </HStack>
-          </VStack>
+            {!isKawasanValid && totalKawasanAreaHa > 0 ? (
+              <Tooltip
+                content={`Minimum pembelian untuk kawasan adalah ${formatNumber(minKawasanHa)} ha (saat ini: ${formatNumber(totalKawasanAreaHa, { maximumFractionDigits: 2 })} ha).`}
+              >
+                <VStack flex={1} minW={0} align={"stretch"}>
+                  <Button
+                    primary
+                    variant={"outline"}
+                    w={"full"}
+                    disabled={
+                      !hasFilteredLayers ||
+                      addToCartMultipleMutation.isPending ||
+                      isShowLoading ||
+                      !isKawasanValid
+                    }
+                    onClick={handleAddToCartKawasanOnly}
+                  >
+                    {IGT_BASIS_MAP.kawasan.icon && (
+                      <AppIcon icon={IGT_BASIS_MAP.kawasan.icon} />
+                    )}
+                    {"Semua Kawasan"} ({formatNumber(kawasanLayers.length)})
+                  </Button>
+                </VStack>
+              </Tooltip>
+            ) : (
+              <Button
+                primary
+                variant={"outline"}
+                flex={1}
+                minW={0}
+                disabled={
+                  !hasFilteredLayers ||
+                  addToCartMultipleMutation.isPending ||
+                  isShowLoading ||
+                  !isKawasanValid
+                }
+                onClick={handleAddToCartKawasanOnly}
+              >
+                {IGT_BASIS_MAP.kawasan.icon && (
+                  <AppIcon icon={IGT_BASIS_MAP.kawasan.icon} />
+                )}
+                {"Semua Kawasan"} ({formatNumber(kawasanLayers.length)})
+              </Button>
+            )}
+          </HStack>
         </VStack>
+      </VStack>
     );
   },
 );

@@ -12,6 +12,7 @@ import type {
   InternalSystemPolicyModalTriggerProps,
   PolicyFormValues,
 } from "@/features/internal/system-policies/types/internal.system-policies.type";
+import { t } from "@/shared/libs/i18n";
 import { useForm } from "react-hook-form";
 
 export const InternalSystemPolicyModalTrigger = (
@@ -120,13 +121,15 @@ const InternalSystemPolicyModalContent = (
         </Modal.Body>
 
         <Modal.Footer>
-          <Button variant={"outline"} onClick={close} disabled={updateMutation.isPending}>
-            {"Batal"}
-          </Button>
+          <VStack gap={"xs"}>
+            <Button primary type={"submit"} loading={updateMutation.isPending}>
+              {"Simpan"}
+            </Button>
 
-          <Button type={"submit"} loading={updateMutation.isPending}>
-            {"Simpan Perubahan"}
-          </Button>
+            <Button onClick={close} disabled={updateMutation.isPending}>
+              {t["action.cancel"]()}
+            </Button>
+          </VStack>
         </Modal.Footer>
       </form>
     </Modal.Content>

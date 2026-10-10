@@ -3,7 +3,6 @@ import { getInternalLeaderboard } from "@/features/internal/home/services/intern
 import { getMitraRegistration } from "@/features/internal/home/services/internal.home.mitra-registration.service";
 import { getPublicationStatus } from "@/features/internal/home/services/internal.home.publication-status.service";
 import { getInternalTrend } from "@/features/internal/home/services/internal.home.trend.service";
-import { getInternalHomePolicies } from "@/features/internal/home/services/internal.home.policies.service";
 import { getInternalHomePricings } from "@/features/internal/home/services/internal.home.pricing.service";
 import type {
   IgtBasisSummary,
@@ -14,7 +13,6 @@ import type {
   TopIgtLayerItem,
   TopMitraAcquisitionItem,
 } from "@/features/internal/home/types/internal.home.leaderboard.type";
-import type { InternalHomePolicyItem } from "@/features/internal/home/types/internal.home.policies.type";
 import type { InternalHomePricingItem } from "@/features/internal/home/types/internal.home.pricing.type";
 import type { InternalHomeTrendItem } from "@/features/internal/home/types/internal.home.trend.type";
 import type { HomePeriod } from "@/features/mitra/home/types/mitra.home.data-summary.type";
@@ -115,20 +113,5 @@ export const useInternalHomePricingQuery = () => {
   return {
     ...query,
     pricings: (query.data ?? []) as InternalHomePricingItem[],
-  };
-};
-
-// 7. Hook Kebijakan Sistem (Policies)
-export const useInternalHomePoliciesQuery = () => {
-  const query = useQuery({
-    queryKey: queryKeys.internal.home.policies(),
-    queryFn: ({ signal }) => getInternalHomePolicies(signal),
-    retry: false,
-    staleTime: 1000 * 60 * 5,
-  });
-
-  return {
-    ...query,
-    policies: (query.data ?? []) as InternalHomePolicyItem[],
   };
 };

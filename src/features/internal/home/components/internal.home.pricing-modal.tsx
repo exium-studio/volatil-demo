@@ -9,9 +9,9 @@ import { usePopModal } from "@/design-system/components/overlay/hooks/use-pop-mo
 import { Modal } from "@/design-system/components/overlay/ui/modal";
 import { useMountTimeout } from "@/design-system/hooks/use-mount-timeout";
 import {
-  serviceRateFormSchema,
+  internalHomePricingFormSchema,
   zodResolver,
-} from "@/features/internal/home/schemas/service-rate.schema";
+} from "@/features/internal/home/schemas/internal.home.pricing.schema";
 import type {
   InternalHomePricingModalContentProps,
   InternalHomePricingModalTriggerProps,
@@ -65,11 +65,11 @@ const InternalHomePricingModalContent = (
     register,
     formState: { errors },
   } = useForm<PricingFormValues>({
-    resolver: zodResolver(serviceRateFormSchema),
+    resolver: zodResolver(internalHomePricingFormSchema),
     defaultValues: {
       price: pricing.price,
-      minPurchase: pricing.minimumPurchase,
-      kodePnbp: pricing.pnbpCode ?? "",
+      minimumPurchase: pricing.minimumPurchase,
+      pnbpCode: pricing.pnbpCode ?? "",
     },
   });
 
@@ -81,8 +81,8 @@ const InternalHomePricingModalContent = (
       await updateMutation.mutateAsync({
         id: pricing.id,
         unitPrice: values.price,
-        minPurchase: values.minPurchase,
-        kodePnbp: values.kodePnbp,
+        minPurchase: values.minimumPurchase,
+        kodePnbp: values.pnbpCode,
       });
 
       close();
@@ -129,12 +129,12 @@ const InternalHomePricingModalContent = (
             <Field
               label={`Minimal Pembelian (${pricing.unit})`}
               w={"full"}
-              errorText={errors.minPurchase?.message}
+              errorText={errors.minimumPurchase?.message}
             >
               <NumberInput
                 w={"full"}
                 defaultValue={String(pricing.minimumPurchase)}
-                inputProps={register("minPurchase")}
+                inputProps={register("minimumPurchase")}
                 min={1}
                 step={100}
               />
@@ -144,13 +144,13 @@ const InternalHomePricingModalContent = (
             <Field
               label={"Kode Akun PNBP"}
               w={"full"}
-              errorText={errors.kodePnbp?.message}
+              errorText={errors.pnbpCode?.message}
             >
               <Input
                 w={"full"}
                 placeholder={"425121"}
                 defaultValue={pricing.pnbpCode}
-                {...register("kodePnbp")}
+                {...register("pnbpCode")}
               />
             </Field>
           </VStack>

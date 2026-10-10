@@ -43,7 +43,7 @@ const PERIOD_OPTIONS = [
 
 export const InternalHomeTrend = (props: InternalHomeTrendProps) => {
   return (
-    <Container.Root withContext={true} flex={"1 1 100%"} {...props}>
+    <Container.Root withContext={true} {...props}>
       <InternalHomeTrendContent />
     </Container.Root>
   );

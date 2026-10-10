@@ -25,7 +25,7 @@ import { useMemo } from "react";
 
 export const InternalHomePricing = (props: InternalHomePricingProps) => {
   return (
-    <Container.Root flex={"1 1 350px"} withContext={true} {...props}>
+    <Container.Root withContext={true} {...props}>
       <InternalHomePricingContent />
     </Container.Root>
   );

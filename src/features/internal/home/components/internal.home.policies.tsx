@@ -14,12 +14,10 @@ import { HStack } from "@/design-system/components/layout/ui/flex-box";
 import { Separator } from "@/design-system/components/layout/ui/separator";
 import { HeaderContainer } from "@/design-system/components/shell/ui/header-container";
 import { Heading } from "@/design-system/components/typography/ui/heading";
-import { InternalHomePolicyModalTrigger } from "@/features/internal/home/components/internal.home.policies-modal";
-import { useInternalHomePoliciesQuery } from "@/features/internal/home/hooks/use-internal-home.query";
-import type {
-  InternalHomePoliciesProps,
-  InternalHomePolicyItem,
-} from "@/features/internal/home/types/internal.home.policies.type";
+import { InternalSystemPolicyModalTrigger } from "@/features/internal/system-policies/components/internal.system-policies.modal";
+import { useInternalSystemPoliciesQuery } from "@/features/internal/system-policies/hooks/use-internal-system-policies";
+import type { InternalHomePoliciesProps } from "@/features/internal/home/types/internal.home.policies.type";
+import type { SystemPolicyItem } from "@/features/mitra/data-request/types/mitra.data-request.pricing-policy.type";
 import {
   ClockIcon,
   HourglassIcon,
@@ -41,7 +39,7 @@ const InternalHomePoliciesContent = () => {
   const { isSmContainer } = useContainerContext();
 
   // Queries
-  const { policies, isLoading } = useInternalHomePoliciesQuery();
+  const { items: policies, isLoading } = useInternalSystemPoliciesQuery();
 
   if (isLoading) {
     return <Skeleton minH={isSmContainer ? "240px" : "180px"} w={"full"} />;
@@ -94,7 +92,7 @@ const InternalHomePoliciesContent = () => {
       <Separator borderColor={"bg.canvas"} />
 
       <StatGrid.Root columns={cols}>
-        {policies.map((policy: InternalHomePolicyItem, index: number) => {
+        {policies.map((policy: SystemPolicyItem, index: number) => {
           const IconComp = getPolicyIcon(policy.key);
           const colorPalette = getPolicyColor(policy.key);
           const isCurrency = policy.unit === "IDR" || policy.unit === "Rupiah";
@@ -124,14 +122,14 @@ const InternalHomePoliciesContent = () => {
                   <StatGrid.Label>{policy.label ?? policy.key}</StatGrid.Label>
                 </HStack>
 
-                <InternalHomePolicyModalTrigger policy={policy}>
+                <InternalSystemPolicyModalTrigger policy={policy}>
                   <IconButton
                     variant={"ghost"}
                     aria-label={`Ubah kebijakan ${policy.label ?? policy.key}`}
                   >
                     <AppIcon icon={PencilIcon} />
                   </IconButton>
-                </InternalHomePolicyModalTrigger>
+                </InternalSystemPolicyModalTrigger>
               </StatGrid.Header>
 
               <StatGrid.Value value={formattedValue} />

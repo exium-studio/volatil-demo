@@ -165,6 +165,8 @@ export type MitraMyDataEditModalContentProps = {
   item: MyDataItem;
   close: () => void;
 };
-
-
-
+export type ExtensionEligibility = {
+  canExtend: boolean;
+  daysRemaining: number;
+  reason?: string;
+};
