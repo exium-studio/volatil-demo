@@ -237,8 +237,12 @@ export const TransactionHistoryDataView = () => {
     const itemActions: DataViewItemActionsGenerator<TransactionRecord>[] = [
       {
         key: "pay-billing",
-        label: "Bayar",
+        label: (transaction: TransactionRecord) =>
+          transaction.orderStatus === "paid"
+            ? "Cek Status Pembayaran"
+            : "Bayar",
         icon: CreditCardIcon,
+        colorPalette: "blue",
         hidden: (transaction: TransactionRecord) =>
           transaction.transactionStatus !== "pending",
         onClick: (transaction: TransactionRecord) => {
@@ -251,6 +255,7 @@ export const TransactionHistoryDataView = () => {
           }
         },
       },
+
       {
         key: "view-invoice",
         label: "Lihat Faktur",
@@ -261,6 +266,7 @@ export const TransactionHistoryDataView = () => {
         rel: "noopener noreferrer",
         hidden: (transaction: TransactionRecord) => !transaction.invoiceUrl,
       },
+
       {
         key: "view-tte-invoice",
         label: "Lihat Faktur TTE",
@@ -271,6 +277,7 @@ export const TransactionHistoryDataView = () => {
         rel: "noopener noreferrer",
         hidden: (transaction: TransactionRecord) => !transaction.tteInvoiceUrl,
       },
+
       {
         key: "view-detail",
         label: "Detail",

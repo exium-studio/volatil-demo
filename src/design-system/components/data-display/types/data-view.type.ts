@@ -26,7 +26,7 @@ export type DataViewModalActionConfig<T = Record<string, unknown>> = {
 
 export type DataViewDeclarativeItemAction<T = Record<string, unknown>> = {
   key?: string;
-  label: string | ((item: T) => string); // Label is mandatory
+  label: string | ((item: T) => string);
   icon?: ActionIconType | ((item: T) => ActionIconType);
   colorPalette?: string | ((item: T) => string | undefined);
   variant?: "solid" | "subtle" | "outline" | "ghost";
@@ -42,9 +42,15 @@ export type DataViewDeclarativeItemAction<T = Record<string, unknown>> = {
     item: T,
     formattedItem: FormattedListItem<T>,
   ) => void | Promise<void>;
-  hidden?: (item: T, formattedItem: FormattedListItem<T>) => boolean;
-  disabled?: (item: T, formattedItem: FormattedListItem<T>) => boolean;
-  loading?: boolean | ((item: T, formattedItem: FormattedListItem<T>) => boolean);
+  hidden?:
+    | boolean
+    | ((item: T, formattedItem: FormattedListItem<T>) => boolean);
+  disabled?:
+    | boolean
+    | ((item: T, formattedItem: FormattedListItem<T>) => boolean);
+  loading?:
+    | boolean
+    | ((item: T, formattedItem: FormattedListItem<T>) => boolean);
   showInRow?: boolean; // If true, render in spread action column (default: true)
   showInMenu?: boolean; // If true, render in sticky dropdown menu (default: true)
   sticky?: boolean; // If true, render as sticky action button pinned to the left of the menu trigger
