@@ -153,7 +153,7 @@ export const renderCartMapLayers = (
 
   const {
     aoiPolygon,
-    coveragePolygon,
+    kawasanCoveragePolygon,
     bidangFeatures,
     selectionType = "catalog",
     isAoiVisible = true,
@@ -169,7 +169,7 @@ export const renderCartMapLayers = (
   const colors = getSelectionTypeMapColors(selectionType);
   const beforeId = getBeforeId(map);
   const aoiFeature = normalizePolygonFeature(aoiPolygon);
-  const coverageFeature = normalizePolygonFeature(coveragePolygon);
+  const coverageFeature = normalizePolygonFeature(kawasanCoveragePolygon);
 
   // When exclusive mode is enabled (e.g. Cart page), hide / clear layers of all other selection types
   if (exclusive) {
@@ -553,7 +553,7 @@ export const useCartAoiCoverageMap = (
   // Destructure options for precise dependencies
   const {
     aoiPolygon,
-    coveragePolygon,
+    kawasanCoveragePolygon,
     bidangFeatures,
     selectionType,
     isAoiVisible = true,
@@ -609,7 +609,7 @@ export const useCartAoiCoverageMap = (
 
     renderCartMapLayers(map, {
       aoiPolygon,
-      coveragePolygon,
+      kawasanCoveragePolygon,
       bidangFeatures,
       selectionType,
       isAoiVisible,
@@ -621,7 +621,7 @@ export const useCartAoiCoverageMap = (
   }, [
     map,
     aoiPolygon,
-    coveragePolygon,
+    kawasanCoveragePolygon,
     bidangFeatures,
     selectionType,
     isAoiVisible,

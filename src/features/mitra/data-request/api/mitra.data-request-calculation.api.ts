@@ -13,7 +13,7 @@ export const normalizeSpatialCalculationResult = (
 ): CalculateSpatialCoverageResult => {
   if (!raw) {
     return {
-      coveragePolygon: null,
+      kawasanCoveragePolygon: null,
       totalBidangCount: 0,
       totalKawasanCount: 0,
       totalKawasanAreaHa: 0,
@@ -105,8 +105,10 @@ export const normalizeSpatialCalculationResult = (
   const purchaseLimitMessage =
     validation?.message ?? rawData.purchaseLimitMessage;
 
-  const coveragePolygon =
-    coverageKawasan?.polygon ?? rawData.coveragePolygon ?? null;
+  const kawasanCoveragePolygon =
+    coverageKawasan?.polygon ??
+    rawData.kawasanCoveragePolygon ??
+    null;
 
   return {
     calculationToken,
@@ -115,7 +117,7 @@ export const normalizeSpatialCalculationResult = (
     summary,
     policy,
     validation,
-    coveragePolygon,
+    kawasanCoveragePolygon,
     totalBidangCount,
     totalKawasanCount,
     totalKawasanAreaHa,

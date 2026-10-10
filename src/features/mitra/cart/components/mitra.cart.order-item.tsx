@@ -61,7 +61,7 @@ export const MitraCartOrderItem = memo((props: MitraCartOrderItemProps) => {
   const totalKawasanHa = order.coverageHa;
 
   const hasAoiPolygon = Boolean(order.aoiPolygon);
-  const hasCoverageKawasan = Boolean(order.coveragePolygon);
+  const hasCoverageKawasan = Boolean(order.kawasanCoveragePolygon);
   const hasCoverageBidang =
     order.items.some((i) => (i.spatialBasis ?? i.igtBasis) === "bidang") &&
     Boolean(order.aoiPolygon);

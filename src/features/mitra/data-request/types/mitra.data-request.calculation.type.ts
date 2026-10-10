@@ -114,7 +114,7 @@ export type RawCalculateSpatialResponse = {
   policy?: RawCalculateSpatialPolicy;
   config?: RawCalculateSpatialPolicy;
   validation?: CalculateSpatialValidation;
-  coveragePolygon?: GeoJSON.Polygon | GeoJSON.MultiPolygon | null;
+  kawasanCoveragePolygon?: GeoJSON.Polygon | GeoJSON.MultiPolygon | null;
   totalBidangCount?: number;
   totalKawasanCount?: number;
   totalKawasanAreaHa?: number;
@@ -134,7 +134,7 @@ export type CalculateSpatialCoverageResult = {
   summary?: CalculateSpatialSummary;
   policy?: CalculateSpatialPolicy;
   validation?: CalculateSpatialValidation;
-  coveragePolygon: GeoJSON.Polygon | GeoJSON.MultiPolygon | null;
+  kawasanCoveragePolygon: GeoJSON.Polygon | GeoJSON.MultiPolygon | null;
   totalBidangCount: number;
   totalKawasanCount: number;
   totalKawasanAreaHa: number;

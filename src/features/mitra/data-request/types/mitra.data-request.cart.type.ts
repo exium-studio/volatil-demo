@@ -63,7 +63,5 @@ export type AddToCartLayerParam = {
   areaHa?: number;
   cqlFilter?: string;
   aoiPolygon?: GeoJSON.MultiPolygon | GeoJSON.Polygon;
-  coveragePolygon?: GeoJSON.MultiPolygon | GeoJSON.Polygon;
+  kawasanCoveragePolygon?: GeoJSON.MultiPolygon | GeoJSON.Polygon;
 };
-
-

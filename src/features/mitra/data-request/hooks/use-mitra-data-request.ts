@@ -3,7 +3,10 @@
 import { toast } from "@/design-system/components/toast";
 import { useMapInstanceStore } from "@/design-system/components/map/stores/map.instance.store";
 import { createCartOrder } from "@/features/mitra/cart/services/mitra.cart.service";
-import type { AddToCartOrderRequest } from "@/features/mitra/cart/types/mitra.cart.order.type";
+import type {
+  AddToCartOrderRequest,
+  PurchasedIgtBasis,
+} from "@/features/mitra/cart/types/mitra.cart.order.type";
 import {
   getIgtByAoi,
   getIgtByUploadedAoi,
@@ -83,15 +86,19 @@ export const useAddToCartAll = () => {
 
   return useMutation({
     mutationFn: (params: AddToCartLayerParam) => {
+      const basis: PurchasedIgtBasis =
+        params.spatialBasis === "bidang"
+          ? "bidang"
+          : params.spatialBasis === "kawasan"
+            ? "kawasan"
+            : "all";
+
       const payload: AddToCartOrderRequest = {
         selectionType: params.selectionType ?? "catalog",
+        purchasedIgtBasis: basis,
         aoiPolygon: params.aoiPolygon,
-        coveragePolygon: params.coveragePolygon,
-        items: [
-          {
-            sourceLayerId: params.layerId,
-          },
-        ],
+        kawasanCoveragePolygon:
+          basis === "bidang" ? undefined : params.kawasanCoveragePolygon,
       };
       return createCartOrder(payload);
     },
@@ -101,10 +108,13 @@ export const useAddToCartAll = () => {
         params.typeName.split(":")[1]?.replace(/_/g, " ") ||
         params.typeName;
       const toastId = `add-to-cart-${params.layerId}-${Date.now()}`;
-      toast.loading(`Menambahkan data layer "${layerDisplayName}" ke keranjang...`, {
-        id: toastId,
-        group: "Keranjang",
-      });
+      toast.loading(
+        `Menambahkan data layer "${layerDisplayName}" ke keranjang...`,
+        {
+          id: toastId,
+          group: "Keranjang",
+        },
+      );
       return { toastId };
     },
     onSuccess: (data, params, context) => {
@@ -165,28 +175,24 @@ export const useAddToCartMultipleLayers = () => {
     mutationFn: (params: {
       layers: AddToCartLayerParam[];
       selectionType?: "catalog" | "upload_aoi" | "draw_aoi";
-      calculationToken?: string;
-      purchasedBasis?: "bidang" | "kawasan" | "all";
-      targetBasis?: "bidang" | "kawasan" | "all";
+      purchasedIgtBasis?: PurchasedIgtBasis;
       cqlFilter?: string;
       aoiPolygon?: GeoJSON.MultiPolygon | GeoJSON.Polygon;
-      coveragePolygon?: GeoJSON.MultiPolygon | GeoJSON.Polygon;
+      kawasanCoveragePolygon?: GeoJSON.MultiPolygon | GeoJSON.Polygon;
     }) => {
-      const basis = params.purchasedBasis ?? params.targetBasis ?? "all";
+      const basis: PurchasedIgtBasis = params.purchasedIgtBasis ?? "all";
       const payload: AddToCartOrderRequest = {
         selectionType:
           params.selectionType ??
-          params.layers[0]?.selectionType ??
+          params.layers?.[0]?.selectionType ??
           "catalog",
-        calculationToken: params.calculationToken,
-        purchasedBasis: basis,
-        targetBasis: basis,
-        aoiPolygon: params.aoiPolygon ?? params.layers[0]?.aoiPolygon,
-        coveragePolygon:
-          params.coveragePolygon ?? params.layers[0]?.coveragePolygon,
-        items: params.layers.map((l) => ({
-          sourceLayerId: l.layerId,
-        })),
+        purchasedIgtBasis: basis,
+        aoiPolygon: params.aoiPolygon ?? params.layers?.[0]?.aoiPolygon,
+        kawasanCoveragePolygon:
+          basis === "bidang"
+            ? undefined
+            : (params.kawasanCoveragePolygon ??
+              params.layers?.[0]?.kawasanCoveragePolygon),
       };
       return createCartOrder(payload);
     },

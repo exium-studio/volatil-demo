@@ -77,7 +77,7 @@ export const useKawasanCoverage = (
         setRealProgress(100);
         setStepMessage("Selesai");
         return {
-          coveragePolygon: null,
+          kawasanCoveragePolygon: null,
           totalAreaHa: 0,
           totalIntersectedFeatures: 0,
           isEmpty: true,
@@ -114,7 +114,7 @@ export const useKawasanCoverage = (
         setRealProgress(100);
         setStepMessage("Selesai");
         return {
-          coveragePolygon: null,
+          kawasanCoveragePolygon: null,
           totalAreaHa: 0,
           totalIntersectedFeatures: 0,
           isEmpty: true,
@@ -171,7 +171,7 @@ export const useKawasanCoverage = (
         setRealProgress(100);
         setStepMessage("Tidak ditemukan kawasan berpotongan.");
         return {
-          coveragePolygon: null,
+          kawasanCoveragePolygon: null,
           totalAreaHa: 0,
           totalIntersectedFeatures: 0,
           isEmpty: true,
@@ -239,7 +239,7 @@ export const useKawasanCoverage = (
   }, [isCalculating, realProgress, aoiAreaHa]);
 
   return {
-    coveragePolygon: data?.coveragePolygon ?? null,
+    kawasanCoveragePolygon: data?.kawasanCoveragePolygon ?? null,
     totalAreaHa: data?.totalAreaHa ?? 0,
     totalIntersectedFeatures: data?.totalIntersectedFeatures ?? 0,
     isLoading: isCalculating,

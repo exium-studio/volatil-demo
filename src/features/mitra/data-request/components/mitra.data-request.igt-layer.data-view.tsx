@@ -356,11 +356,10 @@ export const MitraDataRequestIgtLayerDataView = memo(
 
       addToCartMultipleMutation.mutate({
         selectionType,
-        calculationToken: calculationResult?.calculationToken,
-        purchasedBasis: "all",
-        targetBasis: "all",
+        purchasedIgtBasis: "all",
         aoiPolygon: resolvedAoi,
-        coveragePolygon: calculationResult?.coveragePolygon ?? undefined,
+        kawasanCoveragePolygon:
+          calculationResult?.kawasanCoveragePolygon ?? undefined,
         layers: validLayers.map((layer) => ({
           layerId: layer.id,
           typeName: layer.wfs?.wfsTypeName ?? "",
@@ -390,11 +389,8 @@ export const MitraDataRequestIgtLayerDataView = memo(
 
       addToCartMultipleMutation.mutate({
         selectionType,
-        calculationToken: calculationResult?.calculationToken,
-        purchasedBasis: "bidang",
-        targetBasis: "bidang",
+        purchasedIgtBasis: "bidang",
         aoiPolygon: resolvedAoi,
-        coveragePolygon: calculationResult?.coveragePolygon ?? undefined,
         layers: validLayers.map((layer) => ({
           layerId: layer.id,
           typeName: layer.wfs?.wfsTypeName ?? "",
@@ -424,11 +420,10 @@ export const MitraDataRequestIgtLayerDataView = memo(
 
       addToCartMultipleMutation.mutate({
         selectionType,
-        calculationToken: calculationResult?.calculationToken,
-        purchasedBasis: "kawasan",
-        targetBasis: "kawasan",
+        purchasedIgtBasis: "kawasan",
         aoiPolygon: resolvedAoi,
-        coveragePolygon: calculationResult?.coveragePolygon ?? undefined,
+        kawasanCoveragePolygon:
+          calculationResult?.kawasanCoveragePolygon ?? undefined,
         layers: validLayers.map((layer) => ({
           layerId: layer.id,
           typeName: layer.wfs?.wfsTypeName ?? "",
@@ -627,16 +622,18 @@ export const MitraDataRequestIgtLayerDataView = memo(
                 estimatedTotalPrice={
                   calculationResult?.estimatedTotalPrice ?? 0
                 }
-                hasCoveragePolygon={Boolean(calculationResult?.coveragePolygon)}
+                hasKawasanCoveragePolygon={Boolean(
+                  calculationResult?.kawasanCoveragePolygon,
+                )}
                 hasBidangLayer={bidangLayers.length > 0 || totalBidangCount > 0}
                 hasKawasanLayer={
                   kawasanLayers.length > 0 || totalKawasanAreaHa > 0
                 }
-                isCoverageVisible={isCoverageVisible}
+                isKawasanCoverageVisible={isCoverageVisible}
                 isBidangVisible={isBidangVisible}
                 isFetchingBidang={bidangQueryResult.isLoading}
                 selectionType={selectionType}
-                onToggleCoverageVisible={() => {
+                onToggleKawasanCoverageVisible={() => {
                   if (selectionType === "upload_aoi") {
                     setIsUploadCoverageVisible(!isUploadCoverageVisible);
                   } else if (selectionType === "draw_aoi") {
@@ -654,9 +651,12 @@ export const MitraDataRequestIgtLayerDataView = memo(
                     setIsCatalogBidangVisible(!isCatalogBidangVisible);
                   }
                 }}
-                onFlyToCoverage={() => {
-                  if (map && calculationResult?.coveragePolygon) {
-                    flyToCartGeometry(map, calculationResult.coveragePolygon);
+                onFlyToKawasanCoverage={() => {
+                  if (map && calculationResult?.kawasanCoveragePolygon) {
+                    flyToCartGeometry(
+                      map,
+                      calculationResult.kawasanCoveragePolygon,
+                    );
                   }
                 }}
                 onFlyToBidang={() => {

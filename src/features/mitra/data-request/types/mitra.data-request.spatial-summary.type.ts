@@ -22,20 +22,20 @@ export type MitraDataRequestSpatialSummaryProps = {
   progressMessage?: string;
   progressPercentage?: number;
   hasAoiPolygon?: boolean;
-  hasCoveragePolygon?: boolean;
+  hasKawasanCoveragePolygon?: boolean;
   hasBidangLayer?: boolean;
   hasKawasanLayer?: boolean;
   aoiColorPalette?: string;
   isAoiVisible?: boolean;
-  isCoverageVisible?: boolean;
+  isKawasanCoverageVisible?: boolean;
   isBidangVisible?: boolean;
   isFetchingBidang?: boolean;
   selectionType?: string;
   onToggleAoiVisible?: () => void;
-  onToggleCoverageVisible?: () => void;
+  onToggleKawasanCoverageVisible?: () => void;
   onToggleBidangVisible?: () => void;
   onFlyToAoi?: () => void;
-  onFlyToCoverage?: () => void;
+  onFlyToKawasanCoverage?: () => void;
   onFlyToBidang?: () => void;
 };
 

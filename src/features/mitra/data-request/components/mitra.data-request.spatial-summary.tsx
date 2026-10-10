@@ -38,13 +38,13 @@ export const MitraDataRequestSpatialSummary = memo(
       isCalculating: propIsCalculating,
       progressMessage: propProgressMessage,
       progressPercentage: propProgressPercentage,
-      hasCoveragePolygon = false,
-      isCoverageVisible = true,
+      hasKawasanCoveragePolygon = false,
+      isKawasanCoverageVisible = true,
       isBidangVisible = true,
       isFetchingBidang = false,
-      onToggleCoverageVisible,
+      onToggleKawasanCoverageVisible,
       onToggleBidangVisible,
-      onFlyToCoverage,
+      onFlyToKawasanCoverage,
       onFlyToBidang,
     } = props;
 
@@ -208,7 +208,7 @@ export const MitraDataRequestSpatialSummary = memo(
       <VStack gap={"md"}>
         {/* Toggle Selected Layer Bidang */}
         {totalBidangCount > 0 && onToggleBidangVisible && (
-          <HStack justify={"space-between"} align={"center"}>
+          <HStack align={"center"} justify={"space-between"} gap={"md"}>
             <HStack align={"center"} gap={"xs"}>
               <P>{"Tampilkan Cakupan Bidang"}</P>
 
@@ -243,28 +243,28 @@ export const MitraDataRequestSpatialSummary = memo(
         )}
 
         {/* Toggle Selected Layer Cakupan Kawasan  */}
-        {hasCoveragePolygon && onToggleCoverageVisible && (
-          <HStack justify={"space-between"} align={"center"}>
+        {hasKawasanCoveragePolygon && onToggleKawasanCoverageVisible && (
+          <HStack align={"center"} justify={"space-between"} gap={"md"}>
             <HStack gap={"xs"} align={"center"}>
               <P>{"Tampilkan Cakupan Kawasan"}</P>
             </HStack>
 
             <HStack gap={"xs"} align={"center"}>
               <Switch
-                checked={isCoverageVisible}
-                onCheckedChange={onToggleCoverageVisible}
+                checked={isKawasanCoverageVisible}
+                onCheckedChange={onToggleKawasanCoverageVisible}
                 tooltip={
-                  isCoverageVisible
+                  isKawasanCoverageVisible
                     ? "Sembunyikan Cakupan Kawasan"
                     : "Tampilkan Cakupan Kawasan"
                 }
               />
 
-              {onFlyToCoverage && (
+              {onFlyToKawasanCoverage && (
                 <Tooltip content={"Zoom ke Cakupan Kawasan"}>
                   <IconButton
                     variant={"outline"}
-                    onClick={onFlyToCoverage}
+                    onClick={onFlyToKawasanCoverage}
                     aria-label={"Zoom ke Cakupan Kawasan"}
                   >
                     <AppIcon icon={FocusIcon} />

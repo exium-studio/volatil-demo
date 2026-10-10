@@ -248,70 +248,11 @@ export async function createCartOrder(
   payload: AddToCartOrderRequest,
   signal?: AbortSignal,
 ): Promise<AddToCartOrderResponse> {
-  try {
-    const response = await postCreateCartOrderApi(payload, signal);
-    if (response.data) return response.data;
-    const newOrderId = `ord-${Date.now()}`;
-    const newOrder: CartOrder = {
-      orderId: newOrderId,
-      status: "requesting",
-      selectionType: payload.selectionType ?? "upload_aoi",
-      administrativeFilter: payload.administrativeFilter,
-      aoiPolygon: payload.aoiPolygon,
-      coveragePolygon: payload.coveragePolygon,
-      cqlFilter: payload.cqlFilter,
-      createdAt: new Date().toISOString(),
-      totalPrice: 0,
-      items: (payload.items ?? []).map((it, idx) => ({
-        id: `coi-${Date.now()}-${idx}`,
-        sourceLayerId: it.sourceLayerId ?? "geonode:layer",
-        sourceLayerTitle: `Layer IGT (${it.sourceLayerId})`,
-        spatialBasis: "bidang",
-        featuresCount: 0,
-        unitPrice: 50000,
-        subtotalPrice: 0,
-      })),
-    };
-    localDummyOrders = [newOrder, ...localDummyOrders];
-    return {
-      orderId: newOrderId,
-      status: "requesting",
-      estimatedTotalPrice: 0,
-      createdAt: newOrder.createdAt,
-    };
-  } catch (error) {
-    if (isDummyDataEnabled()) {
-      const newOrderId = `ord-${Date.now()}`;
-      const newOrder: CartOrder = {
-        orderId: newOrderId,
-        status: "requesting",
-        selectionType: payload.selectionType ?? "upload_aoi",
-        administrativeFilter: payload.administrativeFilter,
-        aoiPolygon: payload.aoiPolygon,
-        coveragePolygon: payload.coveragePolygon,
-        cqlFilter: payload.cqlFilter,
-        createdAt: new Date().toISOString(),
-        totalPrice: 0,
-        items: (payload.items ?? []).map((it, idx) => ({
-          id: `coi-${Date.now()}-${idx}`,
-          sourceLayerId: it.sourceLayerId ?? "geonode:layer",
-          sourceLayerTitle: `Layer IGT (${it.sourceLayerId})`,
-          spatialBasis: "bidang",
-          featuresCount: 0,
-          unitPrice: 50000,
-          subtotalPrice: 0,
-        })),
-      };
-      localDummyOrders = [newOrder, ...localDummyOrders];
-      return {
-        orderId: newOrderId,
-        status: "requesting",
-        estimatedTotalPrice: 0,
-        createdAt: newOrder.createdAt,
-      };
-    }
-    throw error;
+  const response = await postCreateCartOrderApi(payload, signal);
+  if (!response.data) {
+    throw new Error(response.message || "Gagal membuat pesanan transaksi");
   }
+  return response.data;
 }
 
 /**
@@ -333,7 +274,7 @@ export function simulateCalculationComplete(orderId?: string): boolean {
         coverageHa,
         featuresCount,
         totalPrice: subtotalPrice,
-        coveragePolygon: ord.coveragePolygon ?? ord.aoiPolygon,
+        kawasanCoveragePolygon: ord.kawasanCoveragePolygon ?? ord.aoiPolygon,
         items: ord.items.map((item) => ({
           ...item,
           featuresCount,
@@ -606,8 +547,7 @@ export async function checkOrderPaymentStatus(
     if (response.data) return response.data;
     if (isDummyDataEnabled()) {
       const baseUrl =
-        import.meta.env.VITE_API_BASE_URL ||
-        "https://volatil-be.exium.web.id";
+        import.meta.env.VITE_API_BASE_URL || "https://volatil-be.exium.web.id";
       const targetOrder = localDummyOrders.find((b) => b.orderId === orderId);
       if (targetOrder) {
         targetOrder.status = "paid";
@@ -643,8 +583,7 @@ export async function checkOrderPaymentStatus(
   } catch (error) {
     if (isDummyDataEnabled()) {
       const baseUrl =
-        import.meta.env.VITE_API_BASE_URL ||
-        "https://volatil-be.exium.web.id";
+        import.meta.env.VITE_API_BASE_URL || "https://volatil-be.exium.web.id";
       const targetOrder = localDummyOrders.find((b) => b.orderId === orderId);
       if (targetOrder) {
         targetOrder.status = "paid";

@@ -96,7 +96,7 @@ export const MitraDataRequestCatalogTabsContent = (
   // Keep AOI, Coverage, and Bidang layers mounted across both layer cards and attribute table view
   useCartAoiCoverageMap(map, {
     aoiPolygon: adminBoundaryQuery.aoiPolygon,
-    coveragePolygon: calculationResult?.coveragePolygon,
+    kawasanCoveragePolygon: calculationResult?.kawasanCoveragePolygon,
     bidangFeatures: bidangQueryResult.features,
     selectionType: "catalog",
     isAoiVisible,
@@ -199,14 +199,9 @@ export const MitraDataRequestCatalogTabsContent = (
               w={"full"}
             >
               <VStack align={"start"} gap={0}>
-                <P fontWeight={"semibold"} fontSize={"md"}>
-                  {"AOI Wilayah Administrasi"}
-                </P>
-                {filterLabel && (
-                  <P fontSize={"xs"} color={"fg.muted"}>
-                    {filterLabel}
-                  </P>
-                )}
+                <P fontWeight={"semibold"}>{"AOI Wilayah Administrasi"}</P>
+
+                {filterLabel && <P color={"fg.muted"}>{filterLabel}</P>}
               </VStack>
 
               <HStack align={"center"} gap={"xs"}>

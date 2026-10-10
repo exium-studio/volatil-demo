@@ -1280,7 +1280,7 @@ type CalculateSpatialCompletedEvent = {
     estimatedTotalPrice: number;
     isPurchaseLimitValid: boolean;
     purchaseLimitMessage?: string;
-    coveragePolygon?: {
+    kawasanCoveragePolygon?: {
       type: "Polygon" | "MultiPolygon";
       coordinates: number[][][] | number[][][][];
     } | null;
@@ -1372,17 +1372,16 @@ type SystemPolicyItem = {
 ```typescript
 type AddToCartOrderRequest = {
   selectionType: "upload_aoi" | "draw_aoi" | "catalog";
-  calculationToken?: string; // Token hasil SSE calculation stream (POST /api/mitra/data-request/calculate/stream)
-  targetBasis?: "bidang" | "kawasan" | "all";
+  purchasedIgtBasis: "bidang" | "kawasan" | "all";
   aoiPolygon?: GeoJSON.MultiPolygon | GeoJSON.Polygon;
-  coveragePolygon?: GeoJSON.MultiPolygon | GeoJSON.Polygon;
-  cqlFilter?: string; // e.g. "INTERSECTS(geom, POLYGON(...))"
-  items?: Array<{
-    sourceLayerId: string;
-    cqlFilter?: string;
-    wfsUrl?: string;
-    wmsUrl?: string;
-  }>;
+  kawasanCoveragePolygon?: GeoJSON.MultiPolygon | GeoJSON.Polygon; // Ditiadakan jika purchasedIgtBasis: "bidang"
+  administrativeFilter?: {
+    kodeProvinsi?: string;
+    kodeKabupaten?: string;
+    kodeKecamatan?: string;
+    kodeDesa?: string;
+  };
+  cqlFilter?: string;
 };
 ```
 
@@ -1462,7 +1461,7 @@ type GetOrderDetailResponse = {
     areaHa?: number;
     featuresCount?: number;
     aoiPolygon?: GeoJSON.MultiPolygon | GeoJSON.Polygon;
-    coveragePolygon?: GeoJSON.MultiPolygon | GeoJSON.Polygon;
+    kawasanCoveragePolygon?: GeoJSON.MultiPolygon | GeoJSON.Polygon;
     items: Array<{
       id: string;
       sourceLayerId: string;
@@ -1509,7 +1508,7 @@ data: {
     "subtotalBidangPrice": 0,
     "subtotalKawasanPrice": 2100000,
     "totalPrice": 2100000,
-    "coveragePolygon": { "type": "Polygon", "coordinates": [...] },
+    "kawasanCoveragePolygon": { "type": "Polygon", "coordinates": [...] },
     "createdAt": "2026-09-21T10:45:00.000Z"
   },
   "timestamp": "2026-09-21T10:45:04.120Z"

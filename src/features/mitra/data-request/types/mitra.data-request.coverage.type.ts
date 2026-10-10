@@ -3,7 +3,7 @@
 import type GeoJSON from "geojson";
 
 export type KawasanCoverageResult = {
-  coveragePolygon: GeoJSON.Feature<GeoJSON.Polygon | GeoJSON.MultiPolygon> | null;
+  kawasanCoveragePolygon: GeoJSON.Feature<GeoJSON.Polygon | GeoJSON.MultiPolygon> | null;
   totalAreaHa: number;
   totalIntersectedFeatures: number;
   isEmpty: boolean;
@@ -23,7 +23,7 @@ export type UseKawasanCoverageParams = {
 };
 
 export type UseKawasanCoverageResult = {
-  coveragePolygon: GeoJSON.Feature<GeoJSON.Polygon | GeoJSON.MultiPolygon> | null;
+  kawasanCoveragePolygon: GeoJSON.Feature<GeoJSON.Polygon | GeoJSON.MultiPolygon> | null;
   totalAreaHa: number;
   totalIntersectedFeatures: number;
   isLoading: boolean;

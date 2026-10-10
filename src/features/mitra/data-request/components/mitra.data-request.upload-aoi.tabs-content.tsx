@@ -467,11 +467,9 @@ const UploadAoiFeatureList = memo((props: UploadAoiFeatureListProps) => {
           gap={"sm"}
         >
           <VStack align={"start"} gap={0}>
-            <P fontWeight={"semibold"} fontSize={"md"}>
-              {"Pilih Area AOI"}
-            </P>
+            <P fontWeight={"semibold"}>{"Pilih Area AOI"}</P>
 
-            <P fontSize={"xs"} color={"fg.subtle"}>
+            <P fontSize={"sm"} color={"fg.subtle"}>
               {`${file.fileName} (${formatByte(file.fileSize)}) • ${file.features.length} Polygon`}
             </P>
           </VStack>
@@ -665,7 +663,7 @@ const UploadAoiConfirmedAttributeList = memo(
     // Keep AOI, Coverage, and Bidang layers mounted across both layer list and attribute table view
     useCartAoiCoverageMap(map, {
       aoiPolygon: confirmedPolygon,
-      coveragePolygon: calculationResult?.coveragePolygon,
+      kawasanCoveragePolygon: calculationResult?.kawasanCoveragePolygon,
       bidangFeatures: bidangQueryResult.features,
       selectionType: "upload_aoi",
       isAoiVisible,
@@ -711,12 +709,10 @@ const UploadAoiConfirmedAttributeList = memo(
               w={"full"}
             >
               <VStack align={"start"} gap={0}>
-                <P fontWeight={"semibold"} fontSize={"md"}>
-                  {"AOI Upload"}
-                </P>
+                <P fontWeight={"semibold"}>{"AOI Upload"}</P>
 
                 {aoiAreaHa > 0 && (
-                  <P fontSize={"xs"} color={"fg.muted"}>
+                  <P fontSize={"sm"} color={"fg.muted"}>
                     {`Luas AOI: ${formatNumber(aoiAreaHa, { maximumFractionDigits: 2 })} ha`}
                   </P>
                 )}

@@ -168,7 +168,9 @@ const MitraCartContent = () => {
   // Map layer synchronization hook for Cart AOI & Coverage Polygon
   useCartAoiCoverageMap(map, {
     aoiPolygon: isOrderSelected ? selectedOrder?.aoiPolygon : null,
-    coveragePolygon: isOrderSelected ? selectedOrder?.coveragePolygon : null,
+    kawasanCoveragePolygon: isOrderSelected
+      ? selectedOrder?.kawasanCoveragePolygon
+      : null,
     bidangFeatures: isOrderSelected ? bidangQueryResult.features : null,
     selectionType: selectedOrder?.selectionType,
     isAoiVisible,
@@ -190,7 +192,7 @@ const MitraCartContent = () => {
   useEffect(() => {
     if (isOrderSelected && selectedOrder) {
       const targetGeom =
-        selectedOrder.aoiPolygon ?? selectedOrder.coveragePolygon;
+        selectedOrder.aoiPolygon ?? selectedOrder.kawasanCoveragePolygon;
       if (targetGeom && map) {
         flyToCartGeometry(map, targetGeom);
       }
@@ -227,8 +229,8 @@ const MitraCartContent = () => {
   }, [selectedOrder, map]);
 
   const handleFlyToCoverage = useCallback(() => {
-    if (selectedOrder?.coveragePolygon && map) {
-      flyToCartGeometry(map, selectedOrder.coveragePolygon);
+    if (selectedOrder?.kawasanCoveragePolygon && map) {
+      flyToCartGeometry(map, selectedOrder.kawasanCoveragePolygon);
     }
   }, [selectedOrder, map]);
 

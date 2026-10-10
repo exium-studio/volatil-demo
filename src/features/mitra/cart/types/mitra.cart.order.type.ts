@@ -130,7 +130,7 @@ export type CartMapLayerOptions = {
     | GeoJSON.Polygon
     | GeoJSON.Feature<GeoJSON.Polygon | GeoJSON.MultiPolygon>
     | null;
-  coveragePolygon?:
+  kawasanCoveragePolygon?:
     | GeoJSON.MultiPolygon
     | GeoJSON.Polygon
     | GeoJSON.Feature<GeoJSON.Polygon | GeoJSON.MultiPolygon>
@@ -151,14 +151,13 @@ export type CartOrderItemPayload = {
   wmsUrl?: string;
 };
 
+export type PurchasedIgtBasis = "bidang" | "kawasan" | "all";
+
 export type AddToCartOrderRequest = {
   selectionType: SelectionType;
-  calculationToken?: string;
-  purchasedBasis?: "bidang" | "kawasan" | "all";
-  targetBasis?: "bidang" | "kawasan" | "all";
+  purchasedIgtBasis: PurchasedIgtBasis;
   aoiPolygon?: GeoJSON.MultiPolygon | GeoJSON.Polygon;
-  coveragePolygon?: GeoJSON.MultiPolygon | GeoJSON.Polygon;
-  items?: CartOrderItemPayload[];
+  kawasanCoveragePolygon?: GeoJSON.MultiPolygon | GeoJSON.Polygon;
   administrativeFilter?: {
     kodeProvinsi?: string;
     kodeKabupaten?: string;
@@ -202,7 +201,7 @@ export type CartOrder = {
   status: CartOrderStatus;
   selectionType: SelectionType;
   aoiPolygon?: GeoJSON.MultiPolygon | GeoJSON.Polygon;
-  coveragePolygon?: GeoJSON.MultiPolygon | GeoJSON.Polygon;
+  kawasanCoveragePolygon?: GeoJSON.MultiPolygon | GeoJSON.Polygon;
   coverageHa?: number;
   featuresCount?: number;
   createdAt: string;
