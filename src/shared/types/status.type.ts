@@ -25,10 +25,8 @@ export type OrderStatus =
   | "processing"
   | "pending_tte"
   | "pending_review"
-  | "rejected"
   | "ready"
   | "expired"
-  | "failed"
   | "transaction_expired"
   | "transaction_failed";
 

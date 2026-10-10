@@ -263,6 +263,20 @@ export const ORDER_STATUS_MAP: Record<OrderStatus, OrderStatusConfig> = {
     icon: ClockIcon,
     iconColor: "orange.fg",
   },
+  transaction_expired: {
+    label: "Pembayaran Kedaluwarsa",
+    colorPalette: "gray",
+    icon: TimerOffIcon,
+    iconColor: "gray.fg",
+    noticeDescription: "Batas waktu pembayaran SIMPONI telah kedaluwarsa.",
+  },
+  transaction_failed: {
+    label: "Transaksi Gagal",
+    colorPalette: "red",
+    icon: AlertCircleIcon,
+    iconColor: "red.fg",
+    noticeDescription: "Terjadi kesalahan/kegagalan transaksi pembayaran.",
+  },
   paid: {
     label: "Terbayar",
     colorPalette: "blue",
@@ -291,13 +305,6 @@ export const ORDER_STATUS_MAP: Record<OrderStatus, OrderStatusConfig> = {
     iconColor: "orange.fg",
     noticeDescription: "Menunggu validasi Admin Internal...",
   },
-  rejected: {
-    label: "Ditolak",
-    colorPalette: "red",
-    icon: AlertCircleIcon,
-    iconColor: "red.fg",
-    noticeDescription: "Pesanan ditolak oleh Admin Internal.",
-  },
   ready: {
     label: "Siap Digunakan",
     colorPalette: "green",
@@ -311,27 +318,6 @@ export const ORDER_STATUS_MAP: Record<OrderStatus, OrderStatusConfig> = {
     icon: TimerOffIcon,
     iconColor: "gray.fg",
     noticeDescription: "Masa aktif layanan data spasial telah berakhir.",
-  },
-  failed: {
-    label: "Transaksi Gagal",
-    colorPalette: "red",
-    icon: AlertCircleIcon,
-    iconColor: "red.fg",
-    noticeDescription: "Layanan data spasial gagal diproses.",
-  },
-  transaction_expired: {
-    label: "Pembayaran Kedaluwarsa",
-    colorPalette: "gray",
-    icon: TimerOffIcon,
-    iconColor: "gray.fg",
-    noticeDescription: "Batas waktu pembayaran SIMPONI telah kedaluwarsa.",
-  },
-  transaction_failed: {
-    label: "Transaksi Gagal",
-    colorPalette: "red",
-    icon: AlertCircleIcon,
-    iconColor: "red.fg",
-    noticeDescription: "Terjadi kesalahan/kegagalan transaksi pembayaran.",
   },
 };
 
@@ -420,25 +406,29 @@ export const MITRA_REGISTRATION_STATUS_OPTIONS: FocusSelectOption[] = [
 export const SYSTEM_POLICY_MAP: Record<string, SystemPolicyConfig> = {
   payment_timeout_fallback_hours: {
     label: "Batas Waktu Pembayaran",
-    description: "Batas toleransi waktu penyelesaian pembayaran SIMPONI sebelum pesanan otomatis kedaluwarsa.",
+    description:
+      "Batas toleransi waktu penyelesaian pembayaran SIMPONI sebelum pesanan otomatis kedaluwarsa.",
     colorPalette: "amber",
     icon: HourglassIcon,
   },
   order_access_duration_days: {
     label: "Durasi Akses Layanan",
-    description: "Masa aktif layanan data spasial & streaming WMS setelah pesanan berstatus siap.",
+    description:
+      "Masa aktif layanan data spasial & streaming WMS setelah pesanan berstatus siap.",
     colorPalette: "green",
     icon: ClockIcon,
   },
   order_max_extension_count: {
     label: "Maksimal Perpanjangan",
-    description: "Jumlah maksimum pengajuan perpanjangan masa aktif pesanan yang diizinkan untuk mitra.",
+    description:
+      "Jumlah maksimum pengajuan perpanjangan masa aktif pesanan yang diizinkan untuk mitra.",
     colorPalette: "cyan",
     icon: RefreshCwIcon,
   },
   order_extension_window_days: {
     label: "Jendela Pengajuan Perpanjangan",
-    description: "Rentang waktu sebelum masa aktif berakhir ketika mitra dapat mengajukan perpanjangan.",
+    description:
+      "Rentang waktu sebelum masa aktif berakhir ketika mitra dapat mengajukan perpanjangan.",
     colorPalette: "red",
     icon: ShieldAlertIcon,
   },
