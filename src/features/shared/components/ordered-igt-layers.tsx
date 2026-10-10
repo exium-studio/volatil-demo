@@ -1,4 +1,4 @@
-// src/features/shared/components/ordered-igt-layers-preview.cell.tsx
+// src/features/shared/components/ordered-igt-layers.tsx
 
 import { Box } from "@/design-system/components/layout/ui/box";
 import { HStack, VStack } from "@/design-system/components/layout/ui/flex-box";

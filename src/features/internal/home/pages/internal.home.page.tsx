@@ -1,3 +1,5 @@
+// src/features/internal/home/pages/internal.home.page.tsx
+
 import { Button } from "@/design-system/components/button/ui/button";
 import { AppIcon } from "@/design-system/components/icon/ui/app-icon";
 import { HStack } from "@/design-system/components/layout/ui/flex-box";
