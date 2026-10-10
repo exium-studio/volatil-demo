@@ -2129,18 +2129,83 @@ type UpdateMasterIgtLayerRequest = {
 
 ---
 
-## 4.7 Tarif PNBP & Pricing Management
+## 4.7 Modul Pricing (Master Tarif PNBP)
 
-- `GET /api/internal/pricing` — List aturan tarif per layer / basis
-- `POST /api/internal/pricing` — Buat konfigurasi tarif baru
-- `PUT /api/internal/pricing/{id}` — Update konfigurasi tarif
+- **GET ALL**: `GET /api/internal/pricing` (atau `GET /api/mitra/data-request/pricing`)
+  - Response (200 OK):
+  ```json
+  {
+    "success": true,
+    "message": "Berhasil memuat data tarif PNBP",
+    "data": [
+      {
+        "id": "e9b10a20-3b41-4e89-9a02-123456789abc",
+        "price": 7500,
+        "pnbpCode": "PNBP_BIDANG_01",
+        "minimumPurchase": 5,
+        "igtBasis": "bidang",
+        "unit": "bidang"
+      },
+      {
+        "id": "f8a09b11-2a30-4d78-8f01-987654321def",
+        "price": 50000,
+        "pnbpCode": "PNBP_KAWASAN_01",
+        "minimumPurchase": 10,
+        "igtBasis": "kawasan",
+        "unit": "ha"
+      }
+    ]
+  }
+  ```
+- **UPDATE PRICING (Admin)**: `PUT /api/internal/pricing/:id`
+  - URL Param `:id` = String UUID record Pricing dari GET
+  - Request Body:
+  ```json
+  {
+    "price": 8000,
+    "pnbpCode": "PNBP_BID_01",
+    "minimumPurchase": 5
+  }
+  ```
 
 ---
 
-## 4.8 Batas Pembelian (Purchase Limit)
+## 4.8 Modul Policies (Kebijakan Sistem)
 
-- `GET /api/internal/purchase-limits` — Ambil aturan minimum order (bidang / kawasan ha)
-- `PUT /api/internal/purchase-limits/{id}` — Update ambang batas minimum order
+- **GET ALL**: `GET /api/internal/policies` (atau `GET /api/mitra/data-request/policies`)
+  - Response (200 OK):
+  ```json
+  {
+    "success": true,
+    "message": "Berhasil memuat kebijakan sistem",
+    "data": [
+      {
+        "key": "MIN_PURCHASE_BIDANG",
+        "value": 5,
+        "valueType": "number",
+        "label": "Minimum Pembelian Bidang Tanah",
+        "description": "Batas minimal jumlah bidang tanah yang wajib dibeli mitra per transaksi",
+        "unit": "bidang"
+      },
+      {
+        "key": "MIN_PURCHASE_KAWASAN",
+        "value": 10,
+        "valueType": "number",
+        "label": "Minimum Pembelian Tutupan Kawasan",
+        "description": "Batas minimal luas tutupan kawasan (Hektar) yang wajib dibeli mitra per transaksi",
+        "unit": "ha"
+      }
+    ]
+  }
+  ```
+- **UPDATE POLICY (Admin)**: `PUT /api/internal/policies/:key`
+  - URL Param `:key` = String key kebijakan (contoh: `/api/internal/policies/MIN_PURCHASE_BIDANG`)
+  - Request Body:
+  ```json
+  {
+    "value": 10
+  }
+  ```
 
 ---
 

@@ -9,9 +9,14 @@ import { createPaginationMeta } from "@/shared/types/common-response.type";
 export const DUMMY_PRICING_ITEMS: PricingItem[] = [
   {
     id: "default-bidang",
+    price: 7500,
+    pnbpCode: "PNBP_BIDANG_01",
+    minimumPurchase: 5,
+    igtBasis: "bidang",
+    unit: "bidang",
     layerTitle: "Tarif Standar Bidang Tanah (Global)",
     spatialBasis: "bidang",
-    unitPrice: 50000,
+    unitPrice: 7500,
     unitLabel: "per bidang",
     effectiveDate: "2025-01-01T00:00:00Z",
     description: "Tarif dasar PNBP ATR/BPN per objek bidang tanah terdaftar",
@@ -20,9 +25,14 @@ export const DUMMY_PRICING_ITEMS: PricingItem[] = [
   },
   {
     id: "default-kawasan",
+    price: 50000,
+    pnbpCode: "PNBP_KAWASAN_01",
+    minimumPurchase: 10,
+    igtBasis: "kawasan",
+    unit: "ha",
     layerTitle: "Tarif Standar Kawasan / RTRW (Global)",
     spatialBasis: "kawasan",
-    unitPrice: 150000,
+    unitPrice: 50000,
     unitLabel: "per hektar",
     effectiveDate: "2025-01-01T00:00:00Z",
     description:

@@ -59,7 +59,7 @@ const InternalHomePoliciesContent = () => {
 
   const getPolicyColor = (key: string) => {
     if (key.includes("timeout")) return "amber";
-    if (key.includes("duration") || key.includes("access")) return "blue";
+    if (key.includes("duration") || key.includes("access")) return "green";
     if (key.includes("extension_count") || key.includes("max_extension"))
       return "cyan";
     if (key.includes("extension_window") || key.includes("window"))

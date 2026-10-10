@@ -80,9 +80,9 @@ const InternalHomePricingModalContent = (
     try {
       await updateMutation.mutateAsync({
         id: pricing.id,
-        unitPrice: values.price,
-        minPurchase: values.minimumPurchase,
-        kodePnbp: values.pnbpCode,
+        price: values.price,
+        minimumPurchase: values.minimumPurchase,
+        pnbpCode: values.pnbpCode,
       });
 
       close();

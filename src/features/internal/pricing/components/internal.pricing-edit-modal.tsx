@@ -55,9 +55,12 @@ const InternalPricingEditModalContent = (
   const { modalKey, item, isOpen, open, close } = props;
 
   // States initialized from item props (no setState in useEffect)
-  const [unitPrice, setUnitPrice] = useState<number>(() => item.unitPrice);
-  const [description, setDescription] = useState<string>(
-    () => item.description ?? "",
+  const [price, setPrice] = useState<number>(() => item.price ?? item.unitPrice ?? 0);
+  const [pnbpCode, setPnbpCode] = useState<string>(
+    () => item.pnbpCode ?? item.kodePnbp ?? "",
+  );
+  const [minimumPurchase, setMinimumPurchase] = useState<number>(
+    () => item.minimumPurchase ?? item.minPurchase ?? 0,
   );
 
   // Mutations
@@ -67,8 +70,9 @@ const InternalPricingEditModalContent = (
     updateMutation.mutate(
       {
         id: item.id,
-        unitPrice,
-        description,
+        price,
+        pnbpCode,
+        minimumPurchase,
       },
       {
         onSuccess: () => {
@@ -77,6 +81,9 @@ const InternalPricingEditModalContent = (
       },
     );
   };
+
+  const basis = item.igtBasis ?? item.spatialBasis ?? "bidang";
+  const unitLabel = item.unit ?? (basis === "bidang" ? "bidang" : "ha");
 
   return (
     <Modal.Root
@@ -108,39 +115,50 @@ const InternalPricingEditModalContent = (
                 {"Basis IGT"}
               </P>
               <Badge
-                colorPalette={
-                  item.spatialBasis === "bidang" ? "blue" : "orange"
-                }
+                colorPalette={basis === "bidang" ? "blue" : "orange"}
                 variant={"subtle"}
               >
-                {item.spatialBasis === "bidang"
+                {basis === "bidang"
                   ? "IGT Berbasis Bidang"
                   : "IGT Berbasis Kawasan"}
               </Badge>
             </HStack>
 
+            {/* Input Kode PNBP */}
+            <VStack align={"stretch"} gap={1}>
+              <Field label={"Kode PNBP"}>
+                <Input
+                  value={pnbpCode}
+                  onChange={(e) => setPnbpCode(e.target.value)}
+                  placeholder={"PNBP_BIDANG_01"}
+                />
+              </Field>
+            </VStack>
+
             {/* Input Unit Price */}
             <VStack align={"stretch"} gap={1}>
               <P fontSize={"sm"} fontWeight={"medium"}>
-                {`Tarif Satuan (${item.unitLabel})`}
+                {`Tarif Satuan (Rp / ${unitLabel})`}
               </P>
               <NumberInput
-                value={String(unitPrice)}
-                onValueChange={(val) => setUnitPrice(Number(val.value))}
+                value={String(price)}
+                onValueChange={(val) => setPrice(Number(val.value))}
                 min={0}
-                step={5000}
+                step={1000}
               />
             </VStack>
 
-            {/* Input Description */}
+            {/* Input Minimum Purchase */}
             <VStack align={"stretch"} gap={1}>
-              <Field label={"Dasar Regulasi / Keterangan"}>
-                <Input
-                  value={description}
-                  onChange={(e) => setDescription(e.target.value)}
-                  placeholder={"PP Tarif PNBP ATR/BPN No..."}
-                />
-              </Field>
+              <P fontSize={"sm"} fontWeight={"medium"}>
+                {`Minimum Pembelian (${unitLabel})`}
+              </P>
+              <NumberInput
+                value={String(minimumPurchase)}
+                onValueChange={(val) => setMinimumPurchase(Number(val.value))}
+                min={0}
+                step={1}
+              />
             </VStack>
           </VStack>
         </Modal.Body>

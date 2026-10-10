@@ -123,7 +123,7 @@ const InternalSystemPolicyModalContent = (
         </Modal.Body>
 
         <Modal.Footer>
-          <VStack gap={"xs"}>
+          <VStack gap={"xs"} w={"full"}>
             <Button primary type={"submit"} loading={updateMutation.isPending}>
               {"Simpan"}
             </Button>

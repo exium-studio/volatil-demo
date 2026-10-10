@@ -123,19 +123,19 @@ export const InternalPricingDataView = () => {
             align: "start" as const,
           },
           {
-            value: item.unitPrice,
+            value: item.price ?? item.unitPrice ?? 0,
             td: (
               <VStack align={"end"} gap={0}>
                 <P color={"teal.fg"}>
                   <FormatNumber
-                    value={item.unitPrice}
+                    value={item.price ?? item.unitPrice ?? 0}
                     style={"currency"}
                     currency={"IDR"}
                     maximumFractionDigits={0}
                   />
                 </P>
                 <P fontSize={"xs"} color={"fg.subtle"}>
-                  {item.unitLabel}
+                  {`per ${item.unit ?? (item.igtBasis === "bidang" ? "bidang" : "ha")}`}
                 </P>
               </VStack>
             ),
