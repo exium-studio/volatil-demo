@@ -15,6 +15,7 @@ import { AppIcon } from "@/design-system/components/icon/ui/app-icon";
 import { Switch } from "@/design-system/components/input/ui/switch";
 import { Container } from "@/design-system/components/layout/ui/container";
 import { HStack, VStack } from "@/design-system/components/layout/ui/flex-box";
+import { SimpleGrid } from "@/design-system/components/layout/ui/grid";
 import { AppContentContainer } from "@/design-system/components/layout/ui/page-container";
 import { Separator } from "@/design-system/components/layout/ui/separator";
 import { useMapInstanceStore } from "@/design-system/components/map/stores/map.instance.store";
@@ -30,7 +31,10 @@ import {
   useProvisionOrder,
 } from "@/features/internal/order-review/hooks/use-order-review";
 import { useOrderReviewLayerStore } from "@/features/internal/order-review/stores/order-review-layer.store";
-import type { OrderLayerDataViewProps } from "@/features/internal/order-review/types/order-review.type";
+import type {
+  OrderLayerDataViewProps,
+  OrderSummaryGridProps,
+} from "@/features/internal/order-review/types/order-review.type";
 import type { CartOrderItem } from "@/features/mitra/cart/types/mitra.cart.order.type";
 import { useFlyToLayer } from "@/features/mitra/data-request/hooks/use-fly-to-layer";
 import { normalizePolygonFeature } from "@/features/mitra/data-request/utils/clip-and-union-kawasan";
@@ -271,7 +275,12 @@ export function InternalOrderReviewDetailPage() {
         <Container.Body overflowY={"auto"}>
           {/* Header */}
           <HeaderContainer px={"xs"}>
-            <HStack justify={"space-between"} align={"center"} w={"full"}>
+            <HStack
+              justify={"space-between"}
+              align={"center"}
+              w={"full"}
+              gap={"md"}
+            >
               <HStack align={"center"} gap={"sm"}>
                 <BackButton
                   onClick={() => navigate({ to: "/internal/order-review" })}
@@ -322,143 +331,14 @@ export function InternalOrderReviewDetailPage() {
 
           <Separator borderColor={"bg.canvas"} />
 
-          {/* Metadata Detail */}
-          <VStack gap={"md"} p={"md"} align={"stretch"}>
-            <HStack wrap={"wrap"} gap={"lg"}>
-              <VStack gap={"xs"} align={"start"}>
-                <P fontSize={"xs"} color={"fg.subtle"}>
-                  {"Mitra"}
-                </P>
-
-                <P fontWeight={"semibold"}>{order.mitraName}</P>
-              </VStack>
-
-              <VStack gap={"xs"} align={"start"}>
-                <P fontSize={"xs"} color={"fg.subtle"}>
-                  {"Nomor Pesanan"}
-                </P>
-
-                <P fontWeight={"semibold"}>
-                  {order.orderNumber || order.orderId}
-                </P>
-              </VStack>
-            </HStack>
-
-            <Separator borderColor={"bg.canvas"} />
-
-            <HStack wrap={"wrap"} gap={"lg"}>
-              <VStack gap={"xs"} align={"start"}>
-                <P fontSize={"xs"} color={"fg.subtle"}>
-                  {"Metode Pengajuan"}
-                </P>
-
-                <SelectionTypeBadge my={"auto"}>
-                  {order.selectionType}
-                </SelectionTypeBadge>
-              </VStack>
-
-              <VStack gap={"xs"} align={"start"}>
-                <P fontSize={"xs"} color={"fg.subtle"}>
-                  {"Status Pesanan"}
-                </P>
-
-                <OrderStatusBadge my={"auto"}>{order.status}</OrderStatusBadge>
-              </VStack>
-
-              <VStack gap={"xs"} align={"start"}>
-                <P fontSize={"xs"} color={"fg.subtle"}>
-                  {"Total Estimasi PNBP"}
-                </P>
-
-                <P fontWeight={"semibold"} my={"auto"}>
-                  {formatCurrency(order.totalPrice ?? 0)}
-                </P>
-              </VStack>
-
-              <VStack gap={"xs"} align={"start"}>
-                <P fontSize={"xs"} color={"fg.subtle"}>
-                  {"TTE & Faktur"}
-                </P>
-
-                <Center mt={"3px"}>
-                  <TteBadge
-                    tte={order.tte}
-                    invoiceUrl={order.invoiceUrl}
-                    tteInvoiceUrl={order.tteInvoiceUrl}
-                  />
-                </Center>
-              </VStack>
-
-              {hasAoi && (
-                <VStack gap={"xs"} align={"start"}>
-                  <P fontSize={"xs"} color={"fg.subtle"}>
-                    {"AOI Polygon"}
-                  </P>
-
-                  <HStack align={"center"} gap={"xs"} my={"auto"}>
-                    <Switch
-                      checked={isAoiVisible}
-                      onCheckedChange={({ checked }) => {
-                        handleToggleAoi(checked);
-                      }}
-                      tooltip={
-                        isAoiVisible
-                          ? "Sembunyikan Polygon AOI"
-                          : "Tampilkan Polygon AOI"
-                      }
-                    />
-
-                    <Tooltip content={"Zoom ke AOI Polygon"}>
-                      <IconButton
-                        aria-label={"Zoom to AOI polygon"}
-                        // variant={"outline"}
-                        size={"xs"}
-                        onClick={handleFlyToAoi}
-                      >
-                        <AppIcon icon={FocusIcon} />
-                      </IconButton>
-                    </Tooltip>
-                  </HStack>
-                </VStack>
-              )}
-            </HStack>
-
-            <Separator borderColor={"bg.canvas"} />
-
-            {/* Workspace URLs */}
-            <HStack wrap={"wrap"} gap={"lg"}>
-              <VStack gap={"xs"} align={"start"} flex={1} minW={"260px"}>
-                <P fontSize={"xs"} color={"fg.subtle"}>
-                  {"URL Workspace GeoServer Volatil (Internal)"}
-                </P>
-
-                <Url
-                  url={
-                    order.internalWorkspaceUrl ||
-                    `https://geoserver.internal.volatil.atrbpn.go.id/geoserver/${order.workspaceName || `ws_${order.orderId}`}/ows`
-                  }
-                  label={"Salin URL Workspace Volatil"}
-                  isExternalLink={false}
-                  maxW={"full"}
-                />
-              </VStack>
-
-              {order.workspaceInteropUrl && (
-                <VStack gap={"xs"} align={"start"} flex={1} minW={"260px"}>
-                  <P fontSize={"xs"} color={"fg.subtle"}>
-                    {"URL Workspace Resmi (INTEROP Pusdatin)"}
-                  </P>
-
-                  <Url
-                    url={order.workspaceInteropUrl}
-                    label={"Salin URL Workspace INTEROP"}
-                    isExternalLink={true}
-                    maxW={"full"}
-                  />
-                </VStack>
-              )}
-            </HStack>
-          </VStack>
+          {/* Metadata Summary */}
+          <OrderSummaryGrid
+            order={order}
+            isAoiVisible={isAoiVisible}
+            hasAoi={hasAoi}
+            onToggleAoi={handleToggleAoi}
+            onFlyToAoi={handleFlyToAoi}
+          />
 
           <Separator borderColor={"bg.canvas"} />
 
@@ -469,6 +349,122 @@ export function InternalOrderReviewDetailPage() {
     </AppContentContainer>
   );
 }
+
+const OrderSummaryGrid = (props: OrderSummaryGridProps) => {
+  const { order, isAoiVisible, hasAoi, onToggleAoi, onFlyToAoi } = props;
+
+  return (
+    <SimpleGrid minChildWidth={"200px"} gap={"md"} p={"md"}>
+      <VStack gap={"2xs"} align={"start"}>
+        <P fontSize={"xs"} color={"fg.subtle"}>
+          {"Mitra"}
+        </P>
+        <P fontWeight={"semibold"}>{order.mitraName}</P>
+      </VStack>
+
+      <VStack gap={"2xs"} align={"start"}>
+        <P fontSize={"xs"} color={"fg.subtle"}>
+          {"Nomor Pesanan"}
+        </P>
+        <P fontWeight={"semibold"}>{order.orderNumber || order.orderId}</P>
+      </VStack>
+
+      <VStack gap={"2xs"} align={"start"}>
+        <P fontSize={"xs"} color={"fg.subtle"}>
+          {"Metode Pengajuan"}
+        </P>
+        <SelectionTypeBadge>{order.selectionType}</SelectionTypeBadge>
+      </VStack>
+
+      <VStack gap={"2xs"} align={"start"}>
+        <P fontSize={"xs"} color={"fg.subtle"}>
+          {"Status Pesanan"}
+        </P>
+        <OrderStatusBadge>{order.status}</OrderStatusBadge>
+      </VStack>
+
+      <VStack gap={"2xs"} align={"start"}>
+        <P fontSize={"xs"} color={"fg.subtle"}>
+          {"Total Estimasi PNBP"}
+        </P>
+        <P fontWeight={"semibold"}>{formatCurrency(order.totalPrice ?? 0)}</P>
+      </VStack>
+
+      <VStack gap={"2xs"} align={"start"}>
+        <P fontSize={"xs"} color={"fg.subtle"}>
+          {"TTE & Faktur"}
+        </P>
+        <Center mt={"2px"}>
+          <TteBadge
+            tte={order.tte}
+            invoiceUrl={order.invoiceUrl}
+            tteInvoiceUrl={order.tteInvoiceUrl}
+          />
+        </Center>
+      </VStack>
+
+      {hasAoi && (
+        <VStack gap={"2xs"} align={"start"}>
+          <P fontSize={"xs"} color={"fg.subtle"}>
+            {"AOI Polygon"}
+          </P>
+          <HStack align={"center"} gap={"xs"}>
+            <Switch
+              checked={isAoiVisible}
+              onCheckedChange={({ checked }) => {
+                onToggleAoi(checked);
+              }}
+              tooltip={
+                isAoiVisible
+                  ? "Sembunyikan Polygon AOI"
+                  : "Tampilkan Polygon AOI"
+              }
+            />
+
+            <Tooltip content={"Zoom ke AOI Polygon"}>
+              <IconButton
+                aria-label={"Zoom to AOI polygon"}
+                size={"xs"}
+                onClick={onFlyToAoi}
+              >
+                <AppIcon icon={FocusIcon} />
+              </IconButton>
+            </Tooltip>
+          </HStack>
+        </VStack>
+      )}
+
+      <VStack gap={"2xs"} align={"start"} w={"full"}>
+        <P fontSize={"xs"} color={"fg.subtle"}>
+          {"URL Workspace GeoServer Volatil (Internal)"}
+        </P>
+        <Url
+          url={
+            order.internalWorkspaceUrl ||
+            `https://geoserver.internal.volatil.atrbpn.go.id/geoserver/${order.workspaceName || `ws_${order.orderId}`}/ows`
+          }
+          label={"Salin URL Workspace Volatil"}
+          isExternalLink={false}
+          maxW={"full"}
+        />
+      </VStack>
+
+      {order.workspaceInteropUrl && (
+        <VStack gap={"2xs"} align={"start"} w={"full"}>
+          <P fontSize={"xs"} color={"fg.subtle"}>
+            {"URL Workspace Resmi (INTEROP Pusdatin)"}
+          </P>
+          <Url
+            url={order.workspaceInteropUrl}
+            label={"Salin URL Workspace INTEROP"}
+            isExternalLink={true}
+            maxW={"full"}
+          />
+        </VStack>
+      )}
+    </SimpleGrid>
+  );
+};
 
 const OrderLayerDataView = (props: OrderLayerDataViewProps) => {
   const { order } = props;

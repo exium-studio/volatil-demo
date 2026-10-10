@@ -175,6 +175,14 @@ export type RejectOrderPayload = {
   reason: string;
 };
 
+export type OrderSummaryGridProps = {
+  order: InternalOrderItem;
+  isAoiVisible: boolean;
+  hasAoi: boolean;
+  onToggleAoi: (checked: boolean) => void;
+  onFlyToAoi: () => void;
+};
+
 export type OrderLayerDataViewProps = {
   order: InternalOrderItem;
 };
