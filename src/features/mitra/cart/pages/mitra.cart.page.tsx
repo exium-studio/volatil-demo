@@ -38,7 +38,10 @@ import type {
   MitraCartOrderDetailProps,
   MitraCartOrderListProps,
 } from "@/features/mitra/cart/types/mitra.cart.order.type";
+import { getIgtLayers } from "@/features/mitra/data-request/api/mitra.data-request-igt-layers.api";
 import { useBidangAoiFeatures } from "@/features/mitra/data-request/hooks/use-bidang-aoi-features";
+import { queryKeys } from "@/shared/libs/tanstack-query/query.keys";
+import { useQuery } from "@tanstack/react-query";
 import { InfoIcon, ShoppingCartIcon, Trash2Icon } from "lucide-react";
 import { useCallback, useEffect, useMemo, useState } from "react";
 
@@ -88,25 +91,69 @@ const MitraCartContent = () => {
     refetch: refetchDetail,
   } = useCartOrderDetailQuery(effectiveSelectedOrderId || undefined);
 
+  // Queries — master IGT layers for fallback WFS resolution
+  const { data: masterLayersData } = useQuery({
+    queryKey: queryKeys.map.layers(),
+    queryFn: ({ signal }) => getIgtLayers(signal),
+    staleTime: 1000 * 60 * 5,
+  });
+
   // Derived Values
   const isOrderSelected = Boolean(effectiveSelectedOrderId && selectedOrder);
 
   const selectedOrderItems = selectedOrder?.items;
   const bidangTargetLayers = useMemo(() => {
     if (!selectedOrderItems) return [];
+
+    const masterItems = masterLayersData?.items ?? [];
+    const masterMap = new Map<string, (typeof masterItems)[0]>();
+    for (const l of masterItems) {
+      if (l.id) masterMap.set(l.id.toLowerCase(), l);
+      if (l.typeName) masterMap.set(l.typeName.toLowerCase(), l);
+      if (l.wfs?.wfsTypeName) masterMap.set(l.wfs.wfsTypeName.toLowerCase(), l);
+      if (l.title) masterMap.set(l.title.toLowerCase(), l);
+      if (l.layerName) masterMap.set(l.layerName.toLowerCase(), l);
+    }
+
     return selectedOrderItems
-      .filter(
-        (it) =>
-          it.spatialBasis === "bidang" &&
-          Boolean((it.wfsUrl || it.previewWfsUrl) && it.sourceLayerId),
-      )
-      .map((it) => ({
-        id: it.id || it.sourceLayerId,
-        typeName: it.sourceLayerId,
-        wfsUrl: it.wfsUrl || it.previewWfsUrl || "",
-        title: it.sourceLayerTitle,
-      }));
-  }, [selectedOrderItems]);
+      .filter((it) => (it.spatialBasis ?? it.igtBasis) === "bidang")
+      .map((it) => {
+        const keyId = (it.sourceLayerId || it.id || "").toLowerCase();
+        const keyTitle = (it.sourceLayerTitle || "").toLowerCase();
+        const matchedMaster =
+          masterMap.get(keyId) ||
+          masterMap.get(keyTitle) ||
+          masterItems.find(
+            (l) =>
+              (l.igtBasis ?? l.spatialBasis) === "bidang" &&
+              (l.id?.toLowerCase().includes(keyId) ||
+                l.title?.toLowerCase().includes(keyTitle) ||
+                keyTitle.includes(l.title?.toLowerCase() || "")),
+          );
+
+        const typeName =
+          matchedMaster?.typeName ||
+          matchedMaster?.wfs?.wfsTypeName ||
+          it.sourceLayerId ||
+          it.id;
+
+        const wfsUrl =
+          matchedMaster?.wfs?.url ||
+          matchedMaster?.wfs?.wfsUrl ||
+          matchedMaster?.wfs?.baseUrl ||
+          it.wfsUrl ||
+          it.previewWfsUrl ||
+          "";
+
+        return {
+          id: it.id || it.sourceLayerId,
+          typeName,
+          wfsUrl,
+          title: it.sourceLayerTitle || matchedMaster?.title,
+        };
+      })
+      .filter((it) => Boolean(it.typeName));
+  }, [selectedOrderItems, masterLayersData?.items]);
 
   const bidangQueryResult = useBidangAoiFeatures({
     aoiPolygon: isOrderSelected ? selectedOrder?.aoiPolygon : null,

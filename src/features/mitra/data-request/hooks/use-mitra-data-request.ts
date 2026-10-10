@@ -166,18 +166,21 @@ export const useAddToCartMultipleLayers = () => {
       layers: AddToCartLayerParam[];
       selectionType?: "catalog" | "upload_aoi" | "draw_aoi";
       calculationToken?: string;
+      purchasedBasis?: "bidang" | "kawasan" | "all";
       targetBasis?: "bidang" | "kawasan" | "all";
       cqlFilter?: string;
       aoiPolygon?: GeoJSON.MultiPolygon | GeoJSON.Polygon;
       coveragePolygon?: GeoJSON.MultiPolygon | GeoJSON.Polygon;
     }) => {
+      const basis = params.purchasedBasis ?? params.targetBasis ?? "all";
       const payload: AddToCartOrderRequest = {
         selectionType:
           params.selectionType ??
           params.layers[0]?.selectionType ??
           "catalog",
         calculationToken: params.calculationToken,
-        targetBasis: params.targetBasis,
+        purchasedBasis: basis,
+        targetBasis: basis,
         aoiPolygon: params.aoiPolygon ?? params.layers[0]?.aoiPolygon,
         coveragePolygon:
           params.coveragePolygon ?? params.layers[0]?.coveragePolygon,

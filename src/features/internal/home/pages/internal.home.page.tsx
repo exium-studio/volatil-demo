@@ -25,7 +25,7 @@ export const InternalHomePage = () => {
   const { user } = useAuthSession();
 
   // Derived Values
-  const displayName = user?.fullName || user?.username || "Admin";
+  const displayName = user?.name || "Admin";
   const currentHour = new Date().getHours();
   const timeGreeting =
     currentHour >= 4 && currentHour < 11

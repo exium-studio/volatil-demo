@@ -358,6 +358,7 @@ export const MitraDataRequestIgtLayerDataView = memo(
       addToCartMultipleMutation.mutate({
         selectionType,
         calculationToken: calculationResult?.calculationToken,
+        purchasedBasis: "all",
         targetBasis: "all",
         aoiPolygon: resolvedAoi,
         coveragePolygon: calculationResult?.coveragePolygon ?? undefined,
@@ -391,6 +392,7 @@ export const MitraDataRequestIgtLayerDataView = memo(
       addToCartMultipleMutation.mutate({
         selectionType,
         calculationToken: calculationResult?.calculationToken,
+        purchasedBasis: "bidang",
         targetBasis: "bidang",
         aoiPolygon: resolvedAoi,
         coveragePolygon: calculationResult?.coveragePolygon ?? undefined,
@@ -424,6 +426,7 @@ export const MitraDataRequestIgtLayerDataView = memo(
       addToCartMultipleMutation.mutate({
         selectionType,
         calculationToken: calculationResult?.calculationToken,
+        purchasedBasis: "kawasan",
         targetBasis: "kawasan",
         aoiPolygon: resolvedAoi,
         coveragePolygon: calculationResult?.coveragePolygon ?? undefined,
@@ -582,37 +585,41 @@ export const MitraDataRequestIgtLayerDataView = memo(
     const hasFilteredLayers = !isEmptyArray(filteredLayers);
     const isPurchaseLimitValid =
       calculationResult?.isPurchaseLimitValid ?? true;
-    const purchaseLimitMessage = calculationResult?.purchaseLimitMessage;
+    // Per Integration Guide: Transaksi LAYAK jika salah satu basis (Bidang ATAU Kawasan) memenuhi minimumPurchase.
+    const isBidangEligible =
+      bidangLayers.length > 0 && totalBidangCount > 0 && !isBidangBelowMin;
+    const isKawasanEligible =
+      kawasanLayers.length > 0 &&
+      totalKawasanAreaHa > 0 &&
+      !isKawasanBelowMin;
 
-    // Option A: Tombol "Tambah semua layer" HANYA aktif jika seluruh basis yang ada di list lolos threshold minimum masing-masing.
-    const isAllLayersLimitInvalid =
-      (bidangLayers.length > 0 && isBidangBelowMin) ||
-      (kawasanLayers.length > 0 && isKawasanBelowMin);
+    const isAtLeastOneBasisEligible = isBidangEligible || isKawasanEligible;
 
     const isCartDisabled =
       !hasFilteredLayers ||
       addToCartMultipleMutation.isPending ||
       isShowLoading ||
       isCalculating ||
-      isAllLayersLimitInvalid;
+      !isAtLeastOneBasisEligible;
 
     const isBidangDisabled =
       !hasFilteredLayers ||
       addToCartMultipleMutation.isPending ||
       isShowLoading ||
       isCalculating ||
-      isEmptyArray(bidangLayers) ||
-      totalBidangCount === 0 ||
-      isBidangBelowMin;
+      !isBidangEligible;
 
     const isKawasanDisabled =
       !hasFilteredLayers ||
       addToCartMultipleMutation.isPending ||
       isShowLoading ||
       isCalculating ||
-      isEmptyArray(kawasanLayers) ||
-      totalKawasanAreaHa === 0 ||
-      isKawasanBelowMin;
+      !isKawasanEligible;
+
+    const cartLimitTooltip =
+      !isAtLeastOneBasisEligible && hasFilteredLayers
+        ? "Batas minimum pembelian belum terpenuhi untuk seluruh basis IGT yang dipilih."
+        : undefined;
 
     const bidangLimitTooltip = isBidangBelowMin
       ? `Minimum pembelian untuk bidang tanah adalah ${formatNumber(minBidangCount)} bidang (saat ini: ${formatNumber(totalBidangCount)} bidang).`
@@ -674,7 +681,7 @@ export const MitraDataRequestIgtLayerDataView = memo(
                   calculationResult?.estimatedTotalPrice ?? 0
                 }
                 isPurchaseLimitValid={isPurchaseLimitValid}
-                purchaseLimitMessage={purchaseLimitMessage}
+                purchaseLimitMessage={calculationResult?.validation?.message}
                 hasCoveragePolygon={Boolean(calculationResult?.coveragePolygon)}
                 hasBidangLayer={bidangLayers.length > 0 || totalBidangCount > 0}
                 hasKawasanLayer={
@@ -876,10 +883,8 @@ export const MitraDataRequestIgtLayerDataView = memo(
         {/* Action Bar Footer */}
         <VStack gap={"sm"} w={"full"} p={"md"} bg={"bg.body"} flexShrink={0}>
           {/* Action Buttons */}
-          <VStack w={"full"} gap={"xs"}>
-            {isAllLayersLimitInvalid &&
-            (bidangLimitTooltip || kawasanLimitTooltip) ? (
-              <Tooltip content={bidangLimitTooltip ?? kawasanLimitTooltip}>
+            {cartLimitTooltip ? (
+              <Tooltip content={cartLimitTooltip}>
                 <VStack w={"full"} align={"stretch"}>
                   <Button
                     primary
@@ -975,7 +980,6 @@ export const MitraDataRequestIgtLayerDataView = memo(
             </HStack>
           </VStack>
         </VStack>
-      </VStack>
     );
   },
 );

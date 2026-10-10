@@ -55,14 +55,16 @@ export const MitraCartOrderItem = memo((props: MitraCartOrderItemProps) => {
   const statusConfig = ORDER_STATUS_MAP[order.status];
 
   const totalBidang = order.items
-    .filter((i) => i.spatialBasis === "bidang")
+    .filter((i) => (i.spatialBasis ?? i.igtBasis) === "bidang")
     .reduce((sum, item) => sum + item.featuresCount, 0);
 
   const totalKawasanHa = order.coverageHa;
 
   const hasAoiPolygon = Boolean(order.aoiPolygon);
   const hasCoverageKawasan = Boolean(order.coveragePolygon);
-  const hasCoverageBidang = totalBidang > 0 && Boolean(order.aoiPolygon);
+  const hasCoverageBidang =
+    order.items.some((i) => (i.spatialBasis ?? i.igtBasis) === "bidang") &&
+    Boolean(order.aoiPolygon);
 
   return (
     <Box
@@ -216,7 +218,7 @@ export const MitraCartOrderItem = memo((props: MitraCartOrderItemProps) => {
                 <HStack gap={"sm"} align={"center"} justify={"space-between"}>
                   <P>{"AOI"}</P>
 
-                  <HStack gap={"2xs"} align={"center"}>
+                  <HStack gap={"xs"} align={"center"}>
                     {onToggleAoiVisible && (
                       <Tooltip
                         content={
@@ -252,7 +254,7 @@ export const MitraCartOrderItem = memo((props: MitraCartOrderItemProps) => {
                 <HStack gap={"sm"} align={"center"} justify={"space-between"}>
                   <P>{"Cakupan Kawasan"}</P>
 
-                  <HStack gap={"2xs"} align={"center"}>
+                  <HStack gap={"xs"} align={"center"}>
                     {onToggleCoverageVisible && (
                       <Tooltip
                         content={
@@ -288,7 +290,7 @@ export const MitraCartOrderItem = memo((props: MitraCartOrderItemProps) => {
                 <HStack gap={"sm"} align={"center"} justify={"space-between"}>
                   <P>{"Cakupan Bidang"}</P>
 
-                  <HStack gap={"2xs"} align={"center"}>
+                  <HStack gap={"xs"} align={"center"}>
                     {onToggleBidangVisible && (
                       <Tooltip
                         content={
