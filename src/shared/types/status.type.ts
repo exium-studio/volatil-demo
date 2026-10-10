@@ -18,8 +18,7 @@ export type TransactionStatusConfig = {
  * SSOT 2: Order & Provisioning Status Types (Order Table & Spatial Services)
  */
 export type OrderStatus =
-  | "requesting"
-  | "preparing"
+  // | "requesting"
   | "pending_payment"
   | "paid"
   | "processing"

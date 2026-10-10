@@ -242,21 +242,14 @@ export const TRANSACTION_STATUS_OPTIONS: FocusSelectOption[] = [
  * SSOT 3: Order & Provisioning Status Map (Single Order Table & Spatial Services)
  */
 export const ORDER_STATUS_MAP: Record<OrderStatus, OrderStatusConfig> = {
-  requesting: {
-    label: "Menyiapkan Data IGT",
-    colorPalette: "blue",
-    icon: LoaderIcon,
-    iconColor: "blue.fg",
-    noticeDescription:
-      "Sedang mengkalkulasi clipping, luas kawasan & estimasi harga di server...",
-  },
-  preparing: {
-    label: "Penyiapkan Pesanan",
-    colorPalette: "gray",
-    icon: LoaderIcon,
-    iconColor: "gray.fg",
-    noticeDescription: "Sedang menyiapkan pesanan...",
-  },
+  // requesting: {
+  //   label: "Menyiapkan Data IGT",
+  //   colorPalette: "blue",
+  //   icon: LoaderIcon,
+  //   iconColor: "blue.fg",
+  //   noticeDescription:
+  //     "Sedang mengkalkulasi clipping, luas kawasan & estimasi harga di server...",
+  // },
   pending_payment: {
     label: "Menunggu Pembayaran",
     colorPalette: "orange",
