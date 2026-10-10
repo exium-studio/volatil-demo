@@ -31,16 +31,19 @@ import { useThemeStore } from "@/design-system/stores/theme-store";
 import { useFlyToLayer } from "@/features/mitra/data-request/hooks/use-fly-to-layer";
 import { MitraMyDataEditTrigger } from "@/features/mitra/my-data/components/mitra.my-data.edit-modal";
 import { MitraWorkspaceRenewalTrigger } from "@/features/mitra/my-data/components/mitra.my-data.renewal-modal";
+import { getIgtLayers } from "@/features/mitra/data-request/api/mitra.data-request-igt-layers.api";
 import { useMitraWorkspaceDetailQuery } from "@/features/mitra/my-data/hooks/use-mitra-my-data";
 import type { MyDataItem } from "@/features/mitra/my-data/types/my-data.type";
 import { IgtBasisBadge } from "@/features/shared/components/igt-basis.badge";
 import { LayerAttributeTableView } from "@/features/shared/components/layer-attribute-table.view";
 import { OrderStatusBadge } from "@/features/shared/components/order-status.badge";
+import { queryKeys } from "@/shared/libs/tanstack-query/query.keys";
 import { isEmptyArray } from "@/shared/utils/data/array";
 import {
   formatUtcDateTime,
   getPreferredUserTimezone,
 } from "@/shared/utils/formatter/date.formatter";
+import { useQuery } from "@tanstack/react-query";
 import { useNavigate, useParams } from "@tanstack/react-router";
 import {
   ClockPlusIcon,
@@ -84,8 +87,66 @@ export const MitraMyDataWorkspaceDetailPage = () => {
     refetch,
   } = useMitraWorkspaceDetailQuery(workspaceId);
 
+  const { data: igtMasterLayers } = useQuery({
+    queryKey: queryKeys.map.layers(),
+    queryFn: ({ signal }) => getIgtLayers(signal),
+    staleTime: 1000 * 60 * 5,
+  });
+
   // Refs
   const hasFlownWorkspaceRef = useRef<string | null>(null);
+  const hasInitializedWorkspaceLayersRef = useRef<string | null>(null);
+
+  // Effects — On entering workspace detail, reset master IGT layers and auto-enable matching default active layers
+  useEffect(() => {
+    if (!workspace || !workspace.layers || hasInitializedWorkspaceLayersRef.current === workspace.id) {
+      return;
+    }
+
+    const state = useMapLayerStore.getState();
+
+    // 1. Matikan semua layer IGT master yang sedang aktif di peta
+    state.resetLayers();
+
+    // 2. Cari layer di master yang defaultVisible === true
+    const masterItems = igtMasterLayers?.items ?? [];
+    const defaultMasterLayers = masterItems.filter((l) => Boolean(l.defaultVisible));
+
+    // 3. Tentukan layer mana di workspace ini yang harus di-load otomatis:
+    //    a. Cocokkan berdasarkan ID / typeName / layerName yang sama dengan defaultMasterLayers
+    //    b. Atau jika default master adalah basis "bidang", cari layer di workspace yang basisnya "bidang"
+    const layersToAutoEnable = workspace.layers.filter((wsLayer) => {
+      const matchExact = defaultMasterLayers.some(
+        (m) =>
+          m.id === wsLayer.id ||
+          m.typeName === wsLayer.wfsTypeName ||
+          m.layerName === wsLayer.id.split(":")[1],
+      );
+      if (matchExact) return true;
+
+      const hasDefaultBidangMaster = defaultMasterLayers.some(
+        (m) => (m.spatialBasis ?? m.igtBasis) === "bidang",
+      );
+      if (hasDefaultBidangMaster && wsLayer.spatialBasis === "bidang") {
+        return true;
+      }
+
+      return false;
+    });
+
+    if (layersToAutoEnable.length > 0 && workspace.wmsUrl) {
+      layersToAutoEnable.forEach((layer) => {
+        state.setCustomLayerConfig(layer.id, {
+          wmsUrl: workspace.wmsUrl,
+          layers: layer.wmsLayers || layer.wfsTypeName || "",
+          spatialBasis: layer.spatialBasis,
+        });
+        state.setLayerEnabled(layer.id, true);
+      });
+    }
+
+    hasInitializedWorkspaceLayersRef.current = workspace.id;
+  }, [workspace, igtMasterLayers]);
 
   // Effects — Auto fly camera to workspace bounding box on load
   useEffect(() => {

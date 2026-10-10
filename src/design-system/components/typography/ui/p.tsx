@@ -104,7 +104,7 @@ export const ClampedP = forwardRef<HTMLParagraphElement, PProps>(
         <P
           ref={ref}
           lineClamp={1}
-          wordBreak={"break-all"}
+          wordBreak={restProps.lineClamp === 1 ? "break-all" : "break-word"}
           minW={resolvedMinW}
           {...restProps}
         >
