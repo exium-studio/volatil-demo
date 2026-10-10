@@ -63,6 +63,21 @@ export const INTERNAL_APP_NAVS_MAP = {
     titleKey: "app.navs.home",
     pathname: "/internal/home",
   },
+  order_review: {
+    icon: CheckCircleIcon,
+    titleKey: "app.admin_navs.order_review",
+    pathname: "/internal/order-review",
+  },
+  order_statistic: {
+    icon: ReceiptTextIcon,
+    titleKey: "app.admin_navs.order_statistic",
+    pathname: "/internal/order-statistic",
+  },
+  mitra_registration: {
+    icon: HandshakeIcon,
+    titleKey: "app.admin_navs.mitra_registration",
+    pathname: "/internal/mitra-registration",
+  },
   user_management: {
     icon: UsersIcon,
     titleKey: "app.admin_navs.user_management",
@@ -77,21 +92,6 @@ export const INTERNAL_APP_NAVS_MAP = {
     icon: LayersIcon,
     titleKey: "app.admin_navs.data_management",
     pathname: "/internal/data-management",
-  },
-  order_review: {
-    icon: CheckCircleIcon,
-    titleKey: "app.admin_navs.order_review",
-    pathname: "/internal/order-review",
-  },
-  mitra_registration: {
-    icon: HandshakeIcon,
-    titleKey: "app.admin_navs.mitra_registration",
-    pathname: "/internal/mitra-registration",
-  },
-  order_statistic: {
-    icon: ReceiptTextIcon,
-    titleKey: "app.admin_navs.order_statistic",
-    pathname: "/internal/order-statistic",
   },
   jobs: {
     icon: ListChecksIcon,
