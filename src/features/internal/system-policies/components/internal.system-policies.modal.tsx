@@ -61,9 +61,11 @@ const InternalSystemPolicyModalContent = (
 
   const handleFormSubmit = async (values: PolicyFormValues) => {
     try {
+      const payloadValue =
+        policy.valueType === "number" ? Number(values.value) : values.value;
       await updateMutation.mutateAsync({
         key: policy.key,
-        value: String(values.value),
+        value: payloadValue,
       });
       close();
     } catch {

@@ -308,7 +308,7 @@ export const MitraDataRequestSpatialSummary = memo(
                 />
               </P>
             ) : (
-              <P fontSize={"sm"} color={"fg.error"} fontWeight={"medium"}>
+              <P color={"fg.error"} fontWeight={"medium"}>
                 {"Tidak valid"}
               </P>
             )}
@@ -347,7 +347,7 @@ export const MitraDataRequestSpatialSummary = memo(
                 />
               </P>
             ) : (
-              <P fontSize={"sm"} color={"fg.error"} fontWeight={"medium"}>
+              <P color={"fg.error"} fontWeight={"medium"}>
                 {"Tidak valid"}
               </P>
             )}
@@ -369,7 +369,7 @@ export const MitraDataRequestSpatialSummary = memo(
                 />
               </P>
             ) : (
-              <P fontSize={"md"} fontWeight={"semibold"} color={"fg.error"}>
+              <P fontWeight={"medium"} color={"fg.error"}>
                 {"Tidak valid"}
               </P>
             )}

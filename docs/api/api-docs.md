@@ -1311,29 +1311,43 @@ type CalculateSpatialErrorEvent = {
 
 ### Kebijakan Tarif & Batas Pembelian (Pricing & Policies)
 
-- **Endpoint**: `GET /api/mitra/data-request/policies`
-- **Akses**: `Mitra Only`
+#### 1. Master Tarif PNBP
+- **Endpoint**: `GET /api/mitra/data-request/pricing` (atau `GET /api/internal/pricing`)
+- **Akses**: `Mitra / Internal`
 - **Response (200 OK)**:
-
 ```typescript
-type MitraPricingPolicyResponse = {
-  policies: Array<{
-    id: string;
-    spatialBasis: "bidang" | "kawasan";
-    unitPrice: number;
-    unitLabel: string;
-    minPurchase: number;
-    minUnit: string;
-    description?: string;
-  }>;
-  config: {
-    minimumBidangCount: number;
-    minimumKawasanHa: number;
-    pricePerBidang: number;
-    pricePerKawasanHa: number;
-  };
+type MasterPricingItem = {
+  id: string;
+  price: number;
+  pnbpCode: string;
+  minimumPurchase: number;
+  igtBasis: "bidang" | "kawasan";
+  unit: "bidang" | "ha" | string;
 };
 ```
+
+- **Update Tarif (Admin / Internal)**: `PUT /api/internal/pricing/:id`
+  - URL Param `:id`: UUID string record pricing
+  - Payload: `{ price?: number; pnbpCode?: string; minimumPurchase?: number; }`
+
+#### 2. Kebijakan Sistem
+- **Endpoint**: `GET /api/mitra/data-request/policies` (atau `GET /api/internal/policies`)
+- **Akses**: `Mitra / Internal`
+- **Response (200 OK)**:
+```typescript
+type SystemPolicyItem = {
+  key: string;
+  value: number | string;
+  valueType: "number" | "string" | "boolean" | "json";
+  label: string;
+  description: string;
+  unit?: string;
+};
+```
+
+- **Update Kebijakan (Admin / Internal)**: `PUT /api/internal/policies/:key`
+  - URL Param `:key`: String key kebijakan (contoh: `MIN_PURCHASE_BIDANG`)
+  - Payload: `{ value: number | string; }`
 
 ---
 

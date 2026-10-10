@@ -39,7 +39,7 @@ export const useUpdateInternalSystemPolicy = () => {
   });
 
   return useMutation({
-    mutationFn: ({ key, value }: { key: string; value: string }) =>
+    mutationFn: ({ key, value }: { key: string; value: number | string }) =>
       updateInternalSystemPolicyApi(key, value),
     onMutate: toastHandlers.onLoading,
     onSuccess: () => {

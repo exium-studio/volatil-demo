@@ -8,18 +8,18 @@ export const fetchInternalSystemPoliciesApi = async (
   signal?: AbortSignal,
 ): Promise<ApiResponse<SystemPolicyItem[]>> => {
   return apiClient.get<ApiResponse<SystemPolicyItem[]>>(
-    "/api/internal/system-policies",
+    "/api/internal/policies",
     { signal },
   );
 };
 
 export const updateInternalSystemPolicyApi = async (
   key: string,
-  value: string,
+  value: number | string,
   signal?: AbortSignal,
 ): Promise<ApiResponse<SystemPolicyItem>> => {
   return apiClient.put<ApiResponse<SystemPolicyItem>>(
-    `/api/internal/system-policies/${key}`,
+    `/api/internal/policies/${key}`,
     { value },
     { signal },
   );
