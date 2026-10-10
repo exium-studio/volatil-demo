@@ -56,6 +56,7 @@ export const Button = forwardRef<HTMLButtonElement, ButtonProps>(
               fontSize={restProps?.fontSize}
               lineHeight={"normal"}
               lineClamp={clampVal > 0 ? clampVal : undefined}
+              wordBreak={"break-all"}
             >
               {combinedText}
             </Span>
