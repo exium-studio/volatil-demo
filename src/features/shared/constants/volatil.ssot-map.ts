@@ -14,6 +14,7 @@ import type {
   MitraRegistrationStatusConfig,
   OrderStatus,
   OrderStatusConfig,
+  SystemPolicyConfig,
   TransactionStatus,
   TransactionStatusConfig,
   UserRoleConfig,
@@ -27,11 +28,14 @@ import {
   FolderArchiveIcon,
   Grid2X2Icon,
   HandshakeIcon,
+  HourglassIcon,
   LandmarkIcon,
   Layers2Icon,
   ListIcon,
   LoaderIcon,
   QrCodeIcon,
+  RefreshCwIcon,
+  ShieldAlertIcon,
   ShieldCheckIcon,
   TimerOffIcon,
   XCircleIcon,
@@ -409,3 +413,77 @@ export const MITRA_REGISTRATION_STATUS_OPTIONS: FocusSelectOption[] = [
       label: MITRA_REGISTRATION_STATUS_MAP[key].label,
     })),
 ];
+
+/**
+ * SSOT 7: System Policy Map (Kebijakan Siklus & Perpanjangan Pesanan)
+ */
+export const SYSTEM_POLICY_MAP: Record<string, SystemPolicyConfig> = {
+  payment_timeout_fallback_hours: {
+    label: "Batas Waktu Pembayaran",
+    description: "Batas toleransi waktu penyelesaian pembayaran SIMPONI sebelum pesanan otomatis kedaluwarsa.",
+    colorPalette: "amber",
+    icon: HourglassIcon,
+  },
+  order_access_duration_days: {
+    label: "Durasi Akses Layanan",
+    description: "Masa aktif layanan data spasial & streaming WMS setelah pesanan berstatus siap.",
+    colorPalette: "green",
+    icon: ClockIcon,
+  },
+  order_max_extension_count: {
+    label: "Maksimal Perpanjangan",
+    description: "Jumlah maksimum pengajuan perpanjangan masa aktif pesanan yang diizinkan untuk mitra.",
+    colorPalette: "cyan",
+    icon: RefreshCwIcon,
+  },
+  order_extension_window_days: {
+    label: "Jendela Pengajuan Perpanjangan",
+    description: "Rentang waktu sebelum masa aktif berakhir ketika mitra dapat mengajukan perpanjangan.",
+    colorPalette: "red",
+    icon: ShieldAlertIcon,
+  },
+};
+
+export const getSystemPolicyConfig = (key: string): SystemPolicyConfig => {
+  if (SYSTEM_POLICY_MAP[key]) {
+    return SYSTEM_POLICY_MAP[key];
+  }
+  if (key.includes("timeout")) {
+    return {
+      label: "Batas Waktu Pembayaran",
+      description: "Batas toleransi waktu pembayaran pesanan.",
+      colorPalette: "amber",
+      icon: HourglassIcon,
+    };
+  }
+  if (key.includes("duration") || key.includes("access")) {
+    return {
+      label: "Durasi Akses Layanan",
+      description: "Masa aktif layanan data spasial.",
+      colorPalette: "green",
+      icon: ClockIcon,
+    };
+  }
+  if (key.includes("extension_count") || key.includes("max_extension")) {
+    return {
+      label: "Maksimal Perpanjangan",
+      description: "Jumlah maksimum perpanjangan pesanan.",
+      colorPalette: "cyan",
+      icon: RefreshCwIcon,
+    };
+  }
+  if (key.includes("extension_window") || key.includes("window")) {
+    return {
+      label: "Jendela Pengajuan Perpanjangan",
+      description: "Rentang waktu pengajuan perpanjangan.",
+      colorPalette: "red",
+      icon: ShieldAlertIcon,
+    };
+  }
+  return {
+    label: key,
+    description: "",
+    colorPalette: "blue",
+    icon: ClockIcon,
+  };
+};

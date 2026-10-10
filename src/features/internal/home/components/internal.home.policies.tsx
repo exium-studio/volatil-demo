@@ -14,17 +14,12 @@ import { HStack } from "@/design-system/components/layout/ui/flex-box";
 import { Separator } from "@/design-system/components/layout/ui/separator";
 import { HeaderContainer } from "@/design-system/components/shell/ui/header-container";
 import { Heading } from "@/design-system/components/typography/ui/heading";
+import type { InternalHomePoliciesProps } from "@/features/internal/home/types/internal.home.policies.type";
 import { InternalSystemPolicyModalTrigger } from "@/features/internal/system-policies/components/internal.system-policies.modal";
 import { useInternalSystemPoliciesQuery } from "@/features/internal/system-policies/hooks/use-internal-system-policies";
-import type { InternalHomePoliciesProps } from "@/features/internal/home/types/internal.home.policies.type";
 import type { SystemPolicyItem } from "@/features/mitra/data-request/types/mitra.data-request.pricing-policy.type";
-import {
-  ClockIcon,
-  HourglassIcon,
-  PencilIcon,
-  RefreshCwIcon,
-  ShieldAlertIcon,
-} from "lucide-react";
+import { getSystemPolicyConfig } from "@/features/shared/constants/volatil.ssot-map";
+import { PencilIcon } from "lucide-react";
 
 export const InternalHomePolicies = (props: InternalHomePoliciesProps) => {
   return (
@@ -46,26 +41,6 @@ const InternalHomePoliciesContent = () => {
   }
 
   const cols = isSmContainer ? 1 : 2;
-
-  const getPolicyIcon = (key: string) => {
-    if (key.includes("timeout")) return HourglassIcon;
-    if (key.includes("duration") || key.includes("access")) return ClockIcon;
-    if (key.includes("extension_count") || key.includes("max_extension"))
-      return RefreshCwIcon;
-    if (key.includes("extension_window") || key.includes("window"))
-      return ShieldAlertIcon;
-    return ClockIcon;
-  };
-
-  const getPolicyColor = (key: string) => {
-    if (key.includes("timeout")) return "amber";
-    if (key.includes("duration") || key.includes("access")) return "green";
-    if (key.includes("extension_count") || key.includes("max_extension"))
-      return "cyan";
-    if (key.includes("extension_window") || key.includes("window"))
-      return "red";
-    return "blue";
-  };
 
   return (
     <Container.Body>
@@ -93,8 +68,12 @@ const InternalHomePoliciesContent = () => {
 
       <StatGrid.Root columns={cols}>
         {policies.map((policy: SystemPolicyItem, index: number) => {
-          const IconComp = getPolicyIcon(policy.key);
-          const colorPalette = getPolicyColor(policy.key);
+          const config = getSystemPolicyConfig(policy.key);
+          const IconComp = config.icon;
+          const colorPalette = config.colorPalette;
+          const label = config.label;
+          const description = config.description || policy.description;
+
           const isCurrency = policy.unit === "IDR" || policy.unit === "Rupiah";
           const formattedValue =
             policy.valueType === "number" && !Number.isNaN(Number(policy.value))
@@ -110,7 +89,7 @@ const InternalHomePoliciesContent = () => {
           return (
             <StatGrid.Item key={policy.key} index={index} columns={cols}>
               <StatGrid.Header>
-                <HStack gap={"2xs"} align={"center"}>
+                <HStack gap={"xs"} align={"center"}>
                   <Circle bg={`${colorPalette}.subtle`} p={"2xs"}>
                     <AppIcon
                       icon={IconComp}
@@ -119,13 +98,25 @@ const InternalHomePoliciesContent = () => {
                     />
                   </Circle>
 
-                  <StatGrid.Label>{policy.label ?? policy.key}</StatGrid.Label>
+                  <StatGrid.Label>{label}</StatGrid.Label>
+
+                  {description && (
+                    <InfoTip
+                      variant={"icon"}
+                      appIconProps={{
+                        size: "xs",
+                        color: "fg.subtle",
+                      }}
+                    >
+                      {description}
+                    </InfoTip>
+                  )}
                 </HStack>
 
                 <InternalSystemPolicyModalTrigger policy={policy}>
                   <IconButton
                     variant={"ghost"}
-                    aria-label={`Ubah kebijakan ${policy.label ?? policy.key}`}
+                    aria-label={`Ubah kebijakan ${label}`}
                   >
                     <AppIcon icon={PencilIcon} />
                   </IconButton>
@@ -133,12 +124,6 @@ const InternalHomePoliciesContent = () => {
               </StatGrid.Header>
 
               <StatGrid.Value value={formattedValue} />
-
-              {policy.description && (
-                <StatGrid.Description>
-                  {policy.description}
-                </StatGrid.Description>
-              )}
             </StatGrid.Item>
           );
         })}
@@ -146,3 +131,4 @@ const InternalHomePoliciesContent = () => {
     </Container.Body>
   );
 };
+

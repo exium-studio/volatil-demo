@@ -279,7 +279,7 @@ export const MitraDataRequestIgtLayerDataView = memo(
         bidangTargetLayers.length > 0,
     });
 
-    // Derived stable trigger key: depends strictly on AOI, selectionType, all intersecting layers, and calculation result presence
+    // Derived stable trigger key: depends strictly on AOI geometry, selectionType, and calculation layers
     const calcTriggerKey = useMemo(() => {
       if (!effectiveAoiPolygon || isEmptyArray(validCalculationLayers))
         return "";
@@ -288,14 +288,12 @@ export const MitraDataRequestIgtLayerDataView = memo(
         .sort()
         .join(",");
       const aoiString = JSON.stringify(effectiveAoiPolygon);
-      const hasResult = Boolean(calculationResult);
-      return `${selectionType}|${combinedCqlFilter ?? ""}|${layerIds}|${aoiString}|hasResult:${hasResult}`;
+      return `${selectionType}|${combinedCqlFilter ?? ""}|${layerIds}|${aoiString}`;
     }, [
       effectiveAoiPolygon,
       validCalculationLayers,
       selectionType,
       combinedCqlFilter,
-      calculationResult,
     ]);
 
     // Effects — Trigger backend spatial calculation whenever effective AOI or intersecting layers change

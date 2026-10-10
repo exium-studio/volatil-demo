@@ -12,6 +12,7 @@ import type {
   InternalSystemPolicyModalTriggerProps,
   PolicyFormValues,
 } from "@/features/internal/system-policies/types/internal.system-policies.type";
+import { getSystemPolicyConfig } from "@/features/shared/constants/volatil.ssot-map";
 import { t } from "@/shared/libs/i18n";
 import { useForm } from "react-hook-form";
 
@@ -46,6 +47,9 @@ const InternalSystemPolicyModalContent = (
   props: InternalSystemPolicyModalContentProps,
 ) => {
   const { policy, close } = props;
+  const config = getSystemPolicyConfig(policy.key);
+  const label = config.label;
+  const description = config.description || policy.description;
 
   const updateMutation = useUpdateInternalSystemPolicy();
 
@@ -82,15 +86,15 @@ const InternalSystemPolicyModalContent = (
     <Modal.Content>
       <Modal.Header>
         <Modal.CloseButton />
-        <Modal.Title>{`Ubah Kebijakan: ${policy.label ?? policy.key}`}</Modal.Title>
+        <Modal.Title>{`Ubah Kebijakan: ${label}`}</Modal.Title>
       </Modal.Header>
 
       <form onSubmit={handleSubmit(handleFormSubmit)}>
         <Modal.Body p={"md"}>
           <VStack align={"stretch"} gap={"md"}>
-            {policy.description && (
+            {description && (
               <P color={"fg.subtle"} fontSize={"sm"}>
-                {policy.description}
+                {description}
               </P>
             )}
 

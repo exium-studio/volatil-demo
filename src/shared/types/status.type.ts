@@ -73,3 +73,13 @@ export type MitraRegistrationStatusConfig = {
   colorPalette: "orange" | "green" | "red" | "gray";
   icon?: LucideIcon;
 };
+
+/**
+ * SSOT 6: System Policy Config (Kebijakan Siklus & Perpanjangan)
+ */
+export type SystemPolicyConfig = {
+  label: string;
+  description: string;
+  colorPalette: "amber" | "green" | "cyan" | "red" | "blue" | "purple" | "teal";
+  icon: LucideIcon;
+};
