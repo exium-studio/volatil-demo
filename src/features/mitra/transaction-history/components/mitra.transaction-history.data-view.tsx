@@ -347,7 +347,7 @@ export const TransactionHistoryDataView = () => {
         w={"full"}
       >
         {isLoading ? (
-          <Skeleton p={"md"} rounded={0} />
+          <Skeleton minH={"300px"} p={"md"} rounded={0} />
         ) : isError ? (
           <Box
             flex={1}
