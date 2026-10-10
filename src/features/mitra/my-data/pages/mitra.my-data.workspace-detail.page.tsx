@@ -7,7 +7,6 @@ import type {
   FormattedTableHeader,
 } from "@/design-system/components/data-display/types/data-view-table.type";
 import type { DataViewItemActionsGenerator } from "@/design-system/components/data-display/types/data-view.type";
-import { Countdown } from "@/design-system/components/data-display/ui/countdown";
 import { DataViewTable } from "@/design-system/components/data-display/ui/data-view-table";
 import { Skeleton } from "@/design-system/components/feedback/ui/skeleton";
 import { StateNoData } from "@/design-system/components/feedback/ui/state.no-data";
@@ -39,10 +38,6 @@ import { LayerAttributeTableView } from "@/features/shared/components/layer-attr
 import { OrderStatusBadge } from "@/features/shared/components/order-status.badge";
 import { queryKeys } from "@/shared/libs/tanstack-query/query.keys";
 import { isEmptyArray } from "@/shared/utils/data/array";
-import {
-  formatUtcDateTime,
-  getPreferredUserTimezone,
-} from "@/shared/utils/formatter/date.formatter";
 import { useQuery } from "@tanstack/react-query";
 import { useNavigate, useParams } from "@tanstack/react-router";
 import {
@@ -99,7 +94,11 @@ export const MitraMyDataWorkspaceDetailPage = () => {
 
   // Effects — On entering workspace detail, reset master IGT layers and auto-enable matching default active layers
   useEffect(() => {
-    if (!workspace || !workspace.layers || hasInitializedWorkspaceLayersRef.current === workspace.id) {
+    if (
+      !workspace ||
+      !workspace.layers ||
+      hasInitializedWorkspaceLayersRef.current === workspace.id
+    ) {
       return;
     }
 
@@ -110,7 +109,9 @@ export const MitraMyDataWorkspaceDetailPage = () => {
 
     // 2. Cari layer di master yang defaultVisible === true
     const masterItems = igtMasterLayers?.items ?? [];
-    const defaultMasterLayers = masterItems.filter((l) => Boolean(l.defaultVisible));
+    const defaultMasterLayers = masterItems.filter((l) =>
+      Boolean(l.defaultVisible),
+    );
 
     // 3. Tentukan layer mana di workspace ini yang harus di-load otomatis:
     //    a. Cocokkan berdasarkan ID / typeName / layerName yang sama dengan defaultMasterLayers
@@ -202,7 +203,6 @@ export const MitraMyDataWorkspaceDetailPage = () => {
   }, [workspace?.layers]);
 
   // Derived Values
-  const preferredTimezone = useMemo(() => getPreferredUserTimezone(), []);
   const selectedAttributeLayer = useMemo(() => {
     if (!layerId || !workspace?.layers) return null;
     const found = workspace.layers.find((item) => item.id === layerId);
@@ -240,9 +240,6 @@ export const MitraMyDataWorkspaceDetailPage = () => {
     const headers: FormattedTableHeader[] = [
       { th: "Layer IGT (Label)", sortable: true },
       { th: "Basis IGT", sortable: true },
-      { th: "Status Pesanan", sortable: true },
-      { th: "Sisa Waktu", sortable: true },
-      { th: "Tanggal Kedaluwarsa", sortable: true },
       { th: "Tampilkan di Peta", sortable: false, align: "center" },
     ];
 
@@ -272,31 +269,6 @@ export const MitraMyDataWorkspaceDetailPage = () => {
             {
               value: item.spatialBasis,
               td: <IgtBasisBadge>{item.spatialBasis}</IgtBasisBadge>,
-              align: "start" as const,
-            },
-            {
-              value: item.status,
-              td: <OrderStatusBadge>{item.status}</OrderStatusBadge>,
-              align: "start" as const,
-            },
-            {
-              value: item.expiresAt,
-              td: item.expiresAt ? (
-                <Countdown finishedAt={item.expiresAt} />
-              ) : (
-                <P color={"fg.subtle"}>{"-"}</P>
-              ),
-              align: "start" as const,
-            },
-            {
-              value: item.expiresAt,
-              td: (
-                <P whiteSpace={"nowrap"}>
-                  {item.expiresAt
-                    ? formatUtcDateTime(item.expiresAt, preferredTimezone)
-                    : "-"}
-                </P>
-              ),
               align: "start" as const,
             },
             {
@@ -399,7 +371,6 @@ export const MitraMyDataWorkspaceDetailPage = () => {
   }, [
     workspace?.layers,
     enabledLayerIds,
-    preferredTimezone,
     handleToggleLayer,
     flyTo,
     setLayerId,
