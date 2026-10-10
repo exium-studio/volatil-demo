@@ -15,6 +15,26 @@ Endpoint dikelompokkan ke dalam 4 kategori hak akses utama:
 
 ---
 
+## Standar Format Error Response & Interceptor
+
+Backend menggunakan format JSON error standar berikut untuk seluruh kegagalan (HTTP 4xx / 5xx):
+
+```typescript
+type ApiErrorResponse = {
+  success: false;
+  code: string; // Kode unik mesin, contoh: "AUTH_EXPIRED", "SOMETHING_WRONG", "VALIDATION_ERROR"
+  message: string; // Pesan deskriptif ramah pengguna
+  errors?: Record<string, string[]>; // Detail validasi field per input (khusus VALIDATION_ERROR)
+};
+```
+
+### Kebijakan Interceptor Frontend:
+1. **`code: "AUTH_EXPIRED"` (atau HTTP 401/403 sesi kedaluwarsa)**: Interceptor membersihkan auth token di client, menampilkan 1x toast sesi berakhir, dan mengarahkan pengguna ke halaman login.
+2. **`code: "SOMETHING_WRONG"` (atau HTTP 500 fatal)**: Interceptor menampilkan 1x toast error fatal sistem.
+3. **Error lainnya (Validation Error, 404 Not Found, Domain/Business Logic Error)**: **TIDAK di-intercept secara global**. Error diteruskan utuh (_pass-through_) agar antarmuka UI / form / `useMutation.onError` dapat menampilkan pesan atau aksi kontekstual tanpa menyebabkan _double toast_.
+
+---
+
 ## Daftar Isi
 
 - [1. PUBLIC ENDPOINTS](#1-public-endpoints)

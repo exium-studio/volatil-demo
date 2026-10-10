@@ -105,7 +105,7 @@ const BillingPageBillingCode = () => {
             <Heading>Kode Billing </Heading>
 
             <HStack align={"center"} gap={"sm"}>
-              <Heading color={`${theme.colorPalette}.fg`}>
+              <Heading fontSize={"xl"} color={`${theme.colorPalette}.fg`}>
                 <TNum>{billingCode}</TNum>
               </Heading>
 

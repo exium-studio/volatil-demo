@@ -74,11 +74,15 @@ export const ConfirmationTrigger = (props: ConfirmationTriggerProps) => {
           </Modal.Header>
 
           <Modal.Body pt={0} pb={"lg"}>
-            <VStack align={"center"} gap={"md"} textAlign={"center"}>
+            <VStack align={"center"} gap={"md"}>
+              {/* Inner Icon / Emoji Circle */}
               <Circle
-                size={"48px"}
-                bg={`${resolvedColorPalette}.subtle`}
+                size={"76px"}
+                pos={"relative"}
+                bg={`${resolvedColorPalette}.muted`}
                 color={`${resolvedColorPalette}.fg`}
+                border={"12px solid"}
+                borderColor={`${resolvedColorPalette}.subtle`}
                 mb={"md"}
               >
                 {icon ? (

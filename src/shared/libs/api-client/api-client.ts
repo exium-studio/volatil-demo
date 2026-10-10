@@ -63,11 +63,13 @@ export const apiClient = {
 
       if (!response.ok) {
         let errorMessage = `HTTP Error ${response.status}: ${response.statusText}`;
+        let errorCode: string | undefined = undefined;
         let errorData: Record<string, string[]> | undefined = undefined;
 
         try {
           const jsonError = await response.json();
           if (jsonError.message) errorMessage = jsonError.message;
+          if (jsonError.code) errorCode = String(jsonError.code);
           if (jsonError.errors) errorData = jsonError.errors;
         } catch {
           // Fallback if response is not JSON
@@ -80,7 +82,12 @@ export const apiClient = {
 
         let isToastFired = false;
 
-        if (response.status === 401 || response.status === 403) {
+        // 1. KASUS AUTH_EXPIRED (status 400 with code AUTH_EXPIRED or 401/403 on protected routes)
+        const isAuthExpired =
+          errorCode === "AUTH_EXPIRED" ||
+          (!isAuthLoginEndpoint && (response.status === 401 || response.status === 403));
+
+        if (isAuthExpired) {
           if (typeof window !== "undefined") {
             const currentPath =
               window.location.pathname.replace(/\/$/, "") || "/";
@@ -94,18 +101,18 @@ export const apiClient = {
               sessionStorage.removeItem("keycloakIdToken");
 
               const toastTitle =
-                response.status === 401
-                  ? t["error.unauthorized"]()
-                  : t["error.forbidden"]();
+                response.status === 403
+                  ? t["error.forbidden"]()
+                  : t["error.unauthorized"]();
 
               toast.error(toastTitle, {
                 id: "auth-session-expired-toast",
                 group: t["common.system"](),
                 description:
                   errorMessage ||
-                  (response.status === 401
-                    ? t["error.unauthorized"]()
-                    : t["error.forbidden"]()),
+                  (response.status === 403
+                    ? t["error.forbidden"]()
+                    : t["error.unauthorized"]()),
               });
               isToastFired = true;
 
@@ -116,43 +123,28 @@ export const apiClient = {
               window.location.replace(isInternal ? "/admin" : "/");
             }
           }
-        } else {
-          // Fire error toast for all other non-OK responses (400, 422, 500, etc.)
+        } else if (
+          // 2. KASUS FATAL SERVER ERROR (code SOMETHING_WRONG or HTTP 500)
+          errorCode === "SOMETHING_WRONG" ||
+          response.status === 500
+        ) {
           if (!options.suppressToast && typeof window !== "undefined") {
-            let detailDescription: string | undefined = undefined;
-            if (errorData && typeof errorData === "object") {
-              const errorEntries = Object.entries(errorData);
-              if (errorEntries.length > 0) {
-                const messages = errorEntries
-                  .flatMap(([field, msgs]) =>
-                    Array.isArray(msgs)
-                      ? msgs.map((m) =>
-                          field !== "file" && field !== "general"
-                            ? `${field}: ${m}`
-                            : m,
-                        )
-                      : [String(msgs)],
-                  )
-                  .filter(Boolean);
-                if (messages.length > 0) {
-                  detailDescription = messages.join(", ");
-                }
-              }
-            }
-
-            if (detailDescription && detailDescription === errorMessage) {
-              detailDescription = undefined;
-            }
-
-            toast.error(errorMessage, {
-              id: options.toastId,
-              description: detailDescription,
+            toast.error(errorMessage || "Terjadi kendala pada sistem. Silakan coba beberapa saat lagi.", {
+              id: options.toastId ?? "server-fatal-error-toast",
             });
             isToastFired = true;
           }
         }
 
-        throw new ApiError(errorMessage, response.status, errorData, isToastFired);
+        // 3. SEMUA ERROR LAINNYA (Validation 400/422, Business Logic, 404):
+        // PASS-THROUGH TANPA TOAST GLOBAL (Biarkan UI / useMutation yang handle toast contextual)
+        throw new ApiError(
+          errorMessage,
+          response.status,
+          errorCode,
+          errorData,
+          isToastFired,
+        );
       }
 
       // Handle 204 No Content
@@ -189,7 +181,13 @@ export const apiClient = {
         isNetworkToastFired = true;
       }
 
-      throw new ApiError(networkMsg, 0, undefined, isNetworkToastFired);
+      throw new ApiError(
+        networkMsg,
+        0,
+        undefined,
+        undefined,
+        isNetworkToastFired,
+      );
     }
   },
 

@@ -55,6 +55,20 @@ function resolveLoading<T>(
   return Boolean(loadingProp);
 }
 
+function resolveBoolean<T>(
+  boolProp:
+    | boolean
+    | ((item: T, formattedItem: FormattedListItem<T>) => boolean)
+    | undefined,
+  item: T,
+  formattedItem: FormattedListItem<T>,
+): boolean {
+  if (typeof boolProp === "function") {
+    return Boolean(boolProp(item, formattedItem));
+  }
+  return Boolean(boolProp);
+}
+
 function resolveIcon<T>(
   iconProp: ActionIconType | ((item: T) => ActionIconType) | undefined,
   item: T,
@@ -138,7 +152,7 @@ export function DataViewSpreadActions<
   const visibleRowActions = declarativeActions.filter((action) => {
     if (action.sticky) return false;
     if (action.showInRow === false) return false;
-    if (action.hidden?.(item.data, item)) return false;
+    if (resolveBoolean(action.hidden, item.data, item)) return false;
     return true;
   });
 
@@ -157,7 +171,7 @@ export function DataViewSpreadActions<
         const key = action.key ?? `spread-action-${index}`;
         const isLoading = resolveLoading(action.loading, item.data, item);
         const isDisabled =
-          isLoading || Boolean(action.disabled?.(item.data, item));
+          isLoading || resolveBoolean(action.disabled, item.data, item);
         const resolvedLabel = resolveLabel(action.label, item.data);
         const resolvedIcon = resolveIcon(action.icon, item.data);
         const resolvedColorPalette = resolveColorPalette(
@@ -279,7 +293,7 @@ export function DataViewStickyActions<
   const declarativeActions = itemActions.filter(isDeclarativeAction);
   const stickyActions = declarativeActions.filter((action) => {
     if (!action.sticky) return false;
-    if (action.hidden?.(item.data, item)) return false;
+    if (resolveBoolean(action.hidden, item.data, item)) return false;
     return true;
   });
 
@@ -298,7 +312,7 @@ export function DataViewStickyActions<
         const key = action.key ?? `sticky-action-${index}`;
         const isLoading = resolveLoading(action.loading, item.data, item);
         const isDisabled =
-          isLoading || Boolean(action.disabled?.(item.data, item));
+          isLoading || resolveBoolean(action.disabled, item.data, item);
         const resolvedLabel = resolveLabel(action.label, item.data);
         const resolvedIcon = resolveIcon(action.icon, item.data);
         const resolvedColorPalette = resolveColorPalette(
@@ -428,7 +442,7 @@ export function DataListItemActionsTrigger<
   const visibleActions = itemActions.filter((action) => {
     if (isDeclarativeAction(action)) {
       if (action.showInMenu === false) return false;
-      if (action.hidden?.(item.data, item)) return false;
+      if (resolveBoolean(action.hidden, item.data, item)) return false;
       return true;
     }
     return true;
@@ -477,7 +491,8 @@ export function DataListItemActionsTrigger<
                   item,
                 );
                 const isDisabled =
-                  isLoading || Boolean(action.disabled?.(item.data, item));
+                  isLoading ||
+                  resolveBoolean(action.disabled, item.data, item);
                 const resolvedLabel = resolveLabel(action.label, item.data);
                 const resolvedIcon = resolveIcon(action.icon, item.data);
                 const resolvedColorPalette = resolveColorPalette(
