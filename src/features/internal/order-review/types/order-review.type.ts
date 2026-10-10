@@ -175,7 +175,7 @@ export type RejectOrderPayload = {
   reason: string;
 };
 
-export type OrderSummaryGridProps = {
+export type OrderSummaryProps = {
   order: InternalOrderItem;
   isAoiVisible: boolean;
   hasAoi: boolean;

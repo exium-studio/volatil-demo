@@ -33,7 +33,7 @@ import {
 import { useOrderReviewLayerStore } from "@/features/internal/order-review/stores/order-review-layer.store";
 import type {
   OrderLayerDataViewProps,
-  OrderSummaryGridProps,
+  OrderSummaryProps,
 } from "@/features/internal/order-review/types/order-review.type";
 import type { CartOrderItem } from "@/features/mitra/cart/types/mitra.cart.order.type";
 import { useFlyToLayer } from "@/features/mitra/data-request/hooks/use-fly-to-layer";
@@ -64,6 +64,7 @@ import { useCallback, useEffect, useMemo } from "react";
 import { Center } from "@/design-system/components/layout/ui/center";
 import { MAP_EVENTS_MAP } from "@/design-system/components/map/constants/map.config";
 import { DRAW_FILL_LAYER_ID } from "@/design-system/components/map/hooks/use-map-draw";
+import { useThemeStore } from "@/design-system/stores/theme-store";
 import { getSelectionTypeMapColors } from "@/features/shared/constants/volatil.ssot-map";
 import type GeoJSON from "geojson";
 import type maplibregl from "maplibre-gl";
@@ -158,7 +159,7 @@ const renderOrderReviewAoiLayer = (
   }
 };
 
-export function InternalOrderReviewDetailPage() {
+export const InternalOrderReviewDetailPage = () => {
   // Hooks
   const { orderId } = useParams({ strict: false }) as { orderId: string };
   const navigate = useNavigate();
@@ -332,7 +333,7 @@ export function InternalOrderReviewDetailPage() {
           <Separator borderColor={"bg.canvas"} />
 
           {/* Metadata Summary */}
-          <OrderSummaryGrid
+          <OrderSummary
             order={order}
             isAoiVisible={isAoiVisible}
             hasAoi={hasAoi}
@@ -340,7 +341,7 @@ export function InternalOrderReviewDetailPage() {
             onFlyToAoi={handleFlyToAoi}
           />
 
-          <Separator borderColor={"bg.canvas"} />
+          {/* <Separator borderColor={"bg.canvas"} /> */}
 
           {/* Layer List */}
           <OrderLayerDataView order={order} />
@@ -348,121 +349,139 @@ export function InternalOrderReviewDetailPage() {
       </Container.Root>
     </AppContentContainer>
   );
-}
+};
 
-const OrderSummaryGrid = (props: OrderSummaryGridProps) => {
+const OrderSummary = (props: OrderSummaryProps) => {
+  // Props
   const { order, isAoiVisible, hasAoi, onToggleAoi, onFlyToAoi } = props;
 
+  const { theme } = useThemeStore();
+
   return (
-    <SimpleGrid minChildWidth={"200px"} gap={"md"} p={"md"}>
-      <VStack gap={"2xs"} align={"start"}>
-        <P fontSize={"xs"} color={"fg.subtle"}>
-          {"Mitra"}
-        </P>
-        <P fontWeight={"semibold"}>{order.mitraName}</P>
-      </VStack>
+    <VStack p={"md"}>
+      <VStack
+        gap={"lg"}
+        p={"md"}
+        rounded={theme.radii.container}
+        bg={"bg.subtle"}
+      >
+        <SimpleGrid minChildWidth={"200px"} gap={"md"} gapY={"lg"}>
+          <VStack gap={"2xs"} align={"start"}>
+            <P fontSize={"xs"} color={"fg.subtle"}>
+              {"Mitra"}
+            </P>
+            <P fontWeight={"semibold"}>{order.mitraName}</P>
+          </VStack>
 
-      <VStack gap={"2xs"} align={"start"}>
-        <P fontSize={"xs"} color={"fg.subtle"}>
-          {"Nomor Pesanan"}
-        </P>
-        <P fontWeight={"semibold"}>{order.orderNumber || order.orderId}</P>
-      </VStack>
+          <VStack gap={"2xs"} align={"start"}>
+            <P fontSize={"xs"} color={"fg.subtle"}>
+              {"Nomor Pesanan"}
+            </P>
+            <P fontWeight={"semibold"}>{order.orderNumber || order.orderId}</P>
+          </VStack>
 
-      <VStack gap={"2xs"} align={"start"}>
-        <P fontSize={"xs"} color={"fg.subtle"}>
-          {"Metode Pengajuan"}
-        </P>
-        <SelectionTypeBadge>{order.selectionType}</SelectionTypeBadge>
-      </VStack>
+          <VStack gap={"2xs"} align={"start"}>
+            <P fontSize={"xs"} color={"fg.subtle"}>
+              {"Metode Pengajuan"}
+            </P>
+            <SelectionTypeBadge>{order.selectionType}</SelectionTypeBadge>
+          </VStack>
 
-      <VStack gap={"2xs"} align={"start"}>
-        <P fontSize={"xs"} color={"fg.subtle"}>
-          {"Status Pesanan"}
-        </P>
-        <OrderStatusBadge>{order.status}</OrderStatusBadge>
-      </VStack>
+          <VStack gap={"2xs"} align={"start"}>
+            <P fontSize={"xs"} color={"fg.subtle"}>
+              {"Status Pesanan"}
+            </P>
+            <OrderStatusBadge>{order.status}</OrderStatusBadge>
+          </VStack>
 
-      <VStack gap={"2xs"} align={"start"}>
-        <P fontSize={"xs"} color={"fg.subtle"}>
-          {"Total Estimasi PNBP"}
-        </P>
-        <P fontWeight={"semibold"}>{formatCurrency(order.totalPrice ?? 0)}</P>
-      </VStack>
+          <VStack gap={"2xs"} align={"start"}>
+            <P fontSize={"xs"} color={"fg.subtle"}>
+              {"Total Estimasi PNBP"}
+            </P>
+            <P fontWeight={"semibold"}>
+              {formatCurrency(order.totalPrice ?? 0)}
+            </P>
+          </VStack>
 
-      <VStack gap={"2xs"} align={"start"}>
-        <P fontSize={"xs"} color={"fg.subtle"}>
-          {"TTE & Faktur"}
-        </P>
-        <Center mt={"2px"}>
-          <TteBadge
-            tte={order.tte}
-            invoiceUrl={order.invoiceUrl}
-            tteInvoiceUrl={order.tteInvoiceUrl}
-          />
-        </Center>
-      </VStack>
+          <VStack gap={"2xs"} align={"start"}>
+            <P fontSize={"xs"} color={"fg.subtle"}>
+              {"TTE & Faktur"}
+            </P>
+            <Center mt={"2px"}>
+              <TteBadge
+                tte={order.tte}
+                invoiceUrl={order.invoiceUrl}
+                tteInvoiceUrl={order.tteInvoiceUrl}
+              />
+            </Center>
+          </VStack>
 
-      {hasAoi && (
-        <VStack gap={"2xs"} align={"start"}>
-          <P fontSize={"xs"} color={"fg.subtle"}>
-            {"AOI Polygon"}
-          </P>
-          <HStack align={"center"} gap={"xs"}>
-            <Switch
-              checked={isAoiVisible}
-              onCheckedChange={({ checked }) => {
-                onToggleAoi(checked);
-              }}
-              tooltip={
-                isAoiVisible
-                  ? "Sembunyikan Polygon AOI"
-                  : "Tampilkan Polygon AOI"
-              }
+          {/* {order.workspaceInteropUrl && (
+          <VStack gap={"2xs"} align={"start"} w={"full"}>
+            <P fontSize={"xs"} color={"fg.subtle"}>
+              {"URL Workspace Resmi (INTEROP Pusdatin)"}
+            </P>
+            <Url
+              url={order.workspaceInteropUrl}
+              label={"Salin URL Workspace INTEROP"}
+              isExternalLink={true}
+              maxW={"full"}
             />
+          </VStack>
+        )} */}
+        </SimpleGrid>
 
-            <Tooltip content={"Zoom ke AOI Polygon"}>
-              <IconButton
-                aria-label={"Zoom to AOI polygon"}
-                size={"xs"}
-                onClick={onFlyToAoi}
-              >
-                <AppIcon icon={FocusIcon} />
-              </IconButton>
-            </Tooltip>
-          </HStack>
-        </VStack>
-      )}
+        <HStack wrap={"wrap"} gap={"md"}>
+          {hasAoi && (
+            <VStack gap={"2xs"} align={"start"} minW={"200px"}>
+              <P fontSize={"xs"} color={"fg.subtle"}>
+                {"AOI Polygon"}
+              </P>
 
-      <VStack gap={"2xs"} align={"start"} w={"full"}>
-        <P fontSize={"xs"} color={"fg.subtle"}>
-          {"URL Workspace GeoServer Volatil (Internal)"}
-        </P>
-        <Url
-          url={
-            order.internalWorkspaceUrl ||
-            `https://geoserver.internal.volatil.atrbpn.go.id/geoserver/${order.workspaceName || `ws_${order.orderId}`}/ows`
-          }
-          label={"Salin URL Workspace Volatil"}
-          isExternalLink={false}
-          maxW={"full"}
-        />
+              <HStack align={"center"} gap={"xs"} my={"auto"}>
+                <Switch
+                  checked={isAoiVisible}
+                  onCheckedChange={({ checked }) => {
+                    onToggleAoi(checked);
+                  }}
+                  tooltip={
+                    isAoiVisible
+                      ? "Sembunyikan Polygon AOI"
+                      : "Tampilkan Polygon AOI"
+                  }
+                />
+
+                <Tooltip content={"Zoom ke AOI Polygon"}>
+                  <IconButton
+                    aria-label={"Zoom to AOI polygon"}
+                    size={"xs"}
+                    onClick={onFlyToAoi}
+                  >
+                    <AppIcon icon={FocusIcon} />
+                  </IconButton>
+                </Tooltip>
+              </HStack>
+            </VStack>
+          )}
+
+          <VStack flex={1} gap={"2xs"}>
+            <P fontSize={"xs"} color={"fg.subtle"}>
+              {"URL Workspace GeoServer Volatil (Internal)"}
+            </P>
+
+            <Url
+              url={
+                order.internalWorkspaceUrl ||
+                `https://geoserver.internal.volatil.atrbpn.go.id/geoserver/${order.workspaceName || `ws_${order.orderId}`}/ows`
+              }
+              label={"Salin URL Workspace Volatil"}
+              isExternalLink={false}
+              maxW={"full"}
+            />
+          </VStack>
+        </HStack>
       </VStack>
-
-      {order.workspaceInteropUrl && (
-        <VStack gap={"2xs"} align={"start"} w={"full"}>
-          <P fontSize={"xs"} color={"fg.subtle"}>
-            {"URL Workspace Resmi (INTEROP Pusdatin)"}
-          </P>
-          <Url
-            url={order.workspaceInteropUrl}
-            label={"Salin URL Workspace INTEROP"}
-            isExternalLink={true}
-            maxW={"full"}
-          />
-        </VStack>
-      )}
-    </SimpleGrid>
+    </VStack>
   );
 };
 

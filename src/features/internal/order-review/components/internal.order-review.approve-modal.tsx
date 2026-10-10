@@ -123,7 +123,8 @@ const InternalOrderReviewApproveModalContent = (
     );
   };
 
-  const isSubmitDisabled = !isValid || approveMutation.isPending || isSubmitting;
+  const isSubmitDisabled =
+    !isValid || approveMutation.isPending || isSubmitting;
 
   return (
     <Modal.Content>
@@ -140,7 +141,11 @@ const InternalOrderReviewApproveModalContent = (
       <form onSubmit={handleSubmit(onSubmit)}>
         <Modal.Body>
           <VStack align={"stretch"} gap={"md"}>
-            <Alert.Root status={"info"} colorPalette={"blue"} variant={"subtle"}>
+            <Alert.Root
+              status={"info"}
+              colorPalette={"blue"}
+              variant={"subtle"}
+            >
               <AppIcon icon={InfoIcon} />
               <Alert.Description>
                 {
@@ -227,7 +232,11 @@ const InternalOrderReviewApproveModalContent = (
                   <P fontSize={"xs"} color={"fg.subtle"}>
                     {"Total Biaya"}
                   </P>
-                  <P fontSize={"sm"} fontWeight={"bold"} color={"colorPalette.fg"}>
+                  <P
+                    fontSize={"sm"}
+                    fontWeight={"bold"}
+                    color={"colorPalette.fg"}
+                  >
                     {formatCurrency(order.totalPrice)}
                   </P>
                 </VStack>
@@ -259,4 +268,3 @@ const InternalOrderReviewApproveModalContent = (
     </Modal.Content>
   );
 };
-

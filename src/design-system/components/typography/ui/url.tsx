@@ -30,7 +30,7 @@ export const Url = memo((props: UrlProps) => {
         fontFamily={"mono"}
         color={"fg.muted"}
         flex={1}
-        minW={0}
+        wordBreak={"break-all"}
         _hover={
           isExternalLink
             ? {
