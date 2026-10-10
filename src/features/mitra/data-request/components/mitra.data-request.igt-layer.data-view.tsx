@@ -355,6 +355,7 @@ export const MitraDataRequestIgtLayerDataView = memo(
               | undefined);
 
       addToCartMultipleMutation.mutate({
+        calculationToken: calculationResult?.calculationToken,
         selectionType,
         purchasedIgtBasis: "all",
         aoiPolygon: resolvedAoi,
@@ -366,6 +367,7 @@ export const MitraDataRequestIgtLayerDataView = memo(
           title: layer.title,
           spatialBasis: layer.spatialBasis,
           selectionType,
+          calculationToken: calculationResult?.calculationToken,
         })),
       });
     };
@@ -388,6 +390,7 @@ export const MitraDataRequestIgtLayerDataView = memo(
               | undefined);
 
       addToCartMultipleMutation.mutate({
+        calculationToken: calculationResult?.calculationToken,
         selectionType,
         purchasedIgtBasis: "bidang",
         aoiPolygon: resolvedAoi,
@@ -397,6 +400,7 @@ export const MitraDataRequestIgtLayerDataView = memo(
           title: layer.title,
           spatialBasis: layer.spatialBasis,
           selectionType,
+          calculationToken: calculationResult?.calculationToken,
         })),
       });
     };
@@ -419,6 +423,7 @@ export const MitraDataRequestIgtLayerDataView = memo(
               | undefined);
 
       addToCartMultipleMutation.mutate({
+        calculationToken: calculationResult?.calculationToken,
         selectionType,
         purchasedIgtBasis: "kawasan",
         aoiPolygon: resolvedAoi,
@@ -430,6 +435,7 @@ export const MitraDataRequestIgtLayerDataView = memo(
           title: layer.title,
           spatialBasis: layer.spatialBasis,
           selectionType,
+          calculationToken: calculationResult?.calculationToken,
         })),
       });
     };

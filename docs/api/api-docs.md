@@ -1371,6 +1371,7 @@ type SystemPolicyItem = {
 
 ```typescript
 type AddToCartOrderRequest = {
+  calculationToken?: string; // Token hasil perhitungan kalkulasi spasial data-request
   selectionType: "upload_aoi" | "draw_aoi" | "catalog";
   purchasedIgtBasis: "bidang" | "kawasan" | "all";
   aoiPolygon?: GeoJSON.MultiPolygon | GeoJSON.Polygon;

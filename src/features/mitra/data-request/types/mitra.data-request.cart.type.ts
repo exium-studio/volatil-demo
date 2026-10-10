@@ -54,6 +54,7 @@ export type MitraDataRequestAddToCartButtonsProps = StackProps & {
 };
 
 export type AddToCartLayerParam = {
+  calculationToken?: string;
   layerId: string;
   typeName: string;
   title?: string;

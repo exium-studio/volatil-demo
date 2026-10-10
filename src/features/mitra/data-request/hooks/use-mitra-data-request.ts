@@ -94,6 +94,7 @@ export const useAddToCartAll = () => {
             : "all";
 
       const payload: AddToCartOrderRequest = {
+        calculationToken: params.calculationToken,
         selectionType: params.selectionType ?? "catalog",
         purchasedIgtBasis: basis,
         aoiPolygon: params.aoiPolygon,
@@ -173,6 +174,7 @@ export const useAddToCartMultipleLayers = () => {
 
   return useMutation({
     mutationFn: (params: {
+      calculationToken?: string;
       layers: AddToCartLayerParam[];
       selectionType?: "catalog" | "upload_aoi" | "draw_aoi";
       purchasedIgtBasis?: PurchasedIgtBasis;
@@ -182,6 +184,8 @@ export const useAddToCartMultipleLayers = () => {
     }) => {
       const basis: PurchasedIgtBasis = params.purchasedIgtBasis ?? "all";
       const payload: AddToCartOrderRequest = {
+        calculationToken:
+          params.calculationToken ?? params.layers?.[0]?.calculationToken,
         selectionType:
           params.selectionType ??
           params.layers?.[0]?.selectionType ??

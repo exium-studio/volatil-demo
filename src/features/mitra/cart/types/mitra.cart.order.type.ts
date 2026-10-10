@@ -154,6 +154,7 @@ export type CartOrderItemPayload = {
 export type PurchasedIgtBasis = "bidang" | "kawasan" | "all";
 
 export type AddToCartOrderRequest = {
+  calculationToken?: string;
   selectionType: SelectionType;
   purchasedIgtBasis: PurchasedIgtBasis;
   aoiPolygon?: GeoJSON.MultiPolygon | GeoJSON.Polygon;

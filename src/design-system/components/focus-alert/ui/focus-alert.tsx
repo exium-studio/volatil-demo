@@ -394,7 +394,7 @@ const FocusAlertContent = (props: FocusAlertContentProps) => {
   const resolved =
     (variant ? FOCUS_ALERT_VARIANTS_MAP[variant] : undefined) ?? fallback;
   const resolvedColorPalette = colorPalette ?? resolved.colorPalette;
-  const resolvedDoneLabel = doneLabel ?? t["action.finish"]();
+  const resolvedDoneLabel = doneLabel ?? t["action.confirm"]();
   const hasCancel = Boolean(cancelLabel || onCancel);
   const resolvedCancelLabel = cancelLabel ?? t["action.cancel"]();
 
