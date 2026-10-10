@@ -218,8 +218,8 @@ export const MapSearch = () => {
     <VStack
       ref={containerRef}
       gap={2}
-      w={"300px"}
-      pointerEvents={"auto"}
+      w={isOpened ? "300px" : "36px"}
+      pointerEvents={"none"}
       position={"relative"}
     >
       {/* Search Input Container */}
@@ -234,6 +234,7 @@ export const MapSearch = () => {
           bg={"bg.body"}
           transition={"width 200ms ease"}
           cursor={isOpened ? "text" : "pointer"}
+          pointerEvents={"auto"}
           onClick={handleOpenSearch}
         >
           <SearchInput
@@ -267,11 +268,13 @@ export const MapSearch = () => {
           top={"100%"}
           left={0}
           right={0}
+          w={"300px"}
           bg={"bg.body"}
           rounded={theme.radii.component}
           shadow={"xs"}
           maxH={"360px"}
           overflowY={"auto"}
+          pointerEvents={"auto"}
           zIndex={2000}
         >
           {/* Recent Searches List */}

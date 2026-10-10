@@ -109,7 +109,6 @@ export default defineConfig([
     },
     rules: {
       "custom/no-inline-type": "error",
-      "custom/no-redundant-vstack-align": "error",
     },
   },
 ]);
