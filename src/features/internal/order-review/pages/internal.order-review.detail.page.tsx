@@ -56,12 +56,12 @@ import {
   EyeIcon,
   EyeOffIcon,
   FocusIcon,
+  HandshakeIcon,
   LoaderIcon,
   MapPlusIcon,
 } from "lucide-react";
 import { useCallback, useEffect, useMemo } from "react";
 
-import { Center } from "@/design-system/components/layout/ui/center";
 import { MAP_EVENTS_MAP } from "@/design-system/components/map/constants/map.config";
 import { DRAW_FILL_LAYER_ID } from "@/design-system/components/map/hooks/use-map-draw";
 import { useThemeStore } from "@/design-system/stores/theme-store";
@@ -355,118 +355,145 @@ const OrderSummary = (props: OrderSummaryProps) => {
   // Props
   const { order, isAoiVisible, hasAoi, onToggleAoi, onFlyToAoi } = props;
 
+  // Stores
   const { theme } = useThemeStore();
 
   return (
-    <VStack p={"md"}>
-      <VStack
-        gap={"lg"}
-        p={"md"}
-        rounded={theme.radii.container}
-        bg={"bg.subtle"}
-      >
-        <SimpleGrid minChildWidth={"200px"} gap={"md"} gapY={"lg"}>
-          <VStack gap={"2xs"} align={"start"}>
-            <P fontSize={"xs"} color={"fg.subtle"}>
-              {"Mitra"}
-            </P>
-            <P fontWeight={"semibold"}>{order.mitraName}</P>
-          </VStack>
+    <VStack p={"md"} align={"stretch"} w={"full"}>
+      <VStack gap={"md"} rounded={theme.radii.container} w={"full"}>
+        {/* Top Header Section: Order Number, Status Badge, Mitra & Draw AOI Method */}
+        <VStack align={"stretch"} gap={"xs"}>
+          <HStack
+            justify={"space-between"}
+            align={"flex-start"}
+            wrap={"wrap"}
+            gap={"sm"}
+          >
+            <VStack align={"start"} gap={"2xs"}>
+              <P fontSize={"sm"} color={"fg.subtle"}>
+                {"Nomor pesanan"}
+              </P>
 
-          <VStack gap={"2xs"} align={"start"}>
-            <P fontSize={"xs"} color={"fg.subtle"}>
-              {"Nomor Pesanan"}
-            </P>
-            <P fontWeight={"semibold"}>{order.orderNumber || order.orderId}</P>
-          </VStack>
+              <P fontSize={"xl"} fontWeight={"bold"} lineHeight={"short"}>
+                {order.orderNumber || order.orderId}
+              </P>
+            </VStack>
 
-          <VStack gap={"2xs"} align={"start"}>
-            <P fontSize={"xs"} color={"fg.subtle"}>
-              {"Metode Pengajuan"}
-            </P>
-            <SelectionTypeBadge>{order.selectionType}</SelectionTypeBadge>
-          </VStack>
-
-          <VStack gap={"2xs"} align={"start"}>
-            <P fontSize={"xs"} color={"fg.subtle"}>
-              {"Status Pesanan"}
-            </P>
             <OrderStatusBadge>{order.status}</OrderStatusBadge>
-          </VStack>
+          </HStack>
 
-          <VStack gap={"2xs"} align={"start"}>
-            <P fontSize={"xs"} color={"fg.subtle"}>
-              {"Total Estimasi PNBP"}
-            </P>
-            <P fontWeight={"semibold"}>
-              {formatCurrency(order.totalPrice ?? 0)}
-            </P>
-          </VStack>
+          <HStack align={"center"} gap={"xs"} wrap={"wrap"}>
+            <HStack align={"center"} gap={"2xs"}>
+              <AppIcon icon={HandshakeIcon} size={"sm"} color={"fg.subtle"} />
 
-          <VStack gap={"2xs"} align={"start"}>
-            <P fontSize={"xs"} color={"fg.subtle"}>
-              {"TTE & Faktur"}
-            </P>
-            <Center mt={"2px"}>
+              <P fontSize={"sm"} color={"fg.muted"}>
+                {order.mitraName}
+              </P>
+            </HStack>
+
+            <P color={"fg.subtle"}>{"•"}</P>
+
+            <SelectionTypeBadge>{order.selectionType}</SelectionTypeBadge>
+          </HStack>
+        </VStack>
+
+        <VStack gap={"sm"}>
+          {/* Middle Metric Cards Grid */}
+          <SimpleGrid minChildWidth={"200px"} gap={"sm"}>
+            {/* Card: Total Estimasi PNBP */}
+            <VStack
+              align={"start"}
+              justify={"space-between"}
+              p={"md"}
+              rounded={theme.radii.container}
+              border={"1px solid"}
+              borderColor={"border.subtle"}
+              minH={"110px"}
+            >
+              <P fontSize={"xs"} color={"fg.subtle"}>
+                {"Total estimasi PNBP"}
+              </P>
+
+              <P fontSize={"xl"} fontWeight={"bold"} color={"fg.emphasized"}>
+                {formatCurrency(order.totalPrice ?? 0)}
+              </P>
+            </VStack>
+
+            {/* Card: TTE dan Faktur */}
+            <VStack
+              align={"start"}
+              justify={"space-between"}
+              p={"md"}
+              rounded={theme.radii.container}
+              border={"1px solid"}
+              borderColor={"border.subtle"}
+              minH={"110px"}
+            >
+              <P fontSize={"xs"} color={"fg.subtle"}>
+                {"TTE dan faktur"}
+              </P>
+
               <TteBadge
                 tte={order.tte}
                 invoiceUrl={order.invoiceUrl}
                 tteInvoiceUrl={order.tteInvoiceUrl}
               />
-            </Center>
-          </VStack>
-
-          {/* {order.workspaceInteropUrl && (
-          <VStack gap={"2xs"} align={"start"} w={"full"}>
-            <P fontSize={"xs"} color={"fg.subtle"}>
-              {"URL Workspace Resmi (INTEROP Pusdatin)"}
-            </P>
-            <Url
-              url={order.workspaceInteropUrl}
-              label={"Salin URL Workspace INTEROP"}
-              isExternalLink={true}
-              maxW={"full"}
-            />
-          </VStack>
-        )} */}
-        </SimpleGrid>
-
-        <HStack wrap={"wrap"} gap={"md"}>
-          {hasAoi && (
-            <VStack gap={"2xs"} align={"start"} minW={"200px"}>
-              <P fontSize={"xs"} color={"fg.subtle"}>
-                {"AOI Polygon"}
-              </P>
-
-              <HStack align={"center"} gap={"xs"} my={"auto"}>
-                <Switch
-                  checked={isAoiVisible}
-                  onCheckedChange={({ checked }) => {
-                    onToggleAoi(checked);
-                  }}
-                  tooltip={
-                    isAoiVisible
-                      ? "Sembunyikan Polygon AOI"
-                      : "Tampilkan Polygon AOI"
-                  }
-                />
-
-                <Tooltip content={"Zoom ke AOI Polygon"}>
-                  <IconButton
-                    aria-label={"Zoom to AOI polygon"}
-                    size={"xs"}
-                    onClick={onFlyToAoi}
-                  >
-                    <AppIcon icon={FocusIcon} />
-                  </IconButton>
-                </Tooltip>
-              </HStack>
             </VStack>
-          )}
 
-          <VStack flex={1} gap={"2xs"}>
+            {/* Card: AOI Polygon */}
+            {hasAoi && (
+              <VStack
+                align={"start"}
+                justify={"space-between"}
+                p={"md"}
+                rounded={theme.radii.container}
+                border={"1px solid"}
+                borderColor={"border.subtle"}
+                minH={"110px"}
+              >
+                <P fontSize={"xs"} color={"fg.subtle"}>
+                  {"AOI polygon"}
+                </P>
+
+                <HStack align={"center"} justify={"space-between"} w={"full"}>
+                  <Switch
+                    checked={isAoiVisible}
+                    onCheckedChange={({ checked }) => {
+                      onToggleAoi(checked);
+                    }}
+                    tooltip={
+                      isAoiVisible
+                        ? "Sembunyikan Polygon AOI"
+                        : "Tampilkan Polygon AOI"
+                    }
+                  />
+
+                  <Tooltip content={"Zoom ke AOI Polygon"}>
+                    <IconButton
+                      aria-label={"Zoom to AOI polygon"}
+                      size={"xs"}
+                      onClick={onFlyToAoi}
+                    >
+                      <AppIcon icon={FocusIcon} />
+                    </IconButton>
+                  </Tooltip>
+                </HStack>
+              </VStack>
+            )}
+          </SimpleGrid>
+
+          {/* Bottom Card: URL Workspace GeoServer Volatil (Internal) */}
+          <VStack
+            align={"start"}
+            p={"md"}
+            rounded={theme.radii.container}
+            border={"1px solid"}
+            borderColor={"border.subtle"}
+            gap={"xs"}
+            w={"full"}
+          >
             <P fontSize={"xs"} color={"fg.subtle"}>
-              {"URL Workspace GeoServer Volatil (Internal)"}
+              {"URL workspace GeoServer Volatil (internal)"}
             </P>
 
             <Url
@@ -479,7 +506,7 @@ const OrderSummary = (props: OrderSummaryProps) => {
               maxW={"full"}
             />
           </VStack>
-        </HStack>
+        </VStack>
       </VStack>
     </VStack>
   );

@@ -3,6 +3,7 @@
 import { Button } from "@/design-system/components/button/ui/button";
 import { AppIcon } from "@/design-system/components/icon/ui/app-icon";
 import { HStack } from "@/design-system/components/layout/ui/flex-box";
+import { ExternalLink } from "@/design-system/components/navigation/ui/link";
 import { Badge } from "@/design-system/components/typography/ui/badge";
 import type { TteBadgeProps } from "@/features/shared/types/badge.type";
 import {
@@ -61,34 +62,32 @@ export const TteBadge = (props: TteBadgeProps) => {
       {badgeElement}
 
       {hasInvoice && (
-        <Button size={"2xs"} variant={"outline"} asChild>
-          <a
-            href={invoiceUrl ?? undefined}
-            target={"_blank"}
-            rel={"noopener noreferrer"}
+        <Button size={"2xs"} variant={"outline"} asChild h={"20px"} pl={"6px"}>
+          <ExternalLink
+            href={invoiceUrl}
+            variant={"plain"}
             onClick={(e) => {
               e.stopPropagation();
             }}
           >
-            <AppIcon icon={ReceiptTextIcon} size={"xs"} />
+            <AppIcon icon={ReceiptTextIcon} size={"xs"} mr={"-4px"} />
             {"Faktur"}
-          </a>
+          </ExternalLink>
         </Button>
       )}
 
       {hasTteInvoice && (
-        <Button size={"2xs"} variant={"outline"} asChild>
-          <a
-            href={tteInvoiceUrl ?? undefined}
-            target={"_blank"}
-            rel={"noopener noreferrer"}
+        <Button size={"2xs"} variant={"outline"} asChild h={"20px"} pl={"6px"}>
+          <ExternalLink
+            href={tteInvoiceUrl}
+            variant={"plain"}
             onClick={(e) => {
               e.stopPropagation();
             }}
           >
-            <AppIcon icon={FileCheckIcon} size={"xs"} />
+            <AppIcon icon={FileCheckIcon} size={"xs"} mr={"-4px"} />
             {"Faktur + TTE"}
-          </a>
+          </ExternalLink>
         </Button>
       )}
     </HStack>
