@@ -34,8 +34,8 @@ export const chakraConfig = defineConfig({
 
   theme: {
     breakpoints: {
-      sm: "320px",
-      md: "720px",
+      sm: "35px",
+      md: "75px",
       lg: "960px",
       xl: "1200px",
     },
@@ -134,6 +134,9 @@ export const chakraConfig = defineConfig({
       colors: {
         canvasLight: { value: "#f5f6f8" },
         canvasDark: { value: "#161717" },
+
+        canvasLightAlpha: { value: "rgba(245, 246, 248, 0.85)" },
+        canvasDarkAlpha: { value: "rgba(22, 23, 23, 0.85)" },
 
         bodyLight: { value: "#ffffff" },
         bodyDark: { value: "#1a1b1c" },
@@ -772,6 +775,18 @@ export const chakraConfig = defineConfig({
             value: {
               base: "{colors.canvasLight}",
               _dark: "{colors.canvasDark}",
+            },
+          },
+          canvasAlpha: {
+            value: {
+              base: "{colors.canvasLightAlpha}",
+              _dark: "{colors.canvasDarkAlpha}",
+            },
+          },
+          canvasAlphaInverted: {
+            value: {
+              base: "{colors.canvasDarkAlpha}",
+              _dark: "{colors.canvasLightAlpha}",
             },
           },
           body: {
@@ -2475,7 +2490,7 @@ export const chakraConfig = defineConfig({
         none: { value: "0" },
         sm: { value: "4px" },
         md: { value: "10px" },
-        lg: { value: "20px" },
+        lg: { value: "5px" },
         xl: { value: "50px" },
         backdrop: { value: "10px" },
       },
@@ -2487,8 +2502,8 @@ export const chakraConfig = defineConfig({
       glass: {
         value: {
           bg: "bg.bodyAlpha",
-          backdropFilter: "blur(20px)",
-          WebkitBackdropFilter: "blur(20px)",
+          backdropFilter: "blur(5px)",
+          WebkitBackdropFilter: "blur(5px)",
           border: "1px solid",
           borderColor: {
             _light: "rgba(255, 255, 255, 0.35)",
@@ -2505,8 +2520,8 @@ export const chakraConfig = defineConfig({
       glassTop: {
         value: {
           bg: "bg.bodyAlpha",
-          backdropFilter: "blur(20px)",
-          WebkitBackdropFilter: "blur(20px)",
+          backdropFilter: "blur(5px)",
+          WebkitBackdropFilter: "blur(5px)",
           border: "1px solid",
           borderColor: {
             _light: "rgba(255, 255, 255, 0.35)",
@@ -2523,8 +2538,8 @@ export const chakraConfig = defineConfig({
       glassBottom: {
         value: {
           bg: "bg.bodyAlpha",
-          backdropFilter: "blur(20px)",
-          WebkitBackdropFilter: "blur(20px)",
+          backdropFilter: "blur(5px)",
+          WebkitBackdropFilter: "blur(5px)",
           border: "1px solid",
           borderColor: {
             _light: "rgba(255, 255, 255, 0.35)",
@@ -2541,8 +2556,8 @@ export const chakraConfig = defineConfig({
       glassTopRight: {
         value: {
           bg: "bg.bodyAlpha",
-          backdropFilter: "blur(20px)",
-          WebkitBackdropFilter: "blur(20px)",
+          backdropFilter: "blur(5px)",
+          WebkitBackdropFilter: "blur(5px)",
           border: "1px solid",
           borderColor: {
             _light: "rgba(255, 255, 255, 0.35)",
@@ -2559,8 +2574,8 @@ export const chakraConfig = defineConfig({
       glassBottomLeft: {
         value: {
           bg: "bg.bodyAlpha",
-          backdropFilter: "blur(20px)",
-          WebkitBackdropFilter: "blur(20px)",
+          backdropFilter: "blur(5px)",
+          WebkitBackdropFilter: "blur(5px)",
           border: "1px solid",
           borderColor: {
             _light: "rgba(255, 255, 255, 0.35)",
@@ -2577,8 +2592,8 @@ export const chakraConfig = defineConfig({
       glassTopLeft: {
         value: {
           bg: "bg.bodyAlpha",
-          backdropFilter: "blur(20px)",
-          WebkitBackdropFilter: "blur(20px)",
+          backdropFilter: "blur(5px)",
+          WebkitBackdropFilter: "blur(5px)",
           border: "1px solid",
           borderColor: {
             _light: "rgba(255, 255, 255, 0.35)",
@@ -2595,8 +2610,8 @@ export const chakraConfig = defineConfig({
       glassBottomRight: {
         value: {
           bg: "bg.bodyAlpha",
-          backdropFilter: "blur(20px)",
-          WebkitBackdropFilter: "blur(20px)",
+          backdropFilter: "blur(5px)",
+          WebkitBackdropFilter: "blur(5px)",
           border: "1px solid",
           borderColor: {
             _light: "rgba(255, 255, 255, 0.35)",
@@ -2613,8 +2628,8 @@ export const chakraConfig = defineConfig({
       glassTopBottom: {
         value: {
           bg: "bg.bodyAlpha",
-          backdropFilter: "blur(20px)",
-          WebkitBackdropFilter: "blur(20px)",
+          backdropFilter: "blur(5px)",
+          WebkitBackdropFilter: "blur(5px)",
           border: "1px solid",
           borderColor: {
             _light: "rgba(255, 255, 255, 0.35)",
@@ -2631,8 +2646,8 @@ export const chakraConfig = defineConfig({
       glassAll: {
         value: {
           bg: "bg.bodyAlpha",
-          backdropFilter: "blur(20px)",
-          WebkitBackdropFilter: "blur(20px)",
+          backdropFilter: "blur(5px)",
+          WebkitBackdropFilter: "blur(5px)",
           border: "1px solid",
           borderColor: {
             _light: "rgba(255, 255, 255, 0.35)",

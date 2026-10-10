@@ -476,7 +476,8 @@ const Content = (_props: GisContentProps) => {
         minW={[0, null, "360px"]}
         w={"full"}
         minH={"300px"}
-        layerStyle={"glass"}
+        layerStyle={"frosted"}
+        bg={"bg.canvasAlpha"}
         // bg={"bg.canvas"}
         pointerEvents={"auto"}
       >
