@@ -2486,11 +2486,128 @@ export const chakraConfig = defineConfig({
     layerStyles: {
       glass: {
         value: {
-          bg: "bg.body/50",
-          backdropFilter: "blur(16px)",
-          WebkitBackdropFilter: "blur(16px)",
-          boxShadow:
-            "inset -1px 1px 1px 0 rgba(255, 255, 255, 0.45), inset 1px -1px 1px 0 rgba(255, 255, 255, 0.25)",
+          bg: {
+            _light: "rgba(255, 255, 255, 0.65)",
+            _dark: "rgba(15, 15, 17, 0.35)",
+          },
+          backdropFilter: "blur(20px)",
+          WebkitBackdropFilter: "blur(20px)",
+          border: "1px solid",
+          borderColor: {
+            _light: "rgba(255, 255, 255, 0.35)",
+            _dark: "rgba(255, 255, 255, 0.08)",
+          },
+          boxShadow: {
+            _light:
+              "inset 0 1px 1px 0 rgba(255, 255, 255, 0.45), inset 1px 0 1px 0 rgba(255, 255, 255, 0.35), inset -1px -1px 1px 0 rgba(0, 0, 0, 0.02), inset 0 0 6px 0 rgba(255, 255, 255, 0.12), 0 4px 16px 0 rgba(0, 0, 0, 0.05)",
+            _dark:
+              "inset 0 1px 1px 0 rgba(255, 255, 255, 0.12), inset 1px 0 1px 0 rgba(255, 255, 255, 0.08), inset -1px -1px 1px 0 rgba(0, 0, 0, 0.15), inset 0 0 6px 0 rgba(255, 255, 255, 0.02), 0 4px 16px 0 rgba(0, 0, 0, 0.2)",
+          },
+        },
+      },
+      glassTop: {
+        value: {
+          bg: {
+            _light: "rgba(255, 255, 255, 0.65)",
+            _dark: "rgba(15, 15, 17, 0.35)",
+          },
+          backdropFilter: "blur(20px)",
+          WebkitBackdropFilter: "blur(20px)",
+          border: "1px solid",
+          borderColor: {
+            _light: "rgba(255, 255, 255, 0.35)",
+            _dark: "rgba(255, 255, 255, 0.08)",
+          },
+          boxShadow: {
+            _light:
+              "inset 0 1px 1px 0 rgba(255, 255, 255, 0.5), inset 0 -1px 1px 0 rgba(0, 0, 0, 0.02), inset 0 0 6px 0 rgba(255, 255, 255, 0.1), 0 4px 16px 0 rgba(0, 0, 0, 0.05)",
+            _dark:
+              "inset 0 1px 1px 0 rgba(255, 255, 255, 0.14), inset 0 -1px 1px 0 rgba(0, 0, 0, 0.15), inset 0 0 6px 0 rgba(255, 255, 255, 0.02), 0 4px 16px 0 rgba(0, 0, 0, 0.2)",
+          },
+        },
+      },
+      glassBottom: {
+        value: {
+          bg: {
+            _light: "rgba(255, 255, 255, 0.65)",
+            _dark: "rgba(15, 15, 17, 0.35)",
+          },
+          backdropFilter: "blur(20px)",
+          WebkitBackdropFilter: "blur(20px)",
+          border: "1px solid",
+          borderColor: {
+            _light: "rgba(255, 255, 255, 0.35)",
+            _dark: "rgba(255, 255, 255, 0.08)",
+          },
+          boxShadow: {
+            _light:
+              "inset 0 -1px 1px 0 rgba(255, 255, 255, 0.45), inset -1px 0 1px 0 rgba(255, 255, 255, 0.35), inset 1px 1px 1px 0 rgba(0, 0, 0, 0.02), inset 0 0 6px 0 rgba(255, 255, 255, 0.12), 0 4px 16px 0 rgba(0, 0, 0, 0.05)",
+            _dark:
+              "inset 0 -1px 1px 0 rgba(255, 255, 255, 0.12), inset -1px 0 1px 0 rgba(255, 255, 255, 0.08), inset 1px 1px 1px 0 rgba(0, 0, 0, 0.15), inset 0 0 6px 0 rgba(255, 255, 255, 0.02), 0 4px 16px 0 rgba(0, 0, 0, 0.2)",
+          },
+        },
+      },
+      glassTopRight: {
+        value: {
+          bg: {
+            _light: "rgba(255, 255, 255, 0.65)",
+            _dark: "rgba(15, 15, 17, 0.35)",
+          },
+          backdropFilter: "blur(20px)",
+          WebkitBackdropFilter: "blur(20px)",
+          border: "1px solid",
+          borderColor: {
+            _light: "rgba(255, 255, 255, 0.35)",
+            _dark: "rgba(255, 255, 255, 0.08)",
+          },
+          boxShadow: {
+            _light:
+              "inset 0 1px 1px 0 rgba(255, 255, 255, 0.45), inset -1px 0 1px 0 rgba(255, 255, 255, 0.35), inset 1px -1px 1px 0 rgba(0, 0, 0, 0.02), inset 0 0 6px 0 rgba(255, 255, 255, 0.12), 0 4px 16px 0 rgba(0, 0, 0, 0.05)",
+            _dark:
+              "inset 0 1px 1px 0 rgba(255, 255, 255, 0.12), inset -1px 0 1px 0 rgba(255, 255, 255, 0.08), inset 1px -1px 1px 0 rgba(0, 0, 0, 0.15), inset 0 0 6px 0 rgba(255, 255, 255, 0.02), 0 4px 16px 0 rgba(0, 0, 0, 0.2)",
+          },
+        },
+      },
+      glassBottomLeft: {
+        value: {
+          bg: {
+            _light: "rgba(255, 255, 255, 0.65)",
+            _dark: "rgba(15, 15, 17, 0.35)",
+          },
+          backdropFilter: "blur(20px)",
+          WebkitBackdropFilter: "blur(20px)",
+          border: "1px solid",
+          borderColor: {
+            _light: "rgba(255, 255, 255, 0.35)",
+            _dark: "rgba(255, 255, 255, 0.08)",
+          },
+          boxShadow: {
+            _light:
+              "inset 0 -1px 1px 0 rgba(255, 255, 255, 0.45), inset 1px 0 1px 0 rgba(255, 255, 255, 0.35), inset -1px 1px 1px 0 rgba(0, 0, 0, 0.02), inset 0 0 6px 0 rgba(255, 255, 255, 0.12), 0 4px 16px 0 rgba(0, 0, 0, 0.05)",
+            _dark:
+              "inset 0 -1px 1px 0 rgba(255, 255, 255, 0.12), inset 1px 0 1px 0 rgba(255, 255, 255, 0.08), inset -1px 1px 1px 0 rgba(0, 0, 0, 0.15), inset 0 0 6px 0 rgba(255, 255, 255, 0.02), 0 4px 16px 0 rgba(0, 0, 0, 0.2)",
+          },
+        },
+      },
+      glassAll: {
+        value: {
+          bg: {
+            _light: "rgba(255, 255, 255, 0.65)",
+            _dark: "rgba(15, 15, 17, 0.35)",
+          },
+          backdropFilter: "blur(20px)",
+          WebkitBackdropFilter: "blur(20px)",
+          border: "1px solid",
+          borderColor: {
+            _light: "rgba(255, 255, 255, 0.35)",
+            _dark: "rgba(255, 255, 255, 0.08)",
+          },
+          boxShadow: {
+            _light:
+              "inset 0 1px 1px 0 rgba(255, 255, 255, 0.4), inset 0 -1px 1px 0 rgba(255, 255, 255, 0.3), inset 1px 0 1px 0 rgba(255, 255, 255, 0.35), inset -1px 0 1px 0 rgba(255, 255, 255, 0.25), inset 0 0 6px 0 rgba(255, 255, 255, 0.12), 0 4px 16px 0 rgba(0, 0, 0, 0.05)",
+            _dark:
+              "inset 0 1px 1px 0 rgba(255, 255, 255, 0.1), inset 0 -1px 1px 0 rgba(255, 255, 255, 0.08), inset 1px 0 1px 0 rgba(255, 255, 255, 0.08), inset -1px 0 1px 0 rgba(255, 255, 255, 0.06), inset 0 0 6px 0 rgba(255, 255, 255, 0.02), 0 4px 16px 0 rgba(0, 0, 0, 0.2)",
+          },
         },
       },
       frosted: {

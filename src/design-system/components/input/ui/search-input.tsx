@@ -137,6 +137,7 @@ export const SearchInput = forwardRef<HTMLInputElement, SearchInputProps>(
           <AppIcon
             icon={SearchIcon}
             ml={ml[restProps.size as keyof typeof ml]}
+            color={"fg"}
             cursor={"pointer"}
             onClick={() => internalRef.current?.focus()}
             {...appIconProps}

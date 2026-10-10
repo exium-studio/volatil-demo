@@ -104,39 +104,6 @@ export default defineConfig([
               };
             },
           },
-          "no-redundant-vstack-align": {
-            create(context) {
-              return {
-                JSXOpeningElement(node) {
-                  const tagName = node.name.name;
-                  if (tagName === "VStack") {
-                    const alignAttr = node.attributes.find(
-                      (attr) =>
-                        attr.type === "JSXAttribute" &&
-                        attr.name?.name === "align"
-                    );
-                    if (alignAttr) {
-                      const value =
-                        alignAttr.value?.type === "Literal"
-                          ? alignAttr.value.value
-                          : alignAttr.value?.type === "JSXExpressionContainer" &&
-                            alignAttr.value.expression.type === "Literal"
-                          ? alignAttr.value.expression.value
-                          : null;
-
-                      if (value === "stretch") {
-                        context.report({
-                          node: alignAttr,
-                          message:
-                            "Redundant prop: <VStack> already defaults to align='stretch'. Remove align={'stretch'}.",
-                        });
-                      }
-                    }
-                  }
-                },
-              };
-            },
-          },
         },
       },
     },

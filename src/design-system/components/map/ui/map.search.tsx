@@ -276,7 +276,7 @@ export const MapSearch = () => {
         >
           {/* Recent Searches List */}
           {showRecent && (
-            <VStack align={"stretch"}>
+            <VStack>
               {isEmptyArray(recentSearches) ? (
                 <Box p={4}>
                   <FeedbackState
@@ -336,7 +336,7 @@ export const MapSearch = () => {
 
           {/* Search Results List */}
           {showResults && (
-            <VStack align={"stretch"} gap={0} py={1}>
+            <VStack gap={0} py={1}>
               {showLoader && (
                 <HStack align={"center"} justify={"center"} py={4} gap={4}>
                   <Loader />

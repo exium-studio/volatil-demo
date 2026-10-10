@@ -86,7 +86,8 @@ export const MapOverlayContainer = (props: StackProps) => {
   return (
     <HStack
       align={"center"}
-      bg={"bg.body"}
+      // bg={"bg.body"}
+      layerStyle={"glass"}
       rounded={theme.radii.component}
       shadow={"xs"}
       pointerEvents={"auto"}
