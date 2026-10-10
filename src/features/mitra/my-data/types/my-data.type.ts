@@ -20,6 +20,8 @@ export type MyDataServiceConfig = {
 
 export type MyDataItem = {
   id: string;
+  sourceLayerId?: string;
+  sourceLayerTitle?: string;
   label: string | null;
   title: string;
   igtBasis?: MyDataSpatialBasis;

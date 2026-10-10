@@ -94,45 +94,63 @@ export const MitraMyDataWorkspaceDetailPage = () => {
 
   // Effects — On entering workspace detail, reset master IGT layers and auto-enable matching default active layers
   useEffect(() => {
-    if (
-      !workspace ||
-      !workspace.layers ||
-      hasInitializedWorkspaceLayersRef.current === workspace.id
-    ) {
+    if (!workspace || !workspace.layers) {
       return;
     }
 
     const state = useMapLayerStore.getState();
 
-    // 1. Matikan semua layer IGT master yang sedang aktif di peta
-    state.resetLayers();
+    // 1. Reset all master IGT layers on first initialization of this workspace
+    if (hasInitializedWorkspaceLayersRef.current !== workspace.id) {
+      state.resetLayers();
+      hasInitializedWorkspaceLayersRef.current = workspace.id;
+    }
 
-    // 2. Cari layer di master yang defaultVisible === true
+    // 2. Find master IGT layers where defaultVisible === true
     const masterItems = igtMasterLayers?.items ?? [];
     const defaultMasterLayers = masterItems.filter((l) =>
       Boolean(l.defaultVisible),
     );
 
-    // 3. Tentukan layer mana di workspace ini yang harus di-load otomatis:
-    //    a. Cocokkan berdasarkan ID / typeName / layerName yang sama dengan defaultMasterLayers
-    //    b. Atau jika default master adalah basis "bidang", cari layer di workspace yang basisnya "bidang"
+    // 3. Determine layers in this workspace that should be auto-loaded
     const layersToAutoEnable = workspace.layers.filter((wsLayer) => {
-      const matchExact = defaultMasterLayers.some(
-        (m) =>
-          m.id === wsLayer.id ||
-          m.typeName === wsLayer.wfsTypeName ||
-          m.layerName === wsLayer.id.split(":")[1],
-      );
-      if (matchExact) return true;
+      // If master layers are loaded, match by ID / sourceLayerId / typeName / title
+      if (defaultMasterLayers.length > 0) {
+        const matchExact = defaultMasterLayers.some((m) => {
+          const wsLayerId = wsLayer.id;
+          const wsSourceId = wsLayer.sourceLayerId;
+          const wsLayerName = wsLayer.id.includes(":")
+            ? wsLayer.id.split(":")[1]
+            : wsLayer.id;
+          const wsTitle = wsLayer.title?.toLowerCase().trim();
+          const wsSourceTitle = wsLayer.sourceLayerTitle?.toLowerCase().trim();
+          const mTitle = m.title?.toLowerCase().trim();
 
-      const hasDefaultBidangMaster = defaultMasterLayers.some(
-        (m) => (m.spatialBasis ?? m.igtBasis) === "bidang",
-      );
-      if (hasDefaultBidangMaster && wsLayer.spatialBasis === "bidang") {
-        return true;
+          return (
+            m.id === wsSourceId ||
+            m.id === wsLayerId ||
+            m.typeName === wsSourceId ||
+            m.typeName === wsLayer.wfsTypeName ||
+            m.layerName === wsLayerName ||
+            (mTitle && (mTitle === wsTitle || mTitle === wsSourceTitle))
+          );
+        });
+        if (matchExact) return true;
+
+        const hasDefaultBidangMaster = defaultMasterLayers.some(
+          (m) => (m.spatialBasis ?? m.igtBasis) === "bidang",
+        );
+        if (
+          hasDefaultBidangMaster &&
+          (wsLayer.spatialBasis === "bidang" || wsLayer.igtBasis === "bidang")
+        ) {
+          return true;
+        }
+        return false;
       }
 
-      return false;
+      // Default fallback when master IGT list is still loading or empty: auto-enable "bidang" layers
+      return wsLayer.spatialBasis === "bidang" || wsLayer.igtBasis === "bidang";
     });
 
     if (layersToAutoEnable.length > 0 && workspace.wmsUrl) {
@@ -140,13 +158,11 @@ export const MitraMyDataWorkspaceDetailPage = () => {
         state.setCustomLayerConfig(layer.id, {
           wmsUrl: workspace.wmsUrl,
           layers: layer.wmsLayers || layer.wfsTypeName || "",
-          spatialBasis: layer.spatialBasis,
+          spatialBasis: layer.spatialBasis ?? layer.igtBasis,
         });
         state.setLayerEnabled(layer.id, true);
       });
     }
-
-    hasInitializedWorkspaceLayersRef.current = workspace.id;
   }, [workspace, igtMasterLayers]);
 
   // Effects — Auto fly camera to workspace bounding box on load
@@ -181,11 +197,24 @@ export const MitraMyDataWorkspaceDetailPage = () => {
 
     if (targetBbox) {
       hasFlownWorkspaceRef.current = workspace.id;
-      void flyTo({
-        id: workspace.id,
-        title: workspace.workspaceName,
-        bbox: targetBbox,
-      });
+
+      const triggerFly = () => {
+        void flyTo({
+          id: workspace.id,
+          title: workspace.workspaceName,
+          bbox: targetBbox,
+        });
+      };
+
+      // Ensure style is ready before triggering camera navigation on page refresh
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      if ((map as any).style && map.isStyleLoaded()) {
+        triggerFly();
+      } else {
+        map.once("style.load", () => {
+          triggerFly();
+        });
+      }
     }
   }, [map, workspace, flyTo]);
 
@@ -193,14 +222,9 @@ export const MitraMyDataWorkspaceDetailPage = () => {
   useEffect(() => {
     return () => {
       const state = useMapLayerStore.getState();
-      if (workspace?.layers) {
-        for (const item of workspace.layers) {
-          state.setLayerEnabled(item.id, false);
-          state.setCustomLayerConfig(item.id, null);
-        }
-      }
+      state.resetLayers();
     };
-  }, [workspace?.layers]);
+  }, []);
 
   // Derived Values
   const selectedAttributeLayer = useMemo(() => {

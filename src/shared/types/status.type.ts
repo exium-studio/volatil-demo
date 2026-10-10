@@ -18,7 +18,7 @@ export type TransactionStatusConfig = {
  * SSOT 2: Order & Provisioning Status Types (Order Table & Spatial Services)
  */
 export type OrderStatus =
-  // | "requesting"
+  | "requesting"
   | "pending_payment"
   | "paid"
   | "processing"
@@ -26,6 +26,7 @@ export type OrderStatus =
   | "pending_review"
   | "ready"
   | "expired"
+  | "rejected"
   | "transaction_expired"
   | "transaction_failed";
 

@@ -167,7 +167,6 @@ const InternalOrderReviewApproveModalContent = (
               <P fontSize={"xs"} color={"fg.muted"}>
                 {"URL Workspace GeoServer Volatil (Internal):"}
               </P>
-
               <HStack gap={"md"}>
                 <P
                   fontFamily={"mono"}
