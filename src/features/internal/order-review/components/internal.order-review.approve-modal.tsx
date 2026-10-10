@@ -155,19 +155,20 @@ const InternalOrderReviewApproveModalContent = (
             </Alert.Root>
 
             {/* Internal GeoServer Workspace URL */}
-            <VStack align={"stretch"} gap={1}>
+            <VStack
+              align={"stretch"}
+              gap={"md"}
+              p={"md"}
+              rounded={theme.radii.component}
+              border={"1px solid"}
+              borderColor={"border.subtle"}
+              bg={"bg.subtle"}
+            >
               <P fontSize={"xs"} color={"fg.muted"}>
                 {"URL Workspace GeoServer Volatil (Internal):"}
               </P>
 
-              <HStack
-                gap={"md"}
-                bg={"bg.panel"}
-                p={"md"}
-                rounded={theme.radii.component}
-                border={"1px solid"}
-                borderColor={"border.subtle"}
-              >
+              <HStack gap={"md"}>
                 <P
                   fontFamily={"mono"}
                   fontSize={"xs"}
@@ -192,7 +193,7 @@ const InternalOrderReviewApproveModalContent = (
               name={"workspaceInteropUrl"}
               render={({ field }) => (
                 <Field
-                  variant={"default"}
+                  // variant={"default"}
                   label={"URL Workspace Resmi (INTEROP Pusdatin - Wajib)"}
                   invalid={Boolean(errors.workspaceInteropUrl)}
                   errorText={errors.workspaceInteropUrl?.message}
