@@ -37,7 +37,6 @@ import type {
 } from "@/features/mitra/my-data/types/my-data.type";
 import { IgtBasisBadge } from "@/features/shared/components/igt-basis.badge";
 import { LayerAttributeTableView } from "@/features/shared/components/layer-attribute-table.view";
-import { OrderStatusBadge } from "@/features/shared/components/order-status.badge";
 import { StatusFilterSelect } from "@/features/shared/components/status-filter.select";
 import { TteBadge } from "@/features/shared/components/tte.badge";
 import { ORDER_STATUS_FILTER_OPTIONS } from "@/features/shared/constants/volatil.ssot-map";
@@ -139,7 +138,6 @@ export const MitraMyDataDataView = (_props: MitraMyDataViewProps) => {
       { th: "Layer IGT (Label)", sortable: true },
       { th: "WMS URL", sortable: false },
       { th: "Basis IGT", sortable: true },
-      { th: "Status Pesanan", sortable: true },
       { th: "TTE & Faktur", sortable: false, align: "start" },
       { th: "Sisa Waktu", sortable: true },
       { th: "Tanggal Kedaluwarsa", sortable: true },
@@ -188,11 +186,6 @@ export const MitraMyDataDataView = (_props: MitraMyDataViewProps) => {
             {
               value: item.spatialBasis,
               td: <IgtBasisBadge>{item.spatialBasis}</IgtBasisBadge>,
-              align: "start" as const,
-            },
-            {
-              value: item.status,
-              td: <OrderStatusBadge>{item.status}</OrderStatusBadge>,
               align: "start" as const,
             },
             {
