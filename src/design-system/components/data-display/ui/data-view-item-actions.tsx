@@ -157,12 +157,12 @@ function resolveTriggerElement<T>(
   return null;
 }
 
-export function DataViewSpreadActions<
+export const DataViewSpreadActions = <
   T extends Record<string, unknown> = Record<string, unknown>,
 >(props: {
   item: FormattedListItem<T>;
   itemActions?: DataViewItemActionsGenerator<T>[];
-}) {
+}) => {
   const { item, itemActions = [] } = props;
 
   const declarativeActions = itemActions.filter(isDeclarativeAction);
@@ -303,14 +303,14 @@ export function DataViewSpreadActions<
       })}
     </HStack>
   );
-}
+};
 
-export function DataViewStickyActions<
+export const DataViewStickyActions = <
   T extends Record<string, unknown> = Record<string, unknown>,
 >(props: {
   item: FormattedListItem<T>;
   itemActions?: DataViewItemActionsGenerator<T>[];
-}) {
+}) => {
   const { item, itemActions = [] } = props;
 
   const declarativeActions = itemActions.filter(isDeclarativeAction);
@@ -449,11 +449,13 @@ export function DataViewStickyActions<
       })}
     </HStack>
   );
-}
+};
 
-export function DataListItemActionsTrigger<
+export const DataListItemActionsTrigger = <
   T extends Record<string, unknown> = Record<string, unknown>,
->(props: DataViewItemActionsTriggerProps<T>) {
+>(
+  props: DataViewItemActionsTriggerProps<T>,
+) => {
   // Props
   const {
     children,
@@ -519,8 +521,7 @@ export function DataListItemActionsTrigger<
                   item,
                 );
                 const isDisabled =
-                  isLoading ||
-                  resolveBoolean(action.disabled, item.data, item);
+                  isLoading || resolveBoolean(action.disabled, item.data, item);
                 const resolvedLabel = resolveLabel(action.label, item.data);
                 const customTooltip = action.tooltip
                   ? resolveTooltip(action.tooltip, item.data, resolvedLabel)
@@ -624,7 +625,10 @@ export function DataListItemActionsTrigger<
                 );
 
                 const menuItemNode = customTooltip ? (
-                  <Tooltip content={customTooltip} positioning={{ placement: "right" }}>
+                  <Tooltip
+                    content={customTooltip}
+                    positioning={{ placement: "right" }}
+                  >
                     {rawMenuItemNode}
                   </Tooltip>
                 ) : (
@@ -648,4 +652,4 @@ export function DataListItemActionsTrigger<
       </Menu.Content>
     </Menu.Root>
   );
-}
+};

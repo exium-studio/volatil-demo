@@ -28,6 +28,7 @@ import { Url } from "@/design-system/components/typography/ui/url";
 import { useSearchParam } from "@/design-system/hooks/use-search-param";
 import { useThemeStore } from "@/design-system/stores/theme-store";
 import { useFlyToLayer } from "@/features/mitra/data-request/hooks/use-fly-to-layer";
+import { removeFeatureHighlightFromMap } from "@/features/mitra/data-request/utils/highlight-feature-on-map";
 import { MitraMyDataEditTrigger } from "@/features/mitra/my-data/components/mitra.my-data.edit-modal";
 import { MitraWorkspaceRenewalTrigger } from "@/features/mitra/my-data/components/mitra.my-data.renewal-modal";
 import { getIgtLayers } from "@/features/mitra/data-request/api/mitra.data-request-igt-layers.api";
@@ -209,6 +210,16 @@ export const MitraMyDataWorkspaceDetailPage = () => {
       }
     }
   }, [map, workspace, flyTo]);
+
+  // Effects — Cleanup workspace layers and highlights on unmount / route change
+  useEffect(() => {
+    return () => {
+      useMapLayerStore.getState().resetLayers();
+      if (map) {
+        removeFeatureHighlightFromMap(map);
+      }
+    };
+  }, [map]);
 
   // Derived Values
   const selectedAttributeLayer = useMemo(() => {
