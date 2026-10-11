@@ -178,7 +178,8 @@ const MitraCartContent = () => {
   }, [selectedOrderItems, isKawasanOnly, masterLayersData?.items]);
 
   const bidangQueryResult = useBidangAoiFeatures({
-    aoiPolygon: isOrderSelected && !isKawasanOnly ? selectedOrder?.aoiPolygon : null,
+    aoiPolygon:
+      isOrderSelected && !isKawasanOnly ? selectedOrder?.aoiPolygon : null,
     bidangLayers: bidangTargetLayers,
     enabled:
       isOrderSelected &&
