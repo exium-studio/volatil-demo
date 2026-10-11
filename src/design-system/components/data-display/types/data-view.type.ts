@@ -49,6 +49,10 @@ export type DataViewDeclarativeItemAction<T = Record<string, unknown>> = {
   disabled?:
     | boolean
     | ((item: T, formattedItem: FormattedListItem<T>) => boolean);
+  disabledMessage?:
+    | string
+    | ((item: T, formattedItem: FormattedListItem<T>) => string | undefined)
+    | null;
   loading?:
     | boolean
     | ((item: T, formattedItem: FormattedListItem<T>) => boolean);
@@ -137,6 +141,19 @@ export type DataViewDeclarativeBatchAction<T = Record<string, unknown>> = {
         selectedItems: FormattedListItem<T>[];
         clearSelectedItems: () => void;
       }) => DataViewModalBatchActionConfig<T> | null | undefined);
+};
+
+export type RenderActionButtonParams<T = Record<string, unknown>> = {
+  action: DataViewDeclarativeItemAction<T>;
+  item: FormattedListItem<T>;
+  resolvedLabel: string;
+  resolvedIcon: ActionIconType | undefined;
+  resolvedColorPalette: string | undefined;
+  resolvedHref: string | undefined;
+  iconNode: ReactNode;
+  isDisabled: boolean;
+  isLoading: boolean;
+  triggerElement: ReactElement<{ children?: ReactNode }> | null;
 };
 
 export type DataViewBatchActionsGenerator<T = Record<string, unknown>> =

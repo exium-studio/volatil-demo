@@ -9,9 +9,11 @@ import type {
   DataViewDeclarativeItemAction,
   DataViewItemActionsGenerator,
   DataViewItemActionsTriggerProps,
+  RenderActionButtonParams,
 } from "@/design-system/components/data-display/types/data-view.type";
 import type { FormattedListItem } from "@/design-system/components/data-display/types/data-view-table.type";
 import { AppIcon } from "@/design-system/components/icon/ui/app-icon";
+import { Box } from "@/design-system/components/layout/ui/box";
 import { HStack, VStack } from "@/design-system/components/layout/ui/flex-box";
 import { updateClickOrigin } from "@/design-system/components/overlay/stores/dialog-animation-store";
 import { Menu } from "@/design-system/components/overlay/ui/menu";
@@ -89,6 +91,22 @@ function resolveLabel<T>(
   return labelProp;
 }
 
+function resolveDisabledMessage<T>(
+  disabledMessageProp:
+    | string
+    | ((item: T, formattedItem: FormattedListItem<T>) => string | undefined)
+    | undefined
+    | null,
+  item: T,
+  formattedItem: FormattedListItem<T>,
+): string | undefined {
+  if (!disabledMessageProp) return undefined;
+  if (typeof disabledMessageProp === "function") {
+    return disabledMessageProp(item, formattedItem) ?? undefined;
+  }
+  return disabledMessageProp;
+}
+
 function resolveTooltip<T>(
   tooltipProp:
     | string
@@ -157,6 +175,113 @@ function resolveTriggerElement<T>(
   return null;
 }
 
+const renderActionButton = <T,>(
+  params: RenderActionButtonParams<T>,
+): ReactElement => {
+  const {
+    action,
+    item,
+    resolvedLabel,
+    resolvedIcon,
+    resolvedColorPalette,
+    resolvedHref,
+    iconNode,
+    isDisabled,
+    isLoading,
+    triggerElement,
+  } = params;
+
+  // 1. Link with Icon
+  if (resolvedHref && resolvedIcon) {
+    return (
+      <IconButton
+        asChild
+        variant={action.variant ?? "ghost"}
+        colorPalette={resolvedColorPalette}
+        disabled={isDisabled}
+        loading={isLoading}
+        aria-label={resolvedLabel}
+      >
+        <a
+          href={resolvedHref}
+          target={action.target ?? "_blank"}
+          rel={action.rel ?? "noopener noreferrer"}
+          onClick={(e) => {
+            if (isDisabled) {
+              e.preventDefault();
+              return;
+            }
+            void action.onClick?.(item.data, item);
+          }}
+        >
+          {iconNode}
+        </a>
+      </IconButton>
+    );
+  }
+
+  // 2. Link with Text Button
+  if (resolvedHref) {
+    return (
+      <Button
+        asChild
+        variant={action.variant ?? "outline"}
+        colorPalette={resolvedColorPalette}
+        disabled={isDisabled}
+        loading={isLoading}
+      >
+        <a
+          href={resolvedHref}
+          target={action.target ?? "_blank"}
+          rel={action.rel ?? "noopener noreferrer"}
+          onClick={(e) => {
+            if (isDisabled) {
+              e.preventDefault();
+              return;
+            }
+            void action.onClick?.(item.data, item);
+          }}
+        >
+          {resolvedLabel}
+        </a>
+      </Button>
+    );
+  }
+
+  // 3. Regular Icon Button
+  if (resolvedIcon) {
+    return (
+      <IconButton
+        variant={action.variant ?? "ghost"}
+        colorPalette={resolvedColorPalette}
+        disabled={isDisabled}
+        loading={isLoading}
+        aria-label={resolvedLabel}
+        onClick={
+          triggerElement ? undefined : () => executeItemAction(action, item)
+        }
+      >
+        {iconNode}
+      </IconButton>
+    );
+  }
+
+  // 4. Regular Text Button
+  return (
+    <Button
+      variant={action.variant ?? "outline"}
+      colorPalette={resolvedColorPalette}
+      disabled={isDisabled}
+      loading={isLoading}
+      onClick={
+        triggerElement ? undefined : () => executeItemAction(action, item)
+      }
+    >
+      {resolvedLabel}
+    </Button>
+  );
+};
+
 export const DataViewSpreadActions = <
   T extends Record<string, unknown> = Record<string, unknown>,
 >(props: {
@@ -189,6 +314,11 @@ export const DataViewSpreadActions = <
         const isLoading = resolveLoading(action.loading, item.data, item);
         const isDisabled =
           isLoading || resolveBoolean(action.disabled, item.data, item);
+        const disabledMessage = resolveDisabledMessage(
+          action.disabledMessage,
+          item.data,
+          item,
+        );
         const resolvedLabel = resolveLabel(action.label, item.data);
         const resolvedIcon = resolveIcon(action.icon, item.data);
         const resolvedColorPalette = resolveColorPalette(
@@ -199,91 +329,26 @@ export const DataViewSpreadActions = <
         const iconNode = renderIcon(resolvedIcon);
         const triggerElement = resolveTriggerElement(action.modal, item);
 
-        const resolvedTooltip = resolveTooltip(
+        const baseTooltip = resolveTooltip(
           action.tooltip,
           item.data,
           resolvedLabel,
         );
+        const resolvedTooltip =
+          isDisabled && disabledMessage ? disabledMessage : baseTooltip;
 
-        const rawButton = resolvedHref ? (
-          resolvedIcon ? (
-            <IconButton
-              asChild
-              variant={action.variant ?? "ghost"}
-              colorPalette={resolvedColorPalette}
-              disabled={isDisabled}
-              loading={isLoading}
-              aria-label={resolvedLabel}
-              title={resolvedLabel}
-            >
-              <a
-                href={resolvedHref}
-                target={action.target ?? "_blank"}
-                rel={action.rel ?? "noopener noreferrer"}
-                onClick={(e) => {
-                  if (isDisabled) {
-                    e.preventDefault();
-                    return;
-                  }
-                  void action.onClick?.(item.data, item);
-                }}
-              >
-                {iconNode}
-              </a>
-            </IconButton>
-          ) : (
-            <Button
-              asChild
-              variant={action.variant ?? "outline"}
-              colorPalette={resolvedColorPalette}
-              disabled={isDisabled}
-              loading={isLoading}
-              title={resolvedLabel}
-            >
-              <a
-                href={resolvedHref}
-                target={action.target ?? "_blank"}
-                rel={action.rel ?? "noopener noreferrer"}
-                onClick={(e) => {
-                  if (isDisabled) {
-                    e.preventDefault();
-                    return;
-                  }
-                  void action.onClick?.(item.data, item);
-                }}
-              >
-                {resolvedLabel}
-              </a>
-            </Button>
-          )
-        ) : resolvedIcon ? (
-          <IconButton
-            variant={action.variant ?? "ghost"}
-            colorPalette={resolvedColorPalette}
-            disabled={isDisabled}
-            loading={isLoading}
-            aria-label={resolvedLabel}
-            title={resolvedLabel}
-            onClick={
-              triggerElement ? undefined : () => executeItemAction(action, item)
-            }
-          >
-            {iconNode}
-          </IconButton>
-        ) : (
-          <Button
-            variant={action.variant ?? "outline"}
-            colorPalette={resolvedColorPalette}
-            disabled={isDisabled}
-            loading={isLoading}
-            title={resolvedLabel}
-            onClick={
-              triggerElement ? undefined : () => executeItemAction(action, item)
-            }
-          >
-            {resolvedLabel}
-          </Button>
-        );
+        const rawButton = renderActionButton({
+          action,
+          item,
+          resolvedLabel,
+          resolvedIcon,
+          resolvedColorPalette,
+          resolvedHref,
+          iconNode,
+          isDisabled,
+          isLoading,
+          triggerElement,
+        });
 
         const buttonWithTooltip = resolvedTooltip ? (
           <Tooltip content={resolvedTooltip}>{rawButton}</Tooltip>
@@ -336,12 +401,19 @@ export const DataViewStickyActions = <
         const isLoading = resolveLoading(action.loading, item.data, item);
         const isDisabled =
           isLoading || resolveBoolean(action.disabled, item.data, item);
+        const disabledMessage = resolveDisabledMessage(
+          action.disabledMessage,
+          item.data,
+          item,
+        );
         const resolvedLabel = resolveLabel(action.label, item.data);
-        const resolvedTooltip = resolveTooltip(
+        const baseTooltip = resolveTooltip(
           action.tooltip,
           item.data,
           resolvedLabel,
         );
+        const resolvedTooltip =
+          isDisabled && disabledMessage ? disabledMessage : baseTooltip;
         const resolvedIcon = resolveIcon(action.icon, item.data);
         const resolvedColorPalette = resolveColorPalette(
           action.colorPalette,
@@ -351,85 +423,18 @@ export const DataViewStickyActions = <
         const iconNode = renderIcon(resolvedIcon);
         const triggerElement = resolveTriggerElement(action.modal, item);
 
-        const rawButton = resolvedHref ? (
-          resolvedIcon ? (
-            <IconButton
-              asChild
-              variant={action.variant ?? "ghost"}
-              colorPalette={resolvedColorPalette}
-              disabled={isDisabled}
-              loading={isLoading}
-              aria-label={resolvedLabel}
-              title={resolvedLabel}
-            >
-              <a
-                href={resolvedHref}
-                target={action.target ?? "_blank"}
-                rel={action.rel ?? "noopener noreferrer"}
-                onClick={(e) => {
-                  if (isDisabled) {
-                    e.preventDefault();
-                    return;
-                  }
-                  void action.onClick?.(item.data, item);
-                }}
-              >
-                {iconNode}
-              </a>
-            </IconButton>
-          ) : (
-            <Button
-              asChild
-              variant={action.variant ?? "outline"}
-              colorPalette={resolvedColorPalette}
-              disabled={isDisabled}
-              loading={isLoading}
-              title={resolvedLabel}
-            >
-              <a
-                href={resolvedHref}
-                target={action.target ?? "_blank"}
-                rel={action.rel ?? "noopener noreferrer"}
-                onClick={(e) => {
-                  if (isDisabled) {
-                    e.preventDefault();
-                    return;
-                  }
-                  void action.onClick?.(item.data, item);
-                }}
-              >
-                {resolvedLabel}
-              </a>
-            </Button>
-          )
-        ) : resolvedIcon ? (
-          <IconButton
-            variant={action.variant ?? "ghost"}
-            colorPalette={resolvedColorPalette}
-            disabled={isDisabled}
-            loading={isLoading}
-            aria-label={resolvedLabel}
-            title={resolvedLabel}
-            onClick={
-              triggerElement ? undefined : () => executeItemAction(action, item)
-            }
-          >
-            {iconNode}
-          </IconButton>
-        ) : (
-          <Button
-            variant={action.variant ?? "outline"}
-            colorPalette={resolvedColorPalette}
-            disabled={isDisabled}
-            loading={isLoading}
-            title={resolvedLabel}
-            onClick={
-              triggerElement ? undefined : () => executeItemAction(action, item)
-            }
-          >
-            {resolvedLabel}
-          </Button>
-        );
+        const rawButton = renderActionButton({
+          action,
+          item,
+          resolvedLabel,
+          resolvedIcon,
+          resolvedColorPalette,
+          resolvedHref,
+          iconNode,
+          isDisabled,
+          isLoading,
+          triggerElement,
+        });
 
         const buttonWithTooltip = resolvedTooltip ? (
           <Tooltip content={resolvedTooltip}>{rawButton}</Tooltip>
@@ -522,10 +527,17 @@ export const DataListItemActionsTrigger = <
                 );
                 const isDisabled =
                   isLoading || resolveBoolean(action.disabled, item.data, item);
+                const disabledMessage = resolveDisabledMessage(
+                  action.disabledMessage,
+                  item.data,
+                  item,
+                );
                 const resolvedLabel = resolveLabel(action.label, item.data);
-                const customTooltip = action.tooltip
+                const baseTooltip = action.tooltip
                   ? resolveTooltip(action.tooltip, item.data, resolvedLabel)
-                  : undefined;
+                  : resolvedLabel;
+                const menuTooltipContent =
+                  isDisabled && disabledMessage ? disabledMessage : baseTooltip;
                 const resolvedIcon = resolveIcon(action.icon, item.data);
                 const resolvedColorPalette = resolveColorPalette(
                   action.colorPalette,
@@ -548,92 +560,105 @@ export const DataListItemActionsTrigger = <
                   </>
                 );
 
-                const rawMenuItemNode = resolvedHref ? (
-                  <Menu.Item
-                    asChild
-                    value={key}
-                    disabled={isDisabled}
-                    color={
-                      resolvedColorPalette
-                        ? `${resolvedColorPalette}.fg`
-                        : undefined
-                    }
-                  >
-                    <a
-                      href={resolvedHref}
-                      target={action.target ?? "_blank"}
-                      rel={action.rel ?? "noopener noreferrer"}
-                      onClick={(e) => {
-                        if (isDisabled) {
-                          e.preventDefault();
-                          return;
+                let rawMenuItemNode: ReactElement;
+
+                if (resolvedHref) {
+                  rawMenuItemNode = (
+                    <Menu.Item
+                      asChild
+                      value={key}
+                      disabled={isDisabled}
+                      color={
+                        resolvedColorPalette
+                          ? `${resolvedColorPalette}.fg`
+                          : undefined
+                      }
+                    >
+                      <a
+                        href={resolvedHref}
+                        target={action.target ?? "_blank"}
+                        rel={action.rel ?? "noopener noreferrer"}
+                        onClick={(e) => {
+                          if (isDisabled) {
+                            e.preventDefault();
+                            return;
+                          }
+                          void action.onClick?.(item.data, item);
+                        }}
+                      >
+                        {menuItemContent}
+                      </a>
+                    </Menu.Item>
+                  );
+                } else {
+                  rawMenuItemNode = (
+                    <Menu.Item
+                      value={key}
+                      disabled={isDisabled}
+                      color={
+                        resolvedColorPalette
+                          ? `${resolvedColorPalette}.fg`
+                          : undefined
+                      }
+                      onPointerDown={(e) => {
+                        const triggerProps = triggerElement?.props as
+                          | { modalKey?: string }
+                          | undefined;
+                        if (triggerProps?.modalKey) {
+                          updateClickOrigin(triggerProps.modalKey, {
+                            x: e.clientX,
+                            y: e.clientY,
+                          });
                         }
-                        void action.onClick?.(item.data, item);
                       }}
+                      onClick={
+                        triggerElement
+                          ? () => {
+                              if (isDisabled) return;
+                              const triggerProps = triggerElement.props as {
+                                modalKey?: string;
+                              };
+                              const targetKey =
+                                triggerProps?.modalKey ??
+                                (action.key
+                                  ? `${action.key}-${item.id}`
+                                  : undefined);
+                              if (targetKey) {
+                                navigate({
+                                  to: ".",
+                                  resetScroll: false,
+                                  search: (old: Record<string, unknown>) => ({
+                                    ...old,
+                                    activeModalKey: targetKey,
+                                  }),
+                                });
+                              }
+                            }
+                          : () => executeItemAction(action, item)
+                      }
                     >
                       {menuItemContent}
-                    </a>
-                  </Menu.Item>
-                ) : (
-                  <Menu.Item
-                    value={key}
-                    disabled={isDisabled}
-                    color={
-                      resolvedColorPalette
-                        ? `${resolvedColorPalette}.fg`
-                        : undefined
-                    }
-                    onPointerDown={(e) => {
-                      const triggerProps = triggerElement?.props as
-                        | { modalKey?: string }
-                        | undefined;
-                      if (triggerProps?.modalKey) {
-                        updateClickOrigin(triggerProps.modalKey, {
-                          x: e.clientX,
-                          y: e.clientY,
-                        });
-                      }
-                    }}
-                    onClick={
-                      triggerElement
-                        ? () => {
-                            if (isDisabled) return;
-                            const triggerProps = triggerElement.props as {
-                              modalKey?: string;
-                            };
-                            const targetKey =
-                              triggerProps?.modalKey ??
-                              (action.key
-                                ? `${action.key}-${item.id}`
-                                : undefined);
-                            if (targetKey) {
-                              navigate({
-                                to: ".",
-                                resetScroll: false,
-                                search: (old: Record<string, unknown>) => ({
-                                  ...old,
-                                  activeModalKey: targetKey,
-                                }),
-                              });
-                            }
-                          }
-                        : () => executeItemAction(action, item)
-                    }
-                  >
-                    {menuItemContent}
-                  </Menu.Item>
-                );
+                    </Menu.Item>
+                  );
+                }
 
-                const menuItemNode = customTooltip ? (
-                  <Tooltip
-                    content={customTooltip}
-                    positioning={{ placement: "right" }}
-                  >
-                    {rawMenuItemNode}
-                  </Tooltip>
-                ) : (
-                  rawMenuItemNode
-                );
+                let menuItemNode = rawMenuItemNode;
+                if (menuTooltipContent) {
+                  menuItemNode = (
+                    <Tooltip
+                      content={menuTooltipContent}
+                      positioning={{ placement: "right" }}
+                    >
+                      <Box
+                        w={"full"}
+                        cursor={isDisabled ? "not-allowed" : undefined}
+                        pointerEvents={"auto"}
+                      >
+                        {rawMenuItemNode}
+                      </Box>
+                    </Tooltip>
+                  );
+                }
 
                 if (shouldMountModalInMenu && triggerElement) {
                   return cloneElement(triggerElement, { key }, menuItemNode);
