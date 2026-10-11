@@ -8,6 +8,7 @@ import type {
 } from "@/features/mitra/transaction-history/types/transaction-history.type";
 import { DUMMY_TRANSACTION_HISTORY } from "@/shared/constants/dummy-data/dummy-transaction-history";
 import { createPaginationMeta } from "@/shared/types/common-response.type";
+import type { OrderStatus } from "@/shared/types/status.type";
 import { isDummyDataEnabled } from "@/shared/utils/env/env.utils";
 
 const matchesSearch = (item: TransactionRecord, search: string) =>
@@ -26,7 +27,14 @@ export const getPaginatedTransactionHistory = (
 ): TransactionHistoryResponse => {
   const search = params.search?.trim().toLowerCase();
   const filteredItems = items.filter((item) => {
-    const matchesStatus = !params.status || item.transactionStatus === params.status;
+    const effectiveOrderStatus =
+      item.transactionStatus === "expired" &&
+      (!item.orderStatus || item.orderStatus === "pending_payment")
+        ? "expired"
+        : (item.orderStatus ?? (item.transactionStatus as unknown as OrderStatus));
+
+    const matchesStatus =
+      !params.status || effectiveOrderStatus === params.status;
     const matchesQuery = !search || matchesSearch(item, search);
     return matchesStatus && matchesQuery;
   });

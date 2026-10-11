@@ -54,10 +54,11 @@ export type TransactionHistoryQueryParams = {
   page: number;
   pageSize: number;
   search?: string;
-  status?: TransactionStatus;
+  status?: OrderStatus;
 };
 
 export type TransactionHistoryResponse = {
   items: TransactionRecord[];
   pagination: PaginationMeta;
 };
+
