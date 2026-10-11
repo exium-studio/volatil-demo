@@ -465,7 +465,7 @@ const OrderSummary = (props: OrderSummaryProps) => {
                   {"AOI polygon"}
                 </P>
 
-                <HStack align={"center"} justify={"space-between"} w={"full"}>
+                <HStack align={"center"} gap={"xs"} w={"full"}>
                   <Switch
                     checked={isAoiVisible}
                     onCheckedChange={({ checked }) => {
@@ -514,6 +514,10 @@ const OrderSummary = (props: OrderSummaryProps) => {
               label={"Salin URL Workspace Volatil"}
               isExternalLink={false}
               maxW={"full"}
+              p={"2xs"}
+              pl={"sm"}
+              bg={"bg.subtle"}
+              rounded={theme.radii.component}
             />
           </VStack>
         </VStack>
