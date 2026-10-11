@@ -22,8 +22,10 @@ export const DUMMY_TRANSACTION_HISTORY: TransactionRecord[] = [
     paidAt: "2026-08-25T08:45:12Z",
     expiredAt: "2026-08-27T08:30:00Z",
     billingExpiredAt: "2026-08-27T08:30:00Z",
-    invoiceUrl: "https://volatil-be.exium.web.id/invoices/INV-2026-0825-001.pdf",
-    tteInvoiceUrl: "https://volatil-be.exium.web.id/invoices/TTE-INV-2026-0825-001.pdf",
+    invoiceUrl:
+      "https://volatil-be.exium.web.id/invoices/INV-2026-0825-001.pdf",
+    tteInvoiceUrl:
+      "https://volatil-be.exium.web.id/invoices/TTE-INV-2026-0825-001.pdf",
     tte: true,
     items: [
       {
@@ -71,7 +73,8 @@ export const DUMMY_TRANSACTION_HISTORY: TransactionRecord[] = [
     createdAt: "2026-08-24T14:15:00Z",
     expiredAt: "2026-08-26T14:15:00Z",
     billingExpiredAt: "2026-08-26T14:15:00Z",
-    invoiceUrl: "https://volatil-be.exium.web.id/invoices/INV-2026-0824-002.pdf",
+    invoiceUrl:
+      "https://volatil-be.exium.web.id/invoices/INV-2026-0824-002.pdf",
     tteInvoiceUrl: null,
     tte: false,
     items: [

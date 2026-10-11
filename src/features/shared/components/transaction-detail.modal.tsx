@@ -36,11 +36,7 @@ import {
 } from "@/shared/utils/formatter/date.formatter";
 import { formatNumber } from "@/shared/utils/formatter/number.formatter";
 import { useNavigate } from "@tanstack/react-router";
-import {
-  CreditCardIcon,
-  EyeIcon,
-  Layers2Icon,
-} from "lucide-react";
+import { CreditCardIcon, EyeIcon, Layers2Icon } from "lucide-react";
 import { useMemo } from "react";
 
 export const TransactionDetailTrigger = (
@@ -230,13 +226,7 @@ export const TransactionDetailModalContent = (
         isMuted: !isReady,
       },
     ];
-  }, [
-    effectiveOrderStatus,
-    isExpired,
-    isPaid,
-    preferredTimezone,
-    transaction,
-  ]);
+  }, [effectiveOrderStatus, isExpired, isPaid, preferredTimezone, transaction]);
 
   const orderItemHeaders: FormattedTableHeader[] = useMemo(
     () => [

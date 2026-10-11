@@ -126,11 +126,7 @@ export const InternalTransactionStatisticDataView = () => {
           item.featuresCount ??
           item.items
             .filter((i) => (i.spatialBasis as string) === "bidang")
-            .reduce(
-              (sum, it) =>
-                sum + (it.snapshotFeaturesCount ?? 0),
-              0,
-            );
+            .reduce((sum, it) => sum + (it.snapshotFeaturesCount ?? 0), 0);
 
         const effectiveKawasanHa =
           item.kawasanCoverageHa ??
@@ -210,6 +206,7 @@ export const InternalTransactionStatisticDataView = () => {
                   <Countdown
                     finishedAt={targetExpiry}
                     warningThresholdHours={1}
+                    dangerThresholdMinutes={15}
                     finishColor={"fg.subtle"}
                   />
                 ) : (

@@ -182,6 +182,7 @@ export const TransactionHistoryDataView = () => {
                   <Countdown
                     finishedAt={targetExpiry}
                     warningThresholdHours={1}
+                    dangerThresholdMinutes={15}
                     finishColor={"fg.subtle"}
                   />
                 ) : (

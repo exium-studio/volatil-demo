@@ -64,4 +64,3 @@ export type TransactionHistoryResponse = {
   items: TransactionRecord[];
   pagination: PaginationMeta;
 };
-
