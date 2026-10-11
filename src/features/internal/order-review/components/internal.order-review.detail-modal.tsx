@@ -24,6 +24,7 @@ import {
   getPreferredUserTimezone,
 } from "@/shared/utils/formatter/date.formatter";
 import { formatCurrency } from "@/shared/utils/formatter/number.formatter";
+import { useNavigate } from "@tanstack/react-router";
 import { CheckCircleIcon, LoaderIcon, MapPlusIcon } from "lucide-react";
 import { useMemo } from "react";
 
@@ -58,6 +59,8 @@ const InternalOrderReviewDetailModalContent = (
   const { order, close } = props;
   const preferredTimezone = useMemo(() => getPreferredUserTimezone(), []);
   const provisionOrderMutation = useProvisionOrder();
+
+  const navigate = useNavigate();
 
   const isPaid = order.status === "paid";
   const isProcessing = order.status === "processing";
@@ -255,7 +258,15 @@ const InternalOrderReviewDetailModalContent = (
             <InternalOrderReviewApproveTrigger
               order={order}
               modalKey={`approve-from-detail-${order.orderId}`}
-              onSuccessRedirect={close}
+              onSuccessRedirect={() => {
+                void navigate({
+                  to: "/internal/order-review",
+                  search: (old: Record<string, unknown>) => {
+                    const { activeModalKey: _, ...rest } = old;
+                    return rest;
+                  },
+                });
+              }}
             >
               <Button colorPalette={"green"}>
                 <AppIcon icon={CheckCircleIcon} />

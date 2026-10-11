@@ -112,11 +112,16 @@ const InternalOrderReviewApproveModalContent = (
       },
       {
         onSuccess: () => {
-          close();
           if (onSuccessRedirect) {
             onSuccessRedirect();
           } else {
-            void navigate({ to: "/internal/order-review" });
+            void navigate({
+              to: "/internal/order-review",
+              search: (old: Record<string, unknown>) => {
+                const { activeModalKey: _, ...rest } = old;
+                return rest;
+              },
+            });
           }
         },
       },
@@ -204,7 +209,7 @@ const InternalOrderReviewApproveModalContent = (
                     value={field.value}
                     onChange={field.onChange}
                     onBlur={field.onBlur}
-                    minH={"90px"}
+                    minH={"120px"}
                   />
                 </Field>
               )}

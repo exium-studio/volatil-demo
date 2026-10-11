@@ -327,7 +327,13 @@ export const InternalOrderReviewDetailPage = () => {
                     order={order}
                     modalKey={`approve-detail-${order.orderId}`}
                     onSuccessRedirect={() => {
-                      void navigate({ to: "/internal/order-review" });
+                      void navigate({
+                        to: "/internal/order-review",
+                        search: (old: Record<string, unknown>) => {
+                          const { activeModalKey: _, ...rest } = old;
+                          return rest;
+                        },
+                      });
                     }}
                   >
                     <Button primary={true} colorPalette={"green"}>
