@@ -50,6 +50,9 @@ export type InternalTransactionItem = {
   selectionType: SelectionType;
   totalAmount: number;
   coverageHa?: number;
+  kawasanCoverageHa?: number | null;
+  featuresCount?: number | null;
+  bidangCoverageCount?: number | null;
   mitra: InternalTransactionMitra;
   createdAt: string;
   paidAt?: string;

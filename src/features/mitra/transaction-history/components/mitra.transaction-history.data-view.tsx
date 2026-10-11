@@ -42,6 +42,7 @@ import {
   formatUtcDateTime,
   getPreferredUserTimezone,
 } from "@/shared/utils/formatter/date.formatter";
+import { formatNumber } from "@/shared/utils/formatter/number.formatter";
 import { useNavigate } from "@tanstack/react-router";
 import {
   CreditCardIcon,
@@ -99,6 +100,8 @@ export const TransactionHistoryDataView = () => {
       { th: "IGT Dibeli", sortable: false, align: "start" },
       { th: "Jumlah Layer", sortable: false, align: "start" },
       { th: "Metode Pengajuan", sortable: false, align: "start" },
+      { th: "Cakupan Bidang", sortable: true, align: "start" },
+      { th: "Cakupan Kawasan", sortable: true, align: "start" },
       { th: "Total Nominal", sortable: true, align: "end" },
     ];
 
@@ -114,6 +117,20 @@ export const TransactionHistoryDataView = () => {
           (!item.orderStatus || item.orderStatus === "pending_payment")
             ? "expired"
             : item.orderStatus;
+
+        const effectiveBidangCount =
+          item.bidangCoverageCount ??
+          item.featuresCount ??
+          item.items
+            .filter((i) => (i.spatialBasis as string) === "bidang")
+            .reduce((sum, it) => sum + (it.featuresCount ?? 0), 0);
+
+        const effectiveKawasanHa =
+          item.kawasanCoverageHa ??
+          item.coverageHa ??
+          item.items
+            .filter((i) => (i.spatialBasis as string) === "kawasan")
+            .reduce((sum, it) => sum + (it.areaHa ?? 0), 0);
 
         return {
           id: item.id,
@@ -194,7 +211,8 @@ export const TransactionHistoryDataView = () => {
                 <OrderedIgtLayers
                   items={item.items}
                   orderNumber={item.orderNumber || item.transactionNumber}
-                  coverageHa={item.coverageHa}
+                  coverageHa={effectiveKawasanHa ?? undefined}
+                  bidangCoverageCount={effectiveBidangCount ?? undefined}
                 />
               ),
               align: "start" as const,
@@ -210,6 +228,42 @@ export const TransactionHistoryDataView = () => {
                 <SelectionTypeBadge size={"xs"}>
                   {item.selectionType}
                 </SelectionTypeBadge>
+              ),
+              align: "start" as const,
+            },
+            {
+              value: effectiveBidangCount,
+              td: (
+                <P whiteSpace={"nowrap"}>
+                  {effectiveBidangCount > 0 ? (
+                    <>
+                      <TNum>{formatNumber(effectiveBidangCount)}</TNum>{" "}
+                      {"bidang"}
+                    </>
+                  ) : (
+                    "-"
+                  )}
+                </P>
+              ),
+              align: "start" as const,
+            },
+            {
+              value: effectiveKawasanHa,
+              td: (
+                <P whiteSpace={"nowrap"}>
+                  {effectiveKawasanHa > 0 ? (
+                    <>
+                      <TNum>
+                        {formatNumber(effectiveKawasanHa, {
+                          maximumFractionDigits: 2,
+                        })}
+                      </TNum>{" "}
+                      {"ha"}
+                    </>
+                  ) : (
+                    "-"
+                  )}
+                </P>
               ),
               align: "start" as const,
             },

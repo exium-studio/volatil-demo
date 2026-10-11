@@ -224,7 +224,14 @@ const MitraHomeLastTransactionDataView = (props: {
                 <OrderedIgtLayers
                   items={item.items}
                   orderNumber={item.orderNumber || item.transactionNumber}
-                  coverageHa={item.coverageHa}
+                  coverageHa={
+                    item.kawasanCoverageHa ?? item.coverageHa ?? undefined
+                  }
+                  bidangCoverageCount={
+                    item.bidangCoverageCount ??
+                    item.featuresCount ??
+                    undefined
+                  }
                 />
               ),
               align: "start" as const,

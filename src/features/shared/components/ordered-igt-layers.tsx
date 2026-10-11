@@ -24,6 +24,7 @@ export const OrderedIgtLayers = (props: OrderedIgtLayersPreviewCellProps) => {
     items = [],
     orderNumber,
     coverageHa,
+    bidangCoverageCount,
     maxVisible = 2,
     modalKey: customModalKey,
     ...restProps
@@ -101,6 +102,7 @@ export const OrderedIgtLayers = (props: OrderedIgtLayersPreviewCellProps) => {
           items={items}
           orderNumber={orderNumber}
           coverageHa={coverageHa}
+          bidangCoverageCount={bidangCoverageCount}
           close={close}
         />
       </Modal.Root>
@@ -112,17 +114,21 @@ export const OrderedIgtLayersPreviewModalContent = (
   props: OrderedIgtLayersPreviewModalContentProps,
 ) => {
   // Props
-  const { items, orderNumber, coverageHa } = props;
+  const { items, orderNumber, coverageHa, bidangCoverageCount } = props;
 
   // Derived Values
   const totalCount = items.length;
-  const totalBidang = useMemo(
+  const computedTotalBidang = useMemo(
     () =>
       items
         .filter((it) => (it.igtBasis ?? it.spatialBasis) === "bidang")
         .reduce((sum, it) => sum + (it.featuresCount ?? 0), 0),
     [items],
   );
+  const effectiveTotalBidang =
+    bidangCoverageCount !== undefined && bidangCoverageCount !== null
+      ? bidangCoverageCount
+      : computedTotalBidang;
 
   const hasTotalPrice = useMemo(
     () => items.some((it) => (it.subtotalPrice ?? 0) > 0),
@@ -159,10 +165,10 @@ export const OrderedIgtLayersPreviewModalContent = (
               gap={"xs"}
               color={"fg.muted"}
             >
-              {totalBidang > 0 && (
+              {effectiveTotalBidang > 0 && (
                 <P
                   fontSize={"sm"}
-                >{`${formatNumber(totalBidang)} Total Bidang`}</P>
+                >{`${formatNumber(effectiveTotalBidang)} Total Bidang`}</P>
               )}
 
               <P color={"fg.subtle"}>{"•"}</P>

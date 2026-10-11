@@ -81,6 +81,9 @@ export type InternalOrderItem = {
   expiredAt?: string;
   totalPrice: number;
   coverageHa?: number;
+  kawasanCoverageHa?: number | null;
+  featuresCount?: number | null;
+  bidangCoverageCount?: number | null;
   items: CartOrderItem[];
   aoiPolygon?: GeoJSON.MultiPolygon | GeoJSON.Polygon | null;
   invoiceUrl?: string | null;

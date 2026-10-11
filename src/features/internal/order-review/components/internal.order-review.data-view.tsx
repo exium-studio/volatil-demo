@@ -156,7 +156,14 @@ export const InternalOrderReviewDataView = () => {
               <OrderedIgtLayers
                 items={order.items}
                 orderNumber={order.orderNumber || order.orderId}
-                coverageHa={order.coverageHa}
+                coverageHa={
+                  order.kawasanCoverageHa ?? order.coverageHa ?? undefined
+                }
+                bidangCoverageCount={
+                  order.bidangCoverageCount ??
+                  order.featuresCount ??
+                  undefined
+                }
               />
             ),
             align: "start" as const,

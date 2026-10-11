@@ -248,6 +248,51 @@ export const TransactionDetailModalContent = (
     [],
   );
 
+  const totalBidang = useMemo(() => {
+    if (
+      transaction.bidangCoverageCount !== undefined &&
+      transaction.bidangCoverageCount !== null
+    ) {
+      return transaction.bidangCoverageCount;
+    }
+    if (
+      transaction.featuresCount !== undefined &&
+      transaction.featuresCount !== null
+    ) {
+      return transaction.featuresCount;
+    }
+    if (!transaction.items) return 0;
+    return transaction.items
+      .filter((i) => (i.spatialBasis ?? i.igtBasis) === "bidang")
+      .reduce(
+        (sum, item) =>
+          sum + (item.featuresCount ?? item.snapshotFeaturesCount ?? 0),
+        0,
+      );
+  }, [transaction]);
+
+  const totalKawasanHa = useMemo(() => {
+    if (
+      transaction.kawasanCoverageHa !== undefined &&
+      transaction.kawasanCoverageHa !== null
+    ) {
+      return transaction.kawasanCoverageHa;
+    }
+    if (
+      transaction.coverageHa !== undefined &&
+      transaction.coverageHa !== null
+    ) {
+      return transaction.coverageHa;
+    }
+    if (!transaction.items) return 0;
+    return transaction.items
+      .filter((i) => (i.spatialBasis ?? i.igtBasis) === "kawasan")
+      .reduce(
+        (sum, item) => sum + (item.areaHa ?? item.snapshotAreaHa ?? 0),
+        0,
+      );
+  }, [transaction]);
+
   const orderItemsData = useMemo(() => {
     if (!transaction?.items) return [];
 
@@ -480,6 +525,41 @@ export const TransactionDetailModalContent = (
                   <SelectionTypeBadge>
                     {transaction.selectionType}
                   </SelectionTypeBadge>
+                </VStack>
+
+                <VStack align={"start"} gap={"2xs"}>
+                  <P fontSize={"sm"} color={"fg.subtle"}>
+                    {"Cakupan Bidang"}
+                  </P>
+                  <P fontSize={"md"} fontWeight={"medium"}>
+                    {totalBidang > 0 ? (
+                      <>
+                        <TNum>{formatNumber(totalBidang)}</TNum> {"bidang"}
+                      </>
+                    ) : (
+                      "-"
+                    )}
+                  </P>
+                </VStack>
+
+                <VStack align={"start"} gap={"2xs"}>
+                  <P fontSize={"sm"} color={"fg.subtle"}>
+                    {"Cakupan Kawasan"}
+                  </P>
+                  <P fontSize={"md"} fontWeight={"medium"}>
+                    {totalKawasanHa > 0 ? (
+                      <>
+                        <TNum>
+                          {formatNumber(totalKawasanHa, {
+                            maximumFractionDigits: 2,
+                          })}
+                        </TNum>{" "}
+                        {"ha"}
+                      </>
+                    ) : (
+                      "-"
+                    )}
+                  </P>
                 </VStack>
 
                 <VStack align={"start"} gap={"2xs"}>

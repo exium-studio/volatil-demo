@@ -49,6 +49,7 @@ import {
   formatAdaptiveDateTime,
   getPreferredUserTimezone,
 } from "@/shared/utils/formatter/date.formatter";
+import { formatNumber } from "@/shared/utils/formatter/number.formatter";
 import {
   EyeIcon,
   FileCheckIcon,
@@ -102,6 +103,8 @@ export const InternalTransactionStatisticDataView = () => {
       { th: "IGT Dibeli", sortable: false, align: "start" },
       { th: "Jumlah Layer", sortable: false, align: "start" },
       { th: "Metode Pengajuan", sortable: false, align: "start" },
+      { th: "Cakupan Bidang", sortable: true, align: "start" },
+      { th: "Cakupan Kawasan", sortable: true, align: "start" },
       { th: "Total Nominal", sortable: true, align: "end" },
     ];
 
@@ -117,6 +120,24 @@ export const InternalTransactionStatisticDataView = () => {
           (!item.orderStatus || item.orderStatus === "pending_payment")
             ? "expired"
             : item.orderStatus;
+
+        const effectiveBidangCount =
+          item.bidangCoverageCount ??
+          item.featuresCount ??
+          item.items
+            .filter((i) => (i.spatialBasis as string) === "bidang")
+            .reduce(
+              (sum, it) =>
+                sum + (it.snapshotFeaturesCount ?? 0),
+              0,
+            );
+
+        const effectiveKawasanHa =
+          item.kawasanCoverageHa ??
+          item.coverageHa ??
+          item.items
+            .filter((i) => (i.spatialBasis as string) === "kawasan")
+            .reduce((sum, it) => sum + (it.snapshotAreaHa ?? 0), 0);
 
         return {
           id: item.id,
@@ -220,7 +241,8 @@ export const InternalTransactionStatisticDataView = () => {
                 <OrderedIgtLayers
                   items={item.items}
                   orderNumber={item.orderNumber || item.transactionNumber}
-                  coverageHa={item.coverageHa}
+                  coverageHa={effectiveKawasanHa ?? undefined}
+                  bidangCoverageCount={effectiveBidangCount ?? undefined}
                 />
               ),
               align: "start" as const,
@@ -240,6 +262,42 @@ export const InternalTransactionStatisticDataView = () => {
                 <SelectionTypeBadge size={"xs"}>
                   {item.selectionType}
                 </SelectionTypeBadge>
+              ),
+              align: "start" as const,
+            },
+            {
+              value: effectiveBidangCount,
+              td: (
+                <P fontSize={"sm"} whiteSpace={"nowrap"}>
+                  {effectiveBidangCount > 0 ? (
+                    <>
+                      <TNum>{formatNumber(effectiveBidangCount)}</TNum>{" "}
+                      {"bidang"}
+                    </>
+                  ) : (
+                    "-"
+                  )}
+                </P>
+              ),
+              align: "start" as const,
+            },
+            {
+              value: effectiveKawasanHa,
+              td: (
+                <P fontSize={"sm"} whiteSpace={"nowrap"}>
+                  {effectiveKawasanHa > 0 ? (
+                    <>
+                      <TNum>
+                        {formatNumber(effectiveKawasanHa, {
+                          maximumFractionDigits: 2,
+                        })}
+                      </TNum>{" "}
+                      {"ha"}
+                    </>
+                  ) : (
+                    "-"
+                  )}
+                </P>
               ),
               align: "start" as const,
             },

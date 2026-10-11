@@ -45,6 +45,10 @@ export type SharedTransactionRecord = {
   orderStatus?: OrderStatus;
   selectionType: SelectionType;
   totalAmount: number;
+  coverageHa?: number;
+  kawasanCoverageHa?: number | null;
+  featuresCount?: number | null;
+  bidangCoverageCount?: number | null;
   createdAt: string;
   paidAt?: string;
   expiredAt?: string;

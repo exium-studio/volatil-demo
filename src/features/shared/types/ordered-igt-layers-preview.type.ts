@@ -20,6 +20,7 @@ export type OrderedIgtLayersPreviewCellProps = StackProps & {
   items: OrderedIgtLayerPreviewItem[];
   orderNumber?: string;
   coverageHa?: number;
+  bidangCoverageCount?: number;
   maxVisible?: number;
   modalKey?: string;
 };
@@ -28,5 +29,6 @@ export type OrderedIgtLayersPreviewModalContentProps = {
   items: OrderedIgtLayerPreviewItem[];
   orderNumber?: string;
   coverageHa?: number;
+  bidangCoverageCount?: number;
   close: () => void;
 };
