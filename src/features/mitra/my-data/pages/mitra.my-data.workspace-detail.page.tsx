@@ -530,13 +530,22 @@ export const MitraMyDataWorkspaceDetailPage = () => {
                 </IconButton>
               </Tooltip>
 
-              <MitraWorkspaceRenewalTrigger workspace={workspace}>
-                <Tooltip content={"Perpanjang Workspace"}>
-                  <IconButton aria-label={"Perpanjang Workspace"}>
-                    <AppIcon icon={ClockPlusIcon} />
-                  </IconButton>
-                </Tooltip>
-              </MitraWorkspaceRenewalTrigger>
+              <MitraWorkspaceRenewalTrigger
+                workspace={workspace}
+                renderTrigger={({ eligibility, open }) => (
+                  <Tooltip
+                    content={eligibility.reason ?? "Perpanjang Workspace"}
+                  >
+                    <IconButton
+                      aria-label={"Perpanjang Workspace"}
+                      disabled={!eligibility.canExtend}
+                      onClick={open}
+                    >
+                      <AppIcon icon={ClockPlusIcon} />
+                    </IconButton>
+                  </Tooltip>
+                )}
+              />
             </HStack>
 
             <Box

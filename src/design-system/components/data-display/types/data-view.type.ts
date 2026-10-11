@@ -27,6 +27,7 @@ export type DataViewModalActionConfig<T = Record<string, unknown>> = {
 export type DataViewDeclarativeItemAction<T = Record<string, unknown>> = {
   key?: string;
   label: string | ((item: T) => string);
+  tooltip?: string | ((item: T) => string | undefined) | null;
   icon?: ActionIconType | ((item: T) => ActionIconType);
   colorPalette?: string | ((item: T) => string | undefined);
   variant?: "solid" | "subtle" | "outline" | "ghost";

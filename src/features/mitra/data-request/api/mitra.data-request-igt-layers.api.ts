@@ -15,7 +15,10 @@ export async function getIgtLayers(
 ): Promise<IgtLayersResponse> {
   const user = getUserSession();
   if (!user?.id) {
-    throw new Error("Sesi pengguna tidak valid. Silakan login kembali.");
+    return {
+      items: [],
+      pagination: createPaginationMeta(1, 10, 0),
+    };
   }
 
   const isInternal = user.role === "internal";

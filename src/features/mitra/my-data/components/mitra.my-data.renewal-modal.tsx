@@ -35,6 +35,7 @@ export const MitraWorkspaceRenewalTrigger = (
     modalKey: customModalKey = `mitra-workspace-renew-${props.workspace.id}`,
     workspace,
     children,
+    renderTrigger,
   } = props;
 
   // Stores & Hooks
@@ -55,14 +56,14 @@ export const MitraWorkspaceRenewalTrigger = (
   });
 
   const triggerNode = useMemo(() => {
+    if (renderTrigger) {
+      return renderTrigger({ eligibility, open, isOpen });
+    }
     if (children) {
-      if (!eligibility.canExtend && eligibility.reason) {
-        return <Tooltip content={eligibility.reason}>{children}</Tooltip>;
-      }
       return children;
     }
     return (
-      <Tooltip content={eligibility.reason ?? "Perpanjang Pesanan"}>
+      <Tooltip content={eligibility.reason ?? "Perpanjang Layanan"}>
         <Button
           size={"xs"}
           variant={"outline"}
@@ -73,7 +74,7 @@ export const MitraWorkspaceRenewalTrigger = (
         </Button>
       </Tooltip>
     );
-  }, [children, eligibility]);
+  }, [renderTrigger, children, eligibility, open, isOpen]);
 
   return (
     <Modal.Root
@@ -83,11 +84,9 @@ export const MitraWorkspaceRenewalTrigger = (
       close={close}
       size={"md"}
     >
-      {eligibility.canExtend ? (
-        <Modal.Trigger>{triggerNode}</Modal.Trigger>
-      ) : (
-        triggerNode
-      )}
+      <Modal.Trigger asChild={Boolean(children || renderTrigger)}>
+        {triggerNode}
+      </Modal.Trigger>
 
       {isMounted && (
         <MitraWorkspaceRenewalModalContent

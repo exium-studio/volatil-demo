@@ -89,6 +89,23 @@ function resolveLabel<T>(
   return labelProp;
 }
 
+function resolveTooltip<T>(
+  tooltipProp:
+    | string
+    | ((item: T) => string | undefined | null)
+    | undefined
+    | null,
+  item: T,
+  fallbackLabel: string,
+): string | undefined {
+  if (tooltipProp === null) return undefined;
+  if (typeof tooltipProp === "function") {
+    const res = tooltipProp(item);
+    return res ?? fallbackLabel;
+  }
+  return tooltipProp ?? fallbackLabel;
+}
+
 function resolveColorPalette<T>(
   paletteProp: string | ((item: T) => string | undefined) | undefined,
   item: T,
@@ -182,6 +199,12 @@ export function DataViewSpreadActions<
         const iconNode = renderIcon(resolvedIcon);
         const triggerElement = resolveTriggerElement(action.modal, item);
 
+        const resolvedTooltip = resolveTooltip(
+          action.tooltip,
+          item.data,
+          resolvedLabel,
+        );
+
         const rawButton = resolvedHref ? (
           resolvedIcon ? (
             <IconButton
@@ -262,8 +285,8 @@ export function DataViewSpreadActions<
           </Button>
         );
 
-        const buttonWithTooltip = resolvedLabel ? (
-          <Tooltip content={resolvedLabel}>{rawButton}</Tooltip>
+        const buttonWithTooltip = resolvedTooltip ? (
+          <Tooltip content={resolvedTooltip}>{rawButton}</Tooltip>
         ) : (
           rawButton
         );
@@ -314,6 +337,11 @@ export function DataViewStickyActions<
         const isDisabled =
           isLoading || resolveBoolean(action.disabled, item.data, item);
         const resolvedLabel = resolveLabel(action.label, item.data);
+        const resolvedTooltip = resolveTooltip(
+          action.tooltip,
+          item.data,
+          resolvedLabel,
+        );
         const resolvedIcon = resolveIcon(action.icon, item.data);
         const resolvedColorPalette = resolveColorPalette(
           action.colorPalette,
@@ -403,8 +431,8 @@ export function DataViewStickyActions<
           </Button>
         );
 
-        const buttonWithTooltip = resolvedLabel ? (
-          <Tooltip content={resolvedLabel}>{rawButton}</Tooltip>
+        const buttonWithTooltip = resolvedTooltip ? (
+          <Tooltip content={resolvedTooltip}>{rawButton}</Tooltip>
         ) : (
           rawButton
         );
@@ -494,6 +522,9 @@ export function DataListItemActionsTrigger<
                   isLoading ||
                   resolveBoolean(action.disabled, item.data, item);
                 const resolvedLabel = resolveLabel(action.label, item.data);
+                const customTooltip = action.tooltip
+                  ? resolveTooltip(action.tooltip, item.data, resolvedLabel)
+                  : undefined;
                 const resolvedIcon = resolveIcon(action.icon, item.data);
                 const resolvedColorPalette = resolveColorPalette(
                   action.colorPalette,
@@ -516,7 +547,7 @@ export function DataListItemActionsTrigger<
                   </>
                 );
 
-                const menuItemNode = resolvedHref ? (
+                const rawMenuItemNode = resolvedHref ? (
                   <Menu.Item
                     asChild
                     value={key}
@@ -565,6 +596,7 @@ export function DataListItemActionsTrigger<
                     onClick={
                       triggerElement
                         ? () => {
+                            if (isDisabled) return;
                             const triggerProps = triggerElement.props as {
                               modalKey?: string;
                             };
@@ -589,6 +621,14 @@ export function DataListItemActionsTrigger<
                   >
                     {menuItemContent}
                   </Menu.Item>
+                );
+
+                const menuItemNode = customTooltip ? (
+                  <Tooltip content={customTooltip} positioning={{ placement: "right" }}>
+                    {rawMenuItemNode}
+                  </Tooltip>
+                ) : (
+                  rawMenuItemNode
                 );
 
                 if (shouldMountModalInMenu && triggerElement) {

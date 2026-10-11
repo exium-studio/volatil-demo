@@ -23,6 +23,7 @@ import { NavLink } from "@/design-system/components/navigation/ui/link";
 import { ClampedP, P } from "@/design-system/components/typography/ui/p";
 import { Url } from "@/design-system/components/typography/ui/url";
 import { useDebouncedValue } from "@/design-system/hooks/use-debounced-value";
+import { usePricingPolicy } from "@/features/mitra/data-request/hooks/use-pricing-policy";
 import { MitraWorkspaceRenewalTrigger } from "@/features/mitra/my-data/components/mitra.my-data.renewal-modal";
 import { useMitraWorkspacesQuery } from "@/features/mitra/my-data/hooks/use-mitra-my-data";
 import type {
@@ -30,6 +31,7 @@ import type {
   MitraWorkspaceItem,
   MitraWorkspaceQueryParams,
 } from "@/features/mitra/my-data/types/my-data.type";
+import { checkOrderExtensionEligibility } from "@/features/mitra/my-data/utils/extension.utils";
 import { toast } from "@/design-system/components/toast/core/toast.manager";
 import { TteBadge } from "@/features/shared/components/tte.badge";
 import { isEmptyArray } from "@/shared/utils/data/array";
@@ -52,6 +54,9 @@ import { useMemo, useState } from "react";
 export const MitraMyDataWorkspacesDataView = (_props: MitraMyDataViewProps) => {
   // Navigation
   const navigate = useNavigate();
+
+  // Stores & Hooks
+  const { systemPolicies } = usePricingPolicy();
 
   // States
   const [params, setParams] = useState<MitraWorkspaceQueryParams>({
@@ -230,7 +235,23 @@ export const MitraMyDataWorkspacesDataView = (_props: MitraMyDataViewProps) => {
       {
         key: "renew-workspace",
         label: "Perpanjang Layanan",
+        tooltip: (item: MitraWorkspaceItem) => {
+          const eligibility = checkOrderExtensionEligibility(
+            item,
+            systemPolicies,
+          );
+          return eligibility.canExtend
+            ? "Perpanjang Layanan"
+            : eligibility.reason ?? "Perpanjang Layanan";
+        },
         icon: ClockPlusIcon,
+        disabled: (item: MitraWorkspaceItem) => {
+          const eligibility = checkOrderExtensionEligibility(
+            item,
+            systemPolicies,
+          );
+          return !eligibility.canExtend;
+        },
         modal: {
           triggerComponent: (item: MitraWorkspaceItem) => (
             <MitraWorkspaceRenewalTrigger

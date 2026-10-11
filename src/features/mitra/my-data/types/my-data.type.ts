@@ -149,6 +149,11 @@ export type RenewWorkspaceResponse = {
 export type MitraWorkspaceRenewalTriggerProps = {
   workspace: MitraWorkspaceItem;
   children?: React.ReactNode;
+  renderTrigger?: (params: {
+    eligibility: ExtensionEligibility;
+    open: () => void;
+    isOpen: boolean;
+  }) => React.ReactNode;
   modalKey?: string;
 };
 
