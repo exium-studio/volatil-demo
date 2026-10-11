@@ -9,7 +9,7 @@ import { Center } from "@/design-system/components/layout/ui/center";
 import { HStack, VStack } from "@/design-system/components/layout/ui/flex-box";
 import { Separator } from "@/design-system/components/layout/ui/separator";
 import { Badge } from "@/design-system/components/typography/ui/badge";
-import { P, TNum } from "@/design-system/components/typography/ui/p";
+import { ClampedP, P, TNum } from "@/design-system/components/typography/ui/p";
 import { FormatNumber } from "@/design-system/components/utilities/ui/fornat-number";
 import { useThemeStore } from "@/design-system/stores/theme-store";
 import { useCheckoutCartOrder } from "@/features/mitra/cart/hooks/use-mitra-cart";
@@ -292,13 +292,13 @@ export const MitraCartOrderSummary = (props: MitraCartOrderSummaryProps) => {
           gap={"xs"}
           w={"full"}
         >
-          <P fontSize={"sm"} fontWeight={"semibold"}>
-            {isSelected
-              ? orderIndex != null
-                ? `Pesanan #${orderIndex}`
-                : "Pesanan"
-              : "Pesanan"}
-          </P>
+          {isSelected && activeOrder ? (
+            <ClampedP>
+              {orderIndex != null ? `Pesanan #${orderIndex}` : "Pesanan"}
+            </ClampedP>
+          ) : (
+            <P color={"fg.muted"}>{"Pesanan"}</P>
+          )}
 
           {isSelected && activeOrder ? (
             <OrderStatusBadge showIcon={true}>

@@ -14,7 +14,7 @@ import { Box } from "@/design-system/components/layout/ui/box";
 import { HStack, VStack } from "@/design-system/components/layout/ui/flex-box";
 import { Separator } from "@/design-system/components/layout/ui/separator";
 import { Tooltip } from "@/design-system/components/overlay/ui/tooltip";
-import { P, TNum } from "@/design-system/components/typography/ui/p";
+import { ClampedP, P, TNum } from "@/design-system/components/typography/ui/p";
 import { FormatNumber } from "@/design-system/components/utilities/ui/fornat-number";
 import { useThemeStore } from "@/design-system/stores/theme-store";
 import type {
@@ -101,9 +101,7 @@ export const MitraCartOrderItem = memo((props: MitraCartOrderItemProps) => {
               <RadioIndicator checked={isSelected} mt={"2px"} />
 
               <VStack>
-                <P fontWeight={"semibold"} fontSize={"sm"}>
-                  {`Pesanan #${index + 1}`}
-                </P>
+                <ClampedP>{`Pesanan #${index + 1}`}</ClampedP>
               </VStack>
             </HStack>
 

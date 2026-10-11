@@ -17,7 +17,6 @@ import { AppContentContainer } from "@/design-system/components/layout/ui/page-c
 import { Separator } from "@/design-system/components/layout/ui/separator";
 import { useMapInstanceStore } from "@/design-system/components/map/stores/map.instance.store";
 import { HeaderContainer } from "@/design-system/components/shell/ui/header-container";
-import { Badge } from "@/design-system/components/typography/ui/badge";
 import { Heading } from "@/design-system/components/typography/ui/heading";
 import { useSearchParam } from "@/design-system/hooks/use-search-param";
 import { MitraCartOrderItem } from "@/features/mitra/cart/components/mitra.cart.order-item";
@@ -27,8 +26,6 @@ import {
   removeCartMapLayers,
   useCartAoiCoverageMap,
 } from "@/features/mitra/cart/hooks/use-cart-aoi-coverage-map";
-import { normalizePolygonFeature } from "@/features/mitra/data-request/utils/clip-and-union-kawasan";
-import { highlightFeatureOnMap } from "@/features/mitra/data-request/utils/highlight-feature-on-map";
 import {
   useCancelActiveCartOrder,
   useCartOrderDetailQuery,
@@ -42,9 +39,11 @@ import type {
 } from "@/features/mitra/cart/types/mitra.cart.order.type";
 import { getIgtLayers } from "@/features/mitra/data-request/api/mitra.data-request-igt-layers.api";
 import { useBidangAoiFeatures } from "@/features/mitra/data-request/hooks/use-bidang-aoi-features";
+import { normalizePolygonFeature } from "@/features/mitra/data-request/utils/clip-and-union-kawasan";
+import { highlightFeatureOnMap } from "@/features/mitra/data-request/utils/highlight-feature-on-map";
 import { queryKeys } from "@/shared/libs/tanstack-query/query.keys";
-import * as turf from "@turf/turf";
 import { useQuery } from "@tanstack/react-query";
+import * as turf from "@turf/turf";
 import { InfoIcon, ShoppingCartIcon, Trash2Icon } from "lucide-react";
 import { useCallback, useEffect, useMemo, useState } from "react";
 
@@ -626,10 +625,6 @@ export const MitraCartOrderDetail = (props: MitraCartOrderDetailProps) => {
         <HStack align={"center"} justify={"space-between"} w={"full"}>
           <HStack align={"center"} gap={"sm"}>
             <Heading>{"Rincian Pesanan"}</Heading>
-
-            {displayOrderNumber !== null && (
-              <Badge>{`Pesanan #${displayOrderNumber}`}</Badge>
-            )}
           </HStack>
         </HStack>
       </HeaderContainer>
