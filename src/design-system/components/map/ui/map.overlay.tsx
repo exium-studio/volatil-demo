@@ -10,11 +10,15 @@ import { MapMasterIgtLayerManagement } from "@/design-system/components/map/ui/m
 import { MapCoordinates } from "@/design-system/components/map/ui/map.coordinates";
 import { MapFeatureInfoPanel } from "@/design-system/components/map/ui/map.feature-info-panel";
 import { MapSearch } from "@/design-system/components/map/ui/map.search";
+import { useIsSmallViewport } from "@/design-system/hooks/use-is-small-viewport";
 import { useThemeStore } from "@/design-system/stores/theme-store";
 
 export const MapOverlay = (props: MapOverlayProps) => {
   // Props
   const { showMasterIgtLayerSelect = true } = props;
+
+  // Hooks
+  const isSmallViewport = useIsSmallViewport();
 
   return (
     <Box
@@ -23,7 +27,7 @@ export const MapOverlay = (props: MapOverlayProps) => {
       left={0}
       w={"full"}
       h={"full"}
-      minW={"fit-content"}
+      minW={isSmallViewport ? 0 : "fit-content"}
       overflow={"hidden"}
       pointerEvents={"none"}
     >
@@ -37,7 +41,7 @@ export const MapOverlay = (props: MapOverlayProps) => {
         justify={"space-between"}
         align={"start"}
         gap={4}
-        minW={"480px"}
+        minW={isSmallViewport ? 0 : "480px"}
         pointerEvents={"none"}
       >
         <Box pointerEvents={"none"} flexShrink={0}>
@@ -70,7 +74,7 @@ export const MapOverlay = (props: MapOverlayProps) => {
         bottom={0}
         left={0}
         right={0}
-        minW={"480px"}
+        minW={isSmallViewport ? 0 : "480px"}
         pointerEvents={"none"}
       >
         <MapControls px={"md"} pb={"md"} />

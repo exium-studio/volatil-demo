@@ -473,7 +473,7 @@ const Content = (_props: GisContentProps) => {
       <VStack
         flex={1}
         overflow={"auto"}
-        minW={[0, null, "360px"]}
+        minW={isSmallViewport ? 0 : [0, null, "360px"]}
         w={"full"}
         minH={"300px"}
         layerStyle={"frosted"}
