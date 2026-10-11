@@ -90,9 +90,7 @@ export const MitraMyDataWorkspaceDetailPage = () => {
 
   // Refs
   const hasFlownWorkspaceRef = useRef<string | null>(null);
-  const hasInitializedWorkspaceLayersRef = useRef<string | null>(null);
-
-  // Effects — On entering workspace detail, reset master IGT layers and auto-enable matching default active layers
+  // Effects — Auto-enable matching default active layers in workspace
   useEffect(() => {
     if (!workspace || !workspace.layers) {
       return;
@@ -100,19 +98,13 @@ export const MitraMyDataWorkspaceDetailPage = () => {
 
     const state = useMapLayerStore.getState();
 
-    // 1. Reset all master IGT layers on first initialization of this workspace
-    if (hasInitializedWorkspaceLayersRef.current !== workspace.id) {
-      state.resetLayers();
-      hasInitializedWorkspaceLayersRef.current = workspace.id;
-    }
-
-    // 2. Find master IGT layers where defaultVisible === true
+    // 1. Find master IGT layers where defaultVisible === true
     const masterItems = igtMasterLayers?.items ?? [];
     const defaultMasterLayers = masterItems.filter((l) =>
       Boolean(l.defaultVisible),
     );
 
-    // 3. Determine layers in this workspace that should be auto-loaded
+    // 2. Determine layers in this workspace that should be auto-loaded
     const layersToAutoEnable = workspace.layers.filter((wsLayer) => {
       // If master layers are loaded, match by ID / sourceLayerId / typeName / title
       if (defaultMasterLayers.length > 0) {
@@ -217,14 +209,6 @@ export const MitraMyDataWorkspaceDetailPage = () => {
       }
     }
   }, [map, workspace, flyTo]);
-
-  // Effects — Cleanup loaded workspace layers on unmount / navigation
-  useEffect(() => {
-    return () => {
-      const state = useMapLayerStore.getState();
-      state.resetLayers();
-    };
-  }, []);
 
   // Derived Values
   const selectedAttributeLayer = useMemo(() => {
