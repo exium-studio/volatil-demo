@@ -40,6 +40,7 @@ export type MyDataItem = {
   invoiceUrl?: string | null;
   tteInvoiceUrl?: string | null;
   tte?: boolean;
+  apiKey?: string | null;
 };
 
 export type MitraWorkspaceItem = {
@@ -75,7 +76,10 @@ export type MitraWorkspaceQueryParams = {
   status?: OrderStatus;
 };
 
-export type MitraWorkspaceListResponse = PaginatedResponse<MitraWorkspaceItem>;
+export type MitraWorkspaceListResponse = PaginatedResponse<MitraWorkspaceItem> & {
+  apiKey?: string | null;
+  workspaceUrl?: WorkspaceUrlInfo | null;
+};
 
 export type WorkspaceUrlInfo = {
   workspaceName: string;

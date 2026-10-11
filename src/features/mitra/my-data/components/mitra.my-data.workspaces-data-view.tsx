@@ -8,6 +8,7 @@ import { Countdown } from "@/design-system/components/data-display/ui/countdown"
 import { DataViewFooter } from "@/design-system/components/data-display/ui/data-view-footer";
 import { DEFAULT_PAGE_SIZE_OPTIONS } from "@/design-system/components/data-display/ui/data-view-page-size";
 import { DataViewTable } from "@/design-system/components/data-display/ui/data-view-table";
+import { MaskedText } from "@/design-system/components/data-display/ui/masked-text";
 import { Skeleton } from "@/design-system/components/feedback/ui/skeleton";
 import { StateNoData } from "@/design-system/components/feedback/ui/state.no-data";
 import { StateNoResult } from "@/design-system/components/feedback/ui/state.no-result";
@@ -17,9 +18,10 @@ import { AppIcon } from "@/design-system/components/icon/ui/app-icon";
 import { SearchInput } from "@/design-system/components/input/ui/search-input";
 import { ActionHeaderScrollContainer } from "@/design-system/components/layout/ui/action-header-scroll-container";
 import { Center } from "@/design-system/components/layout/ui/center";
-import { VStack } from "@/design-system/components/layout/ui/flex-box";
+import { HStack, VStack } from "@/design-system/components/layout/ui/flex-box";
 import { Separator } from "@/design-system/components/layout/ui/separator";
 import { NavLink } from "@/design-system/components/navigation/ui/link";
+import { toast } from "@/design-system/components/toast/core/toast.manager";
 import { ClampedP, P } from "@/design-system/components/typography/ui/p";
 import { Url } from "@/design-system/components/typography/ui/url";
 import { useDebouncedValue } from "@/design-system/hooks/use-debounced-value";
@@ -32,7 +34,6 @@ import type {
   MitraWorkspaceQueryParams,
 } from "@/features/mitra/my-data/types/my-data.type";
 import { checkOrderExtensionEligibility } from "@/features/mitra/my-data/utils/extension.utils";
-import { toast } from "@/design-system/components/toast/core/toast.manager";
 import { TteBadge } from "@/features/shared/components/tte.badge";
 import { isEmptyArray } from "@/shared/utils/data/array";
 import {
@@ -45,6 +46,7 @@ import {
   CopyIcon,
   FileCheckIcon,
   FolderOpenIcon,
+  KeyRoundIcon,
   LayersIcon,
   ReceiptTextIcon,
   SquarePen,
@@ -72,6 +74,7 @@ export const MitraMyDataWorkspacesDataView = (_props: MitraMyDataViewProps) => {
   // Queries
   const {
     workspaces,
+    apiKey,
     pagination,
     isLoading,
     isFetching,
@@ -242,7 +245,7 @@ export const MitraMyDataWorkspacesDataView = (_props: MitraMyDataViewProps) => {
           );
           return eligibility.canExtend
             ? "Perpanjang Layanan"
-            : eligibility.reason ?? "Perpanjang Layanan";
+            : (eligibility.reason ?? "Perpanjang Layanan");
         },
         icon: ClockPlusIcon,
         disabled: (item: MitraWorkspaceItem) => {
@@ -287,20 +290,52 @@ export const MitraMyDataWorkspacesDataView = (_props: MitraMyDataViewProps) => {
       batchActions: [],
       itemActions,
     };
-  }, [workspaces, preferredTimezone, navigate]);
+  }, [workspaces, preferredTimezone, navigate, systemPolicies]);
 
   return (
     <VStack flex={1} overflowY={"auto"} w={"full"} h={"full"}>
       {/* Header Controls */}
       <ActionHeaderScrollContainer>
-        <SearchInput
-          value={params.search}
-          onValueChange={(val) => {
-            setParams((prev) => ({ ...prev, search: val, page: 1 }));
-          }}
-          placeholder={"Cari workspace / no. pesanan..."}
-          maxW={"280px"}
-        />
+        <HStack
+          justify={"space-between"}
+          align={"center"}
+          w={"full"}
+          gap={"md"}
+        >
+          <SearchInput
+            value={params.search}
+            onValueChange={(val) => {
+              setParams((prev) => ({ ...prev, search: val, page: 1 }));
+            }}
+            placeholder={"Cari workspace / no. pesanan..."}
+            maxW={"280px"}
+          />
+
+          {apiKey && (
+            <HStack
+              align={"center"}
+              gap={"xs"}
+              h={"40px"}
+              bg={"bg.subtle"}
+              pl={"sm"}
+              rounded={"md"}
+            >
+              <HStack gap={"2xs"} align={"center"} flexShrink={0}>
+                <AppIcon icon={KeyRoundIcon} />
+
+                <P fontWeight={"medium"} color={"fg.muted"}>
+                  {"API Key:"}
+                </P>
+              </HStack>
+
+              <MaskedText
+                value={apiKey}
+                copyLabel={"Salin API Key Mitra"}
+                maxW={"220px"}
+              />
+            </HStack>
+          )}
+        </HStack>
       </ActionHeaderScrollContainer>
 
       <Separator borderColor={"bg.canvas"} />

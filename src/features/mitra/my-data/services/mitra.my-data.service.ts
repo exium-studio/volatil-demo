@@ -54,6 +54,8 @@ export const getPaginatedWorkspaces = (
 
   return {
     items: paginated,
+    apiKey: dummyApiKey,
+    workspaceUrl: dummyWorkspaceUrl,
     pagination: createPaginationMeta(page, pageSize, filtered.length),
   };
 };

@@ -35,6 +35,8 @@ export const useMitraWorkspacesQuery = (
   return {
     ...query,
     workspaces: query.data?.items ?? [],
+    apiKey: query.data?.apiKey ?? null,
+    workspaceUrl: query.data?.workspaceUrl ?? null,
     pagination:
       query.data?.pagination ??
       createPaginationMeta(params?.page ?? 1, params?.pageSize ?? 10, 0),
