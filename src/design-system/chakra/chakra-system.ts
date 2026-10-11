@@ -2665,29 +2665,29 @@ export const chakraConfig = defineConfig({
       frosted: {
         value: {
           bg: "bg.bodyAlpha",
-          backdropFilter: "blur(16px)",
-          WebkitBackdropFilter: "blur(16px)",
+          backdropFilter: "blur(5px)",
+          WebkitBackdropFilter: "blur(5px)",
         },
       },
       frostedInverted: {
         value: {
           bg: "bg.frostedInverted",
-          backdropFilter: "blur(16px)",
-          WebkitBackdropFilter: "blur(16px)",
+          backdropFilter: "blur(5px)",
+          WebkitBackdropFilter: "blur(5px)",
         },
       },
       frostedLight: {
         value: {
           bg: "{colors.frostedLight}",
-          backdropFilter: "blur(16px)",
-          WebkitBackdropFilter: "blur(16px)",
+          backdropFilter: "blur(5px)",
+          WebkitBackdropFilter: "blur(5px)",
         },
       },
       frostedDark: {
         value: {
           bg: "{colors.frostedDark}",
-          backdropFilter: "blur(16px)",
-          WebkitBackdropFilter: "blur(16px)",
+          backdropFilter: "blur(5px)",
+          WebkitBackdropFilter: "blur(5px)",
         },
       },
     },

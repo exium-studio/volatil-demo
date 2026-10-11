@@ -76,7 +76,7 @@ const TopMitraLeaderboardCard = (props: LeaderboardCardProps) => {
   return (
     <Container.Root flex={flex} withContext={true}>
       <Container.Body>
-        <HeaderContainer justify={"space-between"} gap={"sm"} pr={"xs"}>
+        <HeaderContainer justify={"space-between"} pr={"xs"}>
           <HStack wrap={"wrap"} gap={"sm"} py={"sm"}>
             <HStack wrap={"wrap"} align={"center"} gap={"sm"}>
               <Heading>{"Peringkat Mitra Teraktif"}</Heading>
@@ -227,7 +227,7 @@ const TopIgtLayersLeaderboardCard = (props: LeaderboardCardProps) => {
   return (
     <Container.Root flex={flex} withContext={true}>
       <Container.Body>
-        <HeaderContainer justify={"space-between"} gap={"sm"} pr={"xs"}>
+        <HeaderContainer justify={"space-between"} pr={"xs"}>
           <HStack wrap={"wrap"} gap={"sm"} py={"sm"}>
             <HStack wrap={"wrap"} align={"center"} gap={"sm"}>
               <Heading>{"Layer IGT Paling Diminati"}</Heading>

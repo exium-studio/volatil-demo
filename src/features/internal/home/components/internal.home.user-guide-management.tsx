@@ -17,7 +17,7 @@ export const InternalHomeUserGuideManagement = () => {
     <Container.Root withContext={true} w={"full"} position={"relative"}>
       <Container.Body overflowY={"auto"}>
         {/* Header */}
-        <HeaderContainer justify={"space-between"} gap={"sm"} pr={"xs"}>
+        <HeaderContainer justify={"space-between"} pr={"xs"}>
           <HStack wrap={"wrap"} gap={"sm"} py={"sm"}>
             <HStack wrap={"wrap"} align={"center"} gap={"sm"}>
               <Heading>{"Manajemen Dokumen Panduan Pengguna"}</Heading>

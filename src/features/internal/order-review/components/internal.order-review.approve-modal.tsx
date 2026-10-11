@@ -162,7 +162,7 @@ const InternalOrderReviewApproveModalContent = (
             {/* Internal GeoServer Workspace URL */}
             <VStack
               align={"stretch"}
-              gap={"md"}
+              gap={"sm"}
               p={"md"}
               rounded={theme.radii.component}
               border={"1px solid"}
@@ -172,6 +172,7 @@ const InternalOrderReviewApproveModalContent = (
               <P fontSize={"xs"} color={"fg.muted"}>
                 {"URL Workspace GeoServer Volatil (Internal):"}
               </P>
+
               <HStack gap={"md"}>
                 <P
                   fontFamily={"mono"}
@@ -223,25 +224,23 @@ const InternalOrderReviewApproveModalContent = (
               justify={"space-between"}
               align={"center"}
             >
-              <VStack align={"start"} gap={0}>
-                <P fontSize={"xs"} color={"fg.subtle"}>
+              <VStack align={"start"} gap={"2xs"}>
+                <P fontSize={"sm"} color={"fg.subtle"}>
                   {"Jumlah Layer"}
                 </P>
-                <P fontSize={"sm"} fontWeight={"medium"}>
+
+                <P fontWeight={"medium"}>
                   {`${order.items?.length ?? 0} Layer`}
                 </P>
               </VStack>
 
               {order.totalPrice > 0 && (
-                <VStack align={"end"} gap={0}>
-                  <P fontSize={"xs"} color={"fg.subtle"}>
+                <VStack align={"end"} gap={"2xs"}>
+                  <P fontSize={"sm"} color={"fg.subtle"}>
                     {"Total Biaya"}
                   </P>
-                  <P
-                    fontSize={"sm"}
-                    fontWeight={"bold"}
-                    color={"colorPalette.fg"}
-                  >
+
+                  <P fontWeight={"semibold"} color={"colorPalette.fg"}>
                     {formatCurrency(order.totalPrice)}
                   </P>
                 </VStack>
