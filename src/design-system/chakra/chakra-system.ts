@@ -34,8 +34,8 @@ export const chakraConfig = defineConfig({
 
   theme: {
     breakpoints: {
-      sm: "35px",
-      md: "75px",
+      sm: "350px",
+      md: "750px",
       lg: "960px",
       xl: "1200px",
     },

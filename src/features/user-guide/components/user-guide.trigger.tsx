@@ -69,7 +69,7 @@ export const UserGuideTrigger = (props: UserGuideTriggerProps) => {
               size={"lg"}
             />
 
-            <VStack align={"start"} gap={0}>
+            <VStack align={"start"} gap={"2xs"}>
               <P fontWeight={"medium"} color={"fg"}>
                 {"Butuh Bantuan? Pelajari Dokumen Panduan"}
               </P>

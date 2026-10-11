@@ -48,8 +48,9 @@ export const SigninShell = (props: SigninShellProps) => {
         <VStack
           h={"full"}
           overflowY={"auto"}
-          px={[6, 8, 12]}
           py={[8, 10, 12]}
+          // px={[6, 8, 12]}
+          // py={[8, 10, 12]}
           justify={"center"}
         >
           {intro ?? (
@@ -69,7 +70,7 @@ export const SigninShell = (props: SigninShellProps) => {
           {children}
 
           {showUserGuide && (
-            <Box w={"full"} px={[0, null, 8]} mt={8}>
+            <Box w={"full"} maxW={"400px"} px={"md"} mt={8} mx={"auto"}>
               <UserGuideTrigger
                 modalKey={modalKey}
                 portalType={portalType}
