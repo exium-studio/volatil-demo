@@ -1,6 +1,5 @@
 // src/features/shared/components/ordered-igt-layers.tsx
 
-import { Box } from "@/design-system/components/layout/ui/box";
 import { HStack, VStack } from "@/design-system/components/layout/ui/flex-box";
 import { usePopModal } from "@/design-system/components/overlay/hooks/use-pop-modal";
 import { Modal } from "@/design-system/components/overlay/ui/modal";
@@ -82,11 +81,7 @@ export const OrderedIgtLayers = (props: OrderedIgtLayersPreviewCellProps) => {
             <ClampedP>{displayedNames}</ClampedP>
 
             {remainingCount > 0 && (
-              <Badge
-                size={"xs"}
-                variant={"subtle"}
-                fontWeight={"semibold"}
-              >
+              <Badge size={"xs"} variant={"subtle"} fontWeight={"semibold"}>
                 {`+${remainingCount}`}
               </Badge>
             )}
@@ -154,23 +149,34 @@ export const OrderedIgtLayersPreviewModalContent = (
         <VStack align={"stretch"} gap={"md"}>
           {/* Summary */}
           <VStack gap={"xs"} p={"sm"} bg={"bg.subtle"} rounded={"md"}>
-            <P>{`${formatNumber(totalCount)} Total Layer IGT`}</P>
+            <P
+              fontWeight={"medium"}
+            >{`${formatNumber(totalCount)} Total Layer IGT`}</P>
 
-            {totalBidang > 0 && (
-              <P
-                fontSize={"sm"}
-              >{`${formatNumber(totalBidang)} Total Bidang`}</P>
-            )}
+            <HStack
+              wrap={"wrap"}
+              align={"center"}
+              gap={"xs"}
+              color={"fg.muted"}
+            >
+              {totalBidang > 0 && (
+                <P
+                  fontSize={"sm"}
+                >{`${formatNumber(totalBidang)} Total Bidang`}</P>
+              )}
 
-            {coverageHa != null && coverageHa > 0 && (
-              <P fontSize={"sm"}>
-                {`${formatNumber(coverageHa, { maximumFractionDigits: 2 })} ha Luas Cakupan Kawasan`}
-              </P>
-            )}
+              <P color={"fg.subtle"}>{"•"}</P>
+
+              {coverageHa != null && coverageHa > 0 && (
+                <P fontSize={"sm"}>
+                  {`${formatNumber(coverageHa, { maximumFractionDigits: 2 })} ha Luas Cakupan Kawasan`}
+                </P>
+              )}
+            </HStack>
           </VStack>
 
           {/* List of Ordered Layers */}
-          <VStack align={"stretch"} gap={"sm"}>
+          <VStack align={"stretch"} gap={0}>
             {items.map((item, index) => {
               const displayName = item.sourceLayerTitle || "-";
               const basis = item.igtBasis ?? item.spatialBasis;
@@ -187,25 +193,21 @@ export const OrderedIgtLayersPreviewModalContent = (
               }
 
               return (
-                <Box
+                <VStack
                   key={item.id || item.sourceLayerId || index}
                   p={"sm"}
-                  rounded={"md"}
-                  border={"1px solid"}
-                  borderColor={"border.subtle"}
-                  bg={"bg.body"}
+                  borderTop={index > 0 ? "1px solid" : undefined}
+                  borderColor={index > 0 ? "border.subtle" : undefined}
                 >
                   <HStack justify={"space-between"} align={"start"} gap={"sm"}>
                     {/* Number & Title */}
                     <HStack align={"start"} gap={"sm"} flex={1} minW={0}>
-                      <VStack align={"start"} gap={"2xs"} flex={1} minW={0}>
+                      <VStack align={"start"} gap={"xs"} flex={1} minW={0}>
                         <HStack align={"center"} gap={"xs"}>
                           <P wordBreak={"break-word"}>{displayName}</P>
 
                           {basis && (
-                            <IgtBasisBadge size={"xs"}>
-                              {basis}
-                            </IgtBasisBadge>
+                            <IgtBasisBadge size={"xs"}>{basis}</IgtBasisBadge>
                           )}
                         </HStack>
 
@@ -219,7 +221,7 @@ export const OrderedIgtLayersPreviewModalContent = (
                     </HStack>
 
                     {/* Basis Badge & Quantities */}
-                    <VStack align={"end"} gap={"2xs"} flexShrink={0}>
+                    <VStack align={"end"} gap={"xs"} flexShrink={0}>
                       <P
                         fontSize={"sm"}
                         fontWeight={"medium"}
@@ -235,7 +237,7 @@ export const OrderedIgtLayersPreviewModalContent = (
                       )}
                     </VStack>
                   </HStack>
-                </Box>
+                </VStack>
               );
             })}
           </VStack>

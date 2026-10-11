@@ -392,7 +392,7 @@ const OrderSummary = (props: OrderSummaryProps) => {
             <OrderStatusBadge>{order.status}</OrderStatusBadge>
           </HStack>
 
-          <HStack align={"center"} gap={"xs"} wrap={"wrap"}>
+          <HStack wrap={"wrap"} align={"center"} gap={"xs"}>
             <HStack align={"center"} gap={"2xs"}>
               <AppIcon icon={HandshakeIcon} size={"sm"} color={"fg.subtle"} />
 
