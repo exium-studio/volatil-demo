@@ -121,16 +121,9 @@ export const MapMasterIgtLayerManagement = memo(() => {
 
       <Popover.Content w={isSmallViewport ? "300px" : "380px"}>
         <HeaderContainer>
-          <HStack
-            align={"start"}
-            justify={"space-between"}
-            gap={"md"}
-            w={"full"}
-          >
-            <P fontWeight={"medium"}>{"Manajemen Layer & Simbologi IGT"}</P>
+          <P fontWeight={"medium"}>{"Manajemen Layer & Simbologi IGT"}</P>
 
-            <Badge colorPalette={"blue"}>{`${enabledCount} aktif`}</Badge>
-          </HStack>
+          <Badge colorPalette={"blue"}>{`${enabledCount} aktif`}</Badge>
         </HeaderContainer>
 
         <Separator borderColor={"bg.canvas"} />
