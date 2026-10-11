@@ -369,7 +369,12 @@ const InboxCardItem = memo((props: InboxCardItemProps) => {
           mt={"xs"}
         >
           {hasAction ? (
-            <Button variant={"outline"} onClick={handleActionClick}>
+            <Button
+              variant={"outline"}
+              size={"xs"}
+              pr={"6px"}
+              onClick={handleActionClick}
+            >
               {item.actionLabel || "Buka Data Saya"}
               <AppIcon icon={ArrowRightIcon} />
             </Button>
@@ -383,9 +388,12 @@ const InboxCardItem = memo((props: InboxCardItemProps) => {
                 e.stopPropagation();
                 onMarkAsRead(item.id);
               }}
+              size={"xs"}
+              pr={"6px"}
+              color={"fg.muted"}
             >
-              <AppIcon icon={CheckCheckIcon} size={"xs"} />
               {"Tandai dibaca"}
+              <AppIcon icon={CheckCheckIcon} />
             </Button>
           )}
         </HStack>
