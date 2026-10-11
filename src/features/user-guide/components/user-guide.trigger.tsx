@@ -74,9 +74,7 @@ export const UserGuideTrigger = (props: UserGuideTriggerProps) => {
                 {"Butuh Bantuan? Pelajari Dokumen Panduan"}
               </P>
 
-              <P color={"fg.subtle"}>
-                {"Manual book & petunjuk alur penggunaan sistem IGT"}
-              </P>
+              <P color={"fg.subtle"}>{"Petunjuk alur penggunaan sistem IGT"}</P>
             </VStack>
           </HStack>
 

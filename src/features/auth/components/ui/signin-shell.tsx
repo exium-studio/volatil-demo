@@ -46,11 +46,11 @@ export const SigninShell = (props: SigninShellProps) => {
         <FeaturesCarousel h={"full"} />
 
         <VStack
-          h={"full"}
           overflowY={"auto"}
+          maxW={"450px"}
+          h={"full"}
+          mx={"auto"}
           py={[8, 10, 12]}
-          // px={[6, 8, 12]}
-          // py={[8, 10, 12]}
           justify={"center"}
         >
           {intro ?? (
@@ -70,7 +70,7 @@ export const SigninShell = (props: SigninShellProps) => {
           {children}
 
           {showUserGuide && (
-            <Box w={"full"} maxW={"400px"} px={"md"} mt={8} mx={"auto"}>
+            <Box w={"full"} px={"md"} mt={8} mx={"auto"}>
               <UserGuideTrigger
                 modalKey={modalKey}
                 portalType={portalType}
