@@ -91,7 +91,7 @@ export const PLink = forwardRef<HTMLSpanElement, PProps>(
 export const ClampedP = forwardRef<HTMLParagraphElement, PProps>(
   function ClampedP(props, ref) {
     // Props
-    const { children, minW = 0, minWidth, ...restProps } = props;
+    const { children, minW = 0, minWidth, lineClamp = 1, ...restProps } = props;
 
     const resolvedMinW = minWidth ?? minW;
 
@@ -103,8 +103,10 @@ export const ClampedP = forwardRef<HTMLParagraphElement, PProps>(
       >
         <P
           ref={ref}
-          lineClamp={1}
-          wordBreak={restProps.lineClamp === 1 ? "break-all" : "break-word"}
+          lineClamp={lineClamp}
+          wordBreak={
+            lineClamp && Number(lineClamp) > 1 ? "break-word" : "break-all"
+          }
           minW={resolvedMinW}
           {...restProps}
         >

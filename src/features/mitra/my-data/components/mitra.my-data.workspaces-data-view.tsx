@@ -30,6 +30,7 @@ import type {
   MitraWorkspaceItem,
   MitraWorkspaceQueryParams,
 } from "@/features/mitra/my-data/types/my-data.type";
+import { toast } from "@/design-system/components/toast/core/toast.manager";
 import { TteBadge } from "@/features/shared/components/tte.badge";
 import { isEmptyArray } from "@/shared/utils/data/array";
 import {
@@ -39,6 +40,7 @@ import {
 import { useNavigate } from "@tanstack/react-router";
 import {
   ClockPlusIcon,
+  CopyIcon,
   FileCheckIcon,
   FolderOpenIcon,
   LayersIcon,
@@ -209,6 +211,21 @@ export const MitraMyDataWorkspacesDataView = (_props: MitraMyDataViewProps) => {
             params: { workspaceId: item.id },
           });
         },
+      },
+      {
+        key: "copy-workspace-url",
+        label: "Salin URL WMS Workspace",
+        icon: CopyIcon,
+        onClick: (item: MitraWorkspaceItem) => {
+          if (!item.wmsUrl) return;
+          void navigator.clipboard.writeText(item.wmsUrl);
+          toast.create({
+            title: "URL Berhasil Disalin",
+            description: `URL WMS Interop untuk ${item.workspaceName} telah disalin ke clipboard`,
+            variant: "success",
+          });
+        },
+        hidden: (item: MitraWorkspaceItem) => !item.wmsUrl,
       },
       {
         key: "renew-workspace",
