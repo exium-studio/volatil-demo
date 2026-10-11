@@ -13,7 +13,7 @@ import { Box, Circle } from "@/design-system/components/layout/ui/box";
 import { Center } from "@/design-system/components/layout/ui/center";
 import { HStack, VStack } from "@/design-system/components/layout/ui/flex-box";
 import { Badge } from "@/design-system/components/typography/ui/badge";
-import { P } from "@/design-system/components/typography/ui/p";
+import { ClampedP, P } from "@/design-system/components/typography/ui/p";
 import { useThemeStore } from "@/design-system/stores/theme-store";
 import {
   useClearAllInbox,
@@ -28,10 +28,7 @@ import type {
 } from "@/features/notification/types/inbox.type";
 import { t } from "@/shared/libs/i18n";
 import { isEmptyArray } from "@/shared/utils/data/array";
-import {
-  formatUtcDateTime,
-  getPreferredUserTimezone,
-} from "@/shared/utils/formatter/date.formatter";
+import { formatRelativeTime } from "@/shared/utils/formatter/date.formatter";
 import { useNavigate } from "@tanstack/react-router";
 import {
   ArrowRightIcon,
@@ -46,7 +43,7 @@ import {
   UserIcon,
   XIcon,
 } from "lucide-react";
-import { memo, useCallback, useMemo } from "react";
+import { memo, useCallback } from "react";
 
 const CATEGORY_ICON_MAP: Record<InboxCategory, typeof BellIcon> = {
   transaksi: CreditCardIcon,
@@ -178,11 +175,9 @@ export const NotificationInboxDataView = memo(() => {
 
       {/* Load More Button if hasNextPage */}
       {hasNextPage && (
-        <Center pt={2}>
+        <Center mt={"md"}>
           <Button
             size={"sm"}
-            variant={"subtle"}
-            colorPalette={"gray"}
             loading={isFetchingNextPage}
             onClick={() => void fetchNextPage()}
           >
@@ -203,16 +198,15 @@ const InboxCardItem = memo((props: InboxCardItemProps) => {
 
   // Stores & Hooks
   const { theme } = useThemeStore();
-  const preferredTimezone = useMemo(() => getPreferredUserTimezone(), []);
 
   // Derived Values
   const IconComponent = CATEGORY_ICON_MAP[item.category] ?? BellIcon;
   const colorPalette = CATEGORY_COLOR_MAP[item.category] ?? "blue";
   const hasAction = Boolean(
     item.actionUrl ||
-      item.metadata?.workspaceId ||
-      item.category === "kedaluwarsa" ||
-      item.category === "transaksi",
+    item.metadata?.workspaceId ||
+    item.category === "kedaluwarsa" ||
+    item.category === "transaksi",
   );
 
   // Handlers
@@ -273,8 +267,8 @@ const InboxCardItem = memo((props: InboxCardItemProps) => {
       p={"sm"}
       gap={["sm", null, "md"]}
       bg={item.isRead ? "bg.body" : "bg.subtle"}
-      borderWidth={"1px"}
-      borderColor={item.isRead ? "border.subtle" : `${colorPalette}.subtle`}
+      // borderWidth={"1px"}
+      // borderColor={item.isRead ? "border.subtle" : `${colorPalette}.subtle`}
       shadow={"xs"}
       rounded={theme.radii.container}
       w={"full"}
@@ -293,8 +287,8 @@ const InboxCardItem = memo((props: InboxCardItemProps) => {
     >
       <Circle
         aspectRatio={1}
-        w={"28px"}
-        h={"28px"}
+        w={"24px"}
+        h={"24px"}
         p={1}
         bg={item.isRead ? "bg.muted" : `${colorPalette}.muted`}
         color={item.isRead ? "fg.muted" : `${colorPalette}.fg`}
@@ -305,32 +299,16 @@ const InboxCardItem = memo((props: InboxCardItemProps) => {
       </Circle>
 
       <VStack flex={1} minW={0} gap={"xs"} align={"stretch"}>
-        {/* Header Row: Title, Dot, Badge, Date, Delete */}
-        <HStack
-          justify={"space-between"}
-          align={["start", null, "center"]}
-          wrap={"wrap"}
-          gap={"xs"}
-          w={"full"}
-        >
-          {/* Left: Title + Dot + Badge */}
-          <HStack gap={"xs"} align={"center"} wrap={"wrap"} flex={1} minW={0}>
-            <P
+        {/* Header*/}
+        <VStack gap={"sm"} w={"full"}>
+          {/* Title + Dot + Badge */}
+          <HStack align={"center"} gap={"sm"}>
+            <ClampedP
               fontWeight={item.isRead ? "medium" : "semibold"}
               wordBreak={"break-word"}
             >
               {item.title}
-            </P>
-
-            {!item.isRead && (
-              <Box
-                w={"6px"}
-                h={"6px"}
-                rounded={"full"}
-                bg={"blue.500"}
-                flexShrink={0}
-              />
-            )}
+            </ClampedP>
 
             <Badge
               variant={"subtle"}
@@ -341,18 +319,6 @@ const InboxCardItem = memo((props: InboxCardItemProps) => {
             >
               {item.category}
             </Badge>
-          </HStack>
-
-          {/* Right: Date + Delete Action */}
-          <HStack
-            gap={"xs"}
-            align={"center"}
-            flexShrink={0}
-            ml={["0", null, "auto"]}
-          >
-            <P fontSize={"sm"} color={"fg.subtle"} whiteSpace={"nowrap"}>
-              {formatUtcDateTime(item.createdAt, preferredTimezone)}
-            </P>
 
             <ConfirmationTrigger
               modalKey={`delete-inbox-item-${item.id}`}
@@ -366,14 +332,20 @@ const InboxCardItem = memo((props: InboxCardItemProps) => {
                 size={"2xs"}
                 variant={"subtle"}
                 aria-label={"Hapus pesan"}
+                ml={"auto"}
                 rounded={"full"}
                 onClick={(e) => e.stopPropagation()}
               >
-                <AppIcon icon={XIcon} size={"xs"} />
+                <AppIcon icon={XIcon} size={"sm"} />
               </IconButton>
             </ConfirmationTrigger>
           </HStack>
-        </HStack>
+
+          {/* Date */}
+          <P fontSize={"sm"} color={"fg.subtle"} whiteSpace={"nowrap"}>
+            {formatRelativeTime(item.createdAt)}
+          </P>
+        </VStack>
 
         {/* Message Content */}
         <Box w={"full"} pt={"2xs"}>

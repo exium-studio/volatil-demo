@@ -4,6 +4,7 @@ import {
   clearAllInboxApi,
   deleteInboxApi,
   getInboxListApi,
+  getInboxUnreadCountApi,
   markAllInboxAsReadApi,
   markInboxAsReadApi,
 } from "@/features/notification/api/notification.inbox.api";
@@ -18,6 +19,10 @@ export const notificationInboxService = {
     signal?: AbortSignal,
   ): Promise<InboxListResponse> => {
     return getInboxListApi(params, signal);
+  },
+
+  getUnreadCount: async (signal?: AbortSignal): Promise<number> => {
+    return getInboxUnreadCountApi(signal);
   },
 
   markAsRead: async (id: string, signal?: AbortSignal): Promise<void> => {

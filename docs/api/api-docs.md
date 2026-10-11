@@ -591,55 +591,104 @@ type HelpCenterListApiResponse = {
 
 ### Get List Inbox / Notifikasi
 
-- **Endpoint**: `GET /api/inbox`
+- **Endpoint**: `GET /api/inbox` (atau `/api/notifications`)
 - **Akses**: `Authenticated (Mitra & Internal)`
-- **Params**:
-  - `page?: number`
-  - `pageSize?: number`
-  - `category?: "transaksi" | "sistem" | "bantuan" | "akun"`
-  - `isRead?: boolean`
-  - `search?: string`
+- **Query Params**:
+  - `page?: number` (default: 1)
+  - `pageSize?: number` (default: 10, max: 100)
+  - `category?: "transaksi" | "sistem" | "bantuan" | "akun" | "kedaluwarsa"`
+  - `isRead?: boolean | string` (contoh: true | false)
+  - `search?: string` (pencarian pada title atau message)
 - **Response (200 OK)**:
 
-```typescript
-type InboxListResponse = {
-  items: Array<{
-    id: string;
-    title: string;
-    message: string;
-    category: "transaksi" | "sistem" | "bantuan" | "akun";
-    isRead: boolean;
-    actionUrl?: string;
-    createdAt: string;
-  }>;
-  total: number;
-  unreadCount: number;
-  page?: number;
-  pageSize?: number;
-};
+```json
+{
+  "success": true,
+  "code": 200,
+  "data": {
+    "items": [
+      {
+        "id": "46",
+        "title": "Verifikasi Layer Spasial: ORD-2026-00024",
+        "message": "Proses potongan layer spasial untuk pesanan ORD-2026-00024 telah selesai dan sedang menunggu verifikasi akhir dari Tim Admin Internal.",
+        "category": "transaksi",
+        "isRead": false,
+        "actionUrl": "/mitra/my-data/7a345410-b294-4ef2-86f3-fbcf413694a5",
+        "actionLabel": "Cek Status Verifikasi",
+        "metadata": {
+          "orderId": "7a345410-b294-4ef2-86f3-fbcf413694a5",
+          "orderNumber": "ORD-2026-00024",
+          "orderStatus": "pending_review",
+          "updatedAt": "2026-10-11T05:12:20.710Z"
+        },
+        "createdAt": "2026-10-11T05:12:20.713Z",
+        "readAt": null
+      }
+    ],
+    "unreadCount": 45,
+    "pagination": {
+      "totalItems": 46,
+      "totalPages": 5,
+      "currentPage": 1,
+      "itemsPerPage": 10,
+      "hasNextPage": true,
+      "hasPrevPage": false
+    }
+  }
+}
+```
+
+### Get Unread Count
+
+- **Endpoint**: `GET /api/inbox/unread-count` (atau `/api/notifications/unread-count`)
+- **Akses**: `Authenticated (Mitra & Internal)`
+- **Response (200 OK)**:
+
+```json
+{
+  "success": true,
+  "code": 200,
+  "data": {
+    "unreadCount": 45
+  }
+}
 ```
 
 ### Tandai Notifikasi Telah Dibaca
 
 - **Endpoint**: `PATCH /api/inbox/{id}/read`
 - **Akses**: `Authenticated (Mitra & Internal)`
-- **Response (200 OK)**: `{ success: true }`
+- **Response (200 OK)**:
+  ```json
+  { "success": true, "message": "Notification marked as read", "data": { "id": "46", "isRead": true, "readAt": "2026-10-11T05:12:20.713Z" } }
+  ```
 
 ### Tandai Semua Notifikasi Telah Dibaca
 
 - **Endpoint**: `PATCH /api/inbox/read-all`
 - **Akses**: `Authenticated (Mitra & Internal)`
-- **Response (200 OK)**: `{ success: true }`
+- **Response (200 OK)**:
+  ```json
+  { "success": true, "message": "All notifications marked as read", "data": { "updated": 45 } }
+  ```
 
 ### Hapus Notifikasi
 
 - **Endpoint**: `DELETE /api/inbox/{id}`
 - **Akses**: `Authenticated (Mitra & Internal)`
+- **Response (200 OK)**:
+  ```json
+  { "success": true, "message": "Notification deleted" }
+  ```
 
 ### Hapus Semua Notifikasi
 
 - **Endpoint**: `DELETE /api/inbox/clear-all`
 - **Akses**: `Authenticated (Mitra & Internal)`
+- **Response (200 OK)**:
+  ```json
+  { "success": true, "message": "Inbox cleared", "data": { "deleted": 46 } }
+  ```
 
 ---
 

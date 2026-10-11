@@ -4,7 +4,7 @@ import { notificationInboxService } from "@/features/notification/services/notif
 import type { InboxQueryParams } from "@/features/notification/types/inbox.type";
 import { useInfiniteQuery } from "@/shared/hooks/use-infinite-query";
 import { queryKeys } from "@/shared/libs/tanstack-query/query.keys";
-import { useMutation, useQueryClient } from "@tanstack/react-query";
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 
 export const useInboxQuery = (params?: InboxQueryParams) => {
   return useInfiniteQuery({
@@ -14,6 +14,15 @@ export const useInboxQuery = (params?: InboxQueryParams) => {
     params,
     pageSize: params?.pageSize ?? 10,
     staleTime: 60 * 1000,
+  });
+};
+
+export const useInboxUnreadCountQuery = (options?: { refetchInterval?: number }) => {
+  return useQuery({
+    queryKey: queryKeys.mitra.notification.inboxUnreadCount(),
+    queryFn: ({ signal }) => notificationInboxService.getUnreadCount(signal),
+    staleTime: 30 * 1000,
+    refetchInterval: options?.refetchInterval,
   });
 };
 

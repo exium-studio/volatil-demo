@@ -2,6 +2,7 @@
 
 import { DUMMY_INBOX_ITEMS } from "@/shared/constants/dummy-data/dummy-inbox";
 import type {
+  InboxItem,
   InboxListResponse,
   InboxQueryParams,
 } from "@/features/notification/types/inbox.type";
@@ -17,22 +18,50 @@ export const getInboxListApi = async (
 ): Promise<InboxListResponse> => {
   try {
     const response = await apiClient.get<
-      ApiResponse<InboxListResponse> | InboxListResponse
+      ApiResponse<{
+        items: InboxItem[];
+        unreadCount: number;
+        pagination: {
+          totalItems: number;
+          totalPages: number;
+          currentPage: number;
+          itemsPerPage: number;
+          hasNextPage: boolean;
+          hasPrevPage: boolean;
+        };
+      }> | InboxListResponse
     >("/api/inbox", {
       params,
       signal,
     });
 
-    if (
-      response &&
-      typeof response === "object" &&
-      "data" in response &&
-      response.data
-    ) {
-      return response.data;
-    }
+    const rawData =
+      response && typeof response === "object" && "data" in response && response.data
+        ? response.data
+        : (response as InboxListResponse);
 
-    return response as InboxListResponse;
+    const items = rawData.items ?? [];
+    const unreadCount = rawData.unreadCount ?? 0;
+    const rawTotal = "total" in rawData ? (rawData.total as number) : undefined;
+    const rawPagination = "pagination" in rawData ? rawData.pagination : undefined;
+
+    const pagination = rawPagination ?? {
+      totalItems: rawTotal ?? items.length,
+      totalPages: Math.ceil((rawTotal ?? items.length) / (params?.pageSize ?? 10)) || 1,
+      currentPage: params?.page ?? 1,
+      itemsPerPage: params?.pageSize ?? 10,
+      hasNextPage: false,
+      hasPrevPage: false,
+    };
+
+    return {
+      items,
+      unreadCount,
+      pagination,
+      total: pagination.totalItems,
+      page: pagination.currentPage,
+      pageSize: pagination.itemsPerPage,
+    };
   } catch (error) {
     if (isDummyDataEnabled()) {
       console.warn(
@@ -45,7 +74,9 @@ export const getInboxListApi = async (
         filtered = filtered.filter((i) => i.category === params.category);
       }
       if (params?.isRead !== undefined) {
-        filtered = filtered.filter((i) => i.isRead === params.isRead);
+        const boolIsRead =
+          params.isRead === true || params.isRead === "true";
+        filtered = filtered.filter((i) => i.isRead === boolIsRead);
       }
       if (params?.search) {
         const q = params.search.toLowerCase();
@@ -58,16 +89,52 @@ export const getInboxListApi = async (
 
       const page = params?.page ?? 1;
       const pageSize = params?.pageSize ?? 10;
+      const totalItems = filtered.length;
+      const totalPages = Math.ceil(totalItems / pageSize) || 1;
       const startIndex = (page - 1) * pageSize;
       const paginatedItems = filtered.slice(startIndex, startIndex + pageSize);
 
       return {
         items: paginatedItems,
-        total: filtered.length,
         unreadCount: filtered.filter((i) => !i.isRead).length,
+        pagination: {
+          totalItems,
+          totalPages,
+          currentPage: page,
+          itemsPerPage: pageSize,
+          hasNextPage: page < totalPages,
+          hasPrevPage: page > 1,
+        },
+        total: totalItems,
         page,
         pageSize,
       };
+    }
+    throw error;
+  }
+};
+
+export const getInboxUnreadCountApi = async (
+  signal?: AbortSignal,
+): Promise<number> => {
+  try {
+    const response = await apiClient.get<
+      ApiResponse<{ unreadCount: number }> | { unreadCount: number }
+    >("/api/inbox/unread-count", { signal });
+
+    if (
+      response &&
+      typeof response === "object" &&
+      "data" in response &&
+      response.data
+    ) {
+      return response.data.unreadCount ?? 0;
+    }
+
+    return (response as { unreadCount: number })?.unreadCount ?? 0;
+  } catch (error) {
+    if (isDummyDataEnabled()) {
+      return localDummyInbox.filter((item) => !item.isRead).length;
     }
     throw error;
   }

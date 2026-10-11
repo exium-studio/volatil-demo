@@ -77,6 +77,8 @@ export const queryKeys = {
       inbox: () => [...queryKeys.mitra.notification.all, "inbox"] as const,
       inboxList: (params?: Record<string, unknown>) =>
         [...queryKeys.mitra.notification.all, "inbox", "list", params] as const,
+      inboxUnreadCount: () =>
+        [...queryKeys.mitra.notification.all, "inbox", "unread-count"] as const,
     },
   },
   internal: {
