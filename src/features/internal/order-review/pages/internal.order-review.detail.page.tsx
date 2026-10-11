@@ -10,6 +10,7 @@ import type {
   FormattedTableHeader,
 } from "@/design-system/components/data-display/types/data-view-table.type";
 import { DataViewTable } from "@/design-system/components/data-display/ui/data-view-table";
+import { ConfirmationTrigger } from "@/design-system/components/feedback/ui/confirmation-trigger";
 import { Skeleton } from "@/design-system/components/feedback/ui/skeleton";
 import { AppIcon } from "@/design-system/components/icon/ui/app-icon";
 import { Switch } from "@/design-system/components/input/ui/switch";
@@ -292,17 +293,26 @@ export const InternalOrderReviewDetailPage = () => {
 
               <HStack gap={2}>
                 {order.status === "paid" && (
-                  <Button
-                    primary={true}
+                  <ConfirmationTrigger
+                    modalKey={`provision-wms-${order.orderId}`}
+                    icon={MapPlusIcon}
                     colorPalette={"blue"}
-                    loading={provisionOrderMutation.isPending}
-                    onClick={() => {
+                    title={"Buat Layanan WMS"}
+                    description={`Apakah Anda yakin ingin memulai pembuatan layanan WMS untuk pesanan "${order.orderNumber || order.orderId}" (Mitra: ${order.mitraName})? Proses ini akan menyiapkan workspace dan service layer di latar belakang.`}
+                    confirmLabel={"Buat Layanan WMS"}
+                    onConfirm={() => {
                       provisionOrderMutation.mutate({ orderId: order.orderId });
                     }}
                   >
-                    <AppIcon icon={MapPlusIcon} />
-                    {"Create Service WMS"}
-                  </Button>
+                    <Button
+                      primary={true}
+                      colorPalette={"blue"}
+                      loading={provisionOrderMutation.isPending}
+                    >
+                      <AppIcon icon={MapPlusIcon} />
+                      {"Create Service WMS"}
+                    </Button>
+                  </ConfirmationTrigger>
                 )}
 
                 {order.status === "processing" && (

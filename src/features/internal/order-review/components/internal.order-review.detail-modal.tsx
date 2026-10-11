@@ -3,6 +3,7 @@
 import { Button } from "@/design-system/components/button/ui/button";
 import { ClipboardButton } from "@/design-system/components/data-display/ui/clipboard-button";
 import { AppIcon } from "@/design-system/components/icon/ui/app-icon";
+import { ConfirmationTrigger } from "@/design-system/components/feedback/ui/confirmation-trigger";
 import { HStack, VStack } from "@/design-system/components/layout/ui/flex-box";
 import { usePopModal } from "@/design-system/components/overlay/hooks/use-pop-modal";
 import { Modal } from "@/design-system/components/overlay/ui/modal";
@@ -214,11 +215,14 @@ const InternalOrderReviewDetailModalContent = (
           </Button>
 
           {isPaid && (
-            <Button
-              primary={true}
+            <ConfirmationTrigger
+              modalKey={`provision-wms-detail-modal-${order.orderId}`}
+              icon={MapPlusIcon}
               colorPalette={"blue"}
-              loading={provisionOrderMutation.isPending}
-              onClick={() => {
+              title={"Buat Layanan WMS"}
+              description={`Apakah Anda yakin ingin memulai pembuatan layanan WMS untuk pesanan "${order.orderNumber || order.orderId}" (Mitra: ${order.mitraName})? Proses ini akan menyiapkan workspace dan service layer di latar belakang.`}
+              confirmLabel={"Buat Layanan WMS"}
+              onConfirm={() => {
                 provisionOrderMutation.mutate(
                   { orderId: order.orderId },
                   {
@@ -229,9 +233,15 @@ const InternalOrderReviewDetailModalContent = (
                 );
               }}
             >
-              <AppIcon icon={MapPlusIcon} />
-              {"Create Service WMS"}
-            </Button>
+              <Button
+                primary={true}
+                colorPalette={"blue"}
+                loading={provisionOrderMutation.isPending}
+              >
+                <AppIcon icon={MapPlusIcon} />
+                {"Create Service WMS"}
+              </Button>
+            </ConfirmationTrigger>
           )}
 
           {isProcessing && (

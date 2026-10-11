@@ -5,6 +5,7 @@ import type { DataViewItemActionsGenerator } from "@/design-system/components/da
 import { DataViewFooter } from "@/design-system/components/data-display/ui/data-view-footer";
 import { DEFAULT_PAGE_SIZE_OPTIONS } from "@/design-system/components/data-display/ui/data-view-page-size";
 import { DataViewTable } from "@/design-system/components/data-display/ui/data-view-table";
+import { ConfirmationTrigger } from "@/design-system/components/feedback/ui/confirmation-trigger";
 import { Skeleton } from "@/design-system/components/feedback/ui/skeleton";
 import { StateNoData } from "@/design-system/components/feedback/ui/state.no-data";
 import { StateNoResult } from "@/design-system/components/feedback/ui/state.no-result";
@@ -203,9 +204,22 @@ export const InternalOrderReviewDataView = () => {
         key: "provision-wms",
         label: "Create Service WMS",
         icon: MapPlusIcon,
+        colorPalette: "blue",
         hidden: (order: InternalOrderItem) => order.status !== "paid",
-        onClick: (order: InternalOrderItem) => {
-          provisionOrderMutation.mutate({ orderId: order.orderId });
+        modal: {
+          triggerComponent: (order: InternalOrderItem) => (
+            <ConfirmationTrigger
+              modalKey={`provision-wms-${order.orderId}`}
+              icon={MapPlusIcon}
+              colorPalette={"blue"}
+              title={"Buat Layanan WMS"}
+              description={`Apakah Anda yakin ingin memulai pembuatan layanan WMS untuk pesanan "${order.orderNumber || order.orderId}" (Mitra: ${order.mitraName})? Proses ini akan menyiapkan workspace dan service layer di latar belakang.`}
+              confirmLabel={"Buat Layanan WMS"}
+              onConfirm={() => {
+                provisionOrderMutation.mutate({ orderId: order.orderId });
+              }}
+            />
+          ),
         },
       },
       {
