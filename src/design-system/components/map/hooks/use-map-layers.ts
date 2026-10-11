@@ -342,5 +342,30 @@ export const useMapLayers = (
         }
       }
     });
+
+    // Enforce layer z-index order in MapLibre stack:
+    // layers array is ordered bottom-to-top (layers[0] is bottom, layers[last] is top).
+    // Move each layer above the previous one, always respecting beforeId limit.
+    const customBeforeId = getCustomLayerBeforeId(map);
+    for (let i = 0; i < layers.length; i++) {
+      const currentId = layers[i].id;
+      if (!map.getLayer(currentId)) continue;
+
+      // The layer to place before is either the next layer in stack, or customBeforeId
+      let beforeTarget = customBeforeId;
+      for (let j = i + 1; j < layers.length; j++) {
+        const nextId = layers[j].id;
+        if (map.getLayer(nextId)) {
+          beforeTarget = nextId;
+          break;
+        }
+      }
+
+      try {
+        map.moveLayer(currentId, beforeTarget);
+      } catch {
+        // Ignore if already in order
+      }
+    }
   }, [map, layers, cqlFilter, addLayer]);
 };

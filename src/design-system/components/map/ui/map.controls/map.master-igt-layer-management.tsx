@@ -33,11 +33,22 @@ import { getUserSession } from "@/shared/utils/user/user-session.utils";
 import { useQuery } from "@tanstack/react-query";
 import {
   FocusIcon,
+  GripVerticalIcon,
   LayersIcon,
   SquareDashedIcon,
   SwatchBookIcon,
 } from "lucide-react";
-import { memo, useCallback, useMemo, useState } from "react";
+import { memo, useCallback, useEffect, useMemo, useRef, useState } from "react";
+import { combine } from "@atlaskit/pragmatic-drag-and-drop/combine";
+import {
+  draggable,
+  dropTargetForElements,
+} from "@atlaskit/pragmatic-drag-and-drop/element/adapter";
+import {
+  attachClosestEdge,
+  extractClosestEdge,
+  type Edge,
+} from "@atlaskit/pragmatic-drag-and-drop-hitbox/closest-edge";
 
 export const MapMasterIgtLayerManagement = memo(() => {
   // Stores
@@ -46,11 +57,14 @@ export const MapMasterIgtLayerManagement = memo(() => {
     enabledSymbologyLayerIds,
     layerOpacities,
     globalOpacity,
+    layerOrder,
     setGlobalOpacity,
     toggleLayerId,
     toggleSymbologyLayerId,
     setLayerOpacity,
     setAllLayersEnabled,
+    setLayerOrder,
+    reorderLayer,
   } = useMapLayerStore();
 
   // Contexts
@@ -74,8 +88,42 @@ export const MapMasterIgtLayerManagement = memo(() => {
     enabled: isAuthenticated,
   });
 
-  // Derived Values
-  const activeLayers = useMemo(() => layersData?.items ?? [], [layersData]);
+  // Effects — Initialize layerOrder when layersData loaded if empty
+  // Sort descending by zIndex (highest zIndex is at the top of the list, index 0)
+  useEffect(() => {
+    const items = layersData?.items;
+    if (items && items.length > 0 && layerOrder.length === 0) {
+      const sortedByZIndex = [...items].sort(
+        (a, b) => (b.zIndex ?? 0) - (a.zIndex ?? 0),
+      );
+      setLayerOrder(sortedByZIndex.map((l) => l.id));
+    }
+  }, [layersData?.items, layerOrder.length, setLayerOrder]);
+
+  // Derived Values — Sorted active layers reflecting zIndex / drag order
+  const activeLayers = useMemo(() => {
+    const raw = layersData?.items ?? [];
+    if (layerOrder.length === 0) return raw;
+
+    const layerMap = new Map(raw.map((l) => [l.id, l]));
+    const ordered: (typeof raw)[0][] = [];
+
+    // Follow layerOrder (index 0 is visually on top)
+    for (const id of layerOrder) {
+      const item = layerMap.get(id);
+      if (item) {
+        ordered.push(item);
+        layerMap.delete(id);
+      }
+    }
+
+    // Append any layers not yet in layerOrder
+    for (const remaining of layerMap.values()) {
+      ordered.push(remaining);
+    }
+
+    return ordered;
+  }, [layersData, layerOrder]);
 
   const enabledCount = useMemo(() => {
     return activeLayers.filter((l) => Boolean(enabledLayerIds[l.id])).length;
@@ -200,8 +248,6 @@ export const MapMasterIgtLayerManagement = memo(() => {
                       />
                     </VStack>
                   </VStack>
-
-                  <Separator />
                 </>
               )}
 
@@ -214,7 +260,7 @@ export const MapMasterIgtLayerManagement = memo(() => {
               )}
 
               <VStack gap={"2xs"} align={"stretch"}>
-                {activeLayers.map((layer) => {
+                {activeLayers.map((layer, index) => {
                   const isEnabled = Boolean(enabledLayerIds[layer.id]);
                   const isSymbologyEnabled = Boolean(
                     enabledSymbologyLayerIds[layer.id],
@@ -225,12 +271,14 @@ export const MapMasterIgtLayerManagement = memo(() => {
                     <MapMasterIgtLayerItem
                       key={layer.id}
                       layer={layer}
+                      index={index}
                       isEnabled={isEnabled}
                       isSymbologyEnabled={isSymbologyEnabled}
                       opacity={opacity}
                       onToggle={toggleLayerId}
                       onToggleSymbology={toggleSymbologyLayerId}
                       onOpacityChange={setLayerOpacity}
+                      onReorder={reorderLayer}
                     />
                   );
                 })}
@@ -247,22 +295,91 @@ const MapMasterIgtLayerItem = memo((props: MapMasterIgtLayerItemProps) => {
   // Props
   const {
     layer,
+    index,
     isEnabled,
     isSymbologyEnabled,
     opacity,
     onToggle,
     onToggleSymbology,
     onOpacityChange,
+    onReorder,
   } = props;
 
   // Stores
   const { theme } = useThemeStore();
   const { flyTo } = useFlyToLayer();
 
+  // Refs
+  const itemRef = useRef<HTMLDivElement | null>(null);
+  const dragHandleRef = useRef<HTMLButtonElement | null>(null);
+
   // States
   const [isSymbologyOpen, setIsSymbologyOpen] = useState<boolean>(
     Boolean(isSymbologyEnabled),
   );
+  const [isDragging, setIsDragging] = useState<boolean>(false);
+  const [closestEdge, setClosestEdge] = useState<Edge | null>(null);
+
+  // Effects — Pragmatic Drag and Drop
+  useEffect(() => {
+    const element = itemRef.current;
+    const dragHandle = dragHandleRef.current;
+    if (!element || !dragHandle) return;
+
+    return combine(
+      draggable({
+        element,
+        dragHandle,
+        getInitialData: () => ({ id: layer.id, index }),
+        onDragStart: () => setIsDragging(true),
+        onDrop: () => setIsDragging(false),
+      }),
+      dropTargetForElements({
+        element,
+        canDrop: ({ source }) => {
+          return source.data.id !== layer.id;
+        },
+        getData: ({ input, element }) => {
+          const data = { id: layer.id, index };
+          return attachClosestEdge(data, {
+            input,
+            element,
+            allowedEdges: ["top", "bottom"],
+          });
+        },
+        onDragEnter: (args) => {
+          const edge = extractClosestEdge(args.self.data);
+          setClosestEdge(edge);
+        },
+        onDrag: (args) => {
+          const edge = extractClosestEdge(args.self.data);
+          setClosestEdge(edge);
+        },
+        onDragLeave: () => {
+          setClosestEdge(null);
+        },
+        onDrop: (args) => {
+          setClosestEdge(null);
+          const sourceIndex = args.source.data.index as number | undefined;
+          if (sourceIndex === undefined || sourceIndex === index) return;
+
+          const edge = extractClosestEdge(args.self.data);
+          let targetIndex = index;
+          if (edge === "bottom" && sourceIndex < index) {
+            targetIndex = index;
+          } else if (edge === "bottom" && sourceIndex > index) {
+            targetIndex = index + 1;
+          } else if (edge === "top" && sourceIndex < index) {
+            targetIndex = index - 1;
+          } else if (edge === "top" && sourceIndex > index) {
+            targetIndex = index;
+          }
+
+          onReorder(sourceIndex, targetIndex);
+        },
+      }),
+    );
+  }, [layer.id, index, onReorder]);
 
   // Handlers
   const handleToggle = () => {
@@ -293,7 +410,42 @@ const MapMasterIgtLayerItem = memo((props: MapMasterIgtLayerItemProps) => {
   const basisLabel = basisConfig?.label ?? layer.spatialBasis ?? "Layer IGT";
 
   return (
-    <VStack gap={isSymbologyOpen ? "2xs" : 0} align={"stretch"} w={"full"}>
+    <VStack
+      ref={itemRef}
+      gap={isSymbologyOpen ? "2xs" : 0}
+      align={"stretch"}
+      w={"full"}
+      opacity={isDragging ? 0.4 : 1}
+      position={"relative"}
+      transition={"opacity 0.15s ease"}
+    >
+      {closestEdge === "top" && (
+        <Box
+          position={"absolute"}
+          top={"-1px"}
+          left={0}
+          right={0}
+          height={"2px"}
+          bg={"blue.solid"}
+          rounded={"full"}
+          zIndex={10}
+          pointerEvents={"none"}
+        />
+      )}
+      {closestEdge === "bottom" && (
+        <Box
+          position={"absolute"}
+          bottom={"-1px"}
+          left={0}
+          right={0}
+          height={"2px"}
+          bg={"blue.solid"}
+          rounded={"full"}
+          zIndex={10}
+          pointerEvents={"none"}
+        />
+      )}
+
       <HStack
         align={"center"}
         justify={"space-between"}
@@ -306,7 +458,7 @@ const MapMasterIgtLayerItem = memo((props: MapMasterIgtLayerItemProps) => {
         _hover={{ bg: "bg.subtle" }}
         w={"full"}
       >
-        <HStack gap={"md"} align={"center"} flex={1} minW={0}>
+        <HStack gap={"xs"} align={"center"} flex={1} minW={0}>
           <Center
             p={"xs"}
             bg={isEnabled ? `${colorPalette}.subtle` : "bg.muted"}
@@ -319,18 +471,18 @@ const MapMasterIgtLayerItem = memo((props: MapMasterIgtLayerItemProps) => {
             />
           </Center>
 
-          <VStack flex={1} align={"start"} minW={0}>
+          <VStack flex={1} align={"start"} minW={0} gap={0}>
             <ClampedP color={isEnabled ? `fg` : "fg.subtle"}>
               {displayName.replace(/_/g, " ")}
             </ClampedP>
 
-            <ClampedP fontSize={"sm"} color={"fg.subtle"}>
+            <ClampedP fontSize={"xs"} color={"fg.subtle"}>
               {basisLabel}
             </ClampedP>
           </VStack>
         </HStack>
 
-        <HStack gap={"xs"} align={"center"} flexShrink={0}>
+        <HStack gap={"2xs"} align={"center"} flexShrink={0}>
           <Switch
             size={"sm"}
             checked={isEnabled}
@@ -416,6 +568,23 @@ const MapMasterIgtLayerItem = memo((props: MapMasterIgtLayerItemProps) => {
               </VStack>
             </Popover.Content>
           </Popover.Root>
+
+          <Tooltip content={"Tahan & geser untuk mengubah urutan (z-index)"}>
+            <IconButton
+              ref={dragHandleRef}
+              size={"xs"}
+              variant={"ghost"}
+              cursor={"grab"}
+              _active={{ cursor: "grabbing" }}
+              aria-label={"Ubah urutan layer"}
+              onClick={(e) => e.stopPropagation()}
+              color={"fg.subtle"}
+              _hover={{ color: "fg" }}
+              px={0}
+            >
+              <AppIcon icon={GripVerticalIcon} boxSize={4} />
+            </IconButton>
+          </Tooltip>
         </HStack>
       </HStack>
 

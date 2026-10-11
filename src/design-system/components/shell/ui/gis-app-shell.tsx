@@ -338,6 +338,7 @@ const Content = (_props: GisContentProps) => {
     customLayerConfigs,
     cqlFilter,
     globalOpacity,
+    layerOrder,
   } = useIgtLayerStore();
   const {
     enabledLayerIds: previewEnabledLayerIds,
@@ -369,9 +370,20 @@ const Content = (_props: GisContentProps) => {
 
   const mapLayers = useMemo<MapLayerConfig[]>(() => {
     const rawList = fetchedLayers?.items ?? [];
-    const sorted = [...rawList].sort(
-      (a, b) => (a.zIndex ?? 0) - (b.zIndex ?? 0),
-    );
+    const sorted = [...rawList].sort((a, b) => {
+      if (layerOrder.length > 0) {
+        const indexA = layerOrder.indexOf(a.id);
+        const indexB = layerOrder.indexOf(b.id);
+        if (indexA !== -1 && indexB !== -1) {
+          // Bottom-to-top rendering: item with higher index in bottom or top
+          // In MapLibre layer stack, earlier configs are added first (at the bottom).
+          // If layer list shows top-to-bottom (0 is top-most visually), then 0 has highest z-index.
+          // In reverse: layer at index 0 should be rendered on top (added last).
+          return indexB - indexA;
+        }
+      }
+      return (a.zIndex ?? 0) - (b.zIndex ?? 0);
+    });
     const configs: MapLayerConfig[] = sorted
       .filter((layer: IgtLayerItem) =>
         Boolean(layer.wms?.wmsUrl || layer.wms?.layers || layer.id),
@@ -447,6 +459,7 @@ const Content = (_props: GisContentProps) => {
     previewEnabledLayerIds,
     previewLayerConfigs,
     globalOpacity,
+    layerOrder,
   ]);
 
   // Derived Values

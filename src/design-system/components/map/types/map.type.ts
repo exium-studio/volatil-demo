@@ -236,6 +236,9 @@ export type MapLayerState = {
     layerId: string,
     config: Partial<WmsRasterLayerConfig> | null,
   ) => void;
+  layerOrder: string[];
+  setLayerOrder: (order: string[]) => void;
+  reorderLayer: (sourceIndex: number, targetIndex: number) => void;
   resetLayers: () => void;
 };
 
