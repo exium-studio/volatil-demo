@@ -44,6 +44,7 @@ export type MitraCartOrderItemProps = {
   onToggleBidangVisible?: () => void;
   onFlyToAoi?: () => void;
   onFlyToCoverage?: () => void;
+  onFlyToBidang?: () => void;
 };
 
 export type MitraCartOrderListProps = {
@@ -57,6 +58,7 @@ export type MitraCartOrderListProps = {
   onToggleBidangVisible?: () => void;
   onFlyToAoi?: () => void;
   onFlyToCoverage?: () => void;
+  onFlyToBidang?: () => void;
 };
 
 export type MitraCartOrderDetailProps = {
@@ -215,6 +217,8 @@ export type CartOrder = {
   subtotalBidang?: number;
   subtotalKawasan?: number;
   totalPrice: number;
+  purchasedBasis?: PurchasedIgtBasis;
+  purchasedIgtBasis?: PurchasedIgtBasis;
   items: CartOrderItem[];
   administrativeFilter?: {
     kodeProvinsi?: string;

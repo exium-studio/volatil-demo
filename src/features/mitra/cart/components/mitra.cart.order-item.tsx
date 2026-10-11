@@ -46,6 +46,7 @@ export const MitraCartOrderItem = memo((props: MitraCartOrderItemProps) => {
     onToggleBidangVisible,
     onFlyToAoi,
     onFlyToCoverage,
+    onFlyToBidang,
   } = props;
 
   // Stores
@@ -60,9 +61,19 @@ export const MitraCartOrderItem = memo((props: MitraCartOrderItemProps) => {
 
   const totalKawasanHa = order.coverageHa;
 
+  const isKawasanOnly =
+    order.purchasedBasis === "kawasan" ||
+    order.purchasedIgtBasis === "kawasan" ||
+    (order.items.length > 0 &&
+      order.items.some((i) => (i.spatialBasis ?? i.igtBasis) === "kawasan") &&
+      !order.items.some((i) => (i.spatialBasis ?? i.igtBasis) === "bidang"));
+
   const hasAoiPolygon = Boolean(order.aoiPolygon);
+
   const hasCoverageKawasan = Boolean(order.kawasanCoveragePolygon);
+
   const hasCoverageBidang =
+    !isKawasanOnly &&
     order.items.some((i) => (i.spatialBasis ?? i.igtBasis) === "bidang") &&
     Boolean(order.aoiPolygon);
 
@@ -307,12 +318,12 @@ export const MitraCartOrderItem = memo((props: MitraCartOrderItemProps) => {
                       </Tooltip>
                     )}
 
-                    {onFlyToAoi && (
+                    {onFlyToBidang && (
                       <Tooltip content={"Zoom ke Cakupan Bidang"}>
                         <IconButton
                           size={"xs"}
                           variant={"ghost"}
-                          onClick={onFlyToAoi}
+                          onClick={onFlyToBidang}
                         >
                           <AppIcon icon={FocusIcon} />
                         </IconButton>

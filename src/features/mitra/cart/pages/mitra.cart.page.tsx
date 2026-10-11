@@ -16,6 +16,7 @@ import { HStack, VStack } from "@/design-system/components/layout/ui/flex-box";
 import { AppContentContainer } from "@/design-system/components/layout/ui/page-container";
 import { Separator } from "@/design-system/components/layout/ui/separator";
 import { useMapInstanceStore } from "@/design-system/components/map/stores/map.instance.store";
+import { fitBoundsSafe } from "@/design-system/components/map/utils/map-camera";
 import { HeaderContainer } from "@/design-system/components/shell/ui/header-container";
 import { Badge } from "@/design-system/components/typography/ui/badge";
 import { Heading } from "@/design-system/components/typography/ui/heading";
@@ -27,6 +28,7 @@ import {
   removeCartMapLayers,
   useCartAoiCoverageMap,
 } from "@/features/mitra/cart/hooks/use-cart-aoi-coverage-map";
+import { normalizePolygonFeature } from "@/features/mitra/data-request/utils/clip-and-union-kawasan";
 import {
   useCancelActiveCartOrder,
   useCartOrderDetailQuery,
@@ -41,6 +43,7 @@ import type {
 import { getIgtLayers } from "@/features/mitra/data-request/api/mitra.data-request-igt-layers.api";
 import { useBidangAoiFeatures } from "@/features/mitra/data-request/hooks/use-bidang-aoi-features";
 import { queryKeys } from "@/shared/libs/tanstack-query/query.keys";
+import * as turf from "@turf/turf";
 import { useQuery } from "@tanstack/react-query";
 import { InfoIcon, ShoppingCartIcon, Trash2Icon } from "lucide-react";
 import { useCallback, useEffect, useMemo, useState } from "react";
@@ -101,9 +104,28 @@ const MitraCartContent = () => {
   // Derived Values
   const isOrderSelected = Boolean(effectiveSelectedOrderId && selectedOrder);
 
+  const isKawasanOnly = useMemo(() => {
+    if (!selectedOrder) return false;
+    const basis =
+      selectedOrder.purchasedBasis ?? selectedOrder.purchasedIgtBasis;
+    if (basis === "kawasan") return true;
+    if (basis === "bidang" || basis === "all") return false;
+
+    // Fallback: detect from items if purchasedBasis is not explicitly present
+    const items = selectedOrder.items ?? [];
+    if (items.length === 0) return false;
+    const hasKawasan = items.some(
+      (it) => (it.spatialBasis ?? it.igtBasis) === "kawasan",
+    );
+    const hasBidang = items.some(
+      (it) => (it.spatialBasis ?? it.igtBasis) === "bidang",
+    );
+    return hasKawasan && !hasBidang;
+  }, [selectedOrder]);
+
   const selectedOrderItems = selectedOrder?.items;
   const bidangTargetLayers = useMemo(() => {
-    if (!selectedOrderItems) return [];
+    if (!selectedOrderItems || isKawasanOnly) return [];
 
     const masterItems = masterLayersData?.items ?? [];
     const masterMap = new Map<string, (typeof masterItems)[0]>();
@@ -153,13 +175,14 @@ const MitraCartContent = () => {
         };
       })
       .filter((it) => Boolean(it.typeName));
-  }, [selectedOrderItems, masterLayersData?.items]);
+  }, [selectedOrderItems, isKawasanOnly, masterLayersData?.items]);
 
   const bidangQueryResult = useBidangAoiFeatures({
-    aoiPolygon: isOrderSelected ? selectedOrder?.aoiPolygon : null,
+    aoiPolygon: isOrderSelected && !isKawasanOnly ? selectedOrder?.aoiPolygon : null,
     bidangLayers: bidangTargetLayers,
     enabled:
       isOrderSelected &&
+      !isKawasanOnly &&
       isBidangVisible &&
       Boolean(selectedOrder?.aoiPolygon) &&
       bidangTargetLayers.length > 0,
@@ -171,11 +194,12 @@ const MitraCartContent = () => {
     kawasanCoveragePolygon: isOrderSelected
       ? selectedOrder?.kawasanCoveragePolygon
       : null,
-    bidangFeatures: isOrderSelected ? bidangQueryResult.features : null,
+    bidangFeatures:
+      isOrderSelected && !isKawasanOnly ? bidangQueryResult.features : null,
     selectionType: selectedOrder?.selectionType,
     isAoiVisible,
     isCoverageVisible,
-    isBidangVisible,
+    isBidangVisible: isBidangVisible && !isKawasanOnly,
     isActive: isOrderSelected,
     exclusive: true,
   });
@@ -234,6 +258,70 @@ const MitraCartContent = () => {
     }
   }, [selectedOrder, map]);
 
+  const handleFlyToBidang = useCallback(() => {
+    if (!map) return;
+
+    // 1. Prioritize combined bounding box from all bidang items in the order
+    const bidangItems = (selectedOrder?.items ?? []).filter(
+      (it) => (it.spatialBasis ?? it.igtBasis) === "bidang",
+    );
+    const validBboxes = bidangItems
+      .map((it) => it.bbox)
+      .filter((b): b is [number, number, number, number] => Boolean(b));
+
+    if (validBboxes.length > 0) {
+      const mergedBbox: [number, number, number, number] = [
+        Math.min(...validBboxes.map((b) => b[0])),
+        Math.min(...validBboxes.map((b) => b[1])),
+        Math.max(...validBboxes.map((b) => b[2])),
+        Math.max(...validBboxes.map((b) => b[3])),
+      ];
+      fitBoundsSafe(map, mergedBbox, { padding: 80, maxZoom: 17 });
+      return;
+    }
+
+    // 2. If item bbox is absent, use bbox from matching master layer items
+    const masterItems = masterLayersData?.items ?? [];
+    const masterBboxes = bidangItems
+      .map((it) => {
+        const keyId = (it.sourceLayerId || it.id || "").toLowerCase();
+        const keyTitle = (it.sourceLayerTitle || "").toLowerCase();
+        const matched = masterItems.find(
+          (m) =>
+            m.id?.toLowerCase() === keyId ||
+            m.typeName?.toLowerCase() === keyId ||
+            m.title?.toLowerCase() === keyTitle,
+        );
+        return matched?.bbox;
+      })
+      .filter((b): b is [number, number, number, number] => Boolean(b));
+
+    if (masterBboxes.length > 0) {
+      const mergedBbox: [number, number, number, number] = [
+        Math.min(...masterBboxes.map((b) => b[0])),
+        Math.min(...masterBboxes.map((b) => b[1])),
+        Math.max(...masterBboxes.map((b) => b[2])),
+        Math.max(...masterBboxes.map((b) => b[3])),
+      ];
+      fitBoundsSafe(map, mergedBbox, { padding: 80, maxZoom: 17 });
+      return;
+    }
+
+    // 3. Fallback: zoom to AOI polygon bbox if available
+    if (selectedOrder?.aoiPolygon) {
+      const aoiFeature = normalizePolygonFeature(selectedOrder.aoiPolygon);
+      if (aoiFeature) {
+        const aoiBbox = turf.bbox(aoiFeature) as [
+          number,
+          number,
+          number,
+          number,
+        ];
+        fitBoundsSafe(map, aoiBbox, { padding: 80, maxZoom: 17 });
+      }
+    }
+  }, [map, selectedOrder, masterLayersData?.items]);
+
   // Derived Values
   const selectedOrderIndex = orders.findIndex(
     (b) => b.orderId === effectiveSelectedOrderId,
@@ -269,6 +357,7 @@ const MitraCartContent = () => {
           onToggleBidangVisible={handleToggleBidang}
           onFlyToAoi={handleFlyToAoi}
           onFlyToCoverage={handleFlyToCoverage}
+          onFlyToBidang={handleFlyToBidang}
         />
 
         <MitraCartOrderDetail
@@ -301,6 +390,7 @@ export const MitraCartOrderList = (props: MitraCartOrderListProps) => {
     onToggleBidangVisible,
     onFlyToAoi,
     onFlyToCoverage,
+    onFlyToBidang,
   } = props;
 
   // Contexts
@@ -459,6 +549,7 @@ export const MitraCartOrderList = (props: MitraCartOrderListProps) => {
                       onToggleBidangVisible={onToggleBidangVisible}
                       onFlyToAoi={onFlyToAoi}
                       onFlyToCoverage={onFlyToCoverage}
+                      onFlyToBidang={onFlyToBidang}
                     />
                   );
                 })}

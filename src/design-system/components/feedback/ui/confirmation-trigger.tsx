@@ -4,6 +4,7 @@ import { Button } from "@/design-system/components/button/ui/button";
 import type { ConfirmationTriggerProps } from "@/design-system/components/feedback/types/confirmation-trigger.type";
 import { AppIcon } from "@/design-system/components/icon/ui/app-icon";
 import { Circle } from "@/design-system/components/layout/ui/box";
+import { AbsoluteCenter } from "@/design-system/components/layout/ui/center";
 import { VStack } from "@/design-system/components/layout/ui/flex-box";
 import { usePopModal } from "@/design-system/components/overlay/hooks/use-pop-modal";
 import { Modal } from "@/design-system/components/overlay/ui/modal";
@@ -75,24 +76,29 @@ export const ConfirmationTrigger = (props: ConfirmationTriggerProps) => {
 
           <Modal.Body pt={0} pb={"lg"}>
             <VStack align={"center"} gap={"md"}>
-              {/* Inner Icon / Emoji Circle */}
               <Circle
-                size={"76px"}
                 pos={"relative"}
-                bg={`${resolvedColorPalette}.muted`}
+                size={"76px"}
+                bg={`${resolvedColorPalette}.muted/40`}
                 color={`${resolvedColorPalette}.fg`}
-                border={"12px solid"}
-                borderColor={`${resolvedColorPalette}.subtle`}
                 mb={"md"}
               >
+                <AbsoluteCenter>
+                  <Circle size={"52px"} bg={`${resolvedColorPalette}.muted`} />
+                </AbsoluteCenter>
+
                 {icon ? (
                   isValidElement(icon) ? (
                     icon
                   ) : (
-                    <AppIcon icon={icon as ComponentType} size={"lg"} />
+                    <AppIcon
+                      icon={icon as ComponentType}
+                      size={"lg"}
+                      zIndex={2}
+                    />
                   )
                 ) : (
-                  <AppIcon icon={AlertTriangleIcon} size={"lg"} />
+                  <AppIcon icon={AlertTriangleIcon} size={"lg"} zIndex={2} />
                 )}
               </Circle>
 

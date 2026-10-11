@@ -1978,19 +1978,19 @@ export const chakraConfig = defineConfig({
           subtle: {
             value: {
               base: "{colors.blue.50} !important",
-              _dark: "{colors.blue.950} !important",
+              _dark: "{colors.blue.900} !important",
             },
           },
           muted: {
             value: {
               base: "{colors.blue.100} !important",
-              _dark: "{colors.blue.900} !important",
+              _dark: "{colors.blue.800} !important",
             },
           },
           emphasized: {
             value: {
               base: "{colors.blue.200} !important",
-              _dark: "{colors.blue.800} !important",
+              _dark: "{colors.blue.700} !important",
             },
           },
           solid: {
