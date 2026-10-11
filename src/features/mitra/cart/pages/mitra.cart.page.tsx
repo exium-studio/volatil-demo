@@ -16,7 +16,6 @@ import { HStack, VStack } from "@/design-system/components/layout/ui/flex-box";
 import { AppContentContainer } from "@/design-system/components/layout/ui/page-container";
 import { Separator } from "@/design-system/components/layout/ui/separator";
 import { useMapInstanceStore } from "@/design-system/components/map/stores/map.instance.store";
-import { fitBoundsSafe } from "@/design-system/components/map/utils/map-camera";
 import { HeaderContainer } from "@/design-system/components/shell/ui/header-container";
 import { Badge } from "@/design-system/components/typography/ui/badge";
 import { Heading } from "@/design-system/components/typography/ui/heading";
@@ -29,6 +28,7 @@ import {
   useCartAoiCoverageMap,
 } from "@/features/mitra/cart/hooks/use-cart-aoi-coverage-map";
 import { normalizePolygonFeature } from "@/features/mitra/data-request/utils/clip-and-union-kawasan";
+import { highlightFeatureOnMap } from "@/features/mitra/data-request/utils/highlight-feature-on-map";
 import {
   useCancelActiveCartOrder,
   useCartOrderDetailQuery,
@@ -261,6 +261,8 @@ const MitraCartContent = () => {
   const handleFlyToBidang = useCallback(() => {
     if (!map) return;
 
+    let targetBbox: [number, number, number, number] | null = null;
+
     // 1. Prioritize combined bounding box from all bidang items in the order
     const bidangItems = (selectedOrder?.items ?? []).filter(
       (it) => (it.spatialBasis ?? it.igtBasis) === "bidang",
@@ -270,56 +272,78 @@ const MitraCartContent = () => {
       .filter((b): b is [number, number, number, number] => Boolean(b));
 
     if (validBboxes.length > 0) {
-      const mergedBbox: [number, number, number, number] = [
+      targetBbox = [
         Math.min(...validBboxes.map((b) => b[0])),
         Math.min(...validBboxes.map((b) => b[1])),
         Math.max(...validBboxes.map((b) => b[2])),
         Math.max(...validBboxes.map((b) => b[3])),
       ];
-      fitBoundsSafe(map, mergedBbox, { padding: 80, maxZoom: 17 });
-      return;
-    }
+    } else {
+      // 2. If item bbox is absent, use bbox from matching master layer items
+      const masterItems = masterLayersData?.items ?? [];
+      const masterBboxes = bidangItems
+        .map((it) => {
+          const keyId = (it.sourceLayerId || it.id || "").toLowerCase();
+          const keyTitle = (it.sourceLayerTitle || "").toLowerCase();
+          const matched = masterItems.find(
+            (m) =>
+              m.id?.toLowerCase() === keyId ||
+              m.typeName?.toLowerCase() === keyId ||
+              m.title?.toLowerCase() === keyTitle,
+          );
+          return matched?.bbox;
+        })
+        .filter((b): b is [number, number, number, number] => Boolean(b));
 
-    // 2. If item bbox is absent, use bbox from matching master layer items
-    const masterItems = masterLayersData?.items ?? [];
-    const masterBboxes = bidangItems
-      .map((it) => {
-        const keyId = (it.sourceLayerId || it.id || "").toLowerCase();
-        const keyTitle = (it.sourceLayerTitle || "").toLowerCase();
-        const matched = masterItems.find(
-          (m) =>
-            m.id?.toLowerCase() === keyId ||
-            m.typeName?.toLowerCase() === keyId ||
-            m.title?.toLowerCase() === keyTitle,
-        );
-        return matched?.bbox;
-      })
-      .filter((b): b is [number, number, number, number] => Boolean(b));
-
-    if (masterBboxes.length > 0) {
-      const mergedBbox: [number, number, number, number] = [
-        Math.min(...masterBboxes.map((b) => b[0])),
-        Math.min(...masterBboxes.map((b) => b[1])),
-        Math.max(...masterBboxes.map((b) => b[2])),
-        Math.max(...masterBboxes.map((b) => b[3])),
-      ];
-      fitBoundsSafe(map, mergedBbox, { padding: 80, maxZoom: 17 });
-      return;
-    }
-
-    // 3. Fallback: zoom to AOI polygon bbox if available
-    if (selectedOrder?.aoiPolygon) {
-      const aoiFeature = normalizePolygonFeature(selectedOrder.aoiPolygon);
-      if (aoiFeature) {
-        const aoiBbox = turf.bbox(aoiFeature) as [
-          number,
-          number,
-          number,
-          number,
+      if (masterBboxes.length > 0) {
+        targetBbox = [
+          Math.min(...masterBboxes.map((b) => b[0])),
+          Math.min(...masterBboxes.map((b) => b[1])),
+          Math.max(...masterBboxes.map((b) => b[2])),
+          Math.max(...masterBboxes.map((b) => b[3])),
         ];
-        fitBoundsSafe(map, aoiBbox, { padding: 80, maxZoom: 17 });
+      } else if (selectedOrder?.aoiPolygon) {
+        // 3. Fallback: zoom to AOI polygon bbox if available
+        const aoiFeature = normalizePolygonFeature(selectedOrder.aoiPolygon);
+        if (aoiFeature) {
+          targetBbox = turf.bbox(aoiFeature) as [
+            number,
+            number,
+            number,
+            number,
+          ];
+        }
       }
     }
+
+    if (!targetBbox) return;
+
+    const [minLng, minLat, maxLng, maxLat] = targetBbox;
+    const bboxPolygonFeature: GeoJSON.Feature<GeoJSON.Polygon> = {
+      type: "Feature",
+      properties: {
+        id: `bidang-bbox-${selectedOrder?.orderId ?? "active"}`,
+        title: "Cakupan Bidang",
+      },
+      geometry: {
+        type: "Polygon",
+        coordinates: [
+          [
+            [minLng, minLat],
+            [maxLng, minLat],
+            [maxLng, maxLat],
+            [minLng, maxLat],
+            [minLng, minLat],
+          ],
+        ],
+      },
+    };
+
+    highlightFeatureOnMap(map, bboxPolygonFeature, {
+      zoom: 16,
+      fitCamera: true,
+      timeoutMs: 2000,
+    });
   }, [map, selectedOrder, masterLayersData?.items]);
 
   // Derived Values
