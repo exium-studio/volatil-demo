@@ -183,7 +183,7 @@ export const MapMasterIgtLayerManagement = memo(() => {
                     <VStack gap={"xs"} align={"stretch"}>
                       <HStack justify={"space-between"} w={"full"}>
                         <P fontSize={"sm"} fontWeight={"medium"}>
-                          {"Opasitas Semua Layer IGT"}
+                          {"Opasitas Semua Layer"}
                         </P>
 
                         <P

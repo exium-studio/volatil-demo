@@ -20,7 +20,7 @@ import { SearchInput } from "@/design-system/components/input/ui/search-input";
 import { Switch } from "@/design-system/components/input/ui/switch";
 import { ActionHeaderScrollContainer } from "@/design-system/components/layout/ui/action-header-scroll-container";
 import { Center } from "@/design-system/components/layout/ui/center";
-import { HStack, VStack } from "@/design-system/components/layout/ui/flex-box";
+import { VStack } from "@/design-system/components/layout/ui/flex-box";
 import { Separator } from "@/design-system/components/layout/ui/separator";
 import { useMapLayerStore } from "@/design-system/components/map/stores/map.layer.store";
 import { ClampedP, P } from "@/design-system/components/typography/ui/p";
@@ -33,13 +33,10 @@ import type {
   MitraMyDataViewProps,
   MyDataItem,
   MyDataQueryParams,
-  OrderStatus,
 } from "@/features/mitra/my-data/types/my-data.type";
 import { IgtBasisBadge } from "@/features/shared/components/igt-basis.badge";
 import { LayerAttributeTableView } from "@/features/shared/components/layer-attribute-table.view";
-import { StatusFilterSelect } from "@/features/shared/components/status-filter.select";
 import { TteBadge } from "@/features/shared/components/tte.badge";
-import { ORDER_STATUS_FILTER_OPTIONS } from "@/features/shared/constants/volatil.ssot-map";
 import { isEmptyArray } from "@/shared/utils/data/array";
 import {
   formatUtcDateTime,
@@ -57,14 +54,11 @@ import {
   SquarePen,
   TablePropertiesIcon,
 } from "lucide-react";
-import { useCallback, useMemo, useState, useTransition } from "react";
+import { useCallback, useMemo, useState } from "react";
 
 export const MitraMyDataDataView = (_props: MitraMyDataViewProps) => {
   // Navigation
   const navigate = useNavigate();
-
-  // Transitions
-  const [_isPending, startTransition] = useTransition();
 
   // Stores
   const enabledLayerIds = useMapLayerStore((s) => s.enabledLayerIds);
@@ -79,7 +73,6 @@ export const MitraMyDataDataView = (_props: MitraMyDataViewProps) => {
     page: 1,
     pageSize: DEFAULT_PAGE_SIZE_OPTIONS[0],
     search: "",
-    status: undefined,
   });
   const [selectedAttributeLayer, setSelectedAttributeLayer] =
     useState<MyDataItem | null>(null);
@@ -94,7 +87,6 @@ export const MitraMyDataDataView = (_props: MitraMyDataViewProps) => {
       page: params.page,
       pageSize: params.pageSize,
       search: debouncedSearch || undefined,
-      status: params.status,
     });
 
   // Handlers
@@ -349,25 +341,6 @@ export const MitraMyDataDataView = (_props: MitraMyDataViewProps) => {
           placeholder={"Cari layer IGT / tema..."}
           maxW={"280px"}
         />
-
-        <HStack gap={"sm"}>
-          <StatusFilterSelect
-            modalKey={"my-data-status-filter"}
-            placeholder={"Status"}
-            options={ORDER_STATUS_FILTER_OPTIONS}
-            value={params.status ?? ""}
-            onValueChange={(value) => {
-              startTransition(() => {
-                setParams((prev) => ({
-                  ...prev,
-                  status: (value as OrderStatus) || undefined,
-                  page: 1,
-                }));
-              });
-            }}
-            w={"180px"}
-          />
-        </HStack>
       </ActionHeaderScrollContainer>
 
       <Separator borderColor={"bg.canvas"} />
@@ -406,10 +379,10 @@ export const MitraMyDataDataView = (_props: MitraMyDataViewProps) => {
             py={"xl"}
             bg={"bg.body"}
           >
-            {debouncedSearch || params.status ? (
+            {debouncedSearch ? (
               <StateNoResult
                 description={
-                  "Tidak ada layer IGT yang sesuai dengan kata kunci atau filter yang Anda pilih."
+                  "Tidak ada layer IGT yang sesuai dengan kata kunci pencarian Anda."
                 }
               />
             ) : (

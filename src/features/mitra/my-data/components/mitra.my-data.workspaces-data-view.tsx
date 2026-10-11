@@ -1,5 +1,3 @@
-// src/features/mitra/my-data/components/mitra.my-data.workspaces-data-view.tsx
-
 import { Button } from "@/design-system/components/button/ui/button";
 import type {
   FormattedListItem,
@@ -19,7 +17,7 @@ import { AppIcon } from "@/design-system/components/icon/ui/app-icon";
 import { SearchInput } from "@/design-system/components/input/ui/search-input";
 import { ActionHeaderScrollContainer } from "@/design-system/components/layout/ui/action-header-scroll-container";
 import { Center } from "@/design-system/components/layout/ui/center";
-import { HStack, VStack } from "@/design-system/components/layout/ui/flex-box";
+import { VStack } from "@/design-system/components/layout/ui/flex-box";
 import { Separator } from "@/design-system/components/layout/ui/separator";
 import { NavLink } from "@/design-system/components/navigation/ui/link";
 import { ClampedP, P } from "@/design-system/components/typography/ui/p";
@@ -31,12 +29,8 @@ import type {
   MitraMyDataViewProps,
   MitraWorkspaceItem,
   MitraWorkspaceQueryParams,
-  OrderStatus,
 } from "@/features/mitra/my-data/types/my-data.type";
-import { OrderStatusBadge } from "@/features/shared/components/order-status.badge";
-import { StatusFilterSelect } from "@/features/shared/components/status-filter.select";
 import { TteBadge } from "@/features/shared/components/tte.badge";
-import { ORDER_STATUS_FILTER_OPTIONS } from "@/features/shared/constants/volatil.ssot-map";
 import { isEmptyArray } from "@/shared/utils/data/array";
 import {
   formatUtcDateTime,
@@ -51,21 +45,17 @@ import {
   ReceiptTextIcon,
   SquarePen,
 } from "lucide-react";
-import { useMemo, useState, useTransition } from "react";
+import { useMemo, useState } from "react";
 
 export const MitraMyDataWorkspacesDataView = (_props: MitraMyDataViewProps) => {
   // Navigation
   const navigate = useNavigate();
-
-  // Transitions
-  const [_isPending, startTransition] = useTransition();
 
   // States
   const [params, setParams] = useState<MitraWorkspaceQueryParams>({
     page: 1,
     pageSize: DEFAULT_PAGE_SIZE_OPTIONS[0],
     search: "",
-    status: undefined,
   });
 
   // Derived Values
@@ -85,7 +75,6 @@ export const MitraMyDataWorkspacesDataView = (_props: MitraMyDataViewProps) => {
     page: params.page,
     pageSize: params.pageSize,
     search: debouncedSearch || undefined,
-    status: params.status,
   });
 
   // Derived Values — Table headers & items
@@ -95,7 +84,6 @@ export const MitraMyDataWorkspacesDataView = (_props: MitraMyDataViewProps) => {
       { th: "WMS URL (Interop)", sortable: false },
       { th: "No. Transaksi / Pesanan", sortable: true },
       { th: "Jumlah Layer", sortable: true, align: "center" },
-      { th: "Status Pesanan", sortable: true },
       { th: "TTE & Faktur", sortable: false, align: "start" },
       { th: "Sisa Waktu", sortable: true },
       { th: "Tanggal Kedaluwarsa", sortable: true },
@@ -173,11 +161,6 @@ export const MitraMyDataWorkspacesDataView = (_props: MitraMyDataViewProps) => {
                 </P>
               ),
               align: "center" as const,
-            },
-            {
-              value: item.status,
-              td: <OrderStatusBadge>{item.status}</OrderStatusBadge>,
-              align: "start" as const,
             },
             {
               value: item.tte ? "TTE" : "Belum TTE",
@@ -280,25 +263,6 @@ export const MitraMyDataWorkspacesDataView = (_props: MitraMyDataViewProps) => {
           placeholder={"Cari workspace / no. pesanan..."}
           maxW={"280px"}
         />
-
-        <HStack gap={"sm"}>
-          <StatusFilterSelect
-            modalKey={"my-data-workspace-status-filter"}
-            placeholder={"Status"}
-            options={ORDER_STATUS_FILTER_OPTIONS}
-            value={params.status ?? ""}
-            onValueChange={(value) => {
-              startTransition(() => {
-                setParams((prev) => ({
-                  ...prev,
-                  status: (value as OrderStatus) || undefined,
-                  page: 1,
-                }));
-              });
-            }}
-            w={"180px"}
-          />
-        </HStack>
       </ActionHeaderScrollContainer>
 
       <Separator borderColor={"bg.canvas"} />
@@ -337,10 +301,10 @@ export const MitraMyDataWorkspacesDataView = (_props: MitraMyDataViewProps) => {
             py={"xl"}
             bg={"bg.body"}
           >
-            {debouncedSearch || params.status ? (
+            {debouncedSearch ? (
               <StateNoResult
                 description={
-                  "Tidak ada workspace yang sesuai dengan kata kunci atau filter yang Anda pilih."
+                  "Tidak ada workspace yang sesuai dengan kata kunci pencarian Anda."
                 }
               />
             ) : (
