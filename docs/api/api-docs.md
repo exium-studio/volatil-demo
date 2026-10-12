@@ -591,6 +591,8 @@ type HelpCenterListApiResponse = {
 
 ### Get List Inbox / Notifikasi
 
+> **PENTING (Standar SSOT):** Backend menggunakan contract `code` + `metadata`. URL navigasi dan label aksi diatur penuh oleh Frontend melalui resolver UI. Panduan integrasi lengkap dan daftar enum `InboxCode` tersedia di: [`INBOX_CODE_SSOT_INTEGRATION_GUIDE.md`](../INBOX_CODE_SSOT_INTEGRATION_GUIDE.md).
+
 - **Endpoint**: `GET /api/inbox` (atau `/api/notifications`)
 - **Akses**: `Authenticated (Mitra & Internal)`
 - **Query Params**:
@@ -609,20 +611,22 @@ type HelpCenterListApiResponse = {
     "items": [
       {
         "id": "46",
-        "title": "Verifikasi Layer Spasial: ORD-2026-00024",
-        "message": "Proses potongan layer spasial untuk pesanan ORD-2026-00024 telah selesai dan sedang menunggu verifikasi akhir dari Tim Admin Internal.",
+        "code": "ORDER_PENDING_REVIEW",
         "category": "transaksi",
         "isRead": false,
-        "actionUrl": "/mitra/my-data/7a345410-b294-4ef2-86f3-fbcf413694a5",
-        "actionLabel": "Cek Status Verifikasi",
         "metadata": {
           "orderId": "7a345410-b294-4ef2-86f3-fbcf413694a5",
           "orderNumber": "ORD-2026-00024",
+          "workspaceId": "7a345410-b294-4ef2-86f3-fbcf413694a5",
           "orderStatus": "pending_review",
           "updatedAt": "2026-10-11T05:12:20.710Z"
         },
         "createdAt": "2026-10-11T05:12:20.713Z",
-        "readAt": null
+        "readAt": null,
+        "title": "Verifikasi Layer Spasial: ORD-2026-00024",
+        "message": "Proses potongan layer spasial untuk pesanan ORD-2026-00024 telah selesai dan sedang menunggu verifikasi akhir dari Tim Admin Internal.",
+        "actionUrl": "/mitra/my-data/7a345410-b294-4ef2-86f3-fbcf413694a5",
+        "actionLabel": "Cek Status Verifikasi"
       }
     ],
     "unreadCount": 45,
@@ -2373,3 +2377,41 @@ export type IgtBasisType = "bidang" | "kawasan";
 
 > [!IMPORTANT]
 > Properti `spatialBasis` telah didegradasi / dihapus total (clean break) dan digantikan secara standar dengan `igtBasis: "bidang" | "kawasan"`.
+
+### 9. SSOT Kode Notifikasi Inbox (`InboxCode`)
+
+Standarisasi notifikasi inbox: Backend mengirim event berupa enum `code` dan entitas pendukung di dalam `metadata`. Frontend bertanggung jawab menerjemahkan `code` menjadi rute navigasi TanStack Router (`actionUrl`), tombol (`actionLabel`), teks redaksi, icon, dan warna (`colorPalette`).
+
+```typescript
+export type InboxCode =
+  // Transaksi
+  | "ORDER_CREATED"
+  | "ORDER_PAID"
+  | "ORDER_PROVISIONING"
+  | "ORDER_PENDING_REVIEW"
+  | "ORDER_PENDING_TTE"
+  | "ORDER_READY"
+  | "ORDER_REJECTED"
+  | "ORDER_CANCELLED"
+  // Kedaluwarsa
+  | "WORKSPACE_EXPIRING_H7"
+  | "WORKSPACE_EXPIRING_H3"
+  | "WORKSPACE_EXPIRING_H1"
+  | "WORKSPACE_EXPIRED"
+  // Bantuan
+  | "TICKET_CREATED"
+  | "TICKET_REPLIED"
+  | "TICKET_RESOLVED"
+  | "TICKET_CLOSED"
+  // Akun
+  | "MITRA_REGISTRATION_SUBMITTED"
+  | "MITRA_REGISTRATION_VERIFIED"
+  | "MITRA_REGISTRATION_REJECTED"
+  | "SECURITY_PASSWORD_CHANGED"
+  | "SECURITY_TOTP_ENABLED"
+  // Internal
+  | "INTERNAL_NEW_ORDER_REVIEW"
+  | "INTERNAL_NEW_REGISTRATION"
+  | "SYSTEM_ANNOUNCEMENT";
+```
+

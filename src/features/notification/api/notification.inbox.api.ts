@@ -6,6 +6,7 @@ import type {
   InboxListResponse,
   InboxQueryParams,
 } from "@/features/notification/types/inbox.type";
+import { resolveInboxUI } from "@/features/notification/constants/inbox-code-resolver";
 import { apiClient } from "@/shared/libs/api-client/api-client";
 import type { ApiResponse } from "@/shared/types/common-response.type";
 import { isDummyDataEnabled } from "@/shared/utils/env/env.utils";
@@ -80,11 +81,13 @@ export const getInboxListApi = async (
       }
       if (params?.search) {
         const q = params.search.toLowerCase();
-        filtered = filtered.filter(
-          (i) =>
-            i.title.toLowerCase().includes(q) ||
-            i.message.toLowerCase().includes(q),
-        );
+        filtered = filtered.filter((i) => {
+          const resolved = resolveInboxUI(i);
+          return (
+            resolved.title.toLowerCase().includes(q) ||
+            resolved.message.toLowerCase().includes(q)
+          );
+        });
       }
 
       const page = params?.page ?? 1;

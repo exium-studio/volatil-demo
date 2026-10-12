@@ -22,44 +22,20 @@ import {
   useMarkAllInboxAsRead,
   useMarkInboxAsRead,
 } from "@/features/notification/hooks/use-inbox.query";
-import type {
-  InboxCardItemProps,
-  InboxCategory,
-} from "@/features/notification/types/inbox.type";
+import type { InboxCardItemProps } from "@/features/notification/types/inbox.type";
+import { resolveInboxUI } from "@/features/notification/constants/inbox-code-resolver";
 import { t } from "@/shared/libs/i18n";
 import { isEmptyArray } from "@/shared/utils/data/array";
 import { formatRelativeTime } from "@/shared/utils/formatter/date.formatter";
 import { useNavigate } from "@tanstack/react-router";
 import {
   ArrowRightIcon,
-  BellIcon,
   CheckCheckIcon,
-  ClockIcon,
-  CreditCardIcon,
-  HelpCircleIcon,
   InboxIcon,
-  InfoIcon,
   Trash2Icon,
-  UserIcon,
   XIcon,
 } from "lucide-react";
-import { memo, useCallback } from "react";
-
-const CATEGORY_ICON_MAP: Record<InboxCategory, typeof BellIcon> = {
-  transaksi: CreditCardIcon,
-  sistem: InfoIcon,
-  bantuan: HelpCircleIcon,
-  akun: UserIcon,
-  kedaluwarsa: ClockIcon,
-};
-
-const CATEGORY_COLOR_MAP: Record<InboxCategory, string> = {
-  transaksi: "blue",
-  sistem: "gray",
-  bantuan: "green",
-  akun: "purple",
-  kedaluwarsa: "orange",
-};
+import { memo, useCallback, useMemo } from "react";
 
 export const NotificationInboxDataView = memo(() => {
   // Queries & Mutations
@@ -200,46 +176,28 @@ const InboxCardItem = memo((props: InboxCardItemProps) => {
   const { theme } = useThemeStore();
 
   // Derived Values
-  const IconComponent = CATEGORY_ICON_MAP[item.category] ?? BellIcon;
-  const colorPalette = CATEGORY_COLOR_MAP[item.category] ?? "blue";
-  const hasAction = Boolean(
-    item.actionUrl ||
-    item.metadata?.workspaceId ||
-    item.category === "kedaluwarsa" ||
-    item.category === "transaksi",
-  );
+  const resolved = useMemo(() => resolveInboxUI(item), [item]);
+  const IconComponent = resolved.icon;
+  const colorPalette = resolved.colorPalette;
+  const hasAction = Boolean(resolved.actionUrl);
 
   // Handlers
-  const handleNavigate = useCallback(() => {
-    const rawUrl = item.actionUrl;
-    const wsId =
-      item.metadata?.workspaceId ||
-      (rawUrl?.startsWith("/mitra/my-data/")
-        ? rawUrl.replace("/mitra/my-data/", "").split("?")[0]
-        : null);
+  const handleNavigate = useCallback(async () => {
+    if (!resolved.actionUrl) return;
 
-    // 1. If we have a workspaceId, navigate to workspace detail page
-    if (wsId) {
-      void navigate({
-        to: "/mitra/my-data/$workspaceId",
-        params: { workspaceId: wsId },
-      });
-      return;
-    }
+    if (resolved.actionUrl.startsWith("/")) {
+      const [pathname, searchStr] = resolved.actionUrl.split("?");
 
-    // 2. If rawUrl is specified and points elsewhere
-    if (rawUrl && rawUrl !== "/mitra/my-data") {
-      if (rawUrl.startsWith("/")) {
-        void navigate({ href: rawUrl });
-      } else {
-        window.location.href = rawUrl;
+      // If URL contains activeModalKey, push the base page first so closing the modal goes back to the page
+      if (searchStr && searchStr.includes("activeModalKey=")) {
+        await navigate({ href: pathname });
       }
-      return;
-    }
 
-    // 3. Fallback: navigate to my-data list page
-    void navigate({ to: "/mitra/my-data" });
-  }, [item.actionUrl, item.metadata?.workspaceId, navigate]);
+      await navigate({ href: resolved.actionUrl });
+    } else {
+      window.location.href = resolved.actionUrl;
+    }
+  }, [resolved.actionUrl, navigate]);
 
   const handleCardClick = (e: React.MouseEvent) => {
     if (!hasAction) return;
@@ -267,8 +225,6 @@ const InboxCardItem = memo((props: InboxCardItemProps) => {
       p={"sm"}
       gap={["sm", null, "md"]}
       bg={item.isRead ? "bg.body" : "bg.subtle"}
-      // borderWidth={"1px"}
-      // borderColor={item.isRead ? "border.subtle" : `${colorPalette}.subtle`}
       shadow={"xs"}
       rounded={theme.radii.container}
       w={"full"}
@@ -307,7 +263,7 @@ const InboxCardItem = memo((props: InboxCardItemProps) => {
               fontWeight={item.isRead ? "medium" : "semibold"}
               wordBreak={"break-word"}
             >
-              {item.title}
+              {resolved.title}
             </ClampedP>
 
             <Badge
@@ -356,7 +312,7 @@ const InboxCardItem = memo((props: InboxCardItemProps) => {
             wordBreak={"break-word"}
             whiteSpace={"pre-line"}
           >
-            {item.message}
+            {resolved.message}
           </P>
         </Box>
 
@@ -375,7 +331,7 @@ const InboxCardItem = memo((props: InboxCardItemProps) => {
               pr={"6px"}
               onClick={handleActionClick}
             >
-              {item.actionLabel || "Buka Data Saya"}
+              {resolved.actionLabel || "Buka"}
               <AppIcon icon={ArrowRightIcon} />
             </Button>
           ) : (
