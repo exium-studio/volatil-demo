@@ -18,13 +18,16 @@ import {
 
 export const resolveInboxUI = (item: InboxItem): InboxResolvedUI => {
   const meta = item.metadata ?? {};
-  
+
   // Infer code if not provided by backend (legacy records)
   let code = item.code;
   if (!code && item.title) {
     if (item.title.startsWith("Pembayaran Berhasil")) {
       code = "ORDER_PAID";
-    } else if (item.title.startsWith("Verifikasi Layer Spasial") || item.actionLabel === "Cek Status Verifikasi") {
+    } else if (
+      item.title.startsWith("Verifikasi Layer Spasial") ||
+      item.actionLabel === "Cek Status Verifikasi"
+    ) {
       code = "ORDER_PENDING_REVIEW";
     } else if (item.title.startsWith("Menunggu Pembayaran")) {
       code = "ORDER_CREATED";
@@ -262,8 +265,7 @@ export const resolveInboxUI = (item: InboxItem): InboxResolvedUI => {
     case "SECURITY_TOTP_ENABLED":
       return {
         title: "Autentikasi Dua Faktor Aktif",
-        message:
-          "Keamanan 2FA (TOTP) akun Anda telah berhasil diaktifkan.",
+        message: "Keamanan 2FA (TOTP) akun Anda telah berhasil diaktifkan.",
         actionUrl: "/mitra/home",
         actionLabel: "Dashboard",
         icon: ShieldCheckIcon,
