@@ -296,46 +296,41 @@ export const MitraMyDataWorkspacesDataView = (_props: MitraMyDataViewProps) => {
     <VStack flex={1} overflowY={"auto"} w={"full"} h={"full"}>
       {/* Header Controls */}
       <ActionHeaderScrollContainer>
-        <HStack
-          justify={"space-between"}
-          align={"center"}
-          w={"full"}
-          gap={"md"}
-        >
-          <SearchInput
-            value={params.search}
-            onValueChange={(val) => {
-              setParams((prev) => ({ ...prev, search: val, page: 1 }));
-            }}
-            placeholder={"Cari workspace / no. pesanan..."}
-            maxW={"280px"}
-          />
+        <SearchInput
+          value={params.search}
+          onValueChange={(val) => {
+            setParams((prev) => ({ ...prev, search: val, page: 1 }));
+          }}
+          placeholder={"Cari workspace / no. pesanan..."}
+          maxW={"280px"}
+        />
 
-          {apiKey && (
-            <HStack
-              align={"center"}
-              gap={"xs"}
-              h={"40px"}
-              bg={"bg.subtle"}
-              pl={"sm"}
-              rounded={"md"}
-            >
-              <HStack gap={"2xs"} align={"center"} flexShrink={0}>
-                <AppIcon icon={KeyRoundIcon} />
+        {apiKey && (
+          <HStack
+            flex={1}
+            align={"center"}
+            gap={"xs"}
+            minW={"280px"}
+            h={"40px"}
+            pl={"sm"}
+            bg={"bg.subtle"}
+            rounded={"md"}
+          >
+            <HStack align={"center"} gap={"2xs"}>
+              <AppIcon icon={KeyRoundIcon} />
 
-                <P fontWeight={"medium"} color={"fg.muted"}>
-                  {"API Key:"}
-                </P>
-              </HStack>
-
-              <MaskedText
-                value={apiKey}
-                copyLabel={"Salin API Key Mitra"}
-                maxW={"220px"}
-              />
+              <P fontWeight={"medium"} color={"fg.muted"}>
+                {"API Key:"}
+              </P>
             </HStack>
-          )}
-        </HStack>
+
+            <MaskedText
+              value={apiKey}
+              copyLabel={"Salin API Key Mitra"}
+              flex={1}
+            />
+          </HStack>
+        )}
       </ActionHeaderScrollContainer>
 
       <Separator borderColor={"bg.canvas"} />

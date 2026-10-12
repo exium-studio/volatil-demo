@@ -91,62 +91,57 @@ export const MitraMyDataWorkspaceDetailPage = () => {
 
   // Refs
   const hasFlownWorkspaceRef = useRef<string | null>(null);
-  // Effects — Auto-enable matching default active layers in workspace
+  // Effects — Manage workspace layers on mount (unload master IGT, auto-enable matching defaultVisible workspace layers) and restore master default layers on unmount
   useEffect(() => {
-    if (!workspace || !workspace.layers) {
-      return;
-    }
-
+    // 1. Landing: reset/unload master layers
     const state = useMapLayerStore.getState();
+    state.resetLayers();
 
-    // 1. Find master IGT layers where defaultVisible === true
-    const masterItems = igtMasterLayers?.items ?? [];
-    const defaultMasterLayers = masterItems.filter((l) =>
-      Boolean(l.defaultVisible),
-    );
+    // 2. Auto-enable workspace layer(s) that match defaultVisible === true
+    if (workspace && workspace.layers && workspace.wmsUrl) {
+      const masterItems = igtMasterLayers?.items ?? [];
+      const defaultMasterLayers = masterItems.filter((l) =>
+        Boolean(l.defaultVisible),
+      );
 
-    // 2. Determine layers in this workspace that should be auto-loaded
-    const layersToAutoEnable = workspace.layers.filter((wsLayer) => {
-      // If master layers are loaded, match by ID / sourceLayerId / typeName / title
-      if (defaultMasterLayers.length > 0) {
-        const matchExact = defaultMasterLayers.some((m) => {
-          const wsLayerId = wsLayer.id;
-          const wsSourceId = wsLayer.sourceLayerId;
-          const wsLayerName = wsLayer.id.includes(":")
-            ? wsLayer.id.split(":")[1]
-            : wsLayer.id;
-          const wsTitle = wsLayer.title?.toLowerCase().trim();
-          const wsSourceTitle = wsLayer.sourceLayerTitle?.toLowerCase().trim();
-          const mTitle = m.title?.toLowerCase().trim();
+      const layersToAutoEnable = workspace.layers.filter((wsLayer) => {
+        if (defaultMasterLayers.length > 0) {
+          const matchExact = defaultMasterLayers.some((m) => {
+            const wsLayerId = wsLayer.id;
+            const wsSourceId = wsLayer.sourceLayerId;
+            const wsLayerName = wsLayer.id.includes(":")
+              ? wsLayer.id.split(":")[1]
+              : wsLayer.id;
+            const wsTitle = wsLayer.title?.toLowerCase().trim();
+            const wsSourceTitle = wsLayer.sourceLayerTitle?.toLowerCase().trim();
+            const mTitle = m.title?.toLowerCase().trim();
 
-          return (
-            m.id === wsSourceId ||
-            m.id === wsLayerId ||
-            m.typeName === wsSourceId ||
-            m.typeName === wsLayer.wfsTypeName ||
-            m.layerName === wsLayerName ||
-            (mTitle && (mTitle === wsTitle || mTitle === wsSourceTitle))
+            return (
+              m.id === wsSourceId ||
+              m.id === wsLayerId ||
+              m.typeName === wsSourceId ||
+              m.typeName === wsLayer.wfsTypeName ||
+              m.layerName === wsLayerName ||
+              (mTitle && (mTitle === wsTitle || mTitle === wsSourceTitle))
+            );
+          });
+          if (matchExact) return true;
+
+          const hasDefaultBidangMaster = defaultMasterLayers.some(
+            (m) => (m.spatialBasis ?? m.igtBasis) === "bidang",
           );
-        });
-        if (matchExact) return true;
-
-        const hasDefaultBidangMaster = defaultMasterLayers.some(
-          (m) => (m.spatialBasis ?? m.igtBasis) === "bidang",
-        );
-        if (
-          hasDefaultBidangMaster &&
-          (wsLayer.spatialBasis === "bidang" || wsLayer.igtBasis === "bidang")
-        ) {
-          return true;
+          if (
+            hasDefaultBidangMaster &&
+            (wsLayer.spatialBasis === "bidang" || wsLayer.igtBasis === "bidang")
+          ) {
+            return true;
+          }
+          return false;
         }
-        return false;
-      }
 
-      // Default fallback when master IGT list is still loading or empty: auto-enable "bidang" layers
-      return wsLayer.spatialBasis === "bidang" || wsLayer.igtBasis === "bidang";
-    });
+        return wsLayer.spatialBasis === "bidang" || wsLayer.igtBasis === "bidang";
+      });
 
-    if (layersToAutoEnable.length > 0 && workspace.wmsUrl) {
       layersToAutoEnable.forEach((layer) => {
         state.setCustomLayerConfig(layer.id, {
           wmsUrl: workspace.wmsUrl,
@@ -156,7 +151,25 @@ export const MitraMyDataWorkspaceDetailPage = () => {
         state.setLayerEnabled(layer.id, true);
       });
     }
-  }, [workspace, igtMasterLayers]);
+
+    return () => {
+      // 3. Exit / unmount: reset custom workspace configs and clean highlights
+      const exitState = useMapLayerStore.getState();
+      exitState.resetLayers();
+      if (map) {
+        removeFeatureHighlightFromMap(map);
+      }
+
+      // 4. Restore master IGT layers where defaultVisible === true
+      const masterItems = igtMasterLayers?.items ?? [];
+      const defaultActiveLayers = masterItems.filter((l) =>
+        Boolean(l.defaultVisible),
+      );
+      defaultActiveLayers.forEach((layer) => {
+        exitState.setLayerEnabled(layer.id, true);
+      });
+    };
+  }, [map, workspace, igtMasterLayers]);
 
   // Effects — Auto fly camera to workspace bounding box on load
   useEffect(() => {
@@ -210,16 +223,6 @@ export const MitraMyDataWorkspaceDetailPage = () => {
       }
     }
   }, [map, workspace, flyTo]);
-
-  // Effects — Cleanup workspace layers and highlights on unmount / route change
-  useEffect(() => {
-    return () => {
-      useMapLayerStore.getState().resetLayers();
-      if (map) {
-        removeFeatureHighlightFromMap(map);
-      }
-    };
-  }, [map]);
 
   // Derived Values
   const selectedAttributeLayer = useMemo(() => {

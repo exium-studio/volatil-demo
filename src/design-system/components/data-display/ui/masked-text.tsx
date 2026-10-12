@@ -19,7 +19,6 @@ export const MaskedText = memo((props: MaskedTextProps) => {
     withCopy = true,
     copyLabel = "Salin Teks",
     withToggle = true,
-    maxW = "200px",
     ...restProps
   } = props;
 
@@ -33,10 +32,10 @@ export const MaskedText = memo((props: MaskedTextProps) => {
   const maskedString = maskChar.repeat(maskLength);
 
   return (
-    <HStack gap={"xs"} align={"center"} maxW={maxW} w={"full"} {...restProps}>
+    <HStack gap={"xs"} align={"center"} w={"full"} {...restProps}>
       <HStack flex={1} minW={0} overflow={"hidden"}>
         {isVisible ? (
-          <ClampedP fontFamily={"mono"} userSelect={"all"}>
+          <ClampedP flex={1} fontFamily={"mono"} userSelect={"all"}>
             {value}
           </ClampedP>
         ) : (
