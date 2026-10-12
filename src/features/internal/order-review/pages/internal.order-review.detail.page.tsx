@@ -578,7 +578,7 @@ const OrderLayerDataView = (props: OrderLayerDataViewProps) => {
       { th: "Layer IGT", sortable: true },
       { th: "Basis IGT", sortable: true },
       { th: "WMS URL (Volatil)", sortable: false },
-      { th: "Jumlah / Luas", sortable: true, align: "center" },
+      { th: "Jumlah / Luas", sortable: true, align: "end" },
       // { th: "Estimasi Biaya", sortable: true, align: "end" },
       { th: "Tampilkan di Peta", align: "center" },
     ];
@@ -630,7 +630,7 @@ const OrderLayerDataView = (props: OrderLayerDataViewProps) => {
                     : `${formatNumber(item.featuresCount ?? 0)} bidang`}
                 </P>
               ),
-              align: "center" as const,
+              align: "end" as const,
             },
             // {
             //   value: item.subtotalPrice ?? 0,
