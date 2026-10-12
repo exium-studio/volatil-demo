@@ -10,6 +10,7 @@ import type {
   InternalTransactionListResponse,
   InternalTransactionQueryParams,
   InternalTransactionStatistics,
+  OrderStatus,
 } from "@/features/internal/statistik-pesanan/types/internal.transaction-statistic.type";
 import {
   DUMMY_INTERNAL_TRANSACTIONS,
@@ -64,17 +65,23 @@ export const getPaginatedInternalTransactions = (
 ): InternalTransactionListResponse => {
   const search = params.search?.trim().toLowerCase();
   const filteredItems = items.filter((item) => {
+    const effectiveOrderStatus =
+      item.transactionStatus === "expired" &&
+      (!item.orderStatus || item.orderStatus === "pending_payment")
+        ? "expired"
+        : (item.orderStatus ?? (item.transactionStatus as unknown as OrderStatus));
+
+    const matchesOrdStatus =
+      !params.orderStatus || effectiveOrderStatus === params.orderStatus;
     const matchesTxStatus =
       !params.transactionStatus ||
       item.transactionStatus === params.transactionStatus;
-    const matchesOrdStatus =
-      !params.orderStatus || item.orderStatus === params.orderStatus;
     const matchesSelectionType =
       !params.selectionType || item.selectionType === params.selectionType;
     const matchesQuery = !search || matchesSearch(item, search);
     return (
-      matchesTxStatus &&
       matchesOrdStatus &&
+      matchesTxStatus &&
       matchesSelectionType &&
       matchesQuery
     );

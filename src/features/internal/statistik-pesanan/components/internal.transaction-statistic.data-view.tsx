@@ -38,11 +38,10 @@ import { SelectionTypeBadge } from "@/features/shared/components/selection-type.
 import { StatusFilterSelect } from "@/features/shared/components/status-filter.select";
 import { TransactionDetailTrigger } from "@/features/shared/components/transaction-detail.modal";
 import { TteBadge } from "@/features/shared/components/tte.badge";
-import { TRANSACTION_STATUS_OPTIONS } from "@/features/shared/constants/volatil.ssot-map";
+import { ORDER_STATUS_FILTER_OPTIONS } from "@/features/shared/constants/volatil.ssot-map";
 import { useLocale } from "@/shared/libs/i18n/locale-provider";
 import type {
   OrderStatus,
-  TransactionStatus,
 } from "@/shared/types/status.type";
 import { isEmptyArray } from "@/shared/utils/data/array";
 import {
@@ -72,7 +71,7 @@ export const InternalTransactionStatisticDataView = () => {
     page: 1,
     pageSize: ITEMS_PER_PAGE_DEFAULT,
     search: "",
-    transactionStatus: undefined,
+    orderStatus: undefined,
   });
 
   // Derived Values
@@ -85,7 +84,7 @@ export const InternalTransactionStatisticDataView = () => {
       page: params.page,
       pageSize: params.pageSize,
       search: debouncedSearch || undefined,
-      transactionStatus: params.transactionStatus,
+      orderStatus: params.orderStatus,
     });
 
   // Derived Values - DataList headers & items
@@ -405,21 +404,21 @@ export const InternalTransactionStatisticDataView = () => {
 
           <StatusFilterSelect
             modalKey={"internal-tx-status-filter"}
-            value={params.transactionStatus ?? ""}
-            options={TRANSACTION_STATUS_OPTIONS}
-            placeholder={"Semua Status"}
+            value={params.orderStatus ?? ""}
+            options={ORDER_STATUS_FILTER_OPTIONS}
+            placeholder={"Status"}
             onValueChange={(val) =>
               startTransition(() => {
                 setParams((prev) => ({
                   ...prev,
-                  transactionStatus: val
-                    ? (val as TransactionStatus)
+                  orderStatus: val
+                    ? (val as OrderStatus)
                     : undefined,
                   page: 1,
                 }));
               })
             }
-            w={"170px"}
+            w={"240px"}
           />
         </ActionHeaderScrollContainer>
 
@@ -459,7 +458,7 @@ export const InternalTransactionStatisticDataView = () => {
               py={"xl"}
               bg={"bg.body"}
             >
-              {debouncedSearch || params.transactionStatus ? (
+              {debouncedSearch || params.orderStatus ? (
                 <StateNoResult
                   query={debouncedSearch || undefined}
                   description={
