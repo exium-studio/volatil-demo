@@ -50,11 +50,19 @@ export const getMitraDataSummary = async (
 ): Promise<MitraHomeDataSummaryResponse> => {
   try {
     const response = await fetchMitraDataSummaryApi(period, signal);
-    const rawData = response?.data ?? response;
+    const rawData =
+      (response?.data as unknown as Record<string, unknown>)?.data ??
+      response?.data ??
+      response;
 
     if (rawData && typeof rawData === "object") {
       const obj = rawData as Record<string, unknown>;
-      if ("field" in obj || "area" in obj || "bidang" in obj || "kawasan" in obj) {
+      if (
+        "field" in obj ||
+        "area" in obj ||
+        "bidang" in obj ||
+        "kawasan" in obj
+      ) {
         return normalizeSummaryItem(obj);
       }
       if (period in obj && obj[period]) {

@@ -306,7 +306,7 @@ const MitraHomeDataSummaryLegend = (props: MitraHomeDataSummaryLegendProps) => {
       <Box>
         <P color={"fg.muted"}>{label}</P>
 
-        <StatGrid.Value>{value}</StatGrid.Value>
+        <StatGrid.Value value={value}>{value}</StatGrid.Value>
       </Box>
     </HStack>
   );
