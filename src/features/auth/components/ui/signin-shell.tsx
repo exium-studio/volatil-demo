@@ -70,7 +70,7 @@ export const SigninShell = (props: SigninShellProps) => {
           {children}
 
           {showUserGuide && (
-            <Box w={"full"} px={"md"} mt={8} mx={"auto"}>
+            <Box w={"full"} px={[0, null, 8]} mt={8} mx={"auto"}>
               <UserGuideTrigger
                 modalKey={modalKey}
                 portalType={portalType}
