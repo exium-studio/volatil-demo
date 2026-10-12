@@ -18,7 +18,20 @@ import {
 
 export const resolveInboxUI = (item: InboxItem): InboxResolvedUI => {
   const meta = item.metadata ?? {};
-  const code = item.code;
+  
+  // Infer code if not provided by backend (legacy records)
+  let code = item.code;
+  if (!code && item.title) {
+    if (item.title.startsWith("Pembayaran Berhasil")) {
+      code = "ORDER_PAID";
+    } else if (item.title.startsWith("Verifikasi Layer Spasial") || item.actionLabel === "Cek Status Verifikasi") {
+      code = "ORDER_PENDING_REVIEW";
+    } else if (item.title.startsWith("Menunggu Pembayaran")) {
+      code = "ORDER_CREATED";
+    } else if (item.title.startsWith("Layanan Aktif")) {
+      code = "ORDER_READY";
+    }
+  }
 
   switch (code) {
     // ── Kategori Transaksi ───────────────────────────────────────────────────
@@ -38,47 +51,71 @@ export const resolveInboxUI = (item: InboxItem): InboxResolvedUI => {
       };
     }
 
-    case "ORDER_PAID":
+    case "ORDER_PAID": {
+      const orderRef = meta.orderId ?? meta.billingCode;
+      const targetUrl = orderRef
+        ? `/mitra/transaction-history?activeModalKey=transaction-detail-${orderRef}`
+        : "/mitra/transaction-history";
+
       return {
         title: `Pembayaran Berhasil: ${meta.orderNumber ?? ""}`,
         message:
           "Pembayaran terverifikasi. Layanan spasial masuk ke dalam antrean pemrosesan.",
-        actionUrl: "/mitra/transaction-history",
-        actionLabel: "Lihat Riwayat",
+        actionUrl: targetUrl,
+        actionLabel: "Lihat Detail Transaksi",
         icon: CheckCircle2Icon,
         colorPalette: "green",
       };
+    }
 
-    case "ORDER_PROVISIONING":
+    case "ORDER_PROVISIONING": {
+      const orderRef = meta.orderId ?? meta.billingCode;
+      const targetUrl = orderRef
+        ? `/mitra/transaction-history?activeModalKey=transaction-detail-${orderRef}`
+        : "/mitra/transaction-history";
+
       return {
         title: `Sedang Diproses: ${meta.orderNumber ?? ""}`,
         message: `Layer spasial pesanan ${meta.orderNumber ?? ""} sedang dibentuk di GeoServer.`,
-        actionUrl: `/mitra/my-data/${meta.workspaceId ?? meta.workspaceName ?? ""}`,
+        actionUrl: targetUrl,
         actionLabel: "Pantau Status",
         icon: ClockIcon,
         colorPalette: "blue",
       };
+    }
 
-    case "ORDER_PENDING_REVIEW":
+    case "ORDER_PENDING_REVIEW": {
+      const orderRef = meta.orderId ?? meta.billingCode;
+      const targetUrl = orderRef
+        ? `/mitra/transaction-history?activeModalKey=transaction-detail-${orderRef}`
+        : "/mitra/transaction-history";
+
       return {
-        title: `Menunggu Verifikasi Admin: ${meta.orderNumber ?? ""}`,
+        title: `Verifikasi Layer Spasial: ${meta.orderNumber ?? ""}`,
         message:
           "Potongan layer spasial selesai diproses dan menunggu verifikasi akhir Tim ATR/BPN.",
-        actionUrl: `/mitra/my-data/${meta.workspaceId ?? meta.workspaceName ?? ""}`,
-        actionLabel: "Cek Verifikasi",
+        actionUrl: targetUrl,
+        actionLabel: "Cek Status Verifikasi",
         icon: ClipboardListIcon,
         colorPalette: "purple",
       };
+    }
 
-    case "ORDER_PENDING_TTE":
+    case "ORDER_PENDING_TTE": {
+      const orderRef = meta.orderId ?? meta.billingCode;
+      const targetUrl = orderRef
+        ? `/mitra/transaction-history?activeModalKey=transaction-detail-${orderRef}`
+        : "/mitra/transaction-history";
+
       return {
         title: `Menunggu TTE: ${meta.orderNumber ?? ""}`,
         message: `Dokumen invoice pesanan ${meta.orderNumber ?? ""} sedang dalam proses Tanda Tangan Elektronik.`,
-        actionUrl: `/mitra/my-data/${meta.workspaceId ?? meta.workspaceName ?? ""}`,
+        actionUrl: targetUrl,
         actionLabel: "Lihat Status TTE",
         icon: FileTextIcon,
         colorPalette: "blue",
       };
+    }
 
     case "ORDER_READY":
       return {
@@ -86,30 +123,42 @@ export const resolveInboxUI = (item: InboxItem): InboxResolvedUI => {
         message:
           "Seluruh layer data spasial telah aktif dan siap diakses via WMS & WFS.",
         actionUrl: `/mitra/my-data/${meta.workspaceId ?? meta.workspaceName ?? ""}`,
-        actionLabel: "Buka di Peta",
+        actionLabel: "Buka Data Saya",
         icon: CheckCircle2Icon,
         colorPalette: "green",
       };
 
-    case "ORDER_REJECTED":
+    case "ORDER_REJECTED": {
+      const orderRef = meta.orderId ?? meta.billingCode;
+      const targetUrl = orderRef
+        ? `/mitra/transaction-history?activeModalKey=transaction-detail-${orderRef}`
+        : "/mitra/transaction-history";
+
       return {
         title: `Pesanan Ditolak: ${meta.orderNumber ?? ""}`,
         message: `Pesanan Anda ditolak. Alasan: ${meta.reason ?? "Silakan periksa riwayat transaksi."}`,
-        actionUrl: "/mitra/transaction-history",
+        actionUrl: targetUrl,
         actionLabel: "Lihat Alasan",
         icon: XCircleIcon,
         colorPalette: "red",
       };
+    }
 
-    case "ORDER_CANCELLED":
+    case "ORDER_CANCELLED": {
+      const orderRef = meta.orderId ?? meta.billingCode;
+      const targetUrl = orderRef
+        ? `/mitra/transaction-history?activeModalKey=transaction-detail-${orderRef}`
+        : "/mitra/transaction-history";
+
       return {
         title: `Pesanan Dibatalkan: ${meta.orderNumber ?? ""}`,
         message: "Batas waktu pembayaran pesanan telah kedaluwarsa.",
-        actionUrl: "/mitra/cart",
-        actionLabel: "Pesan Ulang",
+        actionUrl: targetUrl,
+        actionLabel: "Detail Pesanan",
         icon: XCircleIcon,
         colorPalette: "red",
       };
+    }
 
     // ── Kategori Kedaluwarsa ────────────────────────────────────────────────
     case "WORKSPACE_EXPIRING_H7":
@@ -258,10 +307,17 @@ export const resolveInboxUI = (item: InboxItem): InboxResolvedUI => {
     default: {
       let fallbackUrl = item.actionUrl;
 
-      // Handle legacy BE URLs pointing to /mitra/orders/:orderId
+      // Handle legacy BE URLs
       if (fallbackUrl?.startsWith("/mitra/orders/")) {
         const orderId = fallbackUrl.replace("/mitra/orders/", "").split("?")[0];
         fallbackUrl = `/mitra/transaction-history?activeModalKey=transaction-detail-${orderId}`;
+      } else if (
+        (item.actionLabel === "Cek Status Verifikasi" ||
+          item.title?.includes("Verifikasi Layer Spasial")) &&
+        (meta.orderId || meta.billingCode)
+      ) {
+        const orderRef = meta.orderId ?? meta.billingCode;
+        fallbackUrl = `/mitra/transaction-history?activeModalKey=transaction-detail-${orderRef}`;
       }
 
       return {
