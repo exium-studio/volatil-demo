@@ -189,20 +189,9 @@ export const MitraDataRequestSpatialSummary = memo(
 
     const isOrValidForCheckout = isBidangValid || isKawasanValid;
 
-    const calculatedSubtotalBidang =
-      subtotalBidangPrice > 0
-        ? subtotalBidangPrice
-        : totalBidangCount * effectivePricePerBidang;
-    const calculatedSubtotalKawasan =
-      subtotalKawasanPrice > 0
-        ? subtotalKawasanPrice
-        : Math.ceil(totalKawasanAreaHa) * effectivePricePerKawasanHa;
-
-    const calculatedTotalPrice =
-      isBidangValid && isKawasanValid && estimatedTotalPrice > 0
-        ? estimatedTotalPrice
-        : (isBidangValid ? calculatedSubtotalBidang : 0) +
-          (isKawasanValid ? calculatedSubtotalKawasan : 0);
+    const calculatedSubtotalBidang = subtotalBidangPrice;
+    const calculatedSubtotalKawasan = subtotalKawasanPrice;
+    const calculatedTotalPrice = estimatedTotalPrice;
 
     return (
       <VStack gap={"md"}>
