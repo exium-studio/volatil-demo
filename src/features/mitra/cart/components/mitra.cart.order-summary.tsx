@@ -109,6 +109,21 @@ export const MitraCartOrderSummary = (props: MitraCartOrderSummaryProps) => {
       .filter((i) => i.spatialBasis === "kawasan")
       .reduce((sum, item) => sum + (item.subtotalPrice ?? 0), 0);
   }, [activeOrder]);
+  const unitPriceBidang = useMemo(() => {
+    if (!activeOrder?.items) return 0;
+    const bidangItem = activeOrder.items.find(
+      (i) => i.spatialBasis === "bidang" && (i.unitPrice ?? 0) > 0,
+    );
+    return bidangItem?.unitPrice ?? 0;
+  }, [activeOrder]);
+
+  const unitPriceKawasan = useMemo(() => {
+    if (!activeOrder?.items) return 0;
+    const kawasanItem = activeOrder.items.find(
+      (i) => i.spatialBasis === "kawasan" && (i.unitPrice ?? 0) > 0,
+    );
+    return kawasanItem?.unitPrice ?? 0;
+  }, [activeOrder]);
 
   const handleCheckout = () => {
     if (!activeOrder?.orderId || !isPayable) return;
@@ -449,32 +464,76 @@ export const MitraCartOrderSummary = (props: MitraCartOrderSummaryProps) => {
           my={1}
         />
 
-        <VStack gap={1} align={"stretch"} fontSize={"sm"}>
-          <P fontSize={"sm"} color={"fg.subtle"} mb={"xs"}>
-            Subtotal IGT
+        <VStack gap={"sm"} align={"stretch"} fontSize={"sm"}>
+          <P fontSize={"sm"} color={"fg.subtle"} mb={"2xs"}>
+            {"Subtotal IGT"}
           </P>
 
-          <HStack justify={"space-between"}>
-            <P color={"fg.muted"}>{"Basis Bidang"}</P>
+          <HStack justify={"space-between"} align={"end"}>
+            <VStack align={"start"} gap={"2xs"}>
+              <P color={"fg.muted"}>{"Basis Bidang"}</P>
+
+              {isSelected && totalBidang > 0 && unitPriceBidang > 0 && (
+                <P fontSize={"xs"} color={"fg.subtle"}>
+                  <TNum>{formatNumber(totalBidang)}</TNum>
+                  {" bidang × "}
+                  <FormatNumber
+                    value={unitPriceBidang}
+                    style={"currency"}
+                    currency={"IDR"}
+                    maximumFractionDigits={0}
+                  />
+                </P>
+              )}
+            </VStack>
+
             <P fontWeight={"medium"}>
-              <FormatNumber
-                value={isSelected ? subtotalBidang : 0}
-                style={"currency"}
-                currency={"IDR"}
-                maximumFractionDigits={0}
-              />
+              {isSelected && totalBidang > 0 ? (
+                <FormatNumber
+                  value={subtotalBidang}
+                  style={"currency"}
+                  currency={"IDR"}
+                  maximumFractionDigits={0}
+                />
+              ) : (
+                "-"
+              )}
             </P>
           </HStack>
 
-          <HStack justify={"space-between"} gap={"md"}>
-            <P color={"fg.muted"}>{"Basis Kawasan"}</P>
+          <HStack justify={"space-between"} align={"end"} gap={"md"}>
+            <VStack align={"start"} gap={"2xs"}>
+              <P color={"fg.muted"}>{"Basis Kawasan"}</P>
+
+              {isSelected && totalKawasanHa > 0 && unitPriceKawasan > 0 && (
+                <P fontSize={"xs"} color={"fg.subtle"}>
+                  <TNum>
+                    {formatNumber(totalKawasanHa, {
+                      maximumFractionDigits: 2,
+                    })}
+                  </TNum>
+                  {" ha × "}
+                  <FormatNumber
+                    value={unitPriceKawasan}
+                    style={"currency"}
+                    currency={"IDR"}
+                    maximumFractionDigits={0}
+                  />
+                </P>
+              )}
+            </VStack>
+
             <P fontWeight={"medium"}>
-              <FormatNumber
-                value={isSelected ? subtotalKawasan : 0}
-                style={"currency"}
-                currency={"IDR"}
-                maximumFractionDigits={0}
-              />
+              {isSelected && totalKawasanHa > 0 ? (
+                <FormatNumber
+                  value={subtotalKawasan}
+                  style={"currency"}
+                  currency={"IDR"}
+                  maximumFractionDigits={0}
+                />
+              ) : (
+                "-"
+              )}
             </P>
           </HStack>
         </VStack>

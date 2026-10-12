@@ -244,8 +244,7 @@ export const useCreateCartOrder = () => {
     },
     successMessage: {
       title: "Data dimasukkan ke keranjang!",
-      description:
-        "Sistem sedang memproses penyiapan layer spasial Anda.",
+      description: "Sistem sedang memproses penyiapan layer spasial Anda.",
     },
     errorMessage: {
       title: "Gagal membuat pesanan keranjang",
@@ -399,7 +398,8 @@ export const useReorderCartOrder = (onSuccessCallback?: () => void) => {
     },
     successMessage: {
       title: "Permintaan ulang berhasil dibuat!",
-      description: "Pesanan baru telah masuk ke keranjang dan sedang disiapkan.",
+      description:
+        "Pesanan baru telah masuk ke keranjang dan sedang disiapkan.",
     },
     errorMessage: {
       title: "Gagal membuat permintaan ulang",
