@@ -38,7 +38,10 @@ import type {
   BasisFilterType,
   MitraDataRequestIgtLayerDataViewProps,
 } from "@/features/mitra/data-request/types/mitra.data-request.igt-layer-view.type";
-import { highlightFeatureOnMap } from "@/features/mitra/data-request/utils/highlight-feature-on-map";
+import {
+  getFeatureCollectionBounds,
+  highlightFeatureOnMap,
+} from "@/features/mitra/data-request/utils/highlight-feature-on-map";
 import { IgtBasisBadge } from "@/features/shared/components/igt-basis.badge";
 import { IGT_BASIS_MAP } from "@/features/shared/constants/volatil.ssot-map";
 import { queryKeys } from "@/shared/libs/tanstack-query/query.keys";
@@ -669,10 +672,36 @@ export const MitraDataRequestIgtLayerDataView = memo(
                     bidangQueryResult.features &&
                     bidangQueryResult.features.features.length > 0
                   ) {
-                    highlightFeatureOnMap(map, bidangQueryResult.features, {
-                      fitCamera: true,
-                      zoom: 16,
-                    });
+                    const bounds = getFeatureCollectionBounds(
+                      bidangQueryResult.features,
+                    );
+                    if (bounds) {
+                      const [minLng, minLat, maxLng, maxLat] = bounds;
+                      const bboxPolygonFeature: GeoJSON.Feature<GeoJSON.Polygon> = {
+                        type: "Feature",
+                        properties: {
+                          id: `bidang-bbox-${selectionType}`,
+                          title: "Cakupan Bidang",
+                        },
+                        geometry: {
+                          type: "Polygon",
+                          coordinates: [
+                            [
+                              [minLng, minLat],
+                              [maxLng, minLat],
+                              [maxLng, maxLat],
+                              [minLng, maxLat],
+                              [minLng, minLat],
+                            ],
+                          ],
+                        },
+                      };
+
+                      highlightFeatureOnMap(map, bboxPolygonFeature, {
+                        fitCamera: true,
+                        zoom: 16,
+                      });
+                    }
                   }
                 }}
               />
