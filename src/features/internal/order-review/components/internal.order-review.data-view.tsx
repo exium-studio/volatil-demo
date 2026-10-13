@@ -51,6 +51,7 @@ import {
   LayersIcon,
   MapPlusIcon,
   ReceiptTextIcon,
+  RefreshCwIcon,
 } from "lucide-react";
 import { useMemo, useState, useTransition } from "react";
 
@@ -220,6 +221,28 @@ export const InternalOrderReviewDataView = () => {
               title={"Buat Layanan WMS"}
               description={`Apakah Anda yakin ingin memulai pembuatan layanan WMS untuk pesanan "${order.orderNumber || order.orderId}" (Mitra: ${order.mitraName})? Proses ini akan menyiapkan workspace dan service layer di latar belakang.`}
               confirmLabel={"Buat Layanan WMS"}
+              onConfirm={() => {
+                provisionOrderMutation.mutate({ orderId: order.orderId });
+              }}
+            />
+          ),
+        },
+      },
+      {
+        key: "re-provision-wms",
+        label: "Create Ulang WMS",
+        icon: RefreshCwIcon,
+        colorPalette: "orange",
+        hidden: (order: InternalOrderItem) => order.status !== "processing",
+        modal: {
+          triggerComponent: (order: InternalOrderItem) => (
+            <ConfirmationTrigger
+              modalKey={`re-provision-wms-${order.orderId}`}
+              icon={RefreshCwIcon}
+              colorPalette={"orange"}
+              title={"Buat Ulang Layanan WMS"}
+              description={`Apakah Anda yakin ingin membuat ulang layanan WMS untuk pesanan "${order.orderNumber || order.orderId}" (Mitra: ${order.mitraName})? Gunakan aksi ini jika proses pembuatan layanan WMS sebelumnya mengalami kendala atau terhenti.`}
+              confirmLabel={"Buat Ulang Layanan WMS"}
               onConfirm={() => {
                 provisionOrderMutation.mutate({ orderId: order.orderId });
               }}
