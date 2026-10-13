@@ -406,10 +406,22 @@ export const MitraMyDataWorkspaceDetailPage = () => {
     if (!layerId || !workspace?.layers) return null;
     const found = workspace.layers.find((item) => item.id === layerId);
     if (!found) return null;
+    const workspaceWfsUrl = workspace.wfsUrl ?? found.wfsUrl ?? null;
     return {
       ...found,
-      wfsUrl: workspace.wfsUrl ?? null,
-      wmsUrl: workspace.wmsUrl ?? null,
+      wfsUrl: workspaceWfsUrl,
+      wmsUrl: workspace.wmsUrl ?? found.wmsUrl ?? null,
+      wfs: {
+        ...(found.wfs ?? {}),
+        wfsTypeName:
+          found.wfsTypeName ??
+          found.wfs?.wfsTypeName ??
+          found.sourceLayerId ??
+          found.id,
+        wfsUrl: workspaceWfsUrl ?? undefined,
+        url: workspaceWfsUrl ?? undefined,
+        baseUrl: workspaceWfsUrl ?? undefined,
+      },
       apiKey: effectiveApiKey ?? found.apiKey ?? null,
     };
   }, [layerId, workspace, effectiveApiKey]);

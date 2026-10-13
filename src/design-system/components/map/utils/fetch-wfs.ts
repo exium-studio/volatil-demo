@@ -207,14 +207,17 @@ const fetchWfsPost = async (
 ): Promise<Response> => {
   const url = buildWfsUrl(params, includeStartIndex);
 
-  // Extract base endpoint (strip all query params — they go into POST body)
-  const baseUrl = `${url.origin}${url.pathname}`;
-  const body = url.searchParams.toString();
-
   const isWorkspaceEndpoint =
     url.pathname.includes("/proxy/workspace/") ||
     url.pathname.includes("/workspace/") ||
     (params.wfsUrl && params.wfsUrl.includes("workspace="));
+
+  // Extract base endpoint
+  let baseUrl = `${url.origin}${url.pathname}`;
+  if (params.apiKey && isWorkspaceEndpoint) {
+    baseUrl += `?apiKey=${encodeURIComponent(params.apiKey)}`;
+  }
+  const body = url.searchParams.toString();
 
   const headers: Record<string, string> = {
     "Content-Type": "application/x-www-form-urlencoded",
