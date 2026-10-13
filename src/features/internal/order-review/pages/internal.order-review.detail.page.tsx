@@ -51,6 +51,9 @@ import {
   formatCurrency,
   formatNumber,
 } from "@/shared/utils/formatter/number.formatter";
+import { getIgtLayers } from "@/features/mitra/data-request/api/mitra.data-request-igt-layers.api";
+import { queryKeys } from "@/shared/libs/tanstack-query/query.keys";
+import { useQuery } from "@tanstack/react-query";
 import { useNavigate, useParams } from "@tanstack/react-router";
 import {
   CheckCircleIcon,
@@ -61,7 +64,7 @@ import {
   MapPlusIcon,
   RefreshCwIcon,
 } from "lucide-react";
-import { useCallback, useEffect, useMemo } from "react";
+import { useCallback, useEffect, useMemo, useRef } from "react";
 
 import { MAP_EVENTS_MAP } from "@/design-system/components/map/constants/map.config";
 import { DRAW_FILL_LAYER_ID } from "@/design-system/components/map/hooks/use-map-draw";
@@ -167,14 +170,22 @@ export const InternalOrderReviewDetailPage = () => {
   const map = useMapInstanceStore((state) => state.map);
 
   // Stores
-  const { isAoiVisible, setAoiPolygon, setAoiVisible } =
+  const { isAoiVisible, setAoiPolygon, setAoiVisible, setLayerEnabled } =
     useOrderReviewLayerStore();
 
   // Queries
   const { data: order, isLoading } = useInternalOrderDetailQuery(orderId);
+  const { data: masterIgtData } = useQuery({
+    queryKey: queryKeys.map.layers(),
+    queryFn: ({ signal }) => getIgtLayers(signal),
+    staleTime: 1000 * 60 * 5,
+  });
 
   // Mutations
   const provisionOrderMutation = useProvisionOrder();
+
+  // Refs
+  const hasFlownAoiRef = useRef<string | null>(null);
 
   // Background SSE listening if current order is 'processing'
   const processingOrderIds = useMemo(() => {
@@ -185,12 +196,96 @@ export const InternalOrderReviewDetailPage = () => {
 
   useOrdersProvisionStream(processingOrderIds);
 
-  // Sync order AOI Polygon with store on load
+  // Sync order AOI Polygon with store on load (auto ON)
   useEffect(() => {
     if (order?.aoiPolygon) {
-      setAoiPolygon(order.aoiPolygon, false);
+      setAoiPolygon(order.aoiPolygon, true);
     }
   }, [order?.aoiPolygon, setAoiPolygon]);
+
+  // Effects — Auto-enable purchased IGT layers based on defaultVisible from master IGT layers
+  useEffect(() => {
+    if (!order?.items || order.items.length === 0) return;
+
+    const masterItems = masterIgtData?.items ?? [];
+    const defaultMasterLayers = masterItems.filter((m) =>
+      Boolean(m.defaultVisible),
+    );
+
+    const layersToAutoEnable = order.items.filter((orderItem) => {
+      if (defaultMasterLayers.length > 0) {
+        const matchExact = defaultMasterLayers.some((m) => {
+          const mTitle = m.title?.toLowerCase().trim();
+          const itemTitle = orderItem.sourceLayerTitle?.toLowerCase().trim();
+
+          return (
+            m.id === orderItem.sourceLayerId ||
+            m.typeName === orderItem.sourceLayerId ||
+            (mTitle && itemTitle && mTitle === itemTitle)
+          );
+        });
+        if (matchExact) return true;
+
+        const hasDefaultBidangMaster = defaultMasterLayers.some(
+          (m) => (m.spatialBasis ?? m.igtBasis) === "bidang",
+        );
+        if (
+          hasDefaultBidangMaster &&
+          (orderItem.spatialBasis === "bidang" ||
+            orderItem.igtBasis === "bidang")
+        ) {
+          return true;
+        }
+        return false;
+      }
+
+      return (
+        orderItem.spatialBasis === "bidang" || orderItem.igtBasis === "bidang"
+      );
+    });
+
+    layersToAutoEnable.forEach((item) => {
+      const previewUrl = item.previewWmsUrl || item.wmsUrl || "";
+      setLayerEnabled(item.sourceLayerId, true, {
+        wmsUrl: previewUrl,
+        layers: item.sourceLayerId,
+        spatialBasis: item.spatialBasis,
+      });
+    });
+  }, [order?.items, masterIgtData, setLayerEnabled]);
+
+  // Effects — Auto fly camera to AOI polygon on initial load
+  useEffect(() => {
+    if (
+      !map ||
+      !order?.aoiPolygon ||
+      hasFlownAoiRef.current === order.orderId
+    ) {
+      return;
+    }
+
+    const feature = normalizePolygonFeature(order.aoiPolygon);
+    if (!feature) return;
+
+    hasFlownAoiRef.current = order.orderId;
+
+    const triggerFly = () => {
+      highlightFeatureOnMap(map, feature, {
+        zoom: 15,
+        timeoutMs: 1000,
+        fitCamera: true,
+      });
+    };
+
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    if ((map as any).style && map.isStyleLoaded()) {
+      triggerFly();
+    } else {
+      map.once("style.load", () => {
+        triggerFly();
+      });
+    }
+  }, [map, order?.aoiPolygon, order?.orderId]);
 
   // Effects — Reactive sync for permanent AOI layer (survives style ready)
   useEffect(() => {
