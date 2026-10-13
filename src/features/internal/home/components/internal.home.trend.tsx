@@ -57,6 +57,13 @@ const InternalHomeTrendContent = () => {
   const { acquisitionTrends, isLoading, isFetching, isError, error, refetch } =
     useInternalAcquisitionTrendsQuery(period);
 
+  // Derived Values
+  const isEmpty = isEmptyArray(acquisitionTrends);
+  const showFetchingSkeleton = isFetching;
+  const showError = !isFetching && isError;
+  const showEmpty = !isFetching && !isError && isEmpty;
+  const showContent = !isFetching && !isError && !isEmpty;
+
   if (isLoading) {
     return <Skeleton minH={"356px"} w={"full"} />;
   }
@@ -65,9 +72,9 @@ const InternalHomeTrendContent = () => {
     <Container.Body gap={"md"} pt={"md"} pb={"md"}>
       <InternalHomeTrendHeader period={period} onPeriodChange={setPeriod} />
 
-      {isFetching ? (
-        <Skeleton minH={"296px"} w={"full"} p={"md"} />
-      ) : isError ? (
+      {showFetchingSkeleton && <Skeleton minH={"296px"} w={"full"} p={"md"} />}
+
+      {showError && (
         <Box
           display={"flex"}
           alignItems={"center"}
@@ -87,7 +94,9 @@ const InternalHomeTrendContent = () => {
             }}
           />
         </Box>
-      ) : isEmptyArray(acquisitionTrends) ? (
+      )}
+
+      {showEmpty && (
         <Box
           display={"flex"}
           alignItems={"center"}
@@ -104,7 +113,9 @@ const InternalHomeTrendContent = () => {
             }
           />
         </Box>
-      ) : (
+      )}
+
+      {showContent && (
         <VStack mt={"auto"} pt={"md"}>
           <InternalHomeTrendChartContent
             acquisitionTrends={acquisitionTrends}

@@ -55,6 +55,11 @@ const MitraHomeFinancialFlowContent = () => {
   const { financialFlow, isLoading, isFetching, isError, error, refetch } =
     useMitraFinancialFlowQuery(period);
 
+  // Derived Values
+  const showFetchingSkeleton = isFetching;
+  const showError = !isFetching && isError;
+  const showContent = !isFetching && !isError;
+
   if (isLoading) {
     return <Skeleton minH={"353px"} w={"full"} />;
   }
@@ -67,9 +72,11 @@ const MitraHomeFinancialFlowContent = () => {
       />
 
       <VStack mt={"auto"}>
-        {isFetching ? (
+        {showFetchingSkeleton && (
           <Skeleton minH={"256px"} w={"full"} p={"md"} />
-        ) : isError ? (
+        )}
+
+        {showError && (
           <Box
             display={"flex"}
             alignItems={"center"}
@@ -88,7 +95,9 @@ const MitraHomeFinancialFlowContent = () => {
               }}
             />
           </Box>
-        ) : (
+        )}
+
+        {showContent && (
           <MitraHomeFinancialFlowChartContent financialFlow={financialFlow} />
         )}
       </VStack>

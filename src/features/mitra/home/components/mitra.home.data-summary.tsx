@@ -68,6 +68,11 @@ const MitraHomeDataSummaryContent = () => {
     (dataSummary?.area?.expired ?? 0);
   const isEmpty = !dataSummary || (totalField === 0 && totalArea === 0);
 
+  const showFetchingSkeleton = isFetching;
+  const showError = !isFetching && isError;
+  const showEmpty = !isFetching && !isError && isEmpty;
+  const showContent = !isFetching && !isError && !isEmpty;
+
   if (isLoading) {
     return <Skeleton minH={isSmContainer ? "386px" : "233px"} w={"full"} />;
   }
@@ -78,13 +83,15 @@ const MitraHomeDataSummaryContent = () => {
 
       <Separator borderColor={"bg.canvas"} />
 
-      {isFetching ? (
+      {showFetchingSkeleton && (
         <Skeleton
           minH={isSmContainer ? "259px" : "122px"}
           w={"full"}
           p={"md"}
         />
-      ) : isError ? (
+      )}
+
+      {showError && (
         <Box
           display={"flex"}
           alignItems={"center"}
@@ -103,7 +110,9 @@ const MitraHomeDataSummaryContent = () => {
             }}
           />
         </Box>
-      ) : isEmpty ? (
+      )}
+
+      {showEmpty && (
         <Box
           display={"flex"}
           alignItems={"center"}
@@ -119,7 +128,9 @@ const MitraHomeDataSummaryContent = () => {
             }
           />
         </Box>
-      ) : (
+      )}
+
+      {showContent && (
         <MitraHomeDataSummaryCharts
           dataSummary={dataSummary}
           isSmContainer={isSmContainer}
