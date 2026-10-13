@@ -2,6 +2,7 @@
 
 import type { BoxProps } from "@/design-system/components/layout/types/box.type";
 import type { StackProps } from "@/design-system/components/layout/types/flex-box.type";
+import type { SelectionType } from "@/features/mitra/cart/types/mitra.cart.order.type";
 import type { PaginatedResponse } from "@/shared/types/common-response.type";
 import type { OrderStatus } from "@/shared/types/status.type";
 import type GeoJSON from "geojson";
@@ -73,7 +74,9 @@ export type MitraWorkspaceItem = {
     | GeoJSON.Polygon
     | GeoJSON.MultiPolygon
     | null;
-  selectionType?: string | null;
+  selectionType?: SelectionType | string | null;
+  kawasanCoverageHa?: number | null;
+  bidangCoverageCount?: number | null;
 };
 
 export type MitraWorkspaceQueryParams = {

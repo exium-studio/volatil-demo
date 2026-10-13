@@ -44,11 +44,13 @@ import type { MyDataItem } from "@/features/mitra/my-data/types/my-data.type";
 import { IgtBasisBadge } from "@/features/shared/components/igt-basis.badge";
 import { LayerAttributeTableView } from "@/features/shared/components/layer-attribute-table.view";
 import { OrderStatusBadge } from "@/features/shared/components/order-status.badge";
+import { SelectionTypeBadge } from "@/features/shared/components/selection-type.badge";
 import { getSelectionTypeMapColors } from "@/features/shared/constants/volatil.ssot-map";
 import { queryKeys } from "@/shared/libs/tanstack-query/query.keys";
 import { isEmptyArray } from "@/shared/utils/data/array";
 import { useQuery } from "@tanstack/react-query";
 import { useNavigate, useParams } from "@tanstack/react-router";
+import * as turf from "@turf/turf";
 import type GeoJSON from "geojson";
 import {
   ClockPlusIcon,
@@ -193,7 +195,7 @@ export const MitraMyDataWorkspaceDetailPage = () => {
   const hasFlownWorkspaceRef = useRef<string | null>(null);
 
   // States
-  const [isAoiVisible, setIsAoiVisible] = useState(true);
+  const [isAoiVisible, setIsAoiVisible] = useState(false);
 
   // Effects — Reactive sync for permanent AOI polygon layer (survives style ready)
   useEffect(() => {
@@ -320,6 +322,29 @@ export const MitraMyDataWorkspaceDetailPage = () => {
     }
 
     let targetBbox = workspace.bbox;
+
+    // Fallback 1: Derive bbox from aoiPolygon if workspace.bbox is not present
+    if (!targetBbox && workspace.aoiPolygon) {
+      try {
+        const feature = normalizePolygonFeature(workspace.aoiPolygon);
+        if (feature) {
+          const computed = turf.bbox(feature);
+          if (
+            Array.isArray(computed) &&
+            computed.length === 4 &&
+            computed.every(
+              (n) => typeof n === "number" && !Number.isNaN(n) && Number.isFinite(n),
+            )
+          ) {
+            targetBbox = [computed[0], computed[1], computed[2], computed[3]];
+          }
+        }
+      } catch {
+        // Fall through to layers bbox
+      }
+    }
+
+    // Fallback 2: Derive bounding box from workspace layers
     if (!targetBbox && workspace.layers?.length) {
       let minLng = Infinity;
       let minLat = Infinity;
@@ -354,7 +379,7 @@ export const MitraMyDataWorkspaceDetailPage = () => {
         });
       };
 
-      // Ensure style is ready before triggering camera navigation on page refresh
+      // Ensure style is ready before triggering camera navigation on page load
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
       if ((map as any).style && map.isStyleLoaded()) {
         triggerFly();
@@ -398,6 +423,27 @@ export const MitraMyDataWorkspaceDetailPage = () => {
   const handleFlyToWorkspace = useCallback(() => {
     if (!workspace) return;
     let targetBbox = workspace.bbox;
+
+    if (!targetBbox && workspace.aoiPolygon) {
+      try {
+        const feature = normalizePolygonFeature(workspace.aoiPolygon);
+        if (feature) {
+          const computed = turf.bbox(feature);
+          if (
+            Array.isArray(computed) &&
+            computed.length === 4 &&
+            computed.every(
+              (n) => typeof n === "number" && !Number.isNaN(n) && Number.isFinite(n),
+            )
+          ) {
+            targetBbox = [computed[0], computed[1], computed[2], computed[3]];
+          }
+        }
+      } catch {
+        // Fall through
+      }
+    }
+
     if (!targetBbox && workspace.layers?.length) {
       let minLng = Infinity;
       let minLat = Infinity;
@@ -685,14 +731,21 @@ export const MitraMyDataWorkspaceDetailPage = () => {
                   borderColor={"border.subtle"}
                   minH={"110px"}
                 >
-                  <HStack align={"center"} justify={"space-between"} gap={"xs"}>
+                  <HStack
+                    align={"center"}
+                    justify={"space-between"}
+                    gap={"xs"}
+                    w={"full"}
+                  >
                     <P fontSize={"xs"} color={"fg.subtle"}>
                       {"AOI Polygon"}
                     </P>
 
-                    {/* <SelectionTypeBadge>
-                      {workspace.selectionType}
-                    </SelectionTypeBadge> */}
+                    {workspace.selectionType && (
+                      <SelectionTypeBadge>
+                        {workspace.selectionType}
+                      </SelectionTypeBadge>
+                    )}
                   </HStack>
 
                   <HStack align={"center"} gap={"xs"} w={"full"}>

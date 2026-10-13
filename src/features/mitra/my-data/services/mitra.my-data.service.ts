@@ -88,7 +88,9 @@ export const getMitraWorkspaceDetail = async (
     const response = await fetchMitraWorkspaceDetailApi(workspaceId, signal);
     const res = response as typeof response & {
       aoiPolygon?: MitraWorkspaceItem["aoiPolygon"];
-      selectionType?: string | null;
+      selectionType?: MitraWorkspaceItem["selectionType"];
+      kawasanCoverageHa?: number | null;
+      bidangCoverageCount?: number | null;
     };
     if (response.data) {
       const item = { ...response.data };
@@ -97,6 +99,18 @@ export const getMitraWorkspaceDetail = async (
       }
       if (!item.selectionType && res.selectionType) {
         item.selectionType = res.selectionType;
+      }
+      if (
+        item.kawasanCoverageHa === undefined &&
+        res.kawasanCoverageHa !== undefined
+      ) {
+        item.kawasanCoverageHa = res.kawasanCoverageHa;
+      }
+      if (
+        item.bidangCoverageCount === undefined &&
+        res.bidangCoverageCount !== undefined
+      ) {
+        item.bidangCoverageCount = res.bidangCoverageCount;
       }
       return item;
     }
