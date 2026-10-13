@@ -40,9 +40,7 @@ import { TransactionDetailTrigger } from "@/features/shared/components/transacti
 import { TteBadge } from "@/features/shared/components/tte.badge";
 import { ORDER_STATUS_FILTER_OPTIONS } from "@/features/shared/constants/volatil.ssot-map";
 import { useLocale } from "@/shared/libs/i18n/locale-provider";
-import type {
-  OrderStatus,
-} from "@/shared/types/status.type";
+import type { OrderStatus } from "@/shared/types/status.type";
 import { isEmptyArray } from "@/shared/utils/data/array";
 import {
   formatAdaptiveDateTime,
@@ -411,14 +409,12 @@ export const InternalTransactionStatisticDataView = () => {
               startTransition(() => {
                 setParams((prev) => ({
                   ...prev,
-                  orderStatus: val
-                    ? (val as OrderStatus)
-                    : undefined,
+                  orderStatus: val ? (val as OrderStatus) : undefined,
                   page: 1,
                 }));
               })
             }
-            w={"240px"}
+            minW={"150px"}
           />
         </ActionHeaderScrollContainer>
 
