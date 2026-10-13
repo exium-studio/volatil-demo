@@ -91,9 +91,13 @@ export const getMitraWorkspaceDetail = async (
       selectionType?: MitraWorkspaceItem["selectionType"];
       kawasanCoverageHa?: number | null;
       bidangCoverageCount?: number | null;
+      apiKey?: string | null;
     };
     if (response.data) {
       const item = { ...response.data };
+      if (!item.apiKey && res.apiKey) {
+        item.apiKey = res.apiKey;
+      }
       if (!item.aoiPolygon && res.aoiPolygon) {
         item.aoiPolygon = res.aoiPolygon;
       }

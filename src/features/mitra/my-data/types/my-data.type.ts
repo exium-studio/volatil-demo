@@ -117,6 +117,7 @@ export type MitraMyDataViewProps = StackProps;
 
 export type MitraMyDataWorkspaceDetailSearch = {
   layerId?: string;
+  apiKey?: string;
 };
 
 export type MyDataDetailAttributeListProps = {

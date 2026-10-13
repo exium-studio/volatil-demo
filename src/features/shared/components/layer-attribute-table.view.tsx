@@ -27,6 +27,7 @@ export const LayerAttributeTableView = memo(
     const {
       layer,
       cqlFilter,
+      apiKey: propsApiKey,
       showActions = true,
       canBatchSelect = false,
       batchActions,
@@ -47,6 +48,14 @@ export const LayerAttributeTableView = memo(
 
     // Derived Values — Resolve target layer, layer titles and WFS target params
     const targetLayer = layer ?? selectedIgtLayer;
+
+    const effectiveApiKey = useMemo(() => {
+      if (propsApiKey) return propsApiKey;
+      if (targetLayer && "apiKey" in targetLayer && targetLayer.apiKey) {
+        return targetLayer.apiKey;
+      }
+      return null;
+    }, [propsApiKey, targetLayer]);
 
     const effectiveTypeName = useMemo(() => {
       if (!targetLayer) return "";
@@ -112,6 +121,7 @@ export const LayerAttributeTableView = memo(
       cqlFilter,
       typeName: effectiveTypeName,
       wfsUrl: effectiveWfsUrl,
+      apiKey: effectiveApiKey,
       enabled: Boolean(targetLayer && effectiveTypeName && effectiveWfsUrl),
     });
 

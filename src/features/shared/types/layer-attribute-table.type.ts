@@ -21,6 +21,7 @@ export type LayerAttributeTarget =
       externalWfsUrl?: string | null;
       externalWmsUrl?: string | null;
       bbox?: [number, number, number, number] | null;
+      apiKey?: string | null;
       wfs?: {
         wfsTypeName: string;
         wfsUrl?: string;
@@ -34,6 +35,7 @@ export type LayerAttributeTarget =
 export type LayerAttributeTableViewProps = {
   layer?: LayerAttributeTarget | null;
   cqlFilter?: string;
+  apiKey?: string | null;
   showActions?: boolean;
   canBatchSelect?: boolean;
   batchActions?: DataViewBatchActionsGenerator[];

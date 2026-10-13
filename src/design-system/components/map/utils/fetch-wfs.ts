@@ -45,7 +45,14 @@ export const buildWfsUrl = (
   if (!url.searchParams.has("layerId") && typeName) {
     url.searchParams.set("layerId", typeName);
   }
-  if (apiKey && !url.searchParams.has("apiKey")) {
+
+  // Only apply apiKey for workspace proxy endpoints or workspace services (not master IGT /api/proxy/wfs)
+  const isWorkspaceEndpoint =
+    url.pathname.includes("/proxy/workspace/") ||
+    url.pathname.includes("/workspace/") ||
+    (wfsUrl && wfsUrl.includes("workspace="));
+
+  if (apiKey && isWorkspaceEndpoint && !url.searchParams.has("apiKey")) {
     url.searchParams.set("apiKey", apiKey);
   }
   url.searchParams.set("service", "WFS");
@@ -139,7 +146,13 @@ export const getLayerGeometryColumnName = async (
     if (!url.searchParams.has("layerId") && typeName) {
       url.searchParams.set("layerId", typeName);
     }
-    if (apiKey && !url.searchParams.has("apiKey")) {
+
+    const isWorkspaceEndpoint =
+      url.pathname.includes("/proxy/workspace/") ||
+      url.pathname.includes("/workspace/") ||
+      (wfsUrl && wfsUrl.includes("workspace="));
+
+    if (apiKey && isWorkspaceEndpoint && !url.searchParams.has("apiKey")) {
       url.searchParams.set("apiKey", apiKey);
     }
     url.searchParams.set("service", "WFS");
@@ -149,7 +162,7 @@ export const getLayerGeometryColumnName = async (
     url.searchParams.set("outputFormat", "application/json");
 
     const headers: Record<string, string> = {};
-    if (apiKey) {
+    if (apiKey && isWorkspaceEndpoint) {
       headers["X-API-Key"] = apiKey;
     }
 
@@ -198,9 +211,16 @@ const fetchWfsPost = async (
   const baseUrl = `${url.origin}${url.pathname}`;
   const body = url.searchParams.toString();
 
+  const isWorkspaceEndpoint =
+    url.pathname.includes("/proxy/workspace/") ||
+    url.pathname.includes("/workspace/") ||
+    (params.wfsUrl && params.wfsUrl.includes("workspace="));
+
   const headers: Record<string, string> = {
     "Content-Type": "application/x-www-form-urlencoded",
-    ...(params.apiKey ? { "X-API-Key": params.apiKey } : {}),
+    ...(params.apiKey && isWorkspaceEndpoint
+      ? { "X-API-Key": params.apiKey }
+      : {}),
     ...(params.headers ?? {}),
   };
 
@@ -228,8 +248,15 @@ export const fetchWfs = async (
     Boolean(params.cqlFilter) ||
     url.toString().length > 2000;
 
+  const isWorkspaceEndpoint =
+    url.pathname.includes("/proxy/workspace/") ||
+    url.pathname.includes("/workspace/") ||
+    (params.wfsUrl && params.wfsUrl.includes("workspace="));
+
   const getHeaders: Record<string, string> = {
-    ...(params.apiKey ? { "X-API-Key": params.apiKey } : {}),
+    ...(params.apiKey && isWorkspaceEndpoint
+      ? { "X-API-Key": params.apiKey }
+      : {}),
     ...(params.headers ?? {}),
   };
 

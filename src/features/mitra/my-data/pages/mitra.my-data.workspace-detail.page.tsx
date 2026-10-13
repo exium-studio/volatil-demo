@@ -166,6 +166,8 @@ export const MitraMyDataWorkspaceDetailPage = () => {
   // Search Params
   const { queryValue: layerId, setQueryValue: setLayerId } =
     useSearchParam("layerId");
+  const { queryValue: apiKeyParam, setQueryValue: setApiKeyParam } =
+    useSearchParam("apiKey");
 
   // Stores
   const { theme } = useThemeStore();
@@ -392,6 +394,9 @@ export const MitraMyDataWorkspaceDetailPage = () => {
   }, [map, workspace, flyTo]);
 
   // Derived Values
+  const effectiveApiKey =
+    apiKeyParam ?? workspace?.apiKey ?? null;
+
   const selectedAttributeLayer = useMemo(() => {
     if (!layerId || !workspace?.layers) return null;
     const found = workspace.layers.find((item) => item.id === layerId);
@@ -400,8 +405,9 @@ export const MitraMyDataWorkspaceDetailPage = () => {
       ...found,
       wfsUrl: workspace.wfsUrl ?? null,
       wmsUrl: workspace.wmsUrl ?? null,
+      apiKey: effectiveApiKey ?? found.apiKey ?? null,
     };
-  }, [layerId, workspace]);
+  }, [layerId, workspace, effectiveApiKey]);
 
   // Handlers
   const handleToggleAoi = useCallback((checked: boolean) => {
@@ -623,7 +629,19 @@ export const MitraMyDataWorkspaceDetailPage = () => {
         label: "Detail Atribut",
         icon: TablePropertiesIcon,
         onClick: (item: MyDataItem) => {
-          setLayerId(item.id);
+          const resolvedKey =
+            workspace?.apiKey ?? item.apiKey ?? apiKeyParam ?? undefined;
+          void navigate({
+            to: ".",
+            search: (prev) => {
+              const updated = { ...prev } as Record<string, unknown>;
+              updated.layerId = item.id;
+              if (resolvedKey) {
+                updated.apiKey = resolvedKey;
+              }
+              return updated;
+            },
+          });
         },
       },
     ];
@@ -631,10 +649,12 @@ export const MitraMyDataWorkspaceDetailPage = () => {
     return { headers, items, itemActions };
   }, [
     workspace?.layers,
+    workspace?.apiKey,
+    apiKeyParam,
+    navigate,
     enabledLayerIds,
     handleToggleLayer,
     flyTo,
-    setLayerId,
   ]);
 
   if (isLoading) {
@@ -681,7 +701,11 @@ export const MitraMyDataWorkspaceDetailPage = () => {
           <Container.Body flex={1} minH={0} overflow={"auto"}>
             <LayerAttributeTableView
               layer={selectedAttributeLayer}
-              onBack={() => setLayerId(undefined)}
+              apiKey={effectiveApiKey}
+              onBack={() => {
+                setLayerId(undefined);
+                setApiKeyParam(undefined);
+              }}
               showActions={false}
             />
           </Container.Body>
