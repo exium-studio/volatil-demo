@@ -26,6 +26,7 @@ export const buildWfsUrl = (
     maxFeatures,
     startIndex,
     resultType = "results",
+    apiKey,
   }: Omit<FetchWfsParams, "signal">,
   includeStartIndex = true,
 ) => {
@@ -43,6 +44,9 @@ export const buildWfsUrl = (
 
   if (!url.searchParams.has("layerId") && typeName) {
     url.searchParams.set("layerId", typeName);
+  }
+  if (apiKey && !url.searchParams.has("apiKey")) {
+    url.searchParams.set("apiKey", apiKey);
   }
   url.searchParams.set("service", "WFS");
   url.searchParams.set("version", version);
@@ -115,6 +119,7 @@ const geometryColumnCache = new Map<string, string>();
 export const getLayerGeometryColumnName = async (
   typeName: string,
   wfsUrl?: string,
+  apiKey?: string | null,
   signal?: AbortSignal,
 ): Promise<string> => {
   if (geometryColumnCache.has(typeName)) {
@@ -134,13 +139,21 @@ export const getLayerGeometryColumnName = async (
     if (!url.searchParams.has("layerId") && typeName) {
       url.searchParams.set("layerId", typeName);
     }
+    if (apiKey && !url.searchParams.has("apiKey")) {
+      url.searchParams.set("apiKey", apiKey);
+    }
     url.searchParams.set("service", "WFS");
     url.searchParams.set("version", "1.0.0");
     url.searchParams.set("request", "DescribeFeatureType");
     url.searchParams.set("typeName", typeName);
     url.searchParams.set("outputFormat", "application/json");
 
-    const res = await fetch(url.toString(), { signal });
+    const headers: Record<string, string> = {};
+    if (apiKey) {
+      headers["X-API-Key"] = apiKey;
+    }
+
+    const res = await fetch(url.toString(), { headers, signal });
     if (res.ok) {
       const data = await res.json();
       const element = data?.featureTypes?.[0]?.properties?.find(
@@ -185,9 +198,15 @@ const fetchWfsPost = async (
   const baseUrl = `${url.origin}${url.pathname}`;
   const body = url.searchParams.toString();
 
+  const headers: Record<string, string> = {
+    "Content-Type": "application/x-www-form-urlencoded",
+    ...(params.apiKey ? { "X-API-Key": params.apiKey } : {}),
+    ...(params.headers ?? {}),
+  };
+
   return fetch(baseUrl, {
     method: "POST",
-    headers: { "Content-Type": "application/x-www-form-urlencoded" },
+    headers,
     body,
     signal: params.signal,
   });
@@ -209,10 +228,18 @@ export const fetchWfs = async (
     Boolean(params.cqlFilter) ||
     url.toString().length > 2000;
 
+  const getHeaders: Record<string, string> = {
+    ...(params.apiKey ? { "X-API-Key": params.apiKey } : {}),
+    ...(params.headers ?? {}),
+  };
+
   try {
     res = usePost
       ? await fetchWfsPost(params, true)
-      : await fetch(url.toString(), { signal });
+      : await fetch(url.toString(), {
+          headers: Object.keys(getHeaders).length > 0 ? getHeaders : undefined,
+          signal,
+        });
   } catch (err: unknown) {
     if (signal?.aborted || (err as { name?: string }).name === "AbortError") {
       throw err;
@@ -269,6 +296,7 @@ export const fetchWfs = async (
     const discoveredGeomName = await getLayerGeometryColumnName(
       params.typeName,
       params.wfsUrl,
+      params.apiKey,
       signal,
     );
 
@@ -328,6 +356,7 @@ export const fetchWfs = async (
       const discoveredGeomName = await getLayerGeometryColumnName(
         params.typeName,
         params.wfsUrl,
+        params.apiKey,
         signal,
       );
 

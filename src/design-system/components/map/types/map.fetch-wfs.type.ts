@@ -24,6 +24,8 @@ export type FetchWfsParams = {
   propertyName?: string;
   resultType?: "results" | "hits";
   method?: "GET" | "POST";
+  apiKey?: string | null;
+  headers?: Record<string, string>;
   signal?: AbortSignal;
 };
 

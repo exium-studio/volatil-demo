@@ -12,6 +12,7 @@ import { HStack, VStack } from "@/design-system/components/layout/ui/flex-box";
 import { Separator } from "@/design-system/components/layout/ui/separator";
 import { Heading } from "@/design-system/components/typography/ui/heading";
 import { useInternalTransactionStatisticsQuery } from "@/features/internal/statistik-pesanan/hooks/use-internal-transaction-statistic.query";
+import { IGT_BASIS_MAP } from "@/features/shared/constants/volatil.ssot-map";
 import {
   CheckCircleIcon,
   CircleDollarSignIcon,
@@ -77,7 +78,7 @@ const InternalTransactionStatsGrid = () => {
 
   const STATS = [
     {
-      icon: CircleDollarSignIcon,
+      icon: IGT_BASIS_MAP.bidang.icon,
       label: "Pendapatan WMS Bidang",
       value: statistics.revenueWmsBidang,
       isCurrency: true,
@@ -86,7 +87,7 @@ const InternalTransactionStatsGrid = () => {
         "Akumulasi total pendapatan PNBP dari transaksi penjualan layanan WMS berbasis Bidang",
     },
     {
-      icon: CircleDollarSignIcon,
+      icon: IGT_BASIS_MAP.kawasan.icon,
       label: "Pendapatan WMS Kawasan",
       value: statistics.revenueWmsKawasan,
       isCurrency: true,
@@ -188,7 +189,7 @@ const InternalTransactionWmsStatsGrid = () => {
       label: "Potensi WMS",
       value: statistics.wmsPotential ?? 0,
       suffix: "pesanan",
-      color: "blue.fg",
+      color: "pink.fg",
       tooltip: "Diambil dari total item keranjang (cart) seluruh user mitra",
     },
     {
