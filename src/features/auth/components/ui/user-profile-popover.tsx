@@ -131,6 +131,7 @@ export const UserProfilePopoverTrigger = (
               <Button
                 justifyContent={"space-between"}
                 px={"sm"}
+                clicky={false}
                 onClick={toggleColorMode}
               >
                 <HStack gap={"xs"} align={"center"}>
@@ -152,6 +153,7 @@ export const UserProfilePopoverTrigger = (
                     size={"sm"}
                     w={"full"}
                     px={"sm"}
+                    clicky={false}
                     justifyContent={"start"}
                   >
                     <AppIcon icon={LockIcon} color={"fg.muted"} />
@@ -167,6 +169,7 @@ export const UserProfilePopoverTrigger = (
                   size={"sm"}
                   w={"full"}
                   px={"sm"}
+                  clicky={false}
                   loading={signoutMutation.isPending}
                   justifyContent={"start"}
                   onClick={handleClose}
