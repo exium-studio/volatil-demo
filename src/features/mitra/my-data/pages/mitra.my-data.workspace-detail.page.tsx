@@ -39,7 +39,10 @@ import {
 } from "@/features/mitra/data-request/utils/highlight-feature-on-map";
 import { MitraMyDataEditTrigger } from "@/features/mitra/my-data/components/mitra.my-data.edit-modal";
 import { MitraWorkspaceRenewalTrigger } from "@/features/mitra/my-data/components/mitra.my-data.renewal-modal";
-import { useMitraWorkspaceDetailQuery } from "@/features/mitra/my-data/hooks/use-mitra-my-data";
+import {
+  useMitraMyDataQuery,
+  useMitraWorkspaceDetailQuery,
+} from "@/features/mitra/my-data/hooks/use-mitra-my-data";
 import type { MyDataItem } from "@/features/mitra/my-data/types/my-data.type";
 import { IgtBasisBadge } from "@/features/shared/components/igt-basis.badge";
 import { LayerAttributeTableView } from "@/features/shared/components/layer-attribute-table.view";
