@@ -51,6 +51,7 @@ import { SelectionTypeBadge } from "@/features/shared/components/selection-type.
 import { getSelectionTypeMapColors } from "@/features/shared/constants/volatil.ssot-map";
 import { queryKeys } from "@/shared/libs/tanstack-query/query.keys";
 import { isEmptyArray } from "@/shared/utils/data/array";
+import { formatNumber } from "@/shared/utils/formatter/number.formatter";
 import { useQuery } from "@tanstack/react-query";
 import { useNavigate, useParams } from "@tanstack/react-router";
 import * as turf from "@turf/turf";
@@ -527,6 +528,7 @@ export const MitraMyDataWorkspaceDetailPage = () => {
     const headers: FormattedTableHeader[] = [
       { th: "Layer IGT (Label)", sortable: true },
       { th: "Basis IGT", sortable: true },
+      { th: "Jumlah / Luas", sortable: true, align: "start" },
       { th: "Tampilkan di Peta", sortable: false, align: "center" },
     ];
 
@@ -535,6 +537,21 @@ export const MitraMyDataWorkspaceDetailPage = () => {
         const layerDisplayName =
           item.label || item.title || item.id.replace(/_/g, " ");
         const isVisibleOnMap = Boolean(enabledLayerIds[item.id]);
+
+        const basis = item.spatialBasis ?? item.igtBasis;
+        const isKawasan = basis === "kawasan";
+        const isBidang = basis === "bidang";
+
+        let quantityLabel = "-";
+        if (isBidang && (item.featuresCount ?? 0) > 0) {
+          quantityLabel = `${formatNumber(item.featuresCount ?? 0)} bidang`;
+        } else if (isKawasan && (item.areaHa ?? 0) > 0) {
+          quantityLabel = `${formatNumber(item.areaHa ?? 0, { maximumFractionDigits: 2 })} ha`;
+        } else if ((item.featuresCount ?? 0) > 0) {
+          quantityLabel = `${formatNumber(item.featuresCount ?? 0)} fitur`;
+        } else if ((item.areaHa ?? 0) > 0) {
+          quantityLabel = `${formatNumber(item.areaHa ?? 0, { maximumFractionDigits: 2 })} ha`;
+        }
 
         return {
           id: item.id,
@@ -556,6 +573,15 @@ export const MitraMyDataWorkspaceDetailPage = () => {
             {
               value: item.spatialBasis,
               td: <IgtBasisBadge>{item.spatialBasis}</IgtBasisBadge>,
+              align: "start" as const,
+            },
+            {
+              value: quantityLabel,
+              td: (
+                <P fontSize={"sm"} whiteSpace={"nowrap"}>
+                  {quantityLabel}
+                </P>
+              ),
               align: "start" as const,
             },
             {

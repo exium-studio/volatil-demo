@@ -39,6 +39,8 @@ export type MyDataItem = {
   status: OrderStatus;
   expiresAt: string;
   bbox?: [number, number, number, number];
+  featuresCount?: number | null;
+  areaHa?: number | null;
   invoiceUrl?: string | null;
   tteInvoiceUrl?: string | null;
   tte?: boolean;
