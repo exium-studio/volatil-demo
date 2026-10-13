@@ -54,7 +54,7 @@ const MitraHomeDataSummaryContent = () => {
   const { isSmContainer } = useContainerContext();
 
   // Queries
-  const { dataSummary, isLoading, isError, error, refetch } =
+  const { dataSummary, isLoading, isFetching, isError, error, refetch } =
     useMitraDataSummaryQuery(period);
 
   // Derived Values
@@ -78,7 +78,13 @@ const MitraHomeDataSummaryContent = () => {
 
       <Separator borderColor={"bg.canvas"} />
 
-      {isError ? (
+      {isFetching ? (
+        <Skeleton
+          minH={isSmContainer ? "259px" : "122px"}
+          w={"full"}
+          p={"md"}
+        />
+      ) : isError ? (
         <Box
           display={"flex"}
           alignItems={"center"}

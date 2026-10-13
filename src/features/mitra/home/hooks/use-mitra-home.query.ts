@@ -47,6 +47,7 @@ export const useMitraDataSummaryQuery = (period: MitraHomePeriod = "all") => {
   const query = useQuery({
     queryKey: queryKeys.mitra.home.dataSummary(period),
     queryFn: ({ signal }) => getMitraDataSummary(period, signal),
+    placeholderData: (previousData) => previousData,
     retry: false,
     staleTime: 1000 * 60 * 5,
   });
@@ -77,6 +78,7 @@ export const useMitraFinancialFlowQuery = (period: MitraHomePeriod = "all") => {
   const query = useQuery({
     queryKey: queryKeys.mitra.home.financialFlow(period),
     queryFn: ({ signal }) => getMitraFinancialFlow(period, signal),
+    placeholderData: (previousData) => previousData,
     retry: false,
     staleTime: 1000 * 60 * 5,
   });

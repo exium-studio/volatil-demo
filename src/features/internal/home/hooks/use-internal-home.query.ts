@@ -77,6 +77,7 @@ export const useInternalAcquisitionTrendsQuery = (
   const query = useQuery({
     queryKey: queryKeys.internal.home.trends(period),
     queryFn: ({ signal }) => getInternalTrend(period, signal),
+    placeholderData: (previousData) => previousData,
     retry: false,
     staleTime: 1000 * 60 * 5,
   });

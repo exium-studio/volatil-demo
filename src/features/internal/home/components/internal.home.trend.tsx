@@ -54,7 +54,7 @@ const InternalHomeTrendContent = () => {
   const [period, setPeriod] = useState<HomePeriod>("all");
 
   // Queries / Data
-  const { acquisitionTrends, isLoading, isError, error, refetch } =
+  const { acquisitionTrends, isLoading, isFetching, isError, error, refetch } =
     useInternalAcquisitionTrendsQuery(period);
 
   if (isLoading) {
@@ -62,16 +62,19 @@ const InternalHomeTrendContent = () => {
   }
 
   return (
-    <Container.Body gap={8} pt={"md"} pb={"md"}>
+    <Container.Body gap={"md"} pt={"md"} pb={"md"}>
       <InternalHomeTrendHeader period={period} onPeriodChange={setPeriod} />
 
-      {isError ? (
+      {isFetching ? (
+        <Skeleton minH={"296px"} w={"full"} p={"md"} />
+      ) : isError ? (
         <Box
           display={"flex"}
           alignItems={"center"}
           justifyContent={"center"}
           w={"full"}
           py={"xl"}
+          minH={"296px"}
         >
           <StateRetry
             title={"Gagal Memuat Tren Akuisisi"}
@@ -91,6 +94,7 @@ const InternalHomeTrendContent = () => {
           justifyContent={"center"}
           w={"full"}
           py={"xl"}
+          minH={"296px"}
         >
           <StateNoData
             icon={TrendingUpIcon}
@@ -101,7 +105,7 @@ const InternalHomeTrendContent = () => {
           />
         </Box>
       ) : (
-        <VStack mt={"auto"}>
+        <VStack mt={"auto"} pt={"md"}>
           <InternalHomeTrendChartContent
             acquisitionTrends={acquisitionTrends}
           />

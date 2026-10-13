@@ -52,7 +52,7 @@ const MitraHomeFinancialFlowContent = () => {
   const [period, setPeriod] = useState<HomePeriod>("all");
 
   // Queries / Data
-  const { financialFlow, isLoading, isError, error, refetch } =
+  const { financialFlow, isLoading, isFetching, isError, error, refetch } =
     useMitraFinancialFlowQuery(period);
 
   if (isLoading) {
@@ -60,14 +60,16 @@ const MitraHomeFinancialFlowContent = () => {
   }
 
   return (
-    <Container.Body gap={8} pt={"md"}>
+    <Container.Body gap={"md"} pt={"md"}>
       <MitraHomeFinancialFlowHeader
         period={period}
         onPeriodChange={setPeriod}
       />
 
       <VStack mt={"auto"}>
-        {isError ? (
+        {isFetching ? (
+          <Skeleton minH={"256px"} w={"full"} p={"md"} />
+        ) : isError ? (
           <Box
             display={"flex"}
             alignItems={"center"}
@@ -109,9 +111,7 @@ const MitraHomeFinancialFlowHeader = (
       px={"md"}
     >
       <HStack gap={"xs"} align={"center"}>
-        <Heading>
-          {"Statistik Alur Keuangan"}
-        </Heading>
+        <Heading>{"Statistik Alur Keuangan"}</Heading>
 
         <InfoTip
           variant={"icon"}
