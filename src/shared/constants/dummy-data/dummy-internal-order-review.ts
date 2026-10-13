@@ -6,6 +6,382 @@ const now = new Date();
 
 export const DUMMY_INTERNAL_ORDERS: InternalOrderItem[] = [
   {
+    orderId: "eb1ed7c1-cdb6-4239-bb41-1d35a830b35a",
+    orderNumber: "ORD-2026-00031",
+    transactionNumber: "TRX-2026-000031",
+    workspaceName: "mitra_demo_20261012_040113_kawasan",
+    internalWorkspaceUrl:
+      "https://geoserver-volatil.exium.web.id/geoserver/mitra_demo_20261012_040113_kawasan/wms",
+    workspaceInteropUrl: null,
+    mitraId: "4",
+    mitraName: "Mitra Demo",
+    agencyOrCompany: "Mitra Demo",
+    totalPrice: 264300000,
+    totalAmount: 264300000,
+    coverageHa: 3839.12,
+    kawasanCoverageHa: 3839.12,
+    featuresCount: 25000,
+    bidangCoverageCount: 25000,
+    status: "processing",
+    transactionStatus: "paid",
+    selectionType: "draw_aoi",
+    invoiceUrl:
+      "https://volatil-be.exium.web.id/uploads/invoices/invoice-eb1ed7c1-cdb6-4239-bb41-1d35a830b35a.pdf",
+    tteInvoiceUrl: null,
+    tte: false,
+    paidAt: "2026-10-12T04:01:15.415Z",
+    expiresAt: "2026-10-19T04:01:15.415Z",
+    expiredAt: "2026-10-19T04:01:15.415Z",
+    createdAt: "2026-10-12T04:01:13.623Z",
+    aoiPolygon: {
+      type: "Polygon",
+      coordinates: [
+        [
+          [115.07960434802453, -8.639123383962968],
+          [115.30829424172123, -8.634944388122761],
+          [115.29063248216323, -8.741785427064173],
+          [115.08885741053973, -8.719241876994616],
+          [115.08885741053973, -8.719241876994616],
+          [115.07960434802453, -8.639123383962968],
+        ],
+      ],
+    },
+    items: [
+      {
+        id: "17480874-2379-4c49-bdc9-3850e82b3d42",
+        sourceLayerId: "de468933-4439-46ac-be8c-c40425892407",
+        sourceLayerTitle: "RTRW Badung",
+        spatialBasis: "kawasan",
+        igtBasis: "kawasan",
+        selectionType: "draw_aoi",
+        featuresCount: 0,
+        areaHa: 3792.89,
+        bbox: [115.09930928, -8.730409735, 115.188814811, -8.637242334],
+        cqlFilter:
+          "INTERSECTS(the_geom, POLYGON((115.07960435 -8.63912338, 115.30829424 -8.63494439, 115.29063248 -8.74178543, 115.08885741 -8.71924188, 115.07960435 -8.63912338)))",
+        unitPrice: 20000,
+        subtotalPrice: 38400000,
+        provisionStatus: "queued",
+        previewWmsUrl:
+          "https://volatil-be.exium.web.id/api/proxy/wms?layerId=mitra_demo_20261012_040113_kawasan%3Aigt_4_de468933_4439_46ac_be8c_c40425892407_6def1497",
+        previewWfsUrl:
+          "https://volatil-be.exium.web.id/api/proxy/wfs?layerId=mitra_demo_20261012_040113_kawasan%3Aigt_4_de468933_4439_46ac_be8c_c40425892407_6def1497",
+        externalWfsUrl: null,
+        externalWmsUrl: null,
+        approvedWmsUrl:
+          "https://volatil-be.exium.web.id/api/proxy/wms?layerId=mitra_demo_20261012_040113_kawasan%3Aigt_4_de468933_4439_46ac_be8c_c40425892407_6def1497",
+        approvedWfsUrl:
+          "https://volatil-be.exium.web.id/api/proxy/wfs?layerId=mitra_demo_20261012_040113_kawasan%3Aigt_4_de468933_4439_46ac_be8c_c40425892407_6def1497",
+      },
+      {
+        id: "26613e6e-2472-4a69-91b5-67f841b97c0f",
+        sourceLayerId: "6e602a52-c64e-4a82-a8c4-d0bd3b8fda08",
+        sourceLayerTitle: "Bidang Tanah Kuta Utara",
+        spatialBasis: "bidang",
+        igtBasis: "bidang",
+        selectionType: "draw_aoi",
+        featuresCount: 25000,
+        areaHa: 0,
+        bbox: [
+          115.07960434802453, -8.741785427064173, 115.30829424172123,
+          -8.634944388122761,
+        ],
+        cqlFilter:
+          "INTERSECTS(the_geom, POLYGON((115.07960435 -8.63912338, 115.30829424 -8.63494439, 115.29063248 -8.74178543, 115.08885741 -8.71924188, 115.07960435 -8.63912338)))",
+        unitPrice: 7500,
+        subtotalPrice: 187500000,
+        provisionStatus: "queued",
+        previewWmsUrl:
+          "https://volatil-be.exium.web.id/api/proxy/wms?layerId=mitra_demo_20261012_040113_kawasan%3Aigt_4_6e602a52_c64e_4a82_a8c4_d0bd3b8fda08_97a0594b",
+        previewWfsUrl:
+          "https://volatil-be.exium.web.id/api/proxy/wfs?layerId=mitra_demo_20261012_040113_kawasan%3Aigt_4_6e602a52_c64e_4a82_a8c4_d0bd3b8fda08_97a0594b",
+        externalWfsUrl: null,
+        externalWmsUrl: null,
+        approvedWmsUrl:
+          "https://volatil-be.exium.web.id/api/proxy/wms?layerId=mitra_demo_20261012_040113_kawasan%3Aigt_4_6e602a52_c64e_4a82_a8c4_d0bd3b8fda08_97a0594b",
+        approvedWfsUrl:
+          "https://volatil-be.exium.web.id/api/proxy/wfs?layerId=mitra_demo_20261012_040113_kawasan%3Aigt_4_6e602a52_c64e_4a82_a8c4_d0bd3b8fda08_97a0594b",
+      },
+      {
+        id: "7da39b1e-6897-4f21-87b3-646ed625e7c5",
+        sourceLayerId: "4b5d2a8f-accd-4789-896c-1d32648a463b",
+        sourceLayerTitle: "ZNT Badung",
+        spatialBasis: "kawasan",
+        igtBasis: "kawasan",
+        selectionType: "draw_aoi",
+        featuresCount: 0,
+        areaHa: 3762.21,
+        bbox: [115.09930928, -8.730409735, 115.188814811, -8.637242334],
+        cqlFilter:
+          "INTERSECTS(the_geom, POLYGON((115.07960435 -8.63912338, 115.30829424 -8.63494439, 115.29063248 -8.74178543, 115.08885741 -8.71924188, 115.07960435 -8.63912338)))",
+        unitPrice: 20000,
+        subtotalPrice: 38400000,
+        provisionStatus: "provisioning",
+        previewWmsUrl:
+          "https://volatil-be.exium.web.id/api/proxy/wms?layerId=mitra_demo_20261012_040113_kawasan%3Aigt_4_4b5d2a8f_accd_4789_896c_1d32648a463b_bd265828",
+        previewWfsUrl:
+          "https://volatil-be.exium.web.id/api/proxy/wfs?layerId=mitra_demo_20261012_040113_kawasan%3Aigt_4_4b5d2a8f_accd_4789_896c_1d32648a463b_bd265828",
+        externalWfsUrl: null,
+        externalWmsUrl: null,
+        approvedWmsUrl:
+          "/api/proxy/wms?layerId=mitra_demo_20261012_040113_kawasan%3Aigt_4_4b5d2a8f_accd_4789_896c_1d32648a463b_bd265828",
+        approvedWfsUrl:
+          "/api/proxy/wfs?layerId=mitra_demo_20261012_040113_kawasan%3Aigt_4_4b5d2a8f_accd_4789_896c_1d32648a463b_bd265828",
+      },
+    ],
+  },
+  {
+    orderId: "59e91f9c-c7ca-4292-a37e-4670c557fa59",
+    orderNumber: "ORD-2026-00030",
+    transactionNumber: "TRX-2026-000030",
+    workspaceName: "mitra_demo_20261012_030011_kawasan",
+    internalWorkspaceUrl:
+      "https://geoserver-volatil.exium.web.id/geoserver/mitra_demo_20261012_030011_kawasan/wms",
+    workspaceInteropUrl: null,
+    mitraId: "4",
+    mitraName: "Mitra Demo",
+    agencyOrCompany: "Mitra Demo",
+    totalPrice: 230800000,
+    totalAmount: 230800000,
+    coverageHa: 2164.76,
+    kawasanCoverageHa: 2164.76,
+    featuresCount: 25000,
+    bidangCoverageCount: 25000,
+    status: "paid",
+    transactionStatus: "paid",
+    selectionType: "draw_aoi",
+    invoiceUrl:
+      "https://volatil-be.exium.web.id/uploads/invoices/invoice-59e91f9c-c7ca-4292-a37e-4670c557fa59.pdf",
+    tteInvoiceUrl: null,
+    tte: false,
+    paidAt: "2026-10-12T03:00:13.993Z",
+    expiresAt: "2026-10-19T03:00:13.993Z",
+    expiredAt: "2026-10-19T03:00:13.993Z",
+    createdAt: "2026-10-12T03:00:11.459Z",
+    aoiPolygon: {
+      type: "Polygon",
+      coordinates: [
+        [
+          [115.11527382462577, -8.614651164417936],
+          [115.17903007161499, -8.685474115603796],
+          [115.13068130840429, -8.70885483205656],
+          [115.09144704204596, -8.66001711898366],
+          [115.09144704204596, -8.66001711898366],
+          [115.11527382462577, -8.614651164417936],
+        ],
+      ],
+    },
+    items: [
+      {
+        id: "374ce3fe-d228-407d-a9ab-dcf68121c4bc",
+        sourceLayerId: "de468933-4439-46ac-be8c-c40425892407",
+        sourceLayerTitle: "RTRW Badung",
+        spatialBasis: "kawasan",
+        igtBasis: "kawasan",
+        selectionType: "draw_aoi",
+        featuresCount: 0,
+        areaHa: 2156.65,
+        bbox: [115.10173621, -8.694773632, 115.176367161, -8.61630287],
+        cqlFilter:
+          "INTERSECTS(the_geom, POLYGON((115.11527382 -8.61465116, 115.17903007 -8.68547412, 115.13068131 -8.70885483, 115.09144704 -8.66001712, 115.11527382 -8.61465116)))",
+        unitPrice: 20000,
+        subtotalPrice: 21650000,
+        provisionStatus: "queued",
+        previewWmsUrl:
+          "https://volatil-be.exium.web.id/api/proxy/wms?layerId=mitra_demo_20261012_030011_kawasan%3Aigt_4_de468933_4439_46ac_be8c_c40425892407_c92637e9",
+        previewWfsUrl:
+          "https://volatil-be.exium.web.id/api/proxy/wfs?layerId=mitra_demo_20261012_030011_kawasan%3Aigt_4_de468933_4439_46ac_be8c_c40425892407_c92637e9",
+        externalWfsUrl: null,
+        externalWmsUrl: null,
+        approvedWmsUrl:
+          "https://volatil-be.exium.web.id/api/proxy/wms?layerId=mitra_demo_20261012_030011_kawasan%3Aigt_4_de468933_4439_46ac_be8c_c40425892407_c92637e9",
+        approvedWfsUrl:
+          "https://volatil-be.exium.web.id/api/proxy/wfs?layerId=mitra_demo_20261012_030011_kawasan%3Aigt_4_de468933_4439_46ac_be8c_c40425892407_c92637e9",
+      },
+      {
+        id: "088cf27c-ffc6-49b2-a581-fab2470bcc25",
+        sourceLayerId: "6e602a52-c64e-4a82-a8c4-d0bd3b8fda08",
+        sourceLayerTitle: "Bidang Tanah Kuta Utara",
+        spatialBasis: "bidang",
+        igtBasis: "bidang",
+        selectionType: "draw_aoi",
+        featuresCount: 25000,
+        areaHa: 0,
+        bbox: [
+          115.09144704204596, -8.70885483205656, 115.17903007161499,
+          -8.614651164417936,
+        ],
+        cqlFilter:
+          "INTERSECTS(the_geom, POLYGON((115.11527382 -8.61465116, 115.17903007 -8.68547412, 115.13068131 -8.70885483, 115.09144704 -8.66001712, 115.11527382 -8.61465116)))",
+        unitPrice: 7500,
+        subtotalPrice: 187500000,
+        provisionStatus: "queued",
+        previewWmsUrl:
+          "https://volatil-be.exium.web.id/api/proxy/wms?layerId=mitra_demo_20261012_030011_kawasan%3Aigt_4_6e602a52_c64e_4a82_a8c4_d0bd3b8fda08_a83814cc",
+        previewWfsUrl:
+          "https://volatil-be.exium.web.id/api/proxy/wfs?layerId=mitra_demo_20261012_030011_kawasan%3Aigt_4_6e602a52_c64e_4a82_a8c4_d0bd3b8fda08_a83814cc",
+        externalWfsUrl: null,
+        externalWmsUrl: null,
+        approvedWmsUrl:
+          "https://volatil-be.exium.web.id/api/proxy/wms?layerId=mitra_demo_20261012_030011_kawasan%3Aigt_4_6e602a52_c64e_4a82_a8c4_d0bd3b8fda08_a83814cc",
+        approvedWfsUrl:
+          "https://volatil-be.exium.web.id/api/proxy/wfs?layerId=mitra_demo_20261012_030011_kawasan%3Aigt_4_6e602a52_c64e_4a82_a8c4_d0bd3b8fda08_a83814cc",
+      },
+      {
+        id: "4484c8de-fce4-44fc-a27b-a0b79fd0ce8b",
+        sourceLayerId: "4b5d2a8f-accd-4789-896c-1d32648a463b",
+        sourceLayerTitle: "ZNT Badung",
+        spatialBasis: "kawasan",
+        igtBasis: "kawasan",
+        selectionType: "draw_aoi",
+        featuresCount: 0,
+        areaHa: 2152.55,
+        bbox: [115.10173621, -8.694773632, 115.176367161, -8.61630287],
+        cqlFilter:
+          "INTERSECTS(the_geom, POLYGON((115.11527382 -8.61465116, 115.17903007 -8.68547412, 115.13068131 -8.70885483, 115.09144704 -8.66001712, 115.11527382 -8.61465116)))",
+        unitPrice: 20000,
+        subtotalPrice: 21650000,
+        provisionStatus: "queued",
+        previewWmsUrl:
+          "https://volatil-be.exium.web.id/api/proxy/wms?layerId=mitra_demo_20261012_030011_kawasan%3Aigt_4_4b5d2a8f_accd_4789_896c_1d32648a463b_277f2016",
+        previewWfsUrl:
+          "https://volatil-be.exium.web.id/api/proxy/wfs?layerId=mitra_demo_20261012_030011_kawasan%3Aigt_4_4b5d2a8f_accd_4789_896c_1d32648a463b_277f2016",
+        externalWfsUrl: null,
+        externalWmsUrl: null,
+        approvedWmsUrl:
+          "https://volatil-be.exium.web.id/api/proxy/wms?layerId=mitra_demo_20261012_030011_kawasan%3Aigt_4_4b5d2a8f_accd_4789_896c_1d32648a463b_277f2016",
+        approvedWfsUrl:
+          "https://volatil-be.exium.web.id/api/proxy/wfs?layerId=mitra_demo_20261012_030011_kawasan%3Aigt_4_4b5d2a8f_accd_4789_896c_1d32648a463b_277f2016",
+      },
+    ],
+  },
+  {
+    orderId: "7110fa9b-2577-4f07-b6b4-6fe6eff9aa6e",
+    orderNumber: "ORD-2026-00025",
+    transactionNumber: "TRX-2026-000025",
+    workspaceName: "mitra_demo_20261011_064051_kawasan",
+    internalWorkspaceUrl:
+      "https://geoserver-volatil.exium.web.id/geoserver/mitra_demo_20261011_064051_kawasan/wms",
+    workspaceInteropUrl: null,
+    mitraId: "4",
+    mitraName: "Mitra Demo",
+    agencyOrCompany: "Mitra Demo",
+    totalPrice: 4478000,
+    totalAmount: 4478000,
+    coverageHa: 111.95,
+    kawasanCoverageHa: 111.95,
+    featuresCount: 0,
+    bidangCoverageCount: 0,
+    status: "pending_review",
+    transactionStatus: "paid",
+    selectionType: "draw_aoi",
+    invoiceUrl:
+      "https://volatil-be.exium.web.id/uploads/invoices/invoice-7110fa9b-2577-4f07-b6b4-6fe6eff9aa6e.pdf",
+    tteInvoiceUrl: null,
+    tte: false,
+    paidAt: "2026-10-11T06:40:53.684Z",
+    expiresAt: "2026-12-10T06:40:53.684Z",
+    expiredAt: "2026-12-10T06:40:53.684Z",
+    createdAt: "2026-10-11T06:40:51.346Z",
+    aoiPolygon: {
+      type: "Polygon",
+      coordinates: [
+        [
+          [115.17087522347055, -8.625284173530162],
+          [115.17071517728544, -8.633987059315672],
+          [115.18752002676206, -8.630189461098837],
+          [115.1889604424315, -8.621961200595578],
+          [115.1889604424315, -8.621961200595578],
+          [115.17087522347055, -8.625284173530162],
+        ],
+      ],
+    },
+    items: [
+      {
+        id: "09029d44-c388-4618-8050-895399352e2f",
+        sourceLayerId: "de468933-4439-46ac-be8c-c40425892407",
+        sourceLayerTitle: "RTRW Badung",
+        spatialBasis: "kawasan",
+        igtBasis: "kawasan",
+        selectionType: "draw_aoi",
+        featuresCount: 0,
+        areaHa: 106.2,
+        bbox: [115.17071518, -8.63398706, 115.18230824, -8.623291326],
+        cqlFilter:
+          "INTERSECTS(the_geom, POLYGON((115.17087522 -8.62528417, 115.17071518 -8.63398706, 115.18752003 -8.63018946, 115.18896044 -8.6219612, 115.17087522 -8.62528417)))",
+        unitPrice: 20000,
+        subtotalPrice: 2239000,
+        provisionStatus: "provisioning",
+        previewWmsUrl:
+          "https://volatil-be.exium.web.id/api/proxy/wms?layerId=mitra_demo_20261011_064051_kawasan%3Aigt_4_de468933_4439_46ac_be8c_c40425892407_b10008e1",
+        previewWfsUrl:
+          "https://volatil-be.exium.web.id/api/proxy/wfs?layerId=mitra_demo_20261011_064051_kawasan%3Aigt_4_de468933_4439_46ac_be8c_c40425892407_b10008e1",
+        externalWfsUrl: null,
+        externalWmsUrl: null,
+        approvedWmsUrl:
+          "/api/proxy/wms?layerId=mitra_demo_20261011_064051_kawasan%3Aigt_4_de468933_4439_46ac_be8c_c40425892407_b10008e1",
+        approvedWfsUrl:
+          "/api/proxy/wfs?layerId=mitra_demo_20261011_064051_kawasan%3Aigt_4_de468933_4439_46ac_be8c_c40425892407_b10008e1",
+      },
+      {
+        id: "8dac912e-2390-40f2-873f-369d839adbb8",
+        sourceLayerId: "4b5d2a8f-accd-4789-896c-1d32648a463b",
+        sourceLayerTitle: "ZNT Badung",
+        spatialBasis: "kawasan",
+        igtBasis: "kawasan",
+        selectionType: "draw_aoi",
+        featuresCount: 0,
+        areaHa: 111.95,
+        bbox: [115.17071518, -8.63398706, 115.18230824, -8.623291326],
+        cqlFilter:
+          "INTERSECTS(the_geom, POLYGON((115.17087522 -8.62528417, 115.17071518 -8.63398706, 115.18752003 -8.63018946, 115.18896044 -8.6219612, 115.17087522 -8.62528417)))",
+        unitPrice: 20000,
+        subtotalPrice: 2239000,
+        provisionStatus: "provisioning",
+        previewWmsUrl:
+          "https://volatil-be.exium.web.id/api/proxy/wms?layerId=mitra_demo_20261011_064051_kawasan%3Aigt_4_4b5d2a8f_accd_4789_896c_1d32648a463b_9ac2b473",
+        previewWfsUrl:
+          "https://volatil-be.exium.web.id/api/proxy/wfs?layerId=mitra_demo_20261011_064051_kawasan%3Aigt_4_4b5d2a8f_accd_4789_896c_1d32648a463b_9ac2b473",
+        externalWfsUrl: null,
+        externalWmsUrl: null,
+        approvedWmsUrl:
+          "/api/proxy/wms?layerId=mitra_demo_20261011_064051_kawasan%3Aigt_4_4b5d2a8f_accd_4789_896c_1d32648a463b_9ac2b473",
+        approvedWfsUrl:
+          "/api/proxy/wfs?layerId=mitra_demo_20261011_064051_kawasan%3Aigt_4_4b5d2a8f_accd_4789_896c_1d32648a463b_9ac2b473",
+      },
+    ],
+  },
+  {
+    orderId: "7a345410-b294-4ef2-86f3-fbcf413694a5",
+    orderNumber: "ORD-2026-00024",
+    transactionNumber: "TRX-2026-000024",
+    workspaceName: "mitra_demo_20261011_050412_kawasan",
+    internalWorkspaceUrl:
+      "https://geoserver-volatil.exium.web.id/geoserver/mitra_demo_20261011_050412_kawasan/wms",
+    workspaceInteropUrl: null,
+    mitraId: "4",
+    mitraName: "Mitra Demo",
+    agencyOrCompany: "Mitra Demo",
+    totalPrice: 78220100,
+    totalAmount: 78220100,
+    coverageHa: 565.19,
+    kawasanCoverageHa: 565.19,
+    featuresCount: 7415,
+    bidangCoverageCount: 7415,
+    status: "pending_review",
+    transactionStatus: "paid",
+    selectionType: "catalog",
+    invoiceUrl:
+      "https://volatil-be.exium.web.id/uploads/invoices/invoice-7a345410-b294-4ef2-86f3-fbcf413694a5.pdf",
+    tteInvoiceUrl: null,
+    tte: false,
+    paidAt: "2026-10-11T05:04:20.791Z",
+    expiresAt: "2027-10-11T05:04:20.791Z",
+    expiredAt: "2027-10-11T05:04:20.791Z",
+    createdAt: "2026-10-11T05:04:12.362Z",
+    items: [],
+  },
+  {
     orderId: "ord-2026-0830-001",
     orderNumber: "ORD-20260830-001",
     transactionNumber: "TRX-20260830-001",

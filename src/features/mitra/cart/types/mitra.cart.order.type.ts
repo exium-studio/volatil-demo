@@ -195,6 +195,11 @@ export type CartOrderItem = {
   previewWfsUrl?: string;
   externalWfsUrl?: string | null;
   externalWmsUrl?: string | null;
+  approvedWmsUrl?: string | null;
+  approvedWfsUrl?: string | null;
+  selectionType?: SelectionType;
+  cqlFilter?: string | null;
+  provisionStatus?: string;
   /** Bounding box layer IGT: [minLon, minLat, maxLon, maxLat] (EPSG:4326) */
   bbox?: [number, number, number, number];
 };

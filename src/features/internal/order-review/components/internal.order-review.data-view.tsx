@@ -160,9 +160,7 @@ export const InternalOrderReviewDataView = () => {
                   order.kawasanCoverageHa ?? order.coverageHa ?? undefined
                 }
                 bidangCoverageCount={
-                  order.bidangCoverageCount ??
-                  order.featuresCount ??
-                  undefined
+                  order.bidangCoverageCount ?? order.featuresCount ?? undefined
                 }
               />
             ),
@@ -286,7 +284,7 @@ export const InternalOrderReviewDataView = () => {
 
   return (
     <Container.Root flex={1} minH={0} withContext={true}>
-      <Container.Body flex={1} minH={0} overflowY={"auto"}>
+      <Container.Body flex={1} minH={0} overflow={"clip"}>
         {/* Header Container */}
         <HeaderContainer>
           <HStack gap={"xs"} align={"center"}>
@@ -338,7 +336,7 @@ export const InternalOrderReviewDataView = () => {
         <Separator borderColor={"bg.canvas"} />
 
         {/* Table / Content */}
-        <VStack flex={1} bg={"bg.canvas"} w={"full"} position={"relative"}>
+        <VStack flex={1} minH={0} bg={"bg.canvas"} w={"full"} position={"relative"}>
           {isLoading ? (
             <Skeleton p={"md"} rounded={0} />
           ) : isError ? (
@@ -373,7 +371,7 @@ export const InternalOrderReviewDataView = () => {
               )}
             </Center>
           ) : (
-            <VStack flex={1} position={"relative"} w={"full"}>
+            <VStack flex={1} minH={0} overflow={"hidden"} position={"relative"} w={"full"}>
               <TopBarLoader isFetching={isFetching} />
 
               <DataViewTable.Root<InternalOrderItem>
@@ -381,6 +379,7 @@ export const InternalOrderReviewDataView = () => {
                 items={dataList.items}
                 itemActions={dataList.itemActions}
                 withNumbering={true}
+                virtualized={false}
                 page={params.page}
                 pageSize={params.pageSize}
                 rounded={0}
@@ -390,9 +389,10 @@ export const InternalOrderReviewDataView = () => {
                 <DataViewTable.Body />
               </DataViewTable.Root>
 
-              <Separator borderColor={"bg.canvas"} />
+              <Separator borderColor={"bg.canvas"} flexShrink={0} />
 
               <DataViewFooter
+                flexShrink={0}
                 page={params.page ?? 1}
                 pageSize={params.pageSize ?? 1}
                 setPage={(nextPage: number) =>

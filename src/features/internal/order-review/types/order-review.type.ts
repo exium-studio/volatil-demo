@@ -80,6 +80,10 @@ export type InternalOrderItem = {
   readyAt?: string;
   expiredAt?: string;
   totalPrice: number;
+  totalAmount?: number;
+  transactionStatus?: string;
+  paidAt?: string;
+  expiresAt?: string;
   coverageHa?: number;
   kawasanCoverageHa?: number | null;
   featuresCount?: number | null;
