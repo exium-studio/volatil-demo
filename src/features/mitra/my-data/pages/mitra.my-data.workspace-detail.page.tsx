@@ -187,6 +187,11 @@ export const MitraMyDataWorkspaceDetailPage = () => {
     refetch,
   } = useMitraWorkspaceDetailQuery(workspaceId);
 
+  const { myData } = useMitraMyDataQuery({
+    page: 1,
+    pageSize: 1,
+  });
+
   const { data: igtMasterLayers } = useQuery({
     queryKey: queryKeys.map.layers(),
     queryFn: ({ signal }) => getIgtLayers(signal),
@@ -395,7 +400,7 @@ export const MitraMyDataWorkspaceDetailPage = () => {
 
   // Derived Values
   const effectiveApiKey =
-    apiKeyParam ?? workspace?.apiKey ?? null;
+    apiKeyParam ?? workspace?.apiKey ?? myData?.apiKey ?? null;
 
   const selectedAttributeLayer = useMemo(() => {
     if (!layerId || !workspace?.layers) return null;
@@ -630,7 +635,11 @@ export const MitraMyDataWorkspaceDetailPage = () => {
         icon: TablePropertiesIcon,
         onClick: (item: MyDataItem) => {
           const resolvedKey =
-            workspace?.apiKey ?? item.apiKey ?? apiKeyParam ?? undefined;
+            apiKeyParam ??
+            workspace?.apiKey ??
+            myData?.apiKey ??
+            item.apiKey ??
+            undefined;
           void navigate({
             to: ".",
             search: (prev) => {
@@ -650,6 +659,7 @@ export const MitraMyDataWorkspaceDetailPage = () => {
   }, [
     workspace?.layers,
     workspace?.apiKey,
+    myData?.apiKey,
     apiKeyParam,
     navigate,
     enabledLayerIds,
