@@ -143,9 +143,12 @@ export const MitraMyDataWorkspaceDetailPage = () => {
       });
 
       layersToAutoEnable.forEach((layer) => {
+        const wmsLayers = layer.wmsLayers || layer.wfsTypeName || "";
+        if (!wmsLayers) return;
+
         state.setCustomLayerConfig(layer.id, {
           wmsUrl: workspace.wmsUrl,
-          layers: layer.wmsLayers || layer.wfsTypeName || "",
+          layers: wmsLayers,
           spatialBasis: layer.spatialBasis ?? layer.igtBasis,
         });
         state.setLayerEnabled(layer.id, true);

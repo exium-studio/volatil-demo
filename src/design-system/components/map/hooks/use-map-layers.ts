@@ -11,6 +11,7 @@ import {
   type WmsRasterLayerConfig,
 } from "@/design-system/components/map/types/map.type";
 
+import { toast } from "@/design-system/components/toast";
 import { normalizeApiUrl } from "@/shared/utils/url/url.utils";
 import type maplibregl from "maplibre-gl";
 import { useCallback, useEffect, useRef } from "react";
@@ -263,7 +264,7 @@ export const useMapLayers = (
     map.fire(MAP_EVENTS_MAP.layersReady);
   }, [map, addLayer]);
 
-  // Setup on map-style-ready
+  // Setup on map-style-ready and map error listener
   useEffect(() => {
     if (!map) return;
 
@@ -272,12 +273,32 @@ export const useMapLayers = (
       void setupLayers();
     };
 
+    const handleError = (e: { error?: Error }) => {
+      const errMessage = e?.error?.message ?? "";
+      // Only fire toast when a tile fails due to invalid image format/geoserver XML exception
+      if (
+        (errMessage.includes("Could not load image") &&
+          !errMessage.includes("abort")) ||
+        (errMessage.includes("not, or is no longer, usable") &&
+          errMessage.includes("Could not load image"))
+      ) {
+        toast.error("Gagal Memuat Layer Peta", {
+          id: "map-layer-tile-load-error",
+          description:
+            "Format tile atau layer geoserver tidak valid atau tidak ditemukan.",
+          duplicateStrategy: "ignore",
+        });
+      }
+    };
+
     map.on(MAP_EVENTS_MAP.styleReady as string, handleStyleReady);
+    map.on("error", handleError);
     void setupLayers();
 
     return () => {
       if (!isMapActive(map)) return;
       map.off(MAP_EVENTS_MAP.styleReady as string, handleStyleReady);
+      map.off("error", handleError);
     };
   }, [map, setupLayers, removeLayers]);
 

@@ -24,6 +24,7 @@ export const StatusFilterSelect = (props: StatusFilterSelectProps) => {
     clearable = false,
     isLoading = false,
     isFetching = false,
+    ...restProps
   } = props;
 
   return (
@@ -38,6 +39,7 @@ export const StatusFilterSelect = (props: StatusFilterSelectProps) => {
       clearable={clearable}
       isLoading={isLoading}
       isFetching={isFetching}
+      {...restProps}
     />
   );
 };

@@ -419,15 +419,16 @@ const Content = (_props: GisContentProps) => {
     Object.entries(enabledLayerIds).forEach(([layerId, isEnabled]) => {
       if (!configs.some((c) => c.id === layerId)) {
         const customOverride = customLayerConfigs[layerId];
+        if (!customOverride?.wmsUrl || !customOverride?.layers) return;
         configs.push({
           id: layerId,
           type: "wms-raster",
-          spatialBasis: customOverride?.spatialBasis ?? "bidang",
+          spatialBasis: customOverride.spatialBasis ?? "bidang",
           visible: wmsVisible && Boolean(isEnabled),
           opacity: layerOpacities[layerId] ?? 1.0,
-          wmsUrl: customOverride?.wmsUrl ?? "",
-          layers: customOverride?.layers ?? "",
-          ...(customOverride ?? {}),
+          wmsUrl: customOverride.wmsUrl,
+          layers: customOverride.layers,
+          ...customOverride,
         });
       }
     });
