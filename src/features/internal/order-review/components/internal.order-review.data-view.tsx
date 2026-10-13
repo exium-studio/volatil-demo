@@ -230,10 +230,11 @@ export const InternalOrderReviewDataView = () => {
       },
       {
         key: "re-provision-wms",
-        label: "Create Ulang WMS",
+        label: "Buat Ulang WMS",
         icon: RefreshCwIcon,
         colorPalette: "orange",
-        hidden: (order: InternalOrderItem) => order.status !== "processing",
+        hidden: (order: InternalOrderItem) =>
+          order.status !== "processing" && order.status !== "wms_failed",
         modal: {
           triggerComponent: (order: InternalOrderItem) => (
             <ConfirmationTrigger

@@ -284,6 +284,13 @@ export const ORDER_STATUS_MAP: Record<OrderStatus, OrderStatusConfig> = {
     iconColor: "purple.fg",
     noticeDescription: "Layanan WMS sedang dipersiapkan...",
   },
+  wms_failed: {
+    label: "Gagal Menyiapkan WMS",
+    colorPalette: "red",
+    icon: AlertCircleIcon,
+    iconColor: "red.fg",
+    noticeDescription: "Terjadi kesalahan saat menyiapkan layanan WMS.",
+  },
   pending_tte: {
     label: "Menunggu TTE",
     colorPalette: "yellow",

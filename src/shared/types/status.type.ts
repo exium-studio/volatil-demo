@@ -22,6 +22,7 @@ export type OrderStatus =
   | "pending_payment"
   | "paid"
   | "processing"
+  | "wms_failed"
   | "pending_tte"
   | "pending_review"
   | "ready"

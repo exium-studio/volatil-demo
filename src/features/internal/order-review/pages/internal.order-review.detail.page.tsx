@@ -58,8 +58,8 @@ import {
   EyeOffIcon,
   FocusIcon,
   HandshakeIcon,
-  LoaderIcon,
   MapPlusIcon,
+  RefreshCwIcon,
 } from "lucide-react";
 import { useCallback, useEffect, useMemo } from "react";
 
@@ -310,16 +310,33 @@ export const InternalOrderReviewDetailPage = () => {
                       loading={provisionOrderMutation.isPending}
                     >
                       <AppIcon icon={MapPlusIcon} />
-                      {"Create Service WMS"}
+                      {"Buat Layanan WMS"}
                     </Button>
                   </ConfirmationTrigger>
                 )}
 
-                {order.status === "processing" && (
-                  <Button variant={"outline"} disabled={true}>
-                    <AppIcon icon={LoaderIcon} className={"animate-spin"} />
-                    {"Menyiapkan Layanan WMS..."}
-                  </Button>
+                {(order.status === "processing" ||
+                  order.status === "wms_failed") && (
+                  <ConfirmationTrigger
+                    modalKey={`re-provision-wms-detail-${order.orderId}`}
+                    icon={RefreshCwIcon}
+                    colorPalette={"orange"}
+                    title={"Buat Ulang Layanan WMS"}
+                    description={`Apakah Anda yakin ingin membuat ulang layanan WMS untuk pesanan "${order.orderNumber || order.orderId}" (Mitra: ${order.mitraName})? Gunakan aksi ini jika proses pembuatan layanan WMS sebelumnya mengalami kendala atau terhenti.`}
+                    confirmLabel={"Buat Ulang Layanan WMS"}
+                    onConfirm={() => {
+                      provisionOrderMutation.mutate({ orderId: order.orderId });
+                    }}
+                  >
+                    <Button
+                      primary={order.status === "wms_failed"}
+                      colorPalette={"orange"}
+                      loading={provisionOrderMutation.isPending}
+                    >
+                      <AppIcon icon={RefreshCwIcon} />
+                      {"Buat Ulang WMS"}
+                    </Button>
+                  </ConfirmationTrigger>
                 )}
 
                 {order.status === "pending_review" && (
