@@ -7,4 +7,5 @@ export type UrlProps = Omit<StackProps, "children"> & {
   label?: string;
   isExternalLink?: boolean;
   maxW?: StackProps["maxW"];
+  lineClamp?: number;
 };

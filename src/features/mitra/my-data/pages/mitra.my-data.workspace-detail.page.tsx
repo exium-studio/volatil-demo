@@ -17,8 +17,11 @@ import { Box } from "@/design-system/components/layout/ui/box";
 import { Center } from "@/design-system/components/layout/ui/center";
 import { Container } from "@/design-system/components/layout/ui/container";
 import { HStack, VStack } from "@/design-system/components/layout/ui/flex-box";
+import { SimpleGrid } from "@/design-system/components/layout/ui/grid";
 import { AppContentContainer } from "@/design-system/components/layout/ui/page-container";
 import { Separator } from "@/design-system/components/layout/ui/separator";
+import { MAP_EVENTS_MAP } from "@/design-system/components/map/constants/map.config";
+import { DRAW_FILL_LAYER_ID } from "@/design-system/components/map/hooks/use-map-draw";
 import { useMapLayerStore } from "@/design-system/components/map/stores/map.layer.store";
 import { Tooltip } from "@/design-system/components/overlay/ui/tooltip";
 import { HeaderContainer } from "@/design-system/components/shell/ui/header-container";
@@ -27,20 +30,26 @@ import { ClampedP, P } from "@/design-system/components/typography/ui/p";
 import { Url } from "@/design-system/components/typography/ui/url";
 import { useSearchParam } from "@/design-system/hooks/use-search-param";
 import { useThemeStore } from "@/design-system/stores/theme-store";
+import { getIgtLayers } from "@/features/mitra/data-request/api/mitra.data-request-igt-layers.api";
 import { useFlyToLayer } from "@/features/mitra/data-request/hooks/use-fly-to-layer";
-import { removeFeatureHighlightFromMap } from "@/features/mitra/data-request/utils/highlight-feature-on-map";
+import { normalizePolygonFeature } from "@/features/mitra/data-request/utils/clip-and-union-kawasan";
+import {
+  highlightFeatureOnMap,
+  removeFeatureHighlightFromMap,
+} from "@/features/mitra/data-request/utils/highlight-feature-on-map";
 import { MitraMyDataEditTrigger } from "@/features/mitra/my-data/components/mitra.my-data.edit-modal";
 import { MitraWorkspaceRenewalTrigger } from "@/features/mitra/my-data/components/mitra.my-data.renewal-modal";
-import { getIgtLayers } from "@/features/mitra/data-request/api/mitra.data-request-igt-layers.api";
 import { useMitraWorkspaceDetailQuery } from "@/features/mitra/my-data/hooks/use-mitra-my-data";
 import type { MyDataItem } from "@/features/mitra/my-data/types/my-data.type";
 import { IgtBasisBadge } from "@/features/shared/components/igt-basis.badge";
 import { LayerAttributeTableView } from "@/features/shared/components/layer-attribute-table.view";
 import { OrderStatusBadge } from "@/features/shared/components/order-status.badge";
+import { getSelectionTypeMapColors } from "@/features/shared/constants/volatil.ssot-map";
 import { queryKeys } from "@/shared/libs/tanstack-query/query.keys";
 import { isEmptyArray } from "@/shared/utils/data/array";
 import { useQuery } from "@tanstack/react-query";
 import { useNavigate, useParams } from "@tanstack/react-router";
+import type GeoJSON from "geojson";
 import {
   ClockPlusIcon,
   DatabaseIcon,
@@ -52,7 +61,98 @@ import {
   FocusIcon,
   TablePropertiesIcon,
 } from "lucide-react";
-import { useCallback, useEffect, useMemo, useRef } from "react";
+import type maplibregl from "maplibre-gl";
+import { useCallback, useEffect, useMemo, useRef, useState } from "react";
+
+const WORKSPACE_AOI_SOURCE_ID = "workspace-detail-aoi-source";
+const WORKSPACE_AOI_FILL_ID = "workspace-detail-aoi-fill";
+const WORKSPACE_AOI_LINE_ID = "workspace-detail-aoi-line";
+
+const removeWorkspaceAoiLayer = (map: maplibregl.Map) => {
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  if (!map || !(map as any).style) return;
+
+  try {
+    if (map.getLayer(WORKSPACE_AOI_FILL_ID)) {
+      map.removeLayer(WORKSPACE_AOI_FILL_ID);
+    }
+    if (map.getLayer(WORKSPACE_AOI_LINE_ID)) {
+      map.removeLayer(WORKSPACE_AOI_LINE_ID);
+    }
+    if (map.getSource(WORKSPACE_AOI_SOURCE_ID)) {
+      map.removeSource(WORKSPACE_AOI_SOURCE_ID);
+    }
+  } catch (err) {
+    console.warn("Failed to remove workspace AOI layer:", err);
+  }
+};
+
+const renderWorkspaceAoiLayer = (
+  map: maplibregl.Map,
+  feature: GeoJSON.Feature<GeoJSON.Polygon | GeoJSON.MultiPolygon>,
+  selectionType?: string | null,
+) => {
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  if (!map || !(map as any).style) return;
+
+  const { fillColor, lineColor } = getSelectionTypeMapColors(selectionType);
+
+  try {
+    const existingSource = map.getSource(WORKSPACE_AOI_SOURCE_ID) as
+      | maplibregl.GeoJSONSource
+      | undefined;
+
+    if (existingSource) {
+      existingSource.setData(feature);
+    } else {
+      map.addSource(WORKSPACE_AOI_SOURCE_ID, {
+        type: "geojson",
+        data: feature,
+      });
+    }
+
+    const beforeId = map.getLayer(DRAW_FILL_LAYER_ID)
+      ? DRAW_FILL_LAYER_ID
+      : undefined;
+
+    if (!map.getLayer(WORKSPACE_AOI_FILL_ID)) {
+      map.addLayer(
+        {
+          id: WORKSPACE_AOI_FILL_ID,
+          type: "fill",
+          source: WORKSPACE_AOI_SOURCE_ID,
+          paint: {
+            "fill-color": fillColor,
+            "fill-opacity": 0.25,
+          },
+        } as maplibregl.LayerSpecification,
+        beforeId,
+      );
+    } else {
+      map.setPaintProperty(WORKSPACE_AOI_FILL_ID, "fill-color", fillColor);
+    }
+
+    if (!map.getLayer(WORKSPACE_AOI_LINE_ID)) {
+      map.addLayer(
+        {
+          id: WORKSPACE_AOI_LINE_ID,
+          type: "line",
+          source: WORKSPACE_AOI_SOURCE_ID,
+          paint: {
+            "line-color": lineColor,
+            "line-width": 2.5,
+            "line-opacity": 1,
+          },
+        } as maplibregl.LayerSpecification,
+        beforeId,
+      );
+    } else {
+      map.setPaintProperty(WORKSPACE_AOI_LINE_ID, "line-color", lineColor);
+    }
+  } catch (err) {
+    console.warn("Failed to render workspace AOI layer:", err);
+  }
+};
 
 export const MitraMyDataWorkspaceDetailPage = () => {
   // Navigation
@@ -91,6 +191,40 @@ export const MitraMyDataWorkspaceDetailPage = () => {
 
   // Refs
   const hasFlownWorkspaceRef = useRef<string | null>(null);
+
+  // States
+  const [isAoiVisible, setIsAoiVisible] = useState(true);
+
+  // Effects — Reactive sync for permanent AOI polygon layer (survives style ready)
+  useEffect(() => {
+    if (!map) return;
+
+    const syncAoiLayer = () => {
+      if (isAoiVisible && workspace?.aoiPolygon) {
+        const feature = normalizePolygonFeature(workspace.aoiPolygon);
+        if (feature) {
+          renderWorkspaceAoiLayer(map, feature, workspace.selectionType);
+        }
+      } else {
+        removeWorkspaceAoiLayer(map);
+      }
+    };
+
+    const handleReady = () => {
+      syncAoiLayer();
+    };
+
+    map.on(MAP_EVENTS_MAP.styleReady as string, handleReady);
+    map.on(MAP_EVENTS_MAP.layersReady as string, handleReady);
+    syncAoiLayer();
+
+    return () => {
+      map.off(MAP_EVENTS_MAP.styleReady as string, handleReady);
+      map.off(MAP_EVENTS_MAP.layersReady as string, handleReady);
+      removeWorkspaceAoiLayer(map);
+    };
+  }, [map, isAoiVisible, workspace]);
+
   // Effects — Manage workspace layers on mount (unload master IGT, auto-enable matching defaultVisible workspace layers) and restore master default layers on unmount
   useEffect(() => {
     // 1. Landing: reset/unload master layers
@@ -113,7 +247,9 @@ export const MitraMyDataWorkspaceDetailPage = () => {
               ? wsLayer.id.split(":")[1]
               : wsLayer.id;
             const wsTitle = wsLayer.title?.toLowerCase().trim();
-            const wsSourceTitle = wsLayer.sourceLayerTitle?.toLowerCase().trim();
+            const wsSourceTitle = wsLayer.sourceLayerTitle
+              ?.toLowerCase()
+              .trim();
             const mTitle = m.title?.toLowerCase().trim();
 
             return (
@@ -139,7 +275,9 @@ export const MitraMyDataWorkspaceDetailPage = () => {
           return false;
         }
 
-        return wsLayer.spatialBasis === "bidang" || wsLayer.igtBasis === "bidang";
+        return (
+          wsLayer.spatialBasis === "bidang" || wsLayer.igtBasis === "bidang"
+        );
       });
 
       layersToAutoEnable.forEach((layer) => {
@@ -156,10 +294,11 @@ export const MitraMyDataWorkspaceDetailPage = () => {
     }
 
     return () => {
-      // 3. Exit / unmount: reset custom workspace configs and clean highlights
+      // 3. Exit / unmount: reset custom workspace configs, AOI layer, and clean highlights
       const exitState = useMapLayerStore.getState();
       exitState.resetLayers();
       if (map) {
+        removeWorkspaceAoiLayer(map);
         removeFeatureHighlightFromMap(map);
       }
 
@@ -240,6 +379,57 @@ export const MitraMyDataWorkspaceDetailPage = () => {
   }, [layerId, workspace]);
 
   // Handlers
+  const handleToggleAoi = useCallback((checked: boolean) => {
+    setIsAoiVisible(checked);
+  }, []);
+
+  const handleFlyToAoi = useCallback(() => {
+    if (!map || !workspace?.aoiPolygon) return;
+    const feature = normalizePolygonFeature(workspace.aoiPolygon);
+    if (!feature) return;
+
+    highlightFeatureOnMap(map, feature, {
+      zoom: 15,
+      timeoutMs: 1000,
+      fitCamera: true,
+    });
+  }, [map, workspace]);
+
+  const handleFlyToWorkspace = useCallback(() => {
+    if (!workspace) return;
+    let targetBbox = workspace.bbox;
+    if (!targetBbox && workspace.layers?.length) {
+      let minLng = Infinity;
+      let minLat = Infinity;
+      let maxLng = -Infinity;
+      let maxLat = -Infinity;
+      for (const layer of workspace.layers) {
+        if (layer.bbox && layer.bbox.length === 4) {
+          if (layer.bbox[0] < minLng) minLng = layer.bbox[0];
+          if (layer.bbox[1] < minLat) minLat = layer.bbox[1];
+          if (layer.bbox[2] > maxLng) maxLng = layer.bbox[2];
+          if (layer.bbox[3] > maxLat) maxLat = layer.bbox[3];
+        }
+      }
+      if (
+        minLng !== Infinity &&
+        minLat !== Infinity &&
+        maxLng !== -Infinity &&
+        maxLat !== -Infinity
+      ) {
+        targetBbox = [minLng, minLat, maxLng, maxLat];
+      }
+    }
+
+    if (targetBbox) {
+      void flyTo({
+        id: workspace.id,
+        title: workspace.workspaceName,
+        bbox: targetBbox,
+      });
+    }
+  }, [workspace, flyTo]);
+
   const handleToggleLayer = useCallback(
     (item: MyDataItem, checked: boolean) => {
       if (checked) {
@@ -477,77 +667,109 @@ export const MitraMyDataWorkspaceDetailPage = () => {
             </HStack>
           </HeaderContainer>
 
-          {/* Workspace WMS URL & QGIS Guide */}
+          {/* Workspace Metadata Cards: AOI Polygon & URL Workspace */}
           <VStack gap={"sm"} p={"md"} align={"stretch"}>
-            <P fontSize={"xs"} color={"fg.subtle"}>
-              {"WMS URL Workspace (INTEROP Pusdatin)"}
-            </P>
-
-            <HStack gap={"2xs"}>
-              <Url
-                url={workspace.wmsUrl}
-                label={"Salin WMS URL Workspace"}
-                maxW={"full"}
-              />
-
-              <Tooltip content={"Zoom ke Workspace"}>
-                <IconButton
-                  aria-label={"Zoom ke Workspace"}
-                  onClick={() => {
-                    let targetBbox = workspace.bbox;
-                    if (!targetBbox && workspace.layers?.length) {
-                      let minLng = Infinity;
-                      let minLat = Infinity;
-                      let maxLng = -Infinity;
-                      let maxLat = -Infinity;
-                      for (const layer of workspace.layers) {
-                        if (layer.bbox && layer.bbox.length === 4) {
-                          if (layer.bbox[0] < minLng) minLng = layer.bbox[0];
-                          if (layer.bbox[1] < minLat) minLat = layer.bbox[1];
-                          if (layer.bbox[2] > maxLng) maxLng = layer.bbox[2];
-                          if (layer.bbox[3] > maxLat) maxLat = layer.bbox[3];
-                        }
-                      }
-                      if (
-                        minLng !== Infinity &&
-                        minLat !== Infinity &&
-                        maxLng !== -Infinity &&
-                        maxLat !== -Infinity
-                      ) {
-                        targetBbox = [minLng, minLat, maxLng, maxLat];
-                      }
-                    }
-
-                    if (targetBbox) {
-                      void flyTo({
-                        id: workspace.id,
-                        title: workspace.workspaceName,
-                        bbox: targetBbox,
-                      });
-                    }
-                  }}
+            <SimpleGrid
+              columns={workspace.aoiPolygon ? { base: 1, md: 2 } : 1}
+              gap={"sm"}
+              w={"full"}
+            >
+              {/* Left Card: AOI Polygon */}
+              {workspace.aoiPolygon && (
+                <VStack
+                  align={"start"}
+                  justify={"space-between"}
+                  p={"md"}
+                  rounded={theme.radii.container}
+                  border={"1px solid"}
+                  borderColor={"border.subtle"}
+                  minH={"110px"}
                 >
-                  <AppIcon icon={FocusIcon} />
-                </IconButton>
-              </Tooltip>
+                  <HStack align={"center"} justify={"space-between"} gap={"xs"}>
+                    <P fontSize={"xs"} color={"fg.subtle"}>
+                      {"AOI Polygon"}
+                    </P>
 
-              <MitraWorkspaceRenewalTrigger
-                workspace={workspace}
-                renderTrigger={({ eligibility, open }) => (
-                  <Tooltip
-                    content={eligibility.reason ?? "Perpanjang Workspace"}
-                  >
+                    {/* <SelectionTypeBadge>
+                      {workspace.selectionType}
+                    </SelectionTypeBadge> */}
+                  </HStack>
+
+                  <HStack align={"center"} gap={"xs"} w={"full"}>
+                    <Switch
+                      checked={isAoiVisible}
+                      onCheckedChange={({ checked }) => {
+                        handleToggleAoi(checked);
+                      }}
+                      tooltip={
+                        isAoiVisible
+                          ? "Sembunyikan Polygon AOI"
+                          : "Tampilkan Polygon AOI"
+                      }
+                    />
+
+                    <Tooltip content={"Zoom ke AOI Polygon"}>
+                      <IconButton
+                        aria-label={"Zoom ke AOI Polygon"}
+                        size={"xs"}
+                        onClick={handleFlyToAoi}
+                      >
+                        <AppIcon icon={FocusIcon} />
+                      </IconButton>
+                    </Tooltip>
+                  </HStack>
+                </VStack>
+              )}
+
+              {/* Right Card: Workspace WMS URL & Actions */}
+              <VStack
+                align={"start"}
+                justify={"space-between"}
+                p={"md"}
+                rounded={theme.radii.container}
+                border={"1px solid"}
+                borderColor={"border.subtle"}
+                minH={"110px"}
+              >
+                <P fontSize={"xs"} color={"fg.subtle"}>
+                  {"WMS URL Workspace (INTEROP Pusdatin)"}
+                </P>
+
+                <HStack gap={"2xs"} w={"full"} align={"center"}>
+                  <Url
+                    url={workspace.wmsUrl}
+                    label={"Salin WMS URL Workspace"}
+                    maxW={"full"}
+                  />
+
+                  <Tooltip content={"Zoom ke Workspace"}>
                     <IconButton
-                      aria-label={"Perpanjang Workspace"}
-                      disabled={!eligibility.canExtend}
-                      onClick={open}
+                      aria-label={"Zoom ke Workspace"}
+                      onClick={handleFlyToWorkspace}
                     >
-                      <AppIcon icon={ClockPlusIcon} />
+                      <AppIcon icon={FocusIcon} />
                     </IconButton>
                   </Tooltip>
-                )}
-              />
-            </HStack>
+
+                  <MitraWorkspaceRenewalTrigger
+                    workspace={workspace}
+                    renderTrigger={({ eligibility, open }) => (
+                      <Tooltip
+                        content={eligibility.reason ?? "Perpanjang Workspace"}
+                      >
+                        <IconButton
+                          aria-label={"Perpanjang Workspace"}
+                          disabled={!eligibility.canExtend}
+                          onClick={open}
+                        >
+                          <AppIcon icon={ClockPlusIcon} />
+                        </IconButton>
+                      </Tooltip>
+                    )}
+                  />
+                </HStack>
+              </VStack>
+            </SimpleGrid>
 
             <Box
               p={"sm"}

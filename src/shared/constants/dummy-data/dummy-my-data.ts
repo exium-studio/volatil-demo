@@ -134,6 +134,19 @@ export const dummyMitraWorkspaces: MitraWorkspaceItem[] = [
     tteInvoiceUrl:
       "https://volatil-be.exium.web.id/invoices/TTE-INV-2026-0825-001.pdf",
     tte: true,
+    selectionType: "draw_aoi",
+    aoiPolygon: {
+      type: "Polygon",
+      coordinates: [
+        [
+          [115.083839, -8.850039],
+          [115.251534, -8.850039],
+          [115.251534, -8.239441],
+          [115.083839, -8.239441],
+          [115.083839, -8.850039],
+        ],
+      ],
+    },
   },
   {
     id: "ws_ord_20260829_003",

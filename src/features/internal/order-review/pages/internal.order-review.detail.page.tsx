@@ -288,7 +288,7 @@ export const InternalOrderReviewDetailPage = () => {
                   onClick={() => navigate({ to: "/internal/order-review" })}
                 />
 
-                <ClampedHeading>{"Review Permintaan Detail"}</ClampedHeading>
+                <ClampedHeading>{`Review Permintaan`}</ClampedHeading>
               </HStack>
 
               <HStack gap={2}>
@@ -386,10 +386,6 @@ const OrderSummary = (props: OrderSummaryProps) => {
             gap={"sm"}
           >
             <VStack align={"start"} gap={"2xs"}>
-              <P fontSize={"sm"} color={"fg.subtle"}>
-                {"Nomor pesanan"}
-              </P>
-
               <P fontSize={"xl"} fontWeight={"bold"} lineHeight={"short"}>
                 {order.orderNumber || order.orderId}
               </P>
@@ -406,10 +402,6 @@ const OrderSummary = (props: OrderSummaryProps) => {
                 {order.mitraName}
               </P>
             </HStack>
-
-            <P color={"fg.subtle"}>{"•"}</P>
-
-            <SelectionTypeBadge>{order.selectionType}</SelectionTypeBadge>
           </HStack>
         </VStack>
 
@@ -459,7 +451,6 @@ const OrderSummary = (props: OrderSummaryProps) => {
             {/* Card: AOI Polygon */}
             {hasAoi && (
               <VStack
-                align={"start"}
                 justify={"space-between"}
                 p={"md"}
                 rounded={theme.radii.container}
@@ -467,9 +458,13 @@ const OrderSummary = (props: OrderSummaryProps) => {
                 borderColor={"border.subtle"}
                 minH={"110px"}
               >
-                <P fontSize={"xs"} color={"fg.subtle"}>
-                  {"AOI polygon"}
-                </P>
+                <HStack align={"center"} justify={"space-between"} gap={"xs"}>
+                  <P fontSize={"xs"} color={"fg.subtle"}>
+                    {"AOI polygon"}
+                  </P>
+
+                  <SelectionTypeBadge>{order.selectionType}</SelectionTypeBadge>
+                </HStack>
 
                 <HStack align={"center"} gap={"xs"} w={"full"}>
                   <Switch

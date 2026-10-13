@@ -4,6 +4,7 @@ import type { BoxProps } from "@/design-system/components/layout/types/box.type"
 import type { StackProps } from "@/design-system/components/layout/types/flex-box.type";
 import type { PaginatedResponse } from "@/shared/types/common-response.type";
 import type { OrderStatus } from "@/shared/types/status.type";
+import type GeoJSON from "geojson";
 
 export type { OrderStatus };
 export type MyDataSpatialBasis = "bidang" | "kawasan";
@@ -67,6 +68,12 @@ export type MitraWorkspaceItem = {
   invoiceUrl?: string | null;
   tteInvoiceUrl?: string | null;
   tte?: boolean;
+  aoiPolygon?:
+    | GeoJSON.Feature<GeoJSON.Polygon | GeoJSON.MultiPolygon>
+    | GeoJSON.Polygon
+    | GeoJSON.MultiPolygon
+    | null;
+  selectionType?: string | null;
 };
 
 export type MitraWorkspaceQueryParams = {

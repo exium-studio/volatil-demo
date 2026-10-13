@@ -86,8 +86,19 @@ export const getMitraWorkspaceDetail = async (
 ): Promise<MitraWorkspaceItem | null> => {
   try {
     const response = await fetchMitraWorkspaceDetailApi(workspaceId, signal);
+    const res = response as typeof response & {
+      aoiPolygon?: MitraWorkspaceItem["aoiPolygon"];
+      selectionType?: string | null;
+    };
     if (response.data) {
-      return response.data;
+      const item = { ...response.data };
+      if (!item.aoiPolygon && res.aoiPolygon) {
+        item.aoiPolygon = res.aoiPolygon;
+      }
+      if (!item.selectionType && res.selectionType) {
+        item.selectionType = res.selectionType;
+      }
+      return item;
     }
     if (isDummyDataEnabled()) {
       return (
