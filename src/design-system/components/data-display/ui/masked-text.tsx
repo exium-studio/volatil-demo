@@ -39,7 +39,13 @@ export const MaskedText = memo((props: MaskedTextProps) => {
             {value}
           </ClampedP>
         ) : (
-          <P fontFamily={"mono"} userSelect={"none"} lineClamp={1}>
+          <P
+            fontFamily={"mono"}
+            userSelect={"none"}
+            whiteSpace={"nowrap"}
+            overflow={"hidden"}
+            textOverflow={"clip"}
+          >
             {maskedString}
           </P>
         )}
