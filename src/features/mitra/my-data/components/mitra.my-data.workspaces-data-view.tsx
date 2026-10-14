@@ -296,27 +296,11 @@ export const MitraMyDataWorkspacesDataView = (_props: MitraMyDataViewProps) => {
 
   return (
     <VStack flex={1} overflowY={"auto"} w={"full"} h={"full"}>
-      {/* Header Controls */}
-      <ActionHeaderScrollContainer>
-        <SearchInput
-          value={params.search}
-          onValueChange={(val) => {
-            setParams((prev) => ({ ...prev, search: val, page: 1 }));
-          }}
-          placeholder={"Cari workspace / no. pesanan..."}
-          maxW={"280px"}
-        />
+      <VStack p={"md"}>
+        {isLoading && <Skeleton minW={"280px"} h={"40px"} rounded={"md"} />}
 
-        {isLoading ? (
-          <Skeleton
-            flex={1}
-            minW={"280px"}
-            h={"40px"}
-            rounded={"md"}
-          />
-        ) : apiKey ? (
+        {!isLoading && apiKey && (
           <HStack
-            flex={1}
             align={"center"}
             gap={"xs"}
             minW={"280px"}
@@ -339,7 +323,21 @@ export const MitraMyDataWorkspacesDataView = (_props: MitraMyDataViewProps) => {
               flex={1}
             />
           </HStack>
-        ) : null}
+        )}
+      </VStack>
+
+      <Separator borderColor={"bg.canvas"} />
+
+      {/* Header Controls */}
+      <ActionHeaderScrollContainer>
+        <SearchInput
+          value={params.search}
+          onValueChange={(val) => {
+            setParams((prev) => ({ ...prev, search: val, page: 1 }));
+          }}
+          placeholder={"Cari workspace / no. pesanan..."}
+          maxW={"280px"}
+        />
       </ActionHeaderScrollContainer>
 
       <Separator borderColor={"bg.canvas"} />

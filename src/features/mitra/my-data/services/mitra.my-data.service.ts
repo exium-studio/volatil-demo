@@ -92,6 +92,8 @@ export const getMitraWorkspaceDetail = async (
       kawasanCoverageHa?: number | null;
       bidangCoverageCount?: number | null;
       apiKey?: string | null;
+      canRenew?: boolean;
+      renewalEligibility?: MitraWorkspaceItem["renewalEligibility"];
     };
     if (response.data) {
       const item = { ...response.data };
@@ -115,6 +117,12 @@ export const getMitraWorkspaceDetail = async (
         res.bidangCoverageCount !== undefined
       ) {
         item.bidangCoverageCount = res.bidangCoverageCount;
+      }
+      if (item.canRenew === undefined && res.canRenew !== undefined) {
+        item.canRenew = res.canRenew;
+      }
+      if (!item.renewalEligibility && res.renewalEligibility) {
+        item.renewalEligibility = res.renewalEligibility;
       }
       return item;
     }

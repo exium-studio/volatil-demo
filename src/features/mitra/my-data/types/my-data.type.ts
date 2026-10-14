@@ -79,6 +79,8 @@ export type MitraWorkspaceItem = {
   selectionType?: SelectionType | string | null;
   kawasanCoverageHa?: number | null;
   bidangCoverageCount?: number | null;
+  canRenew?: boolean;
+  renewalEligibility?: RenewalEligibilityInfo | null;
 };
 
 export type MitraWorkspaceQueryParams = {
@@ -189,8 +191,24 @@ export type MitraMyDataEditModalContentProps = {
   item: MyDataItem;
   close: () => void;
 };
+export type RenewalEligibilityInfo = {
+  canRenew: boolean;
+  reason?: string | null;
+  daysRemaining?: number;
+  extensionWindowDays?: number;
+  isInWindow?: boolean;
+  currentExtensions?: number;
+  maxAllowedExtensions?: number;
+  isExtensionLimitReached?: boolean;
+};
+
 export type ExtensionEligibility = {
   canExtend: boolean;
   daysRemaining: number;
   reason?: string;
+  extensionWindowDays?: number;
+  isInWindow?: boolean;
+  currentExtensions?: number;
+  maxAllowedExtensions?: number;
+  isExtensionLimitReached?: boolean;
 };

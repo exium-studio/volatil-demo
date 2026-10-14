@@ -21,6 +21,32 @@ export function checkOrderExtensionEligibility(
   workspace: MitraWorkspaceItem,
   systemPolicies?: SystemPolicies,
 ): ExtensionEligibility {
+  // If BE directly provides renewalEligibility object, prioritize it
+  if (workspace.renewalEligibility) {
+    const beEligibility = workspace.renewalEligibility;
+    return {
+      canExtend: beEligibility.canRenew,
+      daysRemaining: beEligibility.daysRemaining ?? 0,
+      reason: beEligibility.reason ?? undefined,
+      extensionWindowDays: beEligibility.extensionWindowDays,
+      isInWindow: beEligibility.isInWindow,
+      currentExtensions: beEligibility.currentExtensions,
+      maxAllowedExtensions: beEligibility.maxAllowedExtensions,
+      isExtensionLimitReached: beEligibility.isExtensionLimitReached,
+    };
+  }
+
+  // If BE provides canRenew boolean directly without object
+  if (typeof workspace.canRenew === "boolean") {
+    return {
+      canExtend: workspace.canRenew,
+      daysRemaining: 0,
+      reason: workspace.canRenew
+        ? undefined
+        : "Workspace belum memenuhi syarat perpanjangan.",
+    };
+  }
+
   const extensionWindowDays =
     systemPolicies?.order_extension_window_days ?? DEFAULT_EXTENSION_WINDOW_DAYS;
   const maxExtensionCount =
@@ -40,6 +66,9 @@ export function checkOrderExtensionEligibility(
       canExtend: false,
       daysRemaining: 0,
       reason: `Pesanan telah mencapai batas maksimal perpanjangan (${maxExtensionCount}x).`,
+      currentExtensions: currentCount,
+      maxAllowedExtensions: maxExtensionCount,
+      isExtensionLimitReached: true,
     };
   }
 
