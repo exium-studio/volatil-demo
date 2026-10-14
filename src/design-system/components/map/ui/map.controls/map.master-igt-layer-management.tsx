@@ -26,10 +26,21 @@ import { useThemeStore } from "@/design-system/stores/theme-store";
 import type { IgtBasisType } from "@/features/mitra/cart/types/mitra.cart.batch.type";
 import { getIgtLayers } from "@/features/mitra/data-request/api/mitra.data-request-igt-layers.api";
 import { useFlyToLayer } from "@/features/mitra/data-request/hooks/use-fly-to-layer";
+import { IgtBasisBadge } from "@/features/shared/components/igt-basis.badge";
 import { IGT_BASIS_MAP } from "@/features/shared/constants/volatil.ssot-map";
 import { queryKeys } from "@/shared/libs/tanstack-query/query.keys";
 import { isEmptyArray } from "@/shared/utils/data/array";
 import { getUserSession } from "@/shared/utils/user/user-session.utils";
+import {
+  attachClosestEdge,
+  extractClosestEdge,
+} from "@atlaskit/pragmatic-drag-and-drop-hitbox/closest-edge";
+import type { Edge } from "@atlaskit/pragmatic-drag-and-drop-hitbox/dist/types/types";
+import { combine } from "@atlaskit/pragmatic-drag-and-drop/combine";
+import {
+  draggable,
+  dropTargetForElements,
+} from "@atlaskit/pragmatic-drag-and-drop/element/adapter";
 import { useQuery } from "@tanstack/react-query";
 import {
   FocusIcon,
@@ -39,16 +50,6 @@ import {
   SwatchBookIcon,
 } from "lucide-react";
 import { memo, useCallback, useEffect, useMemo, useRef, useState } from "react";
-import { combine } from "@atlaskit/pragmatic-drag-and-drop/combine";
-import {
-  draggable,
-  dropTargetForElements,
-} from "@atlaskit/pragmatic-drag-and-drop/element/adapter";
-import {
-  attachClosestEdge,
-  extractClosestEdge,
-  type Edge,
-} from "@atlaskit/pragmatic-drag-and-drop-hitbox/closest-edge";
 
 export const MapMasterIgtLayerManagement = memo(() => {
   // Stores
@@ -198,7 +199,7 @@ export const MapMasterIgtLayerManagement = memo(() => {
               />
             </Center>
           ) : (
-            <VStack gap={"xs"} align={"stretch"}>
+            <VStack gap={"xs"}>
               {!isEmptyArray(activeLayers) && (
                 <>
                   <VStack gap={"sm"} p={1} align={"stretch"}>
@@ -259,13 +260,14 @@ export const MapMasterIgtLayerManagement = memo(() => {
                 </HStack>
               )}
 
-              <VStack gap={"2xs"} align={"stretch"}>
+              <VStack>
                 {activeLayers.map((layer, index) => {
                   const isEnabled = Boolean(enabledLayerIds[layer.id]);
                   const isSymbologyEnabled = Boolean(
                     enabledSymbologyLayerIds[layer.id],
                   );
                   const opacity = layerOpacities[layer.id] ?? 1.0;
+                  const isFirstIndex = index === 0;
 
                   return (
                     <MapMasterIgtLayerItem
@@ -279,6 +281,10 @@ export const MapMasterIgtLayerManagement = memo(() => {
                       onToggleSymbology={toggleSymbologyLayerId}
                       onOpacityChange={setLayerOpacity}
                       onReorder={reorderLayer}
+                      borderTop={"1px solid"}
+                      borderColor={
+                        isFirstIndex ? "transparent" : "border.subtle"
+                      }
                     />
                   );
                 })}
@@ -303,6 +309,7 @@ const MapMasterIgtLayerItem = memo((props: MapMasterIgtLayerItemProps) => {
     onToggleSymbology,
     onOpacityChange,
     onReorder,
+    ...restProps
   } = props;
 
   // Stores
@@ -406,18 +413,17 @@ const MapMasterIgtLayerItem = memo((props: MapMasterIgtLayerItemProps) => {
   const basisConfig =
     IGT_BASIS_MAP[normalizedBasis] ?? IGT_BASIS_MAP[layer.spatialBasis];
   const colorPalette = basisConfig?.colorPalette ?? "gray";
-  const LayerIcon = basisConfig?.icon ?? LayersIcon;
-  const basisLabel = basisConfig?.label ?? layer.spatialBasis ?? "Layer IGT";
 
   return (
     <VStack
       ref={itemRef}
-      gap={isSymbologyOpen ? "2xs" : 0}
       align={"stretch"}
       w={"full"}
+      py={"xs"}
       opacity={isDragging ? 0.4 : 1}
       position={"relative"}
       transition={"opacity 0.15s ease"}
+      {...restProps}
     >
       {closestEdge === "top" && (
         <Box
@@ -446,150 +452,151 @@ const MapMasterIgtLayerItem = memo((props: MapMasterIgtLayerItemProps) => {
         />
       )}
 
-      <HStack
-        align={"center"}
-        justify={"space-between"}
-        gap={"md"}
-        p={"2xs"}
-        colorPalette={colorPalette}
-        rounded={theme.radii.component}
-        cursor={"pointer"}
-        onClick={handleToggle}
-        _hover={{ bg: "bg.subtle" }}
-        w={"full"}
-      >
-        <HStack gap={"xs"} align={"center"} flex={1} minW={0}>
-          <Center
-            p={"xs"}
-            bg={isEnabled ? `${colorPalette}.subtle` : "bg.muted"}
-            rounded={theme.radii.component}
-            flexShrink={0}
-          >
-            <AppIcon
-              icon={LayerIcon}
-              color={isEnabled ? `${colorPalette}.fg` : "fg.subtle"}
-            />
-          </Center>
+      <VStack gap={"2xs"}>
+        <HStack
+          align={"center"}
+          gap={"md"}
+          colorPalette={colorPalette}
+          rounded={theme.radii.component}
+          cursor={"pointer"}
+          onClick={handleToggle}
+          w={"full"}
+        >
+          <HStack flex={1} align={"center"} gap={"xs"}>
+            <Tooltip content={"Tahan & geser untuk mengubah urutan (z-index)"}>
+              <IconButton
+                ref={dragHandleRef}
+                aria-label={"Ubah urutan layer"}
+                variant={"plain"}
+                size={"2xs"}
+                px={0}
+                cursor={"grab"}
+                onClick={(e) => e.stopPropagation()}
+                color={"fg.subtle"}
+                _hover={{ color: "fg" }}
+                _active={{ cursor: "grabbing" }}
+              >
+                <AppIcon icon={GripVerticalIcon} size={"sm"} />
+              </IconButton>
+            </Tooltip>
 
-          <VStack flex={1} align={"start"} minW={0} gap={0}>
-            <ClampedP color={isEnabled ? `fg` : "fg.subtle"}>
+            <ClampedP
+              fontWeight={"medium"}
+              color={isEnabled ? `fg` : "fg.subtle"}
+            >
               {displayName.replace(/_/g, " ")}
             </ClampedP>
+          </HStack>
 
-            <ClampedP fontSize={"xs"} color={"fg.subtle"}>
-              {basisLabel}
-            </ClampedP>
-          </VStack>
+          <HStack align={"center"} gap={"xs"} mr={"2xs"}>
+            <Switch size={"sm"} checked={isEnabled} pointerEvents={"none"} />
+          </HStack>
         </HStack>
 
-        <HStack gap={"2xs"} align={"center"} flexShrink={0}>
-          <Switch
-            size={"sm"}
-            checked={isEnabled}
-            pointerEvents={"none"}
-            mr={"xs"}
-          />
-
-          <Tooltip
-            content={
-              isSymbologyOpen ? "Sembunyikan Simbologi" : "Tampilkan Simbologi"
-            }
+        <HStack
+          align={"center"}
+          justify={"space-between"}
+          gap={"md"}
+          pl={"28px"}
+        >
+          <IgtBasisBadge
+            colorPalette={isEnabled ? basisConfig.colorPalette : "neutral"}
+            opacity={isEnabled ? 1 : 0.5}
           >
-            <IconButton
-              size={"xs"}
-              variant={"ghost"}
-              aria-label={"Simbologi"}
-              onClick={handleToggleSymbology}
+            {normalizedBasis}
+          </IgtBasisBadge>
+
+          <HStack align={"center"} gap={"2xs"}>
+            <Popover.Root
+              positioning={{
+                placement: "left",
+                offset: { mainAxis: 8 },
+              }}
+              portalled={true}
             >
-              <AppIcon
-                icon={SwatchBookIcon}
-                color={isSymbologyOpen ? "blue.fg" : undefined}
-              />
-            </IconButton>
-          </Tooltip>
+              <Popover.Trigger>
+                <Tooltip content={"Atur Opasitas"}>
+                  <IconButton
+                    size={"xs"}
+                    variant={"ghost"}
+                    aria-label={"Atur Opasitas"}
+                    onClick={(e) => e.stopPropagation()}
+                  >
+                    <AppIcon icon={SquareDashedIcon} />
+                  </IconButton>
+                </Tooltip>
+              </Popover.Trigger>
 
-          <Tooltip content={"Zoom ke Layer"}>
-            <IconButton
-              size={"xs"}
-              variant={"ghost"}
-              aria-label={"Zoom ke Layer"}
-              onClick={handleFlyTo}
+              <Popover.Content
+                w={"220px"}
+                p={3}
+                onClick={(e) => e.stopPropagation()}
+              >
+                <VStack gap={"xs"} align={"stretch"} w={"full"}>
+                  <HStack justify={"space-between"} w={"full"}>
+                    <P fontSize={"sm"} fontWeight={"medium"}>
+                      {"Opasitas Layer"}
+                    </P>
+
+                    <P
+                      fontSize={"sm"}
+                      fontWeight={"semibold"}
+                      color={"fg.muted"}
+                    >
+                      {`${Math.round(opacity * 100)}%`}
+                    </P>
+                  </HStack>
+
+                  <Slider
+                    value={[Math.round(opacity * 100)]}
+                    min={0}
+                    max={100}
+                    step={1}
+                    showValue={false}
+                    onValueChange={(details) =>
+                      onOpacityChange(layer.id, details.value[0] / 100)
+                    }
+                  />
+                </VStack>
+              </Popover.Content>
+            </Popover.Root>
+
+            <Tooltip content={"Zoom ke Layer"}>
+              <IconButton
+                size={"xs"}
+                variant={"ghost"}
+                aria-label={"Zoom ke Layer"}
+                onClick={handleFlyTo}
+              >
+                <AppIcon icon={FocusIcon} />
+              </IconButton>
+            </Tooltip>
+
+            <Tooltip
+              content={
+                isSymbologyOpen
+                  ? "Sembunyikan Simbologi"
+                  : "Tampilkan Simbologi"
+              }
             >
-              <AppIcon icon={FocusIcon} />
-            </IconButton>
-          </Tooltip>
-
-          <Popover.Root
-            positioning={{
-              placement: "left",
-              offset: { mainAxis: 8 },
-            }}
-            portalled={true}
-          >
-            <Popover.Trigger>
-              <Tooltip content={"Atur Opasitas"}>
-                <IconButton
-                  size={"xs"}
-                  variant={"ghost"}
-                  aria-label={"Atur Opasitas"}
-                  onClick={(e) => e.stopPropagation()}
-                >
-                  <AppIcon icon={SquareDashedIcon} />
-                </IconButton>
-              </Tooltip>
-            </Popover.Trigger>
-
-            <Popover.Content
-              w={"220px"}
-              p={3}
-              onClick={(e) => e.stopPropagation()}
-            >
-              <VStack gap={"xs"} align={"stretch"} w={"full"}>
-                <HStack justify={"space-between"} w={"full"}>
-                  <P fontSize={"sm"} fontWeight={"medium"}>
-                    {"Opasitas Layer"}
-                  </P>
-
-                  <P fontSize={"sm"} fontWeight={"semibold"} color={"fg.muted"}>
-                    {`${Math.round(opacity * 100)}%`}
-                  </P>
-                </HStack>
-
-                <Slider
-                  value={[Math.round(opacity * 100)]}
-                  min={0}
-                  max={100}
-                  step={1}
-                  showValue={false}
-                  onValueChange={(details) =>
-                    onOpacityChange(layer.id, details.value[0] / 100)
-                  }
+              <IconButton
+                size={"xs"}
+                variant={"ghost"}
+                aria-label={"Simbologi"}
+                onClick={handleToggleSymbology}
+              >
+                <AppIcon
+                  icon={SwatchBookIcon}
+                  color={isSymbologyOpen ? "blue.fg" : undefined}
                 />
-              </VStack>
-            </Popover.Content>
-          </Popover.Root>
-
-          <Tooltip content={"Tahan & geser untuk mengubah urutan (z-index)"}>
-            <IconButton
-              ref={dragHandleRef}
-              size={"xs"}
-              variant={"ghost"}
-              cursor={"grab"}
-              _active={{ cursor: "grabbing" }}
-              aria-label={"Ubah urutan layer"}
-              onClick={(e) => e.stopPropagation()}
-              color={"fg.subtle"}
-              _hover={{ color: "fg" }}
-              px={0}
-            >
-              <AppIcon icon={GripVerticalIcon} boxSize={4} />
-            </IconButton>
-          </Tooltip>
+              </IconButton>
+            </Tooltip>
+          </HStack>
         </HStack>
-      </HStack>
+      </VStack>
 
       <Collapsible.Root opened={isSymbologyOpen}>
-        <Collapsible.Content>
+        <Collapsible.Content mt={"xs"}>
           <VStack
             gap={"xs"}
             p={3}
