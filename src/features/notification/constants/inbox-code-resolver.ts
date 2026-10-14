@@ -76,7 +76,7 @@ export const resolveInboxUI = (item: InboxItem): InboxResolvedUI => {
         actionUrl: targetUrl,
         actionLabel: "Lihat detail transaksi",
         icon: CheckCircle2Icon,
-        colorPalette: "green",
+        colorPalette: "blue",
       };
     }
 

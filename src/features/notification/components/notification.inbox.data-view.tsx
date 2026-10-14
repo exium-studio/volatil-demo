@@ -199,23 +199,12 @@ const InboxCardItem = memo((props: InboxCardItemProps) => {
     }
   }, [resolved.actionUrl, navigate]);
 
-  const handleCardClick = (e: React.MouseEvent) => {
-    if (!hasAction) return;
-    const target = e.target as HTMLElement;
-    if (target.closest("button") || target.closest("a")) return;
-
-    if (!item.isRead) {
-      onMarkAsRead(item.id);
-    }
-    handleNavigate();
-  };
-
   const handleActionClick = (e: React.MouseEvent) => {
     e.stopPropagation();
     if (!item.isRead) {
       onMarkAsRead(item.id);
     }
-    handleNavigate();
+    void handleNavigate();
   };
 
   return (
@@ -228,18 +217,6 @@ const InboxCardItem = memo((props: InboxCardItemProps) => {
       shadow={"xs"}
       rounded={theme.radii.container}
       w={"full"}
-      cursor={hasAction ? "pointer" : "default"}
-      transition={"all 0.15s ease"}
-      _hover={
-        hasAction
-          ? {
-              borderColor: "border.emphasized",
-              shadow: "sm",
-              bg: item.isRead ? "bg.muted" : "bg.subtle",
-            }
-          : undefined
-      }
-      onClick={handleCardClick}
     >
       <Circle
         aspectRatio={1}
