@@ -26,10 +26,14 @@ export const resolveInboxUI = (item: InboxItem): InboxResolvedUI => {
       code = "ORDER_PAID";
     } else if (
       item.title.startsWith("Verifikasi Layer Spasial") ||
-      item.actionLabel === "Cek Status Verifikasi"
+      item.actionLabel?.toLowerCase().includes("verifikasi")
     ) {
       code = "ORDER_PENDING_REVIEW";
-    } else if (item.title.startsWith("Menunggu Pembayaran")) {
+    } else if (
+      item.title.startsWith("Menunggu Pembayaran") ||
+      item.title.startsWith("Kode Billing Diterbitkan") ||
+      item.title.toLowerCase().includes("kode billing")
+    ) {
       code = "ORDER_CREATED";
     } else if (item.title.startsWith("Layanan Aktif")) {
       code = "ORDER_READY";
@@ -39,16 +43,21 @@ export const resolveInboxUI = (item: InboxItem): InboxResolvedUI => {
   switch (code) {
     // ── Kategori Transaksi ───────────────────────────────────────────────────
     case "ORDER_CREATED": {
-      const orderRef = meta.orderId ?? meta.billingCode;
-      const targetUrl = orderRef
-        ? `/mitra/transaction-history?activeModalKey=transaction-detail-${orderRef}`
-        : "/mitra/transaction-history";
+      const billingCode = meta.billingCode;
+      const orderRef = meta.orderId ?? billingCode;
+      const targetUrl = billingCode
+        ? `/mitra/billing/${billingCode}`
+        : orderRef
+          ? `/mitra/transaction-history?activeModalKey=transaction-detail-${orderRef}`
+          : "/mitra/transaction-history";
 
       return {
-        title: `Menunggu Pembayaran: ${meta.orderNumber ?? ""}`,
-        message: `Silakan lakukan pembayaran kode billing untuk pesanan ${meta.orderNumber ?? ""}.`,
+        title: item.title ?? `Menunggu Pembayaran: ${meta.orderNumber ?? ""}`,
+        message:
+          item.message ??
+          `Silakan lakukan pembayaran kode billing untuk pesanan ${meta.orderNumber ?? ""}.`,
         actionUrl: targetUrl,
-        actionLabel: "Bayar Billing",
+        actionLabel: "Bayar sekarang",
         icon: CreditCardIcon,
         colorPalette: "orange",
       };
@@ -65,7 +74,7 @@ export const resolveInboxUI = (item: InboxItem): InboxResolvedUI => {
         message:
           "Pembayaran terverifikasi. Layanan spasial masuk ke dalam antrean pemrosesan.",
         actionUrl: targetUrl,
-        actionLabel: "Lihat Detail Transaksi",
+        actionLabel: "Lihat detail transaksi",
         icon: CheckCircle2Icon,
         colorPalette: "green",
       };
@@ -81,7 +90,7 @@ export const resolveInboxUI = (item: InboxItem): InboxResolvedUI => {
         title: `Sedang Diproses: ${meta.orderNumber ?? ""}`,
         message: `Layer spasial pesanan ${meta.orderNumber ?? ""} sedang dibentuk di GeoServer.`,
         actionUrl: targetUrl,
-        actionLabel: "Pantau Status",
+        actionLabel: "Pantau status",
         icon: ClockIcon,
         colorPalette: "blue",
       };
@@ -98,7 +107,7 @@ export const resolveInboxUI = (item: InboxItem): InboxResolvedUI => {
         message:
           "Potongan layer spasial selesai diproses dan menunggu verifikasi akhir Tim ATR/BPN.",
         actionUrl: targetUrl,
-        actionLabel: "Cek Status Verifikasi",
+        actionLabel: "Cek status verifikasi",
         icon: ClipboardListIcon,
         colorPalette: "purple",
       };
@@ -114,7 +123,7 @@ export const resolveInboxUI = (item: InboxItem): InboxResolvedUI => {
         title: `Menunggu TTE: ${meta.orderNumber ?? ""}`,
         message: `Dokumen invoice pesanan ${meta.orderNumber ?? ""} sedang dalam proses Tanda Tangan Elektronik.`,
         actionUrl: targetUrl,
-        actionLabel: "Lihat Status TTE",
+        actionLabel: "Lihat status TTE",
         icon: FileTextIcon,
         colorPalette: "blue",
       };
@@ -126,7 +135,7 @@ export const resolveInboxUI = (item: InboxItem): InboxResolvedUI => {
         message:
           "Seluruh layer data spasial telah aktif dan siap diakses via WMS & WFS.",
         actionUrl: `/mitra/my-data/${meta.workspaceId ?? meta.workspaceName ?? ""}`,
-        actionLabel: "Buka Data Saya",
+        actionLabel: "Buka data saya",
         icon: CheckCircle2Icon,
         colorPalette: "green",
       };
@@ -141,7 +150,7 @@ export const resolveInboxUI = (item: InboxItem): InboxResolvedUI => {
         title: `Pesanan Ditolak: ${meta.orderNumber ?? ""}`,
         message: `Pesanan Anda ditolak. Alasan: ${meta.reason ?? "Silakan periksa riwayat transaksi."}`,
         actionUrl: targetUrl,
-        actionLabel: "Lihat Alasan",
+        actionLabel: "Lihat alasan",
         icon: XCircleIcon,
         colorPalette: "red",
       };
@@ -157,7 +166,7 @@ export const resolveInboxUI = (item: InboxItem): InboxResolvedUI => {
         title: `Pesanan Dibatalkan: ${meta.orderNumber ?? ""}`,
         message: "Batas waktu pembayaran pesanan telah kedaluwarsa.",
         actionUrl: targetUrl,
-        actionLabel: "Detail Pesanan",
+        actionLabel: "Detail pesanan",
         icon: XCircleIcon,
         colorPalette: "red",
       };
@@ -171,7 +180,7 @@ export const resolveInboxUI = (item: InboxItem): InboxResolvedUI => {
         title: `Masa Aktif Hampir Habis: Sisa ${meta.daysRemaining ?? ""} Hari`,
         message: `Layanan data spasial pada workspace '${meta.workspaceName ?? ""}' akan segera berakhir. Segera lakukan perpanjangan.`,
         actionUrl: `/mitra/my-data/${meta.workspaceId ?? meta.workspaceName ?? ""}`,
-        actionLabel: "Perpanjang Layanan",
+        actionLabel: "Perpanjang layanan",
         icon: AlertTriangleIcon,
         colorPalette: "orange",
       };
@@ -182,7 +191,7 @@ export const resolveInboxUI = (item: InboxItem): InboxResolvedUI => {
         message:
           "Masa aktif akses WMS/WFS telah habis. Silakan aktifkan kembali untuk mengakses layer.",
         actionUrl: `/mitra/my-data/${meta.workspaceId ?? meta.workspaceName ?? ""}`,
-        actionLabel: "Aktifkan Kembali",
+        actionLabel: "Aktifkan kembali",
         icon: XCircleIcon,
         colorPalette: "red",
       };
@@ -193,7 +202,7 @@ export const resolveInboxUI = (item: InboxItem): InboxResolvedUI => {
         title: `Tiket Dibuat: #${meta.ticketNumber ?? ""}`,
         message: `Tiket bantuan #${meta.ticketNumber ?? ""} berhasil dibuat. Petugas kami akan segera menanggapi.`,
         actionUrl: `/mitra/help-center/${meta.ticketId ?? ""}`,
-        actionLabel: "Lihat Tiket",
+        actionLabel: "Lihat tiket",
         icon: HelpCircleIcon,
         colorPalette: "blue",
       };
@@ -203,7 +212,7 @@ export const resolveInboxUI = (item: InboxItem): InboxResolvedUI => {
         title: `Balasan Tiket #${meta.ticketNumber ?? ""}`,
         message: "Petugas telah membalas tiket bantuan Anda.",
         actionUrl: `/mitra/help-center/${meta.ticketId ?? ""}`,
-        actionLabel: "Baca Balasan",
+        actionLabel: "Baca balasan",
         icon: HelpCircleIcon,
         colorPalette: "blue",
       };
@@ -214,7 +223,7 @@ export const resolveInboxUI = (item: InboxItem): InboxResolvedUI => {
         title: `Tiket Selesai: #${meta.ticketNumber ?? ""}`,
         message: `Kendala tiket #${meta.ticketNumber ?? ""} telah diselesaikan oleh petugas.`,
         actionUrl: `/mitra/help-center/${meta.ticketId ?? ""}`,
-        actionLabel: "Detail Tiket",
+        actionLabel: "Detail tiket",
         icon: CheckCircle2Icon,
         colorPalette: "green",
       };
@@ -226,7 +235,7 @@ export const resolveInboxUI = (item: InboxItem): InboxResolvedUI => {
         message:
           "Dokumen pendaftaran Anda sedang dalam proses verifikasi tim verifikator.",
         actionUrl: "/registration-status",
-        actionLabel: "Cek Status",
+        actionLabel: "Cek status",
         icon: ClockIcon,
         colorPalette: "blue",
       };
@@ -237,7 +246,7 @@ export const resolveInboxUI = (item: InboxItem): InboxResolvedUI => {
         message:
           "Selamat, akun kemitraan Anda telah diverifikasi. Anda sekarang dapat mengakses katalog data.",
         actionUrl: "/mitra/home",
-        actionLabel: "Mulai Akses Data",
+        actionLabel: "Mulai akses data",
         icon: UserCheckIcon,
         colorPalette: "green",
       };
@@ -247,7 +256,7 @@ export const resolveInboxUI = (item: InboxItem): InboxResolvedUI => {
         title: "Pendaftaran Kemitraan Ditolak",
         message: `Pengajuan kemitraan ditolak. Alasan: ${meta.reason ?? "Dokumen tidak sesuai."}`,
         actionUrl: "/registration-status",
-        actionLabel: "Perbaiki Berkas",
+        actionLabel: "Perbaiki berkas",
         icon: XCircleIcon,
         colorPalette: "red",
       };
@@ -279,7 +288,7 @@ export const resolveInboxUI = (item: InboxItem): InboxResolvedUI => {
         message:
           "Mitra mengajukan pesanan yang memerlukan verifikasi layer spasial.",
         actionUrl: `/internal/order-review/${meta.orderId ?? ""}`,
-        actionLabel: "Review Pesanan",
+        actionLabel: "Review pesanan",
         icon: ClipboardListIcon,
         colorPalette: "blue",
       };
@@ -290,7 +299,7 @@ export const resolveInboxUI = (item: InboxItem): InboxResolvedUI => {
         message:
           "Ada pendaftaran mitra baru yang menunggu proses verifikasi berkas.",
         actionUrl: `/internal/mitra-registration/${meta.registrationId ?? ""}`,
-        actionLabel: "Verifikasi Berkas",
+        actionLabel: "Verifikasi berkas",
         icon: UserCheckIcon,
         colorPalette: "purple",
       };
@@ -300,7 +309,7 @@ export const resolveInboxUI = (item: InboxItem): InboxResolvedUI => {
         title: item.title ?? "Pengumuman Sistem",
         message: item.message ?? "Ada pengumuman resmi baru dari sistem.",
         actionUrl: item.actionUrl,
-        actionLabel: item.actionLabel ?? "Lihat Pengumuman",
+        actionLabel: item.actionLabel ?? "Lihat pengumuman",
         icon: BellIcon,
         colorPalette: "blue",
       };
