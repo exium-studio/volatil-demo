@@ -12,6 +12,7 @@ import type {
   RenderActionButtonParams,
 } from "@/design-system/components/data-display/types/data-view.type";
 import type { FormattedListItem } from "@/design-system/components/data-display/types/data-view-table.type";
+import { DataViewTableContext } from "@/design-system/components/data-display/contexts/data-view-table.context";
 import { AppIcon } from "@/design-system/components/icon/ui/app-icon";
 import { Box } from "@/design-system/components/layout/ui/box";
 import { HStack, VStack } from "@/design-system/components/layout/ui/flex-box";
@@ -25,6 +26,7 @@ import { useNavigate } from "@tanstack/react-router";
 import {
   cloneElement,
   isValidElement,
+  useContext,
   type ComponentType,
   type ReactElement,
   type ReactNode,
@@ -473,6 +475,9 @@ export const DataListItemActionsTrigger = <
   // Hooks
   const navigate = useNavigate();
 
+  // Contexts
+  const tableContext = useContext(DataViewTableContext);
+
   // Derived Values
   const visibleActions = itemActions.filter((action) => {
     if (isDeclarativeAction(action)) {
@@ -483,6 +488,17 @@ export const DataListItemActionsTrigger = <
     return true;
   });
 
+  const isMenuOpen = tableContext?.setActiveItemMenuId
+    ? tableContext.activeItemMenuId === item.id
+    : undefined;
+
+  const handleOpenChange = (details: { open: boolean }) => {
+    if (tableContext?.setActiveItemMenuId) {
+      tableContext.setActiveItemMenuId(details.open ? item.id : null);
+    }
+    restProps.onOpenChange?.(details);
+  };
+
   return (
     <Menu.Root
       lazyMount
@@ -491,6 +507,8 @@ export const DataListItemActionsTrigger = <
         hideWhenDetached: true,
       }}
       closeOnSelect={false}
+      open={isMenuOpen}
+      onOpenChange={handleOpenChange}
       {...restProps}
     >
       {contextedTrigger && (

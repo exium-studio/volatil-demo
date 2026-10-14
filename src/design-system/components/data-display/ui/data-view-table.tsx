@@ -146,6 +146,7 @@ const DataListTableRootInternal = <
     selectedItemsList,
     onSelectedItemChangeHandler,
   );
+  const [activeItemMenuId, setActiveItemMenuId] = useState<string | null>(null);
 
   // Resolved Values
   const contextValue = useMemo<DataViewTableContextValue<T>>(
@@ -178,6 +179,8 @@ const DataListTableRootInternal = <
       selectAllItems,
       clearSelectedItems,
       canBatchSelect: !isEmptyArray(batchActions) || canBatchSelect,
+      activeItemMenuId,
+      setActiveItemMenuId,
       renderTdCell: renderTdCellHandler as unknown as (
         column: FormattedTableColumn,
         item: FormattedListItem<T>,
@@ -208,6 +211,8 @@ const DataListTableRootInternal = <
       selectAllItems,
       clearSelectedItems,
       canBatchSelect,
+      activeItemMenuId,
+      setActiveItemMenuId,
       renderTdCellHandler,
     ],
   );

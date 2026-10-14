@@ -144,6 +144,8 @@ export type DataViewTableContextValue<
   selectAllItems: (isChecked: boolean) => void;
   clearSelectedItems: () => void;
   canBatchSelect: boolean;
+  activeItemMenuId?: string | null;
+  setActiveItemMenuId?: (id: string | null) => void;
   renderTdCell?: (
     column: FormattedTableColumn,
     item: FormattedListItem<T>,
