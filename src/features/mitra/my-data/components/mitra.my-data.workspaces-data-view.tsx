@@ -167,11 +167,7 @@ export const MitraMyDataWorkspacesDataView = (_props: MitraMyDataViewProps) => {
             },
             {
               value: item.layersCount,
-              td: (
-                <P textAlign={"center"} fontWeight={"medium"}>
-                  {`${item.layersCount} Layer`}
-                </P>
-              ),
+              td: <P textAlign={"center"}>{`${item.layersCount} Layer`}</P>,
               align: "center" as const,
             },
             {
@@ -188,7 +184,10 @@ export const MitraMyDataWorkspacesDataView = (_props: MitraMyDataViewProps) => {
             {
               value: item.expiresAt,
               td: item.expiresAt ? (
-                <Countdown finishedAt={item.expiresAt} />
+                <Countdown
+                  finishedAt={item.expiresAt}
+                  warningThresholdDays={7}
+                />
               ) : (
                 <P color={"fg.subtle"}>{"-"}</P>
               ),

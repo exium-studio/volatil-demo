@@ -273,7 +273,7 @@ export const InternalMasterGeoserverDataView = () => {
         icon: ActivityIcon,
         loading: (server: MasterGeoserverItem) => testingServerId === server.id,
         disabled: (server: MasterGeoserverItem) =>
-          testingServerId !== null && testingServerId !== server.id,
+          testingServerId === server.id,
         onClick: (server: MasterGeoserverItem) => {
           handleTestConnection(server);
         },
