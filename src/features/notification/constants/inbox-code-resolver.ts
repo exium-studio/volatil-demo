@@ -21,24 +21,54 @@ import {
 export const resolveInboxUI = (item: InboxItem): InboxResolvedUI => {
   const meta = item.metadata ?? {};
 
-  // Infer code if not provided by backend (legacy records)
+  // Infer real code if BE sends generic SYSTEM_ANNOUNCEMENT or missing code
   let code = item.code;
-  if (!code && item.title) {
-    if (item.title.startsWith("Pembayaran Berhasil")) {
+  if (!code || code === "SYSTEM_ANNOUNCEMENT") {
+    const title = item.title ?? "";
+    const metaBillingCode = meta.billingCode;
+    const metaWorkspaceId = meta.workspaceId;
+    const metaWorkspaceName = meta.workspaceName;
+    const metaDays = meta.daysRemaining;
+
+    if (item.category === "kedaluwarsa" || metaWorkspaceId || metaWorkspaceName || title.includes("Masa Aktif")) {
+      if (metaDays === 7 || title.includes("H-7") || title.includes("1 Minggu")) {
+        code = "WORKSPACE_EXPIRING_H7";
+      } else if (metaDays === 3 || title.includes("H-3")) {
+        code = "WORKSPACE_EXPIRING_H3";
+      } else if (metaDays === 1 || title.includes("H-1")) {
+        code = "WORKSPACE_EXPIRING_H1";
+      } else if (title.includes("Kedaluwarsa") || title.includes("Habis")) {
+        code = "WORKSPACE_EXPIRED";
+      } else {
+        code = "WORKSPACE_EXPIRING_H7";
+      }
+    } else if (title.startsWith("Pembayaran Berhasil")) {
       code = "ORDER_PAID";
     } else if (
-      item.title.startsWith("Verifikasi Layer Spasial") ||
-      item.actionLabel?.toLowerCase().includes("verifikasi")
+      title.startsWith("Verifikasi Layer Spasial") ||
+      item.actionLabel?.toLowerCase().includes("verifikasi") ||
+      meta.orderStatus === "pending_review"
     ) {
       code = "ORDER_PENDING_REVIEW";
     } else if (
-      item.title.startsWith("Menunggu Pembayaran") ||
-      item.title.startsWith("Kode Billing Diterbitkan") ||
-      item.title.toLowerCase().includes("kode billing")
+      title.startsWith("Menunggu Pembayaran") ||
+      title.startsWith("Kode Billing Diterbitkan") ||
+      title.toLowerCase().includes("kode billing") ||
+      (metaBillingCode && !meta.paidAt)
     ) {
       code = "ORDER_CREATED";
-    } else if (item.title.startsWith("Layanan Aktif")) {
+    } else if (
+      title.startsWith("Layanan Data Spasial Aktif") ||
+      title.startsWith("Layanan Aktif") ||
+      meta.orderStatus === "ready"
+    ) {
       code = "ORDER_READY";
+    } else if (title.includes("TTE") || meta.orderStatus === "pending_tte") {
+      code = "ORDER_PENDING_TTE";
+    } else if (title.includes("Ditolak") || meta.orderStatus === "rejected") {
+      code = "ORDER_REJECTED";
+    } else if (title.includes("Dibatalkan") || meta.orderStatus === "cancelled") {
+      code = "ORDER_CANCELLED";
     }
   }
 
@@ -131,16 +161,25 @@ export const resolveInboxUI = (item: InboxItem): InboxResolvedUI => {
       };
     }
 
-    case "ORDER_READY":
+    case "ORDER_READY": {
+      const workspaceRef = meta.workspaceId ?? meta.workspaceName;
+      const targetUrl = workspaceRef
+        ? `/mitra/my-data/${workspaceRef}`
+        : meta.orderId
+          ? `/mitra/transaction-history?activeModalKey=transaction-detail-${meta.orderId}`
+          : "/mitra/my-data";
+
       return {
-        title: `Layanan Aktif: ${meta.orderNumber ?? ""}`,
+        title: item.title ?? `Layanan Aktif: ${meta.orderNumber ?? ""}`,
         message:
+          item.message ??
           "Seluruh layer data spasial telah aktif dan siap diakses via WMS & WFS.",
-        actionUrl: `/mitra/my-data/${meta.workspaceId ?? meta.workspaceName ?? ""}`,
+        actionUrl: targetUrl,
         actionLabel: "Buka data saya",
         icon: CheckCircle2Icon,
         colorPalette: "green",
       };
+    }
 
     case "ORDER_REJECTED": {
       const orderRef = meta.orderId ?? meta.billingCode;
@@ -179,8 +218,12 @@ export const resolveInboxUI = (item: InboxItem): InboxResolvedUI => {
     case "WORKSPACE_EXPIRING_H3":
     case "WORKSPACE_EXPIRING_H1":
       return {
-        title: `Masa Aktif Hampir Habis: Sisa ${meta.daysRemaining ?? ""} Hari`,
-        message: `Layanan data spasial pada workspace '${meta.workspaceName ?? ""}' akan segera berakhir. Segera lakukan perpanjangan.`,
+        title:
+          item.title ??
+          `Masa Aktif Hampir Habis: Sisa ${meta.daysRemaining ?? ""} Hari`,
+        message:
+          item.message ??
+          `Layanan data spasial pada workspace '${meta.workspaceName ?? ""}' akan segera berakhir. Segera lakukan perpanjangan.`,
         actionUrl: `/mitra/my-data/${meta.workspaceId ?? meta.workspaceName ?? ""}`,
         actionLabel: "Perpanjang layanan",
         icon: AlertTriangleIcon,
@@ -189,8 +232,9 @@ export const resolveInboxUI = (item: InboxItem): InboxResolvedUI => {
 
     case "WORKSPACE_EXPIRED":
       return {
-        title: `Layanan Kedaluwarsa: ${meta.workspaceName ?? ""}`,
+        title: item.title ?? `Layanan Kedaluwarsa: ${meta.workspaceName ?? ""}`,
         message:
+          item.message ??
           "Masa aktif akses WMS/WFS telah habis. Silakan aktifkan kembali untuk mengakses layer.",
         actionUrl: `/mitra/my-data/${meta.workspaceId ?? meta.workspaceName ?? ""}`,
         actionLabel: "Aktifkan kembali",

@@ -344,7 +344,8 @@ export const MitraMyDataWorkspaceDetailPage = () => {
             Array.isArray(computed) &&
             computed.length === 4 &&
             computed.every(
-              (n) => typeof n === "number" && !Number.isNaN(n) && Number.isFinite(n),
+              (n) =>
+                typeof n === "number" && !Number.isNaN(n) && Number.isFinite(n),
             )
           ) {
             targetBbox = [computed[0], computed[1], computed[2], computed[3]];
@@ -417,11 +418,7 @@ export const MitraMyDataWorkspaceDetailPage = () => {
       wmsUrl: workspace.wmsUrl ?? found.wmsUrl ?? null,
       wfs: {
         ...(found.wfs ?? {}),
-        wfsTypeName:
-          found.wfsTypeName ??
-          found.wfs?.wfsTypeName ??
-          found.sourceLayerId ??
-          found.id,
+        wfsTypeName: found.wfsTypeName ?? found.sourceLayerId ?? found.id,
         wfsUrl: workspaceWfsUrl ?? undefined,
         url: workspaceWfsUrl ?? undefined,
         baseUrl: workspaceWfsUrl ?? undefined,
@@ -460,7 +457,8 @@ export const MitraMyDataWorkspaceDetailPage = () => {
             Array.isArray(computed) &&
             computed.length === 4 &&
             computed.every(
-              (n) => typeof n === "number" && !Number.isNaN(n) && Number.isFinite(n),
+              (n) =>
+                typeof n === "number" && !Number.isNaN(n) && Number.isFinite(n),
             )
           ) {
             targetBbox = [computed[0], computed[1], computed[2], computed[3]];
