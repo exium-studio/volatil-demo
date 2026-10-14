@@ -1,3 +1,5 @@
+// src/features/notification/types/inbox.type.ts
+
 import type { ComponentType } from "react";
 
 export type InboxCategory =

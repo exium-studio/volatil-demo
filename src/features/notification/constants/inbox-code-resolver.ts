@@ -1,3 +1,5 @@
+// src/features/notification/constants/inbox-code-resolver.ts
+
 import type {
   InboxItem,
   InboxResolvedUI,
