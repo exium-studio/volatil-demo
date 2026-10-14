@@ -56,6 +56,7 @@ import { Box } from "@chakra-ui/react";
 import { useQuery } from "@tanstack/react-query";
 import { Outlet, useLocation, useNavigate } from "@tanstack/react-router";
 import { recordRecentNav } from "@/shared/utils/navigation/recent-nav.utils";
+import { usePricingPolicy } from "@/features/mitra/data-request/hooks/use-pricing-policy";
 import { UserIcon } from "lucide-react";
 import { useEffect, useMemo, useRef } from "react";
 
@@ -73,6 +74,7 @@ export const GisAppShell = (props: GisAppShellProps) => {
   const { ...restProps } = props;
 
   // Hooks
+  usePricingPolicy();
   const isSmallViewport = useIsSmallViewport();
   const pathname = useLocation().pathname;
   const { user } = useAuthSession();

@@ -8,24 +8,30 @@ import { Separator } from "@/design-system/components/layout/ui/separator";
 import { usePopModal } from "@/design-system/components/overlay/hooks/use-pop-modal";
 import { Modal } from "@/design-system/components/overlay/ui/modal";
 import { Badge } from "@/design-system/components/typography/ui/badge";
-import { P, TNum } from "@/design-system/components/typography/ui/p";
+import { ClampedP, P, TNum } from "@/design-system/components/typography/ui/p";
 import { useMountTimeout } from "@/design-system/hooks/use-mount-timeout";
 import { Tooltip } from "@/design-system/components/overlay/ui/tooltip";
+import { useThemeStore } from "@/design-system/stores/theme-store";
 import { usePricingPolicy } from "@/features/mitra/data-request/hooks/use-pricing-policy";
+import { usePricingPolicyStore } from "@/features/mitra/data-request/stores/pricing-policy.store";
 import { useRenewMitraWorkspace } from "@/features/mitra/my-data/hooks/use-mitra-my-data";
 import type {
   MitraWorkspaceRenewalModalContentProps,
   MitraWorkspaceRenewalTriggerProps,
 } from "@/features/mitra/my-data/types/my-data.type";
 import { checkOrderExtensionEligibility } from "@/features/mitra/my-data/utils/extension.utils";
+import { IgtBasisBadge } from "@/features/shared/components/igt-basis.badge";
 import {
   formatUtcDateTime,
   getPreferredUserTimezone,
 } from "@/shared/utils/formatter/date.formatter";
-import { formatCurrency } from "@/shared/utils/formatter/number.formatter";
+import {
+  formatCurrency,
+  formatNumber,
+} from "@/shared/utils/formatter/number.formatter";
 import { useNavigate } from "@tanstack/react-router";
 import { ArrowRightIcon, ClockPlusIcon } from "lucide-react";
-import { useMemo, useState } from "react";
+import { useMemo } from "react";
 
 export const MitraWorkspaceRenewalTrigger = (
   props: MitraWorkspaceRenewalTriggerProps,
@@ -104,11 +110,17 @@ export const MitraWorkspaceRenewalModalContent = (
   // Props
   const { workspace, close } = props;
 
+  // Stores
+  const { theme } = useThemeStore();
+  const {
+    accessDurationDays,
+    pricePerBidang,
+    pricePerKawasanHa,
+    calculateRenewalPrice,
+  } = usePricingPolicyStore();
+
   // Navigation
   const navigate = useNavigate();
-
-  // States
-  const [durationMonths] = useState<number>(12);
 
   // Mutations
   const renewMutation = useRenewMitraWorkspace();
@@ -122,29 +134,39 @@ export const MitraWorkspaceRenewalModalContent = (
       return "-";
     }
     const extended = new Date(date);
-    extended.setMonth(extended.getMonth() + durationMonths);
+    extended.setDate(extended.getDate() + (accessDurationDays || 365));
     return formatUtcDateTime(extended.toISOString(), preferredTimezone);
-  }, [workspace.expiresAt, durationMonths, preferredTimezone]);
+  }, [workspace.expiresAt, accessDurationDays, preferredTimezone]);
 
   const currentFormattedExpiry = useMemo(() => {
     return formatUtcDateTime(workspace.expiresAt, preferredTimezone);
   }, [workspace.expiresAt, preferredTimezone]);
 
   const estimatedPrice = useMemo(() => {
-    if (!workspace.layers || workspace.layers.length === 0) {
-      return 1500000;
-    }
-    return workspace.layers.reduce((acc, layer) => {
-      return acc + (layer.spatialBasis === "kawasan" ? 1500000 : 750000);
-    }, 0);
-  }, [workspace.layers]);
+    return calculateRenewalPrice(workspace);
+  }, [calculateRenewalPrice, workspace]);
+
+  // Pricing Breakdown Calculation
+  const bidangCount = Number(workspace.bidangCoverageCount ?? 0);
+  const kawasanHa = Number(workspace.kawasanCoverageHa ?? 0);
+
+  const subtotalBidang = useMemo(() => {
+    if (bidangCount <= 0 || pricePerBidang <= 0) return 0;
+    return bidangCount * pricePerBidang;
+  }, [bidangCount, pricePerBidang]);
+
+  const subtotalKawasan = useMemo(() => {
+    if (kawasanHa <= 0 || pricePerKawasanHa <= 0) return 0;
+    return kawasanHa * pricePerKawasanHa;
+  }, [kawasanHa, pricePerKawasanHa]);
+
+  const hasCoverageBreakdown = bidangCount > 0 || kawasanHa > 0;
 
   // Handlers
   const handleProceedToPayment = () => {
     renewMutation.mutate(
       {
         workspaceId: workspace.id,
-        payload: { durationMonths },
       },
       {
         onSuccess: (data) => {
@@ -180,7 +202,9 @@ export const MitraWorkspaceRenewalModalContent = (
             <VStack align={"stretch"} gap={"sm"}>
               <HStack justify={"space-between"} align={"center"}>
                 <P color={"fg.subtle"}>{"Workspace"}</P>
-                <P fontWeight={"medium"}>{workspace.workspaceName}</P>
+                <ClampedP fontWeight={"medium"}>
+                  {workspace.workspaceName}
+                </ClampedP>
               </HStack>
 
               <HStack justify={"space-between"} align={"center"}>
@@ -216,10 +240,146 @@ export const MitraWorkspaceRenewalModalContent = (
             <VStack align={"stretch"} gap={"sm"}>
               <HStack justify={"space-between"} align={"center"}>
                 <P color={"fg.subtle"}>{"Durasi Perpanjangan"}</P>
-                <P fontWeight={"medium"}>{"12 Bulan (1 Tahun)"}</P>
+                <P fontWeight={"medium"}>
+                  {accessDurationDays >= 365
+                    ? `${Math.round(accessDurationDays / 30)} Bulan (${Math.round(accessDurationDays / 365)} Tahun)`
+                    : `${accessDurationDays} Hari`}
+                </P>
               </HStack>
 
               <Separator borderColor={"bg.canvas"} />
+
+              {/* Daftar Layer IGT Terdaftar */}
+              {workspace.layers && workspace.layers.length > 0 && (
+                <>
+                  <Separator borderColor={"bg.canvas"} />
+
+                  <VStack align={"stretch"} gap={"xs"}>
+                    <P fontSize={"xs"} color={"fg.subtle"}>
+                      {"Daftar Layer IGT"}
+                    </P>
+
+                    <VStack
+                      align={"stretch"}
+                      border={"1px solid"}
+                      borderColor={"border.subtle"}
+                      rounded={theme.radii.component}
+                      overflowY={"auto"}
+                      maxH={"180px"}
+                    >
+                      {workspace.layers.map((layer, index) => {
+                        const isFirstIndex = index === 0;
+                        const basis =
+                          layer.spatialBasis ?? layer.igtBasis ?? "bidang";
+
+                        return (
+                          <VStack
+                            key={layer.id || index}
+                            align={"stretch"}
+                            gap={"2xs"}
+                            p={"sm"}
+                            borderTop={isFirstIndex ? "none" : "1px solid"}
+                            borderColor={"border.subtle"}
+                            fontSize={"xs"}
+                          >
+                            <HStack
+                              align={"center"}
+                              justify={"space-between"}
+                              gap={"2xs"}
+                            >
+                              <P fontWeight={"medium"} color={"fg.default"}>
+                                {layer.title || layer.id}
+                              </P>
+                            </HStack>
+
+                            <HStack
+                              justify={"space-between"}
+                              color={"fg.muted"}
+                            >
+                              <IgtBasisBadge size={"xs"}>{basis}</IgtBasisBadge>
+
+                              <P>
+                                {basis === "bidang"
+                                  ? `${formatNumber(bidangCount || layer.featuresCount || 0)} bidang`
+                                  : `${formatNumber(kawasanHa || layer.areaHa || 0, { maximumFractionDigits: 2 })} ha`}
+                              </P>
+                            </HStack>
+                          </VStack>
+                        );
+                      })}
+                    </VStack>
+                  </VStack>
+                </>
+              )}
+
+              <Separator borderColor={"bg.canvas"} />
+
+              {/* Subtotal & Breakdown Rows */}
+              {hasCoverageBreakdown ? (
+                <>
+                  {bidangCount > 0 && (
+                    <HStack justify={"space-between"} align={"center"}>
+                      <VStack align={"start"} gap={"2xs"}>
+                        <P fontSize={"sm"} color={"fg.subtle"}>
+                          {"Subtotal IGT (Bidang)"}
+                        </P>
+
+                        <P>
+                          <TNum>{formatNumber(bidangCount)}</TNum>
+                          {" bidang × "}
+                          <TNum>{formatCurrency(pricePerBidang)}</TNum>
+                        </P>
+                      </VStack>
+                      <P fontWeight={"medium"}>
+                        <TNum>{formatCurrency(subtotalBidang)}</TNum>
+                      </P>
+                    </HStack>
+                  )}
+
+                  {kawasanHa > 0 && (
+                    <HStack justify={"space-between"} align={"center"}>
+                      <VStack align={"start"} gap={"2xs"}>
+                        <P fontSize={"sm"} color={"fg.subtle"}>
+                          {"Subtotal IGT (Kawasan)"}
+                        </P>
+
+                        <P>
+                          <TNum>
+                            {formatNumber(kawasanHa, {
+                              maximumFractionDigits: 2,
+                            })}
+                          </TNum>
+                          {" ha × "}
+                          <TNum>{formatCurrency(pricePerKawasanHa)}</TNum>
+                        </P>
+                      </VStack>
+                      <P fontWeight={"medium"}>
+                        <TNum>{formatCurrency(subtotalKawasan)}</TNum>
+                      </P>
+                    </HStack>
+                  )}
+
+                  <Separator borderColor={"bg.canvas"} />
+                </>
+              ) : (
+                workspace.layers &&
+                workspace.layers.length > 0 && (
+                  <>
+                    <HStack justify={"space-between"} align={"center"}>
+                      <VStack align={"start"} gap={"2xs"}>
+                        <P color={"fg.subtle"}>{"Subtotal Tarif Layer"}</P>
+                        <P fontSize={"xs"} color={"fg.muted"}>
+                          {`${workspace.layers.length} Layer × Tarif Lisensi`}
+                        </P>
+                      </VStack>
+                      <P fontWeight={"medium"}>
+                        <TNum>{formatCurrency(estimatedPrice)}</TNum>
+                      </P>
+                    </HStack>
+                    <Separator borderColor={"bg.canvas"} />
+                  </>
+                )
+              )}
 
               <HStack justify={"space-between"} align={"center"}>
                 <P fontWeight={"medium"}>{"Total Biaya"}</P>
