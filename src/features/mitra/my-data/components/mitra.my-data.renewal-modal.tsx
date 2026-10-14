@@ -7,11 +7,10 @@ import { HStack, VStack } from "@/design-system/components/layout/ui/flex-box";
 import { Separator } from "@/design-system/components/layout/ui/separator";
 import { usePopModal } from "@/design-system/components/overlay/hooks/use-pop-modal";
 import { Modal } from "@/design-system/components/overlay/ui/modal";
+import { Tooltip } from "@/design-system/components/overlay/ui/tooltip";
 import { Badge } from "@/design-system/components/typography/ui/badge";
 import { ClampedP, P, TNum } from "@/design-system/components/typography/ui/p";
 import { useMountTimeout } from "@/design-system/hooks/use-mount-timeout";
-import { Tooltip } from "@/design-system/components/overlay/ui/tooltip";
-import { useThemeStore } from "@/design-system/stores/theme-store";
 import { usePricingPolicy } from "@/features/mitra/data-request/hooks/use-pricing-policy";
 import { usePricingPolicyStore } from "@/features/mitra/data-request/stores/pricing-policy.store";
 import { useRenewMitraWorkspace } from "@/features/mitra/my-data/hooks/use-mitra-my-data";
@@ -20,7 +19,6 @@ import type {
   MitraWorkspaceRenewalTriggerProps,
 } from "@/features/mitra/my-data/types/my-data.type";
 import { checkOrderExtensionEligibility } from "@/features/mitra/my-data/utils/extension.utils";
-import { IgtBasisBadge } from "@/features/shared/components/igt-basis.badge";
 import {
   formatUtcDateTime,
   getPreferredUserTimezone,
@@ -111,7 +109,6 @@ export const MitraWorkspaceRenewalModalContent = (
   const { workspace, close } = props;
 
   // Stores
-  const { theme } = useThemeStore();
   const {
     accessDurationDays,
     pricePerBidang,
@@ -246,71 +243,6 @@ export const MitraWorkspaceRenewalModalContent = (
                     : `${accessDurationDays} Hari`}
                 </P>
               </HStack>
-
-              <Separator borderColor={"bg.canvas"} />
-
-              {/* Daftar Layer IGT Terdaftar */}
-              {workspace.layers && workspace.layers.length > 0 && (
-                <>
-                  <Separator borderColor={"bg.canvas"} />
-
-                  <VStack align={"stretch"} gap={"xs"}>
-                    <P fontSize={"xs"} color={"fg.subtle"}>
-                      {"Daftar Layer IGT"}
-                    </P>
-
-                    <VStack
-                      align={"stretch"}
-                      border={"1px solid"}
-                      borderColor={"border.subtle"}
-                      rounded={theme.radii.component}
-                      overflowY={"auto"}
-                      maxH={"180px"}
-                    >
-                      {workspace.layers.map((layer, index) => {
-                        const isFirstIndex = index === 0;
-                        const basis =
-                          layer.spatialBasis ?? layer.igtBasis ?? "bidang";
-
-                        return (
-                          <VStack
-                            key={layer.id || index}
-                            align={"stretch"}
-                            gap={"2xs"}
-                            p={"sm"}
-                            borderTop={isFirstIndex ? "none" : "1px solid"}
-                            borderColor={"border.subtle"}
-                            fontSize={"xs"}
-                          >
-                            <HStack
-                              align={"center"}
-                              justify={"space-between"}
-                              gap={"2xs"}
-                            >
-                              <P fontWeight={"medium"} color={"fg.default"}>
-                                {layer.title || layer.id}
-                              </P>
-                            </HStack>
-
-                            <HStack
-                              justify={"space-between"}
-                              color={"fg.muted"}
-                            >
-                              <IgtBasisBadge size={"xs"}>{basis}</IgtBasisBadge>
-
-                              <P>
-                                {basis === "bidang"
-                                  ? `${formatNumber(bidangCount || layer.featuresCount || 0)} bidang`
-                                  : `${formatNumber(kawasanHa || layer.areaHa || 0, { maximumFractionDigits: 2 })} ha`}
-                              </P>
-                            </HStack>
-                          </VStack>
-                        );
-                      })}
-                    </VStack>
-                  </VStack>
-                </>
-              )}
 
               <Separator borderColor={"bg.canvas"} />
 
