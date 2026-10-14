@@ -305,7 +305,14 @@ export const MitraMyDataWorkspacesDataView = (_props: MitraMyDataViewProps) => {
           maxW={"280px"}
         />
 
-        {apiKey && (
+        {isLoading ? (
+          <Skeleton
+            flex={1}
+            minW={"280px"}
+            h={"40px"}
+            rounded={"md"}
+          />
+        ) : apiKey ? (
           <HStack
             flex={1}
             align={"center"}
@@ -330,7 +337,7 @@ export const MitraMyDataWorkspacesDataView = (_props: MitraMyDataViewProps) => {
               flex={1}
             />
           </HStack>
-        )}
+        ) : null}
       </ActionHeaderScrollContainer>
 
       <Separator borderColor={"bg.canvas"} />
