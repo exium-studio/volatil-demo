@@ -186,7 +186,7 @@ const FIELD_STATUSES: MitraHomeDataSummaryStatusConfig[] = [
   },
   {
     key: "almostExpired",
-    label: "Hampir kadaluwarsa",
+    label: "Hampir Kedaluwarsa",
     bg: "an4",
     legendColor: "an4",
     striped: false,
@@ -210,7 +210,7 @@ const AREA_STATUSES: MitraHomeDataSummaryStatusConfig[] = [
   },
   {
     key: "almostExpired",
-    label: "Hampir kadaluwarsa",
+    label: "Hampir Kedaluwarsa",
     bg: "an4",
     legendColor: "an4",
     striped: false,

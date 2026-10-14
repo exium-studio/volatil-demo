@@ -26,20 +26,20 @@ export const normalizeSummaryItem = (
       almostExpired: Number(
         field.almostExpired ??
           field.almost_expired ??
-          field.hampirKadaluwarsa ??
+          field.hampirKedaluwarsa ??
           0,
       ),
-      expired: Number(field.expired ?? field.kadaluwarsa ?? 0),
+      expired: Number(field.expired ?? field.Kedaluwarsa ?? 0),
     },
     area: {
       active: Number(area.active ?? area.aktif ?? 0),
       almostExpired: Number(
         area.almostExpired ??
           area.almost_expired ??
-          area.hampirKadaluwarsa ??
+          area.hampirKedaluwarsa ??
           0,
       ),
-      expired: Number(area.expired ?? area.kadaluwarsa ?? 0),
+      expired: Number(area.expired ?? area.Kedaluwarsa ?? 0),
     },
   };
 };
