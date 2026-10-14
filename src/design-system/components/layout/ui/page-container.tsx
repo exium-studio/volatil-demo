@@ -20,7 +20,7 @@ export const AppContentContainer = (props: StackProps) => {
       flex={1}
       pos={"relative"}
       h={`calc(100% - ${"headerH"})`}
-      p={"md"}
+      p={"sm"}
       gap={"sm"}
       {...props}
     />

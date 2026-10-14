@@ -12,7 +12,7 @@ import { useThemeStore } from "@/design-system/stores/theme-store";
 
 import * as turf from "@turf/turf";
 import type GeoJSON from "geojson";
-import type maplibregl from "maplibre-gl";
+import maplibregl from "maplibre-gl";
 import { useEffect, useRef } from "react";
 
 export const FEATURE_INFO_SOURCE_ID = "map-feature-info-source";
@@ -83,6 +83,36 @@ export const useMapFeatureInfo = (
   useEffect(() => {
     cqlFilterRef.current = cqlFilter;
   }, [cqlFilter]);
+
+  const clickMarkerRef = useRef<maplibregl.Marker | null>(null);
+
+  // Effects — Synchronize orange click pin marker with selectedFeature coordinate
+  useEffect(() => {
+    if (!map) return;
+
+    if (selectedFeature?.coordinate) {
+      if (!clickMarkerRef.current) {
+        clickMarkerRef.current = new maplibregl.Marker({ color: "#f97316" })
+          .setLngLat(selectedFeature.coordinate)
+          .addTo(map);
+      } else {
+        clickMarkerRef.current
+          .setLngLat(selectedFeature.coordinate)
+          .addTo(map);
+      }
+    } else {
+      clickMarkerRef.current?.remove();
+      clickMarkerRef.current = null;
+    }
+  }, [map, selectedFeature]);
+
+  // Clean up click marker on unmount
+  useEffect(() => {
+    return () => {
+      clickMarkerRef.current?.remove();
+      clickMarkerRef.current = null;
+    };
+  }, []);
 
   // Effects — Manage feature info source & layers on map
   useEffect(() => {
@@ -315,6 +345,17 @@ export const useMapFeatureInfo = (
 
       setIsLoading(true);
       setError(null);
+
+      // Immediately display orange pin indicator at clicked location
+      if (!clickMarkerRef.current) {
+        clickMarkerRef.current = new maplibregl.Marker({ color: "#f97316" })
+          .setLngLat([e.lngLat.lng, e.lngLat.lat])
+          .addTo(map);
+      } else {
+        clickMarkerRef.current
+          .setLngLat([e.lngLat.lng, e.lngLat.lat])
+          .addTo(map);
+      }
 
       try {
         let foundFeature = false;
