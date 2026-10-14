@@ -556,7 +556,12 @@ export async function checkOrderPaymentStatus(
         targetOrder.tte = false;
       }
       if (orderId.startsWith("ord-renew-")) {
-        const workspaceId = orderId.replace("ord-renew-", "").split("-")[0];
+        const uuidMatch = orderId.match(
+          /^ord-renew-([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12})/,
+        );
+        const workspaceId = uuidMatch
+          ? uuidMatch[1]
+          : orderId.replace("ord-renew-", "").replace(/-\d+$/, "");
         const ws = dummyMitraWorkspaces.find((w) => w.id === workspaceId);
         if (ws) {
           ws.status = "ready";
@@ -592,7 +597,12 @@ export async function checkOrderPaymentStatus(
         targetOrder.tte = false;
       }
       if (orderId.startsWith("ord-renew-")) {
-        const workspaceId = orderId.replace("ord-renew-", "").split("-")[0];
+        const uuidMatch = orderId.match(
+          /^ord-renew-([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12})/,
+        );
+        const workspaceId = uuidMatch
+          ? uuidMatch[1]
+          : orderId.replace("ord-renew-", "").replace(/-\d+$/, "");
         const ws = dummyMitraWorkspaces.find((w) => w.id === workspaceId);
         if (ws) {
           ws.status = "ready";

@@ -43,12 +43,9 @@ const BillingPageBillingCode = () => {
 
   // Handlers
   const handleCheckStatus = () => {
-    // Check order payment status via GET /api/mitra/cart/orders/:orderId/status
     const targetOrderId = search?.orderId || billingCode;
     const isRenewal = targetOrderId.startsWith("ord-renew-");
-    const renewWsId = isRenewal
-      ? targetOrderId.replace("ord-renew-", "").split("-")[0]
-      : null;
+    const renewWsId = targetOrderId;
 
     checkPaymentMutation.mutate(targetOrderId, {
       onSuccess: (res) => {
