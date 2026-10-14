@@ -23,13 +23,17 @@ export type LayerAttributeTarget =
       bbox?: [number, number, number, number] | null;
       apiKey?: string | null;
       wfs?: {
-        wfsTypeName: string;
+        wfsTypeName?: string;
         wfsUrl?: string;
-      };
+        url?: string;
+        baseUrl?: string;
+      } | null;
       wms?: {
-        layers: string;
+        layers?: string;
         wmsUrl?: string;
-      };
+        url?: string;
+        baseUrl?: string;
+      } | null;
     };
 
 export type LayerAttributeTableViewProps = {

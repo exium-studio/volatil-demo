@@ -41,10 +41,6 @@ import {
   XCircleIcon,
 } from "lucide-react";
 
-/**
- * SSOT 1: Selection & Spatial Basis Config Maps
- */
-
 export const SELECTION_TYPE_CONFIG_MAP: Record<
   SelectionType,
   SelectionTypeConfig
@@ -69,12 +65,6 @@ export const SELECTION_TYPE_CONFIG_MAP: Record<
   },
 };
 
-/**
- * SSOT for MapLibre AOI & Coverage polygon layer colors by SelectionType:
- * - catalog: Purple (#a855f7 / #7c3aed)
- * - upload_aoi: Teal (#06b6d4 / #0891b2)
- * - draw_aoi: Blue (#3b82f6 / #2563eb)
- */
 export const SELECTION_TYPE_MAP_COLOR: Record<
   SelectionType,
   {
@@ -96,9 +86,6 @@ export const SELECTION_TYPE_MAP_COLOR: Record<
   },
 };
 
-/**
- * Returns the fill and line colors for MapLibre AOI & Coverage polygon layers based on selectionType.
- */
 export const getSelectionTypeMapColors = (
   selectionType?: string | null,
 ): {
@@ -117,6 +104,8 @@ export const getSelectionTypeMapColors = (
     lineColor: color.line,
   };
 };
+
+// -----------------------------------------------------------------
 
 export const IGT_BASIS_MAP: Record<IgtBasisType, IgtBasisTypeConfig> = {
   bidang: {
@@ -150,6 +139,8 @@ export const IGT_BASIS_FILTER_OPTIONS: FocusSelectOption[] = [
     label: IGT_BASIS_MAP[key].label,
   })),
 ];
+
+// -----------------------------------------------------------------
 
 export const PAYMENT_METHOD_MAP: Record<PaymentMethod, PaymentMethodConfig> = {
   MPN_GEN2: {
@@ -194,9 +185,8 @@ export const PAYMENT_METHOD_OPTIONS: (PaymentMethodConfig & {
   ...PAYMENT_METHOD_MAP[key],
 }));
 
-/**
- * SSOT 2: Transaction Status Map (Payment & Billing) -- DEPRECATED
- */
+// -----------------------------------------------------------------
+
 export const TRANSACTION_STATUS_MAP: Record<
   TransactionStatus,
   TransactionStatusConfig
@@ -238,9 +228,8 @@ export const TRANSACTION_STATUS_OPTIONS: FocusSelectOption[] = [
   ),
 ];
 
-/**
- * SSOT 3: Order & Provisioning Status Map (Single Order Table & Spatial Services)
- */
+// -----------------------------------------------------------------
+
 export const ORDER_STATUS_MAP: Record<OrderStatus, OrderStatusConfig> = {
   // requesting: {
   //   label: "Menyiapkan Data IGT",
@@ -344,9 +333,8 @@ export const ORDER_STATUS_FILTER_OPTIONS: FocusSelectOption[] = [
   })),
 ];
 
-/**
- * SSOT 5: User Role Map
- */
+// -----------------------------------------------------------------
+
 export const USER_ROLE_MAP: Record<"internal" | "mitra", UserRoleConfig> = {
   internal: {
     label: "Internal",
@@ -368,9 +356,8 @@ export const USER_ROLE_OPTIONS: FocusSelectOption[] = [
   })),
 ];
 
-/**
- * SSOT 6: Mitra Registration Status Map
- */
+// -----------------------------------------------------------------
+
 export const MITRA_REGISTRATION_STATUS_MAP: Record<
   MitraRegistrationStatus,
   MitraRegistrationStatusConfig
@@ -407,9 +394,8 @@ export const MITRA_REGISTRATION_STATUS_OPTIONS: FocusSelectOption[] = [
     })),
 ];
 
-/**
- * SSOT 7: System Policy Map (Kebijakan Siklus & Perpanjangan Pesanan)
- */
+// -----------------------------------------------------------------
+
 export const SYSTEM_POLICY_MAP: Record<string, SystemPolicyConfig> = {
   payment_timeout_fallback_hours: {
     label: "Batas Waktu Pembayaran",
