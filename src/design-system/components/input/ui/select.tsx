@@ -121,7 +121,7 @@ export default function SelectInput(props: SelectProps) {
     }
 
     return (
-      <HStack w={"full"} minW={0} justify={"space-between"} align={"center"}>
+      <HStack w={"full"} justify={"space-between"} align={"center"}>
         <HStack flex={1} minW={0} gap={2} align={"center"}>
           {renderStartElement(
             selectedOption?.startElement,

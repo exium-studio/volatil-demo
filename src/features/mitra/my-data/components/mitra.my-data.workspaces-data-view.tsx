@@ -328,7 +328,13 @@ export const MitraMyDataWorkspacesDataView = (_props: MitraMyDataViewProps) => {
       batchActions: [],
       itemActions,
     };
-  }, [workspaces, preferredTimezone, navigate, systemPolicies, extensionWindowDays]);
+  }, [
+    workspaces,
+    preferredTimezone,
+    navigate,
+    systemPolicies,
+    extensionWindowDays,
+  ]);
 
   return (
     <VStack flex={1} overflowY={"auto"} w={"full"} h={"full"}>
@@ -396,7 +402,7 @@ export const MitraMyDataWorkspacesDataView = (_props: MitraMyDataViewProps) => {
               }),
             });
           }}
-          w={"240px"}
+          w={"150px"}
         />
       </ActionHeaderScrollContainer>
 

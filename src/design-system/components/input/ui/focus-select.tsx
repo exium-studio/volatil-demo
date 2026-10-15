@@ -452,7 +452,6 @@ export function FocusSelectInput(props: FocusSelectInputProps) {
                           gap={"sm"}
                           align={"center"}
                           flex={1}
-                          minW={0}
                           justify={"start"}
                         >
                           {renderStartElement(opt.startElement, opt.icon, "sm")}
