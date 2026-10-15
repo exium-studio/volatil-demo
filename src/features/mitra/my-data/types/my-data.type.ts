@@ -84,11 +84,14 @@ export type MitraWorkspaceItem = {
   renewalEligibility?: RenewalEligibilityInfo | null;
 };
 
+export type WorkspaceActiveStatus = "all" | "active" | "almost_expired" | "expired";
+
 export type MitraWorkspaceQueryParams = {
   page: number;
   pageSize: number;
   search?: string;
   status?: OrderStatus;
+  activeStatus?: WorkspaceActiveStatus;
 };
 
 export type MitraWorkspaceListResponse = PaginatedResponse<MitraWorkspaceItem> & {

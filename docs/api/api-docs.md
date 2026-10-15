@@ -1649,11 +1649,25 @@ type OrderPaymentStatusResponse = {
 
 ## 3.4 My Data & Riwayat Transaksi
 
-### My Data (Layer Aktif Mitra)
+### My Data (Layer & Workspace Aktif Mitra)
 
 - **Endpoint**: `GET /api/mitra/my-data`
 - **Akses**: `Mitra Only`
-- **Params**: `page?: number`, `pageSize?: number`, `search?: string`, `basis?: "bidang" | "kawasan"`, `status?: OrderStatus`
+- **Params**:
+  - `page?: number`
+  - `pageSize?: number`
+  - `search?: string`
+  - `basis?: "bidang" | "kawasan"`
+  - `status?: OrderStatus`
+  - `activeStatus?: "all" | "active" | "almost_expired" | "expired"` (Filter status masa aktif berbasis kebijakan renewal window)
+
+#### Catatan Logika `activeStatus` di Backend:
+BE mengkalkulasi status masa aktif workspace/order berdasarkan perbandingan `expiresAt` dengan `now()` serta nilai konfigurasi kebijakan `order_extension_window_days` dari `SystemPolicies` (default 7 hari):
+- `active`: Masa aktif masih berlaku dan belum memasuki jendela peringatan kedaluwarsa (`daysRemaining > order_extension_window_days` dan `status == "ready"`).
+- `almost_expired`: Masa aktif berada dalam jendela perpanjangan (`0 < daysRemaining <= order_extension_window_days` dan `status == "ready"`).
+- `expired`: Masa aktif telah habis (`daysRemaining <= 0` atau `status == "expired"`).
+- `all`: Tanpa pemfilteran masa aktif (menampilkan seluruh workspace/data).
+
 - **Response (200 OK)**:
 
 ```typescript

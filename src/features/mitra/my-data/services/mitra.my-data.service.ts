@@ -46,7 +46,23 @@ export const getPaginatedWorkspaces = (
       (item.wmsUrl && item.wmsUrl.toLowerCase().includes(search)) ||
       item.layers.some((l) => l.title.toLowerCase().includes(search));
 
-    return matchesStatus && matchesQuery;
+    let matchesActiveStatus = true;
+    if (params?.activeStatus && params.activeStatus !== "all") {
+      const now = Date.now();
+      const expiry = item.expiresAt ? new Date(item.expiresAt).getTime() : 0;
+      const daysRemaining = Math.ceil((expiry - now) / (1000 * 60 * 60 * 24));
+      const windowDays = 7;
+
+      if (params.activeStatus === "active") {
+        matchesActiveStatus = daysRemaining > windowDays && item.status === "ready";
+      } else if (params.activeStatus === "almost_expired") {
+        matchesActiveStatus = daysRemaining > 0 && daysRemaining <= windowDays;
+      } else if (params.activeStatus === "expired") {
+        matchesActiveStatus = daysRemaining <= 0 || item.status === "expired";
+      }
+    }
+
+    return matchesStatus && matchesQuery && matchesActiveStatus;
   });
 
   const startIndex = (page - 1) * pageSize;

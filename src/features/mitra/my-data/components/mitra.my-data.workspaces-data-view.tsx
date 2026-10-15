@@ -17,6 +17,8 @@ import { StateNoResult } from "@/design-system/components/feedback/ui/state.no-r
 import { StateRetry } from "@/design-system/components/feedback/ui/state.retry";
 import { TopBarLoader } from "@/design-system/components/feedback/ui/top-bar-loader";
 import { AppIcon } from "@/design-system/components/icon/ui/app-icon";
+import { FocusSelectInput } from "@/design-system/components/input/ui/focus-select";
+import type { FocusSelectOption } from "@/design-system/components/input/types/focus-select.type";
 import { SearchInput } from "@/design-system/components/input/ui/search-input";
 import { ActionHeaderScrollContainer } from "@/design-system/components/layout/ui/action-header-scroll-container";
 import { Center } from "@/design-system/components/layout/ui/center";
@@ -34,9 +36,11 @@ import type {
   MitraMyDataViewProps,
   MitraWorkspaceItem,
   MitraWorkspaceQueryParams,
+  WorkspaceActiveStatus,
 } from "@/features/mitra/my-data/types/my-data.type";
 import { checkOrderExtensionEligibility } from "@/features/mitra/my-data/utils/extension.utils";
 import { TteBadge } from "@/features/shared/components/tte.badge";
+import { MitraMyDataIndexRoute } from "@/shared/libs/tanstack-router/routes";
 import { isEmptyArray } from "@/shared/utils/data/array";
 import {
   formatUtcDateTime,
@@ -55,12 +59,21 @@ import {
 } from "lucide-react";
 import { useMemo, useState } from "react";
 
+const ACTIVE_STATUS_OPTIONS: FocusSelectOption[] = [
+  { value: "all", label: "Semua Status Masa Aktif" },
+  { value: "active", label: "Aktif" },
+  { value: "almost_expired", label: "Hampir Kedaluwarsa" },
+  { value: "expired", label: "Kedaluwarsa" },
+];
+
 export const MitraMyDataWorkspacesDataView = (_props: MitraMyDataViewProps) => {
   // Navigation
   const navigate = useNavigate();
+  const searchRouteParams = MitraMyDataIndexRoute.useSearch();
 
   // Stores & Hooks
   const { systemPolicies } = usePricingPolicy();
+  const extensionWindowDays = systemPolicies.order_extension_window_days ?? 7;
 
   // States
   const [params, setParams] = useState<MitraWorkspaceQueryParams>({
@@ -70,6 +83,8 @@ export const MitraMyDataWorkspacesDataView = (_props: MitraMyDataViewProps) => {
   });
 
   // Derived Values
+  const activeStatus: WorkspaceActiveStatus =
+    searchRouteParams.activeStatus ?? params.activeStatus ?? "all";
   const debouncedSearch = useDebouncedValue(params.search ?? "");
   const preferredTimezone = useMemo(() => getPreferredUserTimezone(), []);
 
@@ -87,6 +102,7 @@ export const MitraMyDataWorkspacesDataView = (_props: MitraMyDataViewProps) => {
     page: params.page,
     pageSize: params.pageSize,
     search: debouncedSearch || undefined,
+    activeStatus: activeStatus,
   });
 
   // Derived Values — Table headers & items
@@ -207,7 +223,7 @@ export const MitraMyDataWorkspacesDataView = (_props: MitraMyDataViewProps) => {
               td: item.expiresAt ? (
                 <Countdown
                   finishedAt={item.expiresAt}
-                  warningThresholdDays={7}
+                  warningThresholdDays={extensionWindowDays}
                 />
               ) : (
                 <P color={"fg.subtle"}>{"-"}</P>
@@ -312,7 +328,7 @@ export const MitraMyDataWorkspacesDataView = (_props: MitraMyDataViewProps) => {
       batchActions: [],
       itemActions,
     };
-  }, [workspaces, preferredTimezone, navigate, systemPolicies]);
+  }, [workspaces, preferredTimezone, navigate, systemPolicies, extensionWindowDays]);
 
   return (
     <VStack flex={1} overflowY={"auto"} w={"full"} h={"full"}>
@@ -357,6 +373,30 @@ export const MitraMyDataWorkspacesDataView = (_props: MitraMyDataViewProps) => {
           }}
           placeholder={"Cari workspace / no. pesanan..."}
           maxW={"280px"}
+        />
+
+        <FocusSelectInput
+          modalKey={"workspace-active-status-filter-modal"}
+          title={"Filter Status Masa Aktif"}
+          placeholder={"Semua Status Masa Aktif"}
+          options={ACTIVE_STATUS_OPTIONS}
+          value={activeStatus}
+          onValueChange={(val) => {
+            const nextStatus = (val as WorkspaceActiveStatus) ?? "all";
+            setParams((prev) => ({
+              ...prev,
+              activeStatus: nextStatus,
+              page: 1,
+            }));
+            void navigate({
+              to: "/mitra/my-data",
+              search: (prevSearch: Record<string, unknown>) => ({
+                ...prevSearch,
+                activeStatus: nextStatus === "all" ? undefined : nextStatus,
+              }),
+            });
+          }}
+          w={"240px"}
         />
       </ActionHeaderScrollContainer>
 

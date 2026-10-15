@@ -32,6 +32,7 @@ export type MitraHomeDataSummaryLegendProps = StackProps & {
   legendColor: string;
   label: string;
   value: number;
+  onClick?: () => void;
 };
 
 export type MitraHomeSummaryResponse = {

@@ -26,8 +26,10 @@ import type {
   MitraHomeDataSummaryLegendProps,
   MitraHomeDataSummaryProps,
   MitraHomeDataSummaryStatusConfig,
+  MitraHomeSummaryStatus,
 } from "@/features/mitra/home/types/mitra.home.data-summary.type";
 import { DatabaseIcon } from "lucide-react";
+import { useNavigate } from "@tanstack/react-router";
 import { useState } from "react";
 
 const PERIOD_OPTIONS = [
@@ -224,9 +226,27 @@ const AREA_STATUSES: MitraHomeDataSummaryStatusConfig[] = [
   },
 ];
 
+const STATUS_PARAM_MAP: Record<MitraHomeSummaryStatus, "active" | "almost_expired" | "expired"> = {
+  active: "active",
+  almostExpired: "almost_expired",
+  expired: "expired",
+};
+
 const MitraHomeDataSummaryCharts = (props: MitraHomeDataSummaryChartsProps) => {
+  // Navigation
+  const navigate = useNavigate();
+
   // Props
   const { dataSummary, isSmContainer } = props;
+
+  // Handlers
+  const handleNavigateStatus = (statusKey: MitraHomeSummaryStatus) => {
+    const activeStatus = STATUS_PARAM_MAP[statusKey];
+    void navigate({
+      to: "/mitra/my-data",
+      search: { activeStatus },
+    });
+  };
 
   return (
     <SimpleGrid columns={isSmContainer ? 1 : 2} gap={"md"} px={"md"}>
@@ -245,6 +265,9 @@ const MitraHomeDataSummaryCharts = (props: MitraHomeDataSummaryChartsProps) => {
                 colorPalette={config.colorPalette}
                 bg={config.bg}
                 flex={value}
+                cursor={"pointer"}
+                _hover={{ opacity: 0.8 }}
+                onClick={() => handleNavigateStatus(config.key)}
               />
             );
           })}
@@ -259,6 +282,9 @@ const MitraHomeDataSummaryCharts = (props: MitraHomeDataSummaryChartsProps) => {
                 legendColor={config.legendColor}
                 label={config.label}
                 value={value}
+                cursor={"pointer"}
+                _hover={{ opacity: 0.8 }}
+                onClick={() => handleNavigateStatus(config.key)}
               />
             );
           })}
@@ -279,6 +305,9 @@ const MitraHomeDataSummaryCharts = (props: MitraHomeDataSummaryChartsProps) => {
                 colorPalette={config.colorPalette}
                 bg={config.bg}
                 flex={value}
+                cursor={"pointer"}
+                _hover={{ opacity: 0.8 }}
+                onClick={() => handleNavigateStatus(config.key)}
               />
             );
           })}
@@ -293,6 +322,9 @@ const MitraHomeDataSummaryCharts = (props: MitraHomeDataSummaryChartsProps) => {
                 legendColor={config.legendColor}
                 label={config.label}
                 value={value}
+                cursor={"pointer"}
+                _hover={{ opacity: 0.8 }}
+                onClick={() => handleNavigateStatus(config.key)}
               />
             );
           })}
