@@ -581,7 +581,7 @@ const Content = (_props: GisContentProps) => {
         flex={1}
         mode={isSmallViewport ? "snappy" : "free"}
         triggerAlwaysVisible={isSmallViewport}
-        minSizeA={isSmallViewport ? 100 : 360}
+        minSizeA={isSmallViewport ? 100 : 50}
         minSizeB={50}
         direction={isSmallViewport ? "vertical" : "horizontal"}
         defaultLayout={DEFAULT_SPLITTER_SIZE}
