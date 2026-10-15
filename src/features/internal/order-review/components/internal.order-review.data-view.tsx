@@ -56,10 +56,10 @@ import {
 import { useMemo, useState, useTransition } from "react";
 
 const ORDER_STATUS_OPTIONS = [
-  { value: "all", label: "Semua Status (Paid, Proses & Review)" },
-  { value: "paid", label: "Terbayar (Perlu Create WMS)" },
+  { value: "all", label: "Semua Status" },
+  { value: "paid", label: "Terbayar" },
   { value: "processing", label: "Menyiapkan Layanan WMS" },
-  { value: "pending_review", label: "Menunggu Review (WMS Siap)" },
+  { value: "pending_review", label: "Menunggu Review" },
 ];
 
 export const InternalOrderReviewDataView = () => {

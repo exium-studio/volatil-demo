@@ -44,6 +44,8 @@ export type BaseLayerConfig = {
   opacity?: number;
   /** Layer stacking order index (lower = bottom, higher = top). */
   zIndex?: number;
+  /** Minimum zoom level to display the layer (default: 12) */
+  minZoom?: number;
   paint?: Record<string, unknown>;
   layout?: Record<string, unknown>;
 };
@@ -123,6 +125,7 @@ export type IgtLayerItem = {
   visible: boolean;
   defaultVisible: boolean;
   zIndex: number;
+  minZoom?: number;
   wfs: IgtLayerWfsConfig;
   wms: IgtLayerWmsConfig;
 };
@@ -172,6 +175,7 @@ export const getWmsRasterConfigFromIgtLayer = (
     visible,
     opacity,
     zIndex: igtLayer.zIndex,
+    minZoom: igtLayer.minZoom ?? 12,
     wmsUrl,
     layers,
     wfsUrl,

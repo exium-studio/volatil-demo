@@ -14,5 +14,6 @@ export const masterIgtLayerFormSchema = z.object({
   typeName: z.string().min(1, "TypeName GeoServer wajib terisi"),
   igtBasis: z.enum(["bidang", "kawasan"]),
   zIndex: z.number().min(1).max(100),
+  minZoom: z.number().min(0, "Min zoom minimal 0").max(22, "Max zoom maksimal 22"),
 });
 

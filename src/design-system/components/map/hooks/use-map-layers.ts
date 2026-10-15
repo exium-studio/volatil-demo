@@ -172,6 +172,7 @@ export const useMapLayers = (
               id: layer.id,
               type: "raster",
               source: layer.id,
+              minzoom: layer.minZoom ?? 12,
               layout: { visibility },
               paint: { "raster-opacity": opacity, ...(layer.paint ?? {}) },
             },
@@ -200,6 +201,7 @@ export const useMapLayers = (
               id: layer.id,
               type: "raster",
               source: layer.id,
+              minzoom: layer.minZoom ?? 12,
               layout: { visibility },
               paint: { "raster-opacity": opacity, ...(layer.paint ?? {}) },
             },
@@ -221,6 +223,7 @@ export const useMapLayers = (
               type: "fill",
               source: layer.id,
               "source-layer": layer.sourceLayer,
+              minzoom: layer.minZoom ?? 12,
               paint: { "fill-opacity": opacity, ...(layer.paint ?? {}) },
               layout: { ...layer.layout, visibility },
             } as maplibregl.LayerSpecification,
@@ -343,6 +346,12 @@ export const useMapLayers = (
       }
 
       if (map.getLayer(layer.id)) {
+        const targetMinZoom = layer.minZoom ?? 12;
+        const currentLayer = map.getLayer(layer.id);
+        if (currentLayer && currentLayer.minzoom !== targetMinZoom) {
+          map.setLayerZoomRange(layer.id, targetMinZoom, currentLayer.maxzoom ?? 24);
+        }
+
         const targetVisibility = resolveVisibility(layer);
         const currentVisibility = map.getLayoutProperty(layer.id, "visibility");
         if (currentVisibility !== targetVisibility) {

@@ -107,6 +107,7 @@ const InternalDataManagementEditModalContent = (
       description: item.description ?? "",
       igtBasis: item.igtBasis ?? "kawasan",
       zIndex: item.zIndex ?? 1,
+      minZoom: item.minZoom ?? 12,
       geoserverId: item.geoserverId ?? "",
       workspaceName: initialWorkspace,
       layerName: initialLayerName,
@@ -170,6 +171,7 @@ const InternalDataManagementEditModalContent = (
         description: data.description?.trim(),
         igtBasis: data.igtBasis,
         zIndex: data.zIndex,
+        minZoom: data.minZoom,
         isActive: data.isActive,
         defaultVisible: data.defaultVisible,
         geoserverId: selectedGeoserver.id,
@@ -404,6 +406,29 @@ const InternalDataManagementEditModalContent = (
                       value={String(field.value ?? 1)}
                       onValueChange={({ value }) => field.onChange(value || 1)}
                       placeholder={"1"}
+                    />
+                  </Field>
+                )}
+              />
+
+              {/* Input Minimum Zoom Level */}
+              <Controller
+                control={control}
+                name={"minZoom"}
+                render={({ field }) => (
+                  <Field
+                    label={"Minimum Zoom Level"}
+                    helperText={
+                      "Layer hanya akan tampil di peta jika zoom level >= nilai ini."
+                    }
+                  >
+                    <NumberInput
+                      w={"full"}
+                      min={0}
+                      max={22}
+                      value={String(field.value ?? 12)}
+                      onValueChange={({ value }) => field.onChange(value ?? 12)}
+                      placeholder={"12"}
                     />
                   </Field>
                 )}

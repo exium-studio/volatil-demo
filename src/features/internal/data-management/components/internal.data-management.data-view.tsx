@@ -198,6 +198,7 @@ export const InternalDataManagementDataView = () => {
           wmsUrl: normalizedWmsUrl || "",
           layers: item.typeName || "",
           spatialBasis: item.igtBasis,
+          minZoom: item.minZoom ?? 12,
         });
         setLayerEnabled(item.id, true);
 
@@ -227,6 +228,7 @@ export const InternalDataManagementDataView = () => {
       { th: "Workspace / Typename", sortable: true },
       { th: "Basis IGT", sortable: true },
       { th: "Urutan (Z-Index)", sortable: true, align: "center" },
+      { th: "Min Zoom", sortable: true, align: "center" },
       { th: "Default Tampil", sortable: true },
       { th: "Terakhir Diperbarui", sortable: true },
       { th: "Tampilkan di Peta", align: "center" },
@@ -271,6 +273,11 @@ export const InternalDataManagementDataView = () => {
           {
             value: item.zIndex ?? 0,
             td: <P>{item.zIndex != null ? `${item.zIndex}` : "-"}</P>,
+            align: "center" as const,
+          },
+          {
+            value: item.minZoom ?? 12,
+            td: <P>{item.minZoom != null ? `${item.minZoom}` : "12"}</P>,
             align: "center" as const,
           },
           {

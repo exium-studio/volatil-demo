@@ -73,6 +73,7 @@ export async function getIgtLayers(
           raw.defaultVisible ?? raw.default_visible ?? false,
         ),
         zIndex: raw.zIndex ?? 1,
+        minZoom: raw.minZoom ?? raw.minzoom ?? 12,
         wms: raw.wms
           ? {
               ...raw.wms,

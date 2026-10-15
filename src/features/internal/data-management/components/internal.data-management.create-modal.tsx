@@ -93,6 +93,7 @@ const InternalDataManagementCreateModalContent = (
       description: "",
       igtBasis: "kawasan",
       zIndex: 1,
+      minZoom: 12,
       geoserverId: "",
       workspaceName: "",
       layerName: null,
@@ -143,6 +144,7 @@ const InternalDataManagementCreateModalContent = (
         description: data.description?.trim(),
         igtBasis: data.igtBasis,
         zIndex: data.zIndex,
+        minZoom: data.minZoom,
         isActive: data.isActive,
         defaultVisible: data.defaultVisible,
         geoserverId: selectedGeoserver.id,
@@ -395,7 +397,7 @@ const InternalDataManagementCreateModalContent = (
                   <Field
                     label={"Urutan Tumpukan Layer (Z-Index)"}
                     helperText={
-                      "Angka lebih kecil = di bawah, angka lebih besar = di atas"
+                       "Angka lebih kecil = di bawah, angka lebih besar = di atas"
                     }
                   >
                     <NumberInput
@@ -405,6 +407,29 @@ const InternalDataManagementCreateModalContent = (
                       value={String(field.value ?? 1)}
                       onValueChange={({ value }) => field.onChange(value || 1)}
                       placeholder={"1"}
+                    />
+                  </Field>
+                )}
+              />
+
+              {/* Input Minimum Zoom Level */}
+              <Controller
+                control={control}
+                name={"minZoom"}
+                render={({ field }) => (
+                  <Field
+                    label={"Minimum Zoom Level"}
+                    helperText={
+                      "Layer hanya akan tampil di peta jika zoom level >= nilai ini."
+                    }
+                  >
+                    <NumberInput
+                      w={"full"}
+                      min={0}
+                      max={22}
+                      value={String(field.value ?? 12)}
+                      onValueChange={({ value }) => field.onChange(value ?? 12)}
+                      placeholder={"12"}
                     />
                   </Field>
                 )}

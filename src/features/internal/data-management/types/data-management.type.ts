@@ -34,6 +34,7 @@ export type MasterIgtLayerItem = {
   isActive: boolean;
   defaultVisible?: boolean;
   zIndex?: number;
+  minZoom?: number;
   geoserverId: string;
   geoserver: {
     id: string;
@@ -70,6 +71,7 @@ export type CreateMasterIgtLayerPayload = {
   isActive: boolean;
   defaultVisible?: boolean;
   zIndex?: number;
+  minZoom?: number;
 };
 
 export type UpdateMasterIgtLayerPayload =
