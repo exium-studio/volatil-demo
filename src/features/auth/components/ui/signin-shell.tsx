@@ -1,6 +1,7 @@
 // src/features/auth/components/ui/signin-shell.tsx
 
 import { IgtLogo } from "@/design-system/components/branding/ui/igt-logo";
+import { OutlineContourPerspective } from "@/design-system/components/decorative/ui/outline-contour-perspective";
 import { Box } from "@/design-system/components/layout/ui/box";
 import { HStack, VStack } from "@/design-system/components/layout/ui/flex-box";
 import { SimpleGrid } from "@/design-system/components/layout/ui/grid";
@@ -32,7 +33,17 @@ export const SigninShell = (props: SigninShellProps) => {
       : "internal-login-user-guide");
 
   return (
-    <PageContainer p={[2, 4, 6]}>
+    <PageContainer p={[2, 4, 6]} pos={"relative"}>
+      <OutlineContourPerspective
+        className={"debug"}
+        pos={"absolute"}
+        left={0}
+        bottom={"-300px"}
+        w={"full"}
+        h={"full"}
+        opacity={0.1}
+      />
+
       <SimpleGrid
         columns={[1, null, 2]}
         overflow={"clip"}
