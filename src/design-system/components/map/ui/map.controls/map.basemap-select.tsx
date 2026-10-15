@@ -194,16 +194,12 @@ export const MapBasemapSelect = () => {
           <Separator borderColor={"bg.canvas"} my={"sm"} />
 
           <VStack gap={"xs"} align={"stretch"} px={"xs"} pb={"2xs"}>
-            <HStack justify={"space-between"} w={"full"}>
+            <HStack justify={"space-between"} gap={"md"} w={"full"}>
               <P fontSize={"sm"} fontWeight={"medium"}>
                 {"Opasitas Peta Dasar"}
               </P>
 
-              <P
-                fontSize={"sm"}
-                fontWeight={"semibold"}
-                color={"fg.muted"}
-              >
+              <P fontSize={"sm"} fontWeight={"semibold"} color={"fg.muted"}>
                 {`${Math.round(opacity * 100)}%`}
               </P>
             </HStack>
@@ -214,9 +210,7 @@ export const MapBasemapSelect = () => {
               max={100}
               step={1}
               showValue={false}
-              onValueChange={(details) =>
-                setOpacity(details.value[0] / 100)
-              }
+              onValueChange={(details) => setOpacity(details.value[0] / 100)}
             />
           </VStack>
         </Popover.Body>

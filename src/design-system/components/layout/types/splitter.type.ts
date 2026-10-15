@@ -39,6 +39,7 @@ export type SplitterPanelProps = Omit<HTMLChakraProps<"div">, "id" | "defaultVal
   Omit<PanelProps, "id"> & {
     id?: string;
     panelRole?: "a" | "b";
+    snapOnContentScroll?: boolean;
     elementRef?: React.Ref<HTMLElement | null>;
   };
 
@@ -76,7 +77,7 @@ export type SplitterContextValue = {
   snapPrev: () => void;
   snapToStep: (step: 0 | 1 | 2) => void;
   activeSnapIndex: 0 | 1 | 2;
-  registerPanelAContentRef: (el: HTMLElement | null) => void;
+  registerContentScrollRef: (el: HTMLElement | null, enabled?: boolean) => void;
   handleTriggerPointerDown: (e: React.PointerEvent<HTMLDivElement>) => void;
   handleTriggerPointerMove: (e: React.PointerEvent<HTMLDivElement>) => void;
   handleTriggerPointerUp: (e: React.PointerEvent<HTMLDivElement>) => void;

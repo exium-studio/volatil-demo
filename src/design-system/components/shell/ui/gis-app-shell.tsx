@@ -481,6 +481,7 @@ const Content = (_props: GisContentProps) => {
       key={"content"}
       id={"content"}
       panelRole={"a"}
+      snapOnContentScroll={isSmallViewport}
       elementRef={contentPanelRef}
       defaultSize={isSmallViewport ? splitterSize[1] : splitterSize[0]}
       alignItems={"end"}
