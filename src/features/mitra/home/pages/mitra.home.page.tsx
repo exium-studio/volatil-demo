@@ -49,7 +49,7 @@ export const MitraHomePage = () => {
     <AppContentContainer h={"auto"} position={"relative"}>
       {/* Dashboard Top Header */}
       <HStack gap={"xs"} align={"center"} justify={"space-between"} w={"full"}>
-        <HStack gap={"xs"} align={"center"}>
+        <HStack gap={"xs"} align={"center"} pl={"md"}>
           <Heading>{"Dashboard Mitra"}</Heading>
 
           <InfoTip
