@@ -19,7 +19,6 @@ import type {
   MitraWorkspaceRenewalTriggerProps,
 } from "@/features/mitra/my-data/types/my-data.type";
 import { checkOrderExtensionEligibility } from "@/features/mitra/my-data/utils/extension.utils";
-import { useNavigate } from "@tanstack/react-router";
 import {
   formatUtcDateTime,
   getPreferredUserTimezone,
@@ -28,11 +27,8 @@ import {
   formatCurrency,
   formatNumber,
 } from "@/shared/utils/formatter/number.formatter";
-import {
-  ArrowRightIcon,
-  ClockPlusIcon,
-  ReceiptIcon,
-} from "lucide-react";
+import { useNavigate } from "@tanstack/react-router";
+import { ArrowRightIcon, ClockPlusIcon } from "lucide-react";
 import { useMemo } from "react";
 
 export const MitraWorkspaceRenewalTrigger = (
@@ -371,8 +367,8 @@ export const MitraWorkspaceRenewalModalContent = (
             loading={renewMutation.isPending}
             onClick={handleProceedToPayment}
           >
-            <AppIcon icon={ReceiptIcon} />
             {"Lanjut ke Pembayaran"}
+            <AppIcon icon={ArrowRightIcon} />
           </Button>
 
           <Button w={"full"} onClick={close}>
