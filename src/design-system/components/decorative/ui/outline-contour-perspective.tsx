@@ -38,11 +38,11 @@ export const OutlineContourPerspective = (
       css={{
         maskImage: `url(${SVG_URL})`,
         maskRepeat: "no-repeat",
-        maskPosition: "center",
+        maskPosition: "bottom center",
         maskSize: "contain",
         WebkitMaskImage: `url(${SVG_URL})`,
         WebkitMaskRepeat: "no-repeat",
-        WebkitMaskPosition: "center",
+        WebkitMaskPosition: "bottom center",
         WebkitMaskSize: "contain",
       }}
       {...restProps}

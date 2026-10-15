@@ -7,6 +7,7 @@ import { z } from "zod";
 
 const billingSearchSchema = z.object({
   orderId: z.string().optional(),
+  activeModalKey: z.string().optional(),
 });
 
 export const Route = createFileRoute("/_private/mitra/billing/$billingCode")({

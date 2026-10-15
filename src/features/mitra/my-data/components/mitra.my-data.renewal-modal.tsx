@@ -1,11 +1,9 @@
 // src/features/mitra/my-data/components/mitra.my-data.renewal-modal.tsx
 
 import { Button } from "@/design-system/components/button/ui/button";
-import { ClipboardButton } from "@/design-system/components/data-display/ui/clipboard-button";
 import { Skeleton } from "@/design-system/components/feedback/ui/skeleton";
 import { AppIcon } from "@/design-system/components/icon/ui/app-icon";
 import { Fieldset } from "@/design-system/components/input/ui/fieldset";
-import { Box } from "@/design-system/components/layout/ui/box";
 import { HStack, VStack } from "@/design-system/components/layout/ui/flex-box";
 import { Separator } from "@/design-system/components/layout/ui/separator";
 import { usePopModal } from "@/design-system/components/overlay/hooks/use-pop-modal";
@@ -19,9 +17,9 @@ import { useRenewMitraWorkspace } from "@/features/mitra/my-data/hooks/use-mitra
 import type {
   MitraWorkspaceRenewalModalContentProps,
   MitraWorkspaceRenewalTriggerProps,
-  RenewWorkspaceResponse,
 } from "@/features/mitra/my-data/types/my-data.type";
 import { checkOrderExtensionEligibility } from "@/features/mitra/my-data/utils/extension.utils";
+import { useNavigate } from "@tanstack/react-router";
 import {
   formatUtcDateTime,
   getPreferredUserTimezone,
@@ -32,11 +30,10 @@ import {
 } from "@/shared/utils/formatter/number.formatter";
 import {
   ArrowRightIcon,
-  CheckCircle2Icon,
   ClockPlusIcon,
   ReceiptIcon,
 } from "lucide-react";
-import { useMemo, useState } from "react";
+import { useMemo } from "react";
 
 export const MitraWorkspaceRenewalTrigger = (
   props: MitraWorkspaceRenewalTriggerProps,
@@ -116,10 +113,6 @@ export const MitraWorkspaceRenewalModalContent = (
   // Props
   const { workspace, close } = props;
 
-  // States
-  const [renewalResult, setRenewalResult] =
-    useState<RenewWorkspaceResponse | null>(null);
-
   // Pricing Policy Hook (Source of truth for updated master tariffs from BE)
   const {
     pricePerBidang,
@@ -189,6 +182,9 @@ export const MitraWorkspaceRenewalModalContent = (
     pricePerBidang,
   ]);
 
+  // Navigation
+  const navigate = useNavigate();
+
   // Handlers
   const handleProceedToPayment = () => {
     renewMutation.mutate(
@@ -198,123 +194,25 @@ export const MitraWorkspaceRenewalModalContent = (
       },
       {
         onSuccess: (data) => {
-          setRenewalResult(data);
+          close();
+          if (data?.billingCode) {
+            void navigate({
+              to: "/mitra/billing/$billingCode",
+              params: { billingCode: data.billingCode },
+              search: {
+                orderId: data.orderId,
+                activeModalKey: "payment-success",
+              },
+            });
+          } else {
+            void navigate({
+              to: "/mitra/transaction-history",
+            });
+          }
         },
       },
     );
   };
-
-  // Render Instruction Step after Success (SSOT Backend)
-  if (renewalResult) {
-    const formattedExtendedUntil = formatUtcDateTime(
-      renewalResult.extendedUntil,
-      preferredTimezone,
-    );
-
-    return (
-      <Modal.Content>
-        <Modal.Header>
-          <Modal.CloseButton />
-
-          <VStack gap={"2xs"} w={"full"} align={"center"} pt={"xs"}>
-            <Box color={"green.fg"}>
-              <AppIcon icon={CheckCircle2Icon} size={"xl"} />
-            </Box>
-
-            <Modal.Title>{"Order Perpanjangan Dibuat"}</Modal.Title>
-
-            <P color={"fg.muted"} textAlign={"center"} fontSize={"sm"}>
-              {
-                "Gunakan kode billing Simponi di bawah ini untuk menyelesaikan pembayaran."
-              }
-            </P>
-          </VStack>
-        </Modal.Header>
-
-        <Modal.Body>
-          <VStack gap={"md"} align={"stretch"} w={"full"}>
-            {/* Billing Code Card */}
-            <Box
-              p={"md"}
-              bg={"bg.subtle"}
-              borderRadius={"md"}
-              borderWidth={"1px"}
-              borderColor={"border.muted"}
-            >
-              <VStack align={"stretch"} gap={"xs"}>
-                <P fontSize={"xs"} color={"fg.subtle"}>
-                  {"Kode Billing Simponi"}
-                </P>
-
-                <HStack justify={"space-between"} align={"center"}>
-                  <P
-                    fontSize={"xl"}
-                    fontWeight={"bold"}
-                    letterSpacing={"wider"}
-                  >
-                    <TNum>{renewalResult.billingCode}</TNum>
-                  </P>
-
-                  <ClipboardButton
-                    value={renewalResult.billingCode}
-                    size={"sm"}
-                    variant={"outline"}
-                  />
-                </HStack>
-              </VStack>
-            </Box>
-
-            {/* Order Details */}
-            <Fieldset legend={"Rincian Perpanjangan"} containeredContent={true}>
-              <VStack align={"stretch"} gap={"sm"}>
-                <HStack justify={"space-between"} align={"center"}>
-                  <P color={"fg.subtle"}>{"No. Order Perpanjangan"}</P>
-                  <P fontWeight={"medium"}>{renewalResult.orderNumber}</P>
-                </HStack>
-
-                <HStack justify={"space-between"} align={"center"}>
-                  <P color={"fg.subtle"}>{"Workspace"}</P>
-                  <ClampedP fontWeight={"medium"}>
-                    {workspace.workspaceName}
-                  </ClampedP>
-                </HStack>
-
-                <HStack justify={"space-between"} align={"center"}>
-                  <P color={"fg.subtle"}>{"Masa Aktif Baru"}</P>
-                  <Badge variant={"subtle"} colorPalette={"brand"}>
-                    {formattedExtendedUntil}
-                  </Badge>
-                </HStack>
-
-                <Separator borderColor={"bg.canvas"} />
-
-                <HStack justify={"space-between"} align={"center"}>
-                  <P fontWeight={"medium"}>{"Total Tagihan"}</P>
-                  <P fontSize={"lg"} fontWeight={"bold"} color={"brand.fg"}>
-                    <TNum>{formatCurrency(renewalResult.totalAmount)}</TNum>
-                  </P>
-                </HStack>
-              </VStack>
-            </Fieldset>
-
-            <P fontSize={"xs"} color={"fg.muted"} textAlign={"center"}>
-              {
-                "Masa aktif workspace akan diperbarui secara otomatis setelah pembayaran berhasil diverifikasi oleh sistem Simponi."
-              }
-            </P>
-          </VStack>
-        </Modal.Body>
-
-        <Modal.Footer>
-          <VStack gap={"xs"} w={"full"}>
-            <Button primary={true} w={"full"} onClick={close}>
-              {"Selesai"}
-            </Button>
-          </VStack>
-        </Modal.Footer>
-      </Modal.Content>
-    );
-  }
 
   // Initial Confirmation Step with Pricing Breakdown Preview
   return (

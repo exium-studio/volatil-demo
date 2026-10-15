@@ -14,6 +14,7 @@ import { Heading } from "@/design-system/components/typography/ui/heading";
 import { List } from "@/design-system/components/typography/ui/list";
 import { P, TNum } from "@/design-system/components/typography/ui/p";
 import { useThemeStore } from "@/design-system/stores/theme-store";
+import { useMountTimeout } from "@/design-system/hooks/use-mount-timeout";
 import { BillingRoute } from "@/shared/libs/tanstack-router/routes";
 import { useNavigate } from "@tanstack/react-router";
 
@@ -42,37 +43,54 @@ const BillingPageBillingCode = () => {
   const checkPaymentMutation = useCheckOrderPaymentStatus();
 
   // Handlers
-  const handleCheckStatus = () => {
-    const targetOrderId = search?.orderId || billingCode;
-    const isRenewal = targetOrderId.startsWith("ord-renew-");
-    const renewWsId = targetOrderId;
+  const renderPaymentSuccessAlert = (
+    isRenew: boolean,
+    targetWsId: string | undefined,
+  ) => {
+    focusAlert("payment-success", () => (
+      <FocusAlertItem
+        variant={"celebrate"}
+        title={"Pembayaran Berhasil!"}
+        description={
+          isRenew
+            ? "Pembayaran perpanjangan layanan telah terverifikasi. Masa aktif workspace dan layer interop GeoServer telah berhasil diperpanjang (+1 Tahun) dan berstatus Aktif/Ready."
+            : "Pembayaran telah terverifikasi dengan status 'paid'. Pemotongan AOI dan pembuatan service layer WMS/WFS sedang diproses oleh sistem GeoServer internal."
+        }
+        onDone={() => {
+          if (isRenew && targetWsId) {
+            void navigate({
+              to: "/mitra/my-data/$workspaceId",
+              params: { workspaceId: targetWsId },
+            });
+          } else {
+            void navigate({
+              to: "/mitra/transaction-history",
+            });
+          }
+        }}
+      />
+    ));
+  };
 
+  const targetOrderId = search?.orderId || billingCode;
+  const isRenewal =
+    targetOrderId.startsWith("ord-renew-") ||
+    targetOrderId.startsWith("renew-");
+  const extractedWsId = (() => {
+    if (!isRenewal) return undefined;
+    const match = targetOrderId.match(
+      /(?:ord-renew-|renew-\d+-)?([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12})/,
+    );
+    return match
+      ? match[1]
+      : targetOrderId.replace(/^ord-renew-|^renew-\d+-/, "").replace(/-\d+$/, "");
+  })();
+
+  const handleCheckStatus = () => {
     checkPaymentMutation.mutate(targetOrderId, {
       onSuccess: (res) => {
         if (res.transactionStatus === "paid") {
-          focusAlert("payment-success", () => (
-            <FocusAlertItem
-              variant={"celebrate"}
-              title={"Pembayaran Berhasil!"}
-              description={
-                isRenewal
-                  ? "Pembayaran perpanjangan layanan telah terverifikasi. Masa aktif workspace dan layer interop GeoServer telah berhasil diperpanjang (+1 Tahun) dan berstatus Aktif/Ready."
-                  : "Pembayaran telah terverifikasi dengan status 'paid'. Pemotongan AOI dan pembuatan service layer WMS/WFS sedang diproses oleh sistem GeoServer internal."
-              }
-              onDone={() => {
-                if (isRenewal && renewWsId) {
-                  void navigate({
-                    to: "/mitra/my-data/$workspaceId",
-                    params: { workspaceId: renewWsId },
-                  });
-                } else {
-                  void navigate({
-                    to: "/mitra/transaction-history",
-                  });
-                }
-              }}
-            />
-          ));
+          renderPaymentSuccessAlert(isRenewal, extractedWsId);
         } else {
           focusAlert("payment-status-info", () => (
             <FocusAlertItem
@@ -87,6 +105,13 @@ const BillingPageBillingCode = () => {
       },
     });
   };
+
+  // Auto trigger payment-success alert if query param contains activeModalKey=payment-success
+  useMountTimeout(() => {
+    if (search?.activeModalKey === "payment-success") {
+      renderPaymentSuccessAlert(isRenewal, extractedWsId);
+    }
+  }, 100);
 
   return (
     <Container.Root>

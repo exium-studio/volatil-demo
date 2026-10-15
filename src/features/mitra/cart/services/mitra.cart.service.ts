@@ -555,13 +555,13 @@ export async function checkOrderPaymentStatus(
         targetOrder.tteInvoiceUrl = null;
         targetOrder.tte = false;
       }
-      if (orderId.startsWith("ord-renew-")) {
+      if (orderId.startsWith("ord-renew-") || orderId.startsWith("renew-")) {
         const uuidMatch = orderId.match(
-          /^ord-renew-([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12})/,
+          /(?:ord-renew-|renew-\d+-)?([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12})/,
         );
         const workspaceId = uuidMatch
           ? uuidMatch[1]
-          : orderId.replace("ord-renew-", "").replace(/-\d+$/, "");
+          : orderId.replace(/^ord-renew-|^renew-\d+-/, "").replace(/-\d+$/, "");
         const ws = dummyMitraWorkspaces.find((w) => w.id === workspaceId);
         if (ws) {
           ws.status = "ready";
@@ -596,13 +596,13 @@ export async function checkOrderPaymentStatus(
         targetOrder.tteInvoiceUrl = null;
         targetOrder.tte = false;
       }
-      if (orderId.startsWith("ord-renew-")) {
+      if (orderId.startsWith("ord-renew-") || orderId.startsWith("renew-")) {
         const uuidMatch = orderId.match(
-          /^ord-renew-([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12})/,
+          /(?:ord-renew-|renew-\d+-)?([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12})/,
         );
         const workspaceId = uuidMatch
           ? uuidMatch[1]
-          : orderId.replace("ord-renew-", "").replace(/-\d+$/, "");
+          : orderId.replace(/^ord-renew-|^renew-\d+-/, "").replace(/-\d+$/, "");
         const ws = dummyMitraWorkspaces.find((w) => w.id === workspaceId);
         if (ws) {
           ws.status = "ready";
