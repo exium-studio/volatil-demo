@@ -149,9 +149,15 @@ export const useRenewMitraWorkspace = () => {
   >({
     mutationFn: ({ workspaceId, payload }) =>
       renewWorkspace(workspaceId, payload),
-    onSuccess: () => {
+    onSuccess: (_data, variables) => {
+      void queryClient.invalidateQueries({
+        queryKey: queryKeys.mitra.myData.all,
+      });
       void queryClient.invalidateQueries({
         queryKey: queryKeys.mitra.workspace.all,
+      });
+      void queryClient.invalidateQueries({
+        queryKey: queryKeys.mitra.workspace.detail(variables.workspaceId),
       });
       void queryClient.invalidateQueries({
         queryKey: queryKeys.mitra.workspaces.all,

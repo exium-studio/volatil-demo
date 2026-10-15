@@ -251,7 +251,7 @@ export const updateMyData = async (
 
 export const renewWorkspace = async (
   workspaceId: string,
-  payload: RenewWorkspacePayload = { durationMonths: 12 },
+  payload: RenewWorkspacePayload = {},
 ): Promise<RenewWorkspaceResponse> => {
   try {
     const response = await renewWorkspaceApi(workspaceId, payload);
@@ -268,25 +268,30 @@ export const renewWorkspace = async (
         ? new Date(targetWorkspace.expiresAt).getTime()
         : Date.now();
       const baseTime = currentExpiry > Date.now() ? currentExpiry : Date.now();
+      const accessDays = 30;
       const extendedUntil = new Date(
-        baseTime + (payload.durationMonths ?? 12) * 30 * 24 * 60 * 60 * 1000,
+        baseTime + accessDays * 24 * 60 * 60 * 1000,
       ).toISOString();
 
       const orderNumber = `RNW-${Date.now().toString().slice(-6)}`;
       const billingCode = `82026${Math.floor(1000000 + Math.random() * 9000000)}`;
-      const totalAmount =
-        targetWorkspace?.layers.reduce((acc, l) => {
-          return acc + (l.spatialBasis === "kawasan" ? 1500000 : 750000);
-        }, 0) || 1500000;
+      const totalAmount = 750000;
 
       return {
-        orderId: `ord-renew-${workspaceId}-${Date.now()}`,
+        workspaceId,
+        orderId: `renew-1-${workspaceId}-${Date.now()}`,
         orderNumber,
         billingCode,
         totalAmount,
         expiresAt: targetWorkspace?.expiresAt ?? new Date().toISOString(),
         extendedUntil,
         status: "pending_payment",
+        policySnapshot: {
+          accessDays,
+          maxExtensionCount: 1,
+          extensionWindowDays: 7,
+          currentExtensionIndex: 1,
+        },
       };
     }
     throw error;

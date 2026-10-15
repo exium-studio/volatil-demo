@@ -152,18 +152,27 @@ export type MitraMyDataWorkspaceTabsContentProps = {
 };
 
 export type RenewWorkspacePayload = {
-  durationMonths?: number;
   paymentMethod?: string;
 };
 
+export type RenewWorkspacePolicySnapshot = {
+  accessDays: number;
+  maxExtensionCount: number;
+  extensionWindowDays: number;
+  currentExtensionIndex: number;
+};
+
 export type RenewWorkspaceResponse = {
+  workspaceId: string;
   orderId: string;
   orderNumber: string;
   billingCode: string;
   totalAmount: number;
   expiresAt: string;
+  expiredAt?: string;
   extendedUntil: string;
   status: "pending_payment" | "paid";
+  policySnapshot?: RenewWorkspacePolicySnapshot;
 };
 
 export type MitraWorkspaceRenewalTriggerProps = {

@@ -41,7 +41,7 @@ export const fetchMitraWorkspaceDetailApi = async (
 
 export const renewWorkspaceApi = async (
   workspaceId: string,
-  payload: RenewWorkspacePayload,
+  payload: RenewWorkspacePayload = {},
   signal?: AbortSignal,
 ): Promise<ApiResponse<RenewWorkspaceResponse>> => {
   return apiClient.post<ApiResponse<RenewWorkspaceResponse>>(
