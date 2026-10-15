@@ -20,8 +20,10 @@ import {
   forwardRef,
   useCallback,
   useContext,
+  useEffect,
   useImperativeHandle,
   useRef,
+  useState,
 } from "react";
 import {
   Group,
@@ -31,17 +33,57 @@ import {
   type Layout,
 } from "react-resizable-panels";
 
-// Context to pass orientation, variant, and imperative layout controls down to triggers
+// Context to pass orientation, variant, and imperative layout controls down to triggers & panels
 const SplitterContext = createContext<SplitterContextValue>({
   orientation: "horizontal",
   variant: "default",
+  mode: "free",
+  triggerAlwaysVisible: false,
   groupRef: { current: null },
   resetLayout: () => {},
+  snapNext: () => {},
+  snapPrev: () => {},
+  snapToStep: () => {},
+  activeSnapIndex: 1,
+  registerPanelAContentRef: () => {},
+  handleTriggerPointerDown: () => {},
+  handleTriggerPointerMove: () => {},
+  handleTriggerPointerUp: () => {},
+  handleTriggerPointerCancel: () => {},
 });
 
 const ChakraGroup = chakra(Group);
 const ChakraPanel = chakra(Panel);
 const ChakraSeparator = chakra(Separator);
+
+// -------------------------------------------------------------------------------------
+// Helpers
+
+const parseMinSizeToPixels = (
+  value: number | string | undefined,
+  containerSize: number,
+  defaultValue = 0,
+): number => {
+  if (value === undefined || value === null) return defaultValue;
+  if (typeof value === "number") {
+    // If <= 1 and > 0, treat as percentage fraction; if <= 100 and no px, check if it's px or percent.
+    // By convention in minSize (e.g. minSizeA = 100), if >= 10 it's usually px or percent.
+    // However, the prompt says "Contoh nilai: A = 100px, B = 0", so number 100 is px, string "100px" is px.
+    // If containerSize is available, we return absolute pixels:
+    return value;
+  }
+  const str = String(value).trim();
+  if (str.endsWith("%")) {
+    const pct = parseFloat(str);
+    return isNaN(pct) ? defaultValue : (pct / 100) * containerSize;
+  }
+  if (str.endsWith("px")) {
+    const px = parseFloat(str);
+    return isNaN(px) ? defaultValue : px;
+  }
+  const num = parseFloat(str);
+  return isNaN(num) ? defaultValue : num;
+};
 
 // -------------------------------------------------------------------------------------
 
@@ -52,6 +94,10 @@ const SplitterRoot = forwardRef<SplitterGroupHandle, SplitterRootProps>(
       orientation,
       direction = orientation ?? "horizontal",
       variant = "default",
+      mode = "free",
+      triggerAlwaysVisible = false,
+      minSizeA,
+      minSizeB,
       defaultLayout,
       onLayout,
       onResize,
@@ -60,12 +106,345 @@ const SplitterRoot = forwardRef<SplitterGroupHandle, SplitterRootProps>(
       ...restProps
     } = props;
 
+    // States
+    const [activeSnapIndex, setActiveSnapIndex] = useState<0 | 1 | 2>(1);
+
     // Refs
     const internalGroupRef = useRef<GroupImperativeHandle | null>(null);
+    const containerRef = useRef<HTMLDivElement | null>(null);
+    const panelAContentRef = useRef<HTMLElement | null>(null);
+    const animationFrameRef = useRef<number | null>(null);
+    const snapIndexRef = useRef<0 | 1 | 2>(1);
 
-    // Handlers
+    const isVertical = direction === "vertical";
+
+    // Effects
+    useEffect(() => {
+      snapIndexRef.current = activeSnapIndex;
+    }, [activeSnapIndex]);
+
+    // Derived Snap Points Calculation in Percentages
+    const getContainerDimension = useCallback(() => {
+      if (!containerRef.current) return 0;
+      const rect = containerRef.current.getBoundingClientRect();
+      return isVertical ? rect.height : rect.width;
+    }, [isVertical]);
+
+    const calculateSnapPoints = useCallback(() => {
+      const totalPx = getContainerDimension() || 800; // fallback if not yet measured
+      const minAPx = parseMinSizeToPixels(minSizeA, totalPx, 0);
+      const minBPx = parseMinSizeToPixels(minSizeB, totalPx, 0);
+
+      // Percentage bounds:
+      // minPctA: min size of A in percentage
+      const minPctA = Math.max(0, Math.min(100, (minAPx / totalPx) * 100));
+      // maxPctA: max size of A in percentage = 100 - minBPx
+      const maxPctA = Math.max(
+        minPctA,
+        Math.min(100, ((totalPx - minBPx) / totalPx) * 100),
+      );
+
+      // S0: A minimal
+      const s0 = minPctA;
+      // S1: 50% clamped between minPctA and maxPctA
+      const s1 = Math.max(minPctA, Math.min(maxPctA, 50));
+      // S2: A full (total - min B)
+      const s2 = maxPctA;
+
+      return { s0, s1, s2, minPctA, maxPctA };
+    }, [getContainerDimension, minSizeA, minSizeB]);
+
+    // Apply layout with smooth 200ms animation
+    const animateToLayout = useCallback(
+      (targetSizeA: number) => {
+        if (!internalGroupRef.current) return;
+        const group = internalGroupRef.current;
+        const currentLayout = group.getLayout();
+        const panelIds = Object.keys(currentLayout);
+        if (panelIds.length < 2) return;
+
+        // In vertical mobile: panelIds[0] is B (spacer), panelIds[1] is A (content)
+        // In horizontal desktop: panelIds[0] is A (content), panelIds[1] is B (spacer)
+        const id0 = panelIds[0];
+        const id1 = panelIds[1];
+        if (!id0 || !id1) return;
+
+        const currentA = isVertical ? currentLayout[id1] ?? 50 : currentLayout[id0] ?? 50;
+        const startA = currentA;
+        const deltaA = targetSizeA - startA;
+
+        if (Math.abs(deltaA) < 0.1) {
+          // Already there
+          const finalLayout: Record<string, number> = isVertical
+            ? { [id0]: 100 - targetSizeA, [id1]: targetSizeA }
+            : { [id0]: targetSizeA, [id1]: 100 - targetSizeA };
+          group.setLayout(finalLayout);
+          const layoutArr = Object.values(finalLayout);
+          onLayout?.(layoutArr);
+          onResize?.({ size: layoutArr });
+          return;
+        }
+
+        if (animationFrameRef.current !== null) {
+          cancelAnimationFrame(animationFrameRef.current);
+        }
+
+        const startTime = performance.now();
+        const duration = 200; // 200ms per requirement
+
+        const step = (now: number) => {
+          const elapsed = now - startTime;
+          const progress = Math.min(1, elapsed / duration);
+          // Ease-out cubic
+          const easeProgress = 1 - Math.pow(1 - progress, 3);
+          const nextA = startA + deltaA * easeProgress;
+
+          const nextLayout: Record<string, number> = isVertical
+            ? { [id0]: 100 - nextA, [id1]: nextA }
+            : { [id0]: nextA, [id1]: 100 - nextA };
+
+          group.setLayout(nextLayout);
+          const layoutArr = Object.values(nextLayout);
+          onLayout?.(layoutArr);
+          onResize?.({ size: layoutArr });
+
+          if (progress < 1) {
+            animationFrameRef.current = requestAnimationFrame(step);
+          } else {
+            animationFrameRef.current = null;
+          }
+        };
+
+        animationFrameRef.current = requestAnimationFrame(step);
+      },
+      [isVertical, onLayout, onResize],
+    );
+
+    const snapToStep = useCallback(
+      (step: 0 | 1 | 2) => {
+        const { s0, s1, s2 } = calculateSnapPoints();
+        setActiveSnapIndex(step);
+        const targetA = step === 0 ? s0 : step === 1 ? s1 : s2;
+        animateToLayout(targetA);
+      },
+      [animateToLayout, calculateSnapPoints],
+    );
+
+    const snapNext = useCallback(() => {
+      // Swipe that expands A steps up: S0 -> S1, S1 -> S2. At S2, do nothing.
+      const current = snapIndexRef.current;
+      if (current === 0) snapToStep(1);
+      else if (current === 1) snapToStep(2);
+    }, [snapToStep]);
+
+    const snapPrev = useCallback(() => {
+      // Swipe that shrinks A steps down: S2 -> S1, S1 -> S0. At S0, do nothing.
+      const current = snapIndexRef.current;
+      if (current === 2) snapToStep(1);
+      else if (current === 1) snapToStep(0);
+    }, [snapToStep]);
+
+    // Cleanup animation frame on unmount
+    useEffect(() => {
+      return () => {
+        if (animationFrameRef.current !== null) {
+          cancelAnimationFrame(animationFrameRef.current);
+        }
+      };
+    }, []);
+
+    // Pointer gesture handling for Snappy Trigger
+    const dragStartRef = useRef<{
+      x: number;
+      y: number;
+      time: number;
+      pointerId: number;
+    } | null>(null);
+
+    const handleTriggerPointerDown = useCallback(
+      (e: React.PointerEvent<HTMLDivElement>) => {
+        if (mode !== "snappy") return;
+        dragStartRef.current = {
+          x: e.clientX,
+          y: e.clientY,
+          time: performance.now(),
+          pointerId: e.pointerId,
+        };
+        try {
+          e.currentTarget.setPointerCapture(e.pointerId);
+        } catch {
+          // ignore
+        }
+      },
+      [mode],
+    );
+
+    const handleTriggerPointerMove = useCallback(
+      (_e: React.PointerEvent<HTMLDivElement>) => {
+        // No setState during drag
+      },
+      [],
+    );
+
+    const handleTriggerPointerUp = useCallback(
+      (e: React.PointerEvent<HTMLDivElement>) => {
+        if (mode !== "snappy" || !dragStartRef.current) return;
+        const start = dragStartRef.current;
+        dragStartRef.current = null;
+        try {
+          if (e.currentTarget.hasPointerCapture(start.pointerId)) {
+            e.currentTarget.releasePointerCapture(start.pointerId);
+          }
+        } catch {
+          // ignore
+        }
+
+        const deltaX = e.clientX - start.x;
+        const deltaY = e.clientY - start.y;
+        const deltaTime = performance.now() - start.time;
+
+        const delta = isVertical ? deltaY : deltaX;
+        const absDelta = Math.abs(delta);
+        const velocity = absDelta / Math.max(1, deltaTime); // px/ms
+
+        // Thresholds: tap without movement triggers nothing
+        const DIST_THRESHOLD = 30; // 30px
+        const VELOCITY_THRESHOLD = 0.3; // 0.3 px/ms
+
+        if (absDelta < DIST_THRESHOLD && velocity < VELOCITY_THRESHOLD) {
+          return;
+        }
+
+        // Direction logic:
+        // Expanding A:
+        // - Vertical: dragging UP (deltaY < 0) expands A (A is at bottom)
+        // - Horizontal: dragging RIGHT (deltaX > 0) expands A (A is on left)
+        const isExpandingA = isVertical ? deltaY < 0 : deltaX > 0;
+
+        if (isExpandingA) {
+          snapNext();
+        } else {
+          snapPrev();
+        }
+      },
+      [isVertical, mode, snapNext, snapPrev],
+    );
+
+    const handleTriggerPointerCancel = useCallback(
+      (e: React.PointerEvent<HTMLDivElement>) => {
+        if (mode !== "snappy" || !dragStartRef.current) return;
+        try {
+          if (e.currentTarget.hasPointerCapture(dragStartRef.current.pointerId)) {
+            e.currentTarget.releasePointerCapture(dragStartRef.current.pointerId);
+          }
+        } catch {
+          // ignore
+        }
+        dragStartRef.current = null;
+      },
+      [mode],
+    );
+
+    // Panel A content gesture handling (touch swipe up / down)
+    const registerPanelAContentRef = useCallback(
+      (el: HTMLElement | null) => {
+        panelAContentRef.current = el;
+      },
+      [],
+    );
+
+    useEffect(() => {
+      if (mode !== "snappy") return;
+      const el = panelAContentRef.current;
+      if (!el) return;
+
+      let touchStartY = 0;
+      let touchStartX = 0;
+      let touchStartTime = 0;
+      let isTrackingTouch = false;
+
+      const onTouchStart = (e: TouchEvent) => {
+        const touch = e.touches[0];
+        if (!touch) return;
+        touchStartY = touch.clientY;
+        touchStartX = touch.clientX;
+        touchStartTime = performance.now();
+        isTrackingTouch = true;
+      };
+
+      const onTouchEnd = (e: TouchEvent) => {
+        if (!isTrackingTouch) return;
+        isTrackingTouch = false;
+        const touch = e.changedTouches[0];
+        if (!touch) return;
+
+        const deltaY = touch.clientY - touchStartY;
+        const deltaX = touch.clientX - touchStartX;
+        const deltaTime = performance.now() - touchStartTime;
+
+        const delta = isVertical ? deltaY : deltaX;
+        const absDelta = Math.abs(delta);
+        const velocity = absDelta / Math.max(1, deltaTime);
+
+        if (absDelta < 30 && velocity < 0.3) return;
+
+        const scrollTop = el.scrollTop;
+        const currentSnap = snapIndexRef.current;
+
+        if (isVertical) {
+          if (deltaY > 0) {
+            // Swiping DOWN
+            // If scrollTop === 0 and user swipe ke bawah: trigger snap turun satu langkah
+            if (scrollTop <= 1) {
+              snapPrev();
+            }
+          } else {
+            // Swiping UP
+            // If A belum di S2 and user swipe ke atas di konten: naik satu langkah.
+            // After A di S2, konten baru boleh scroll.
+            if (currentSnap < 2) {
+              snapNext();
+            }
+          }
+        } else {
+          // Horizontal equivalent
+          if (deltaX < 0) {
+            if (el.scrollLeft <= 1) {
+              snapPrev();
+            }
+          } else if (currentSnap < 2) {
+            snapNext();
+          }
+        }
+      };
+
+      el.addEventListener("touchstart", onTouchStart, { passive: true });
+      el.addEventListener("touchend", onTouchEnd, { passive: true });
+
+      return () => {
+        el.removeEventListener("touchstart", onTouchStart);
+        el.removeEventListener("touchend", onTouchEnd);
+      };
+    }, [isVertical, mode, snapNext, snapPrev]);
+
+    // Handle Window Resize: recalculate snap points and maintain current snap step
+    useEffect(() => {
+      if (mode !== "snappy") return;
+      const handleResize = () => {
+        snapToStep(snapIndexRef.current);
+      };
+      window.addEventListener("resize", handleResize);
+      return () => window.removeEventListener("resize", handleResize);
+    }, [mode, snapToStep]);
+
+    // Reset Layout Handlers
     const resetLayout = useCallback(
       (targetSizes?: number[] | Record<string, number>) => {
+        if (mode === "snappy") {
+          snapToStep(1);
+          return;
+        }
+
         if (!internalGroupRef.current) return;
         const group = internalGroupRef.current;
         const currentLayout = group.getLayout();
@@ -102,7 +481,7 @@ const SplitterRoot = forwardRef<SplitterGroupHandle, SplitterRootProps>(
         onLayout?.(layoutArray);
         onResize?.({ size: layoutArray });
       },
-      [defaultLayout, onLayout, onResize],
+      [defaultLayout, mode, onLayout, onResize, snapToStep],
     );
 
     useImperativeHandle(
@@ -112,8 +491,11 @@ const SplitterRoot = forwardRef<SplitterGroupHandle, SplitterRootProps>(
         setLayout: (layout: Layout) =>
           internalGroupRef.current?.setLayout(layout) ?? {},
         resetSizes: resetLayout,
+        snapNext,
+        snapPrev,
+        snapToStep,
       }),
-      [resetLayout],
+      [resetLayout, snapNext, snapPrev, snapToStep],
     );
 
     const handleLayoutChanged = (
@@ -131,12 +513,26 @@ const SplitterRoot = forwardRef<SplitterGroupHandle, SplitterRootProps>(
         value={{
           orientation: direction,
           variant,
+          mode,
+          triggerAlwaysVisible,
+          minSizeA,
+          minSizeB,
           groupRef:
             internalGroupRef as React.RefObject<SplitterGroupHandle | null>,
           resetLayout,
+          snapNext,
+          snapPrev,
+          snapToStep,
+          activeSnapIndex,
+          registerPanelAContentRef,
+          handleTriggerPointerDown,
+          handleTriggerPointerMove,
+          handleTriggerPointerUp,
+          handleTriggerPointerCancel,
         }}
       >
         <ChakraGroup
+          ref={containerRef}
           groupRef={internalGroupRef}
           orientation={direction}
           onLayoutChanged={handleLayoutChanged}
@@ -157,13 +553,43 @@ const SplitterRoot = forwardRef<SplitterGroupHandle, SplitterRootProps>(
 
 const SplitterPanel = forwardRef<SplitterPanelHandle, SplitterPanelProps>(
   (props, ref) => {
+    // Context
+    const { registerPanelAContentRef, minSizeA, minSizeB } =
+      useContext(SplitterContext);
+
     // Props
-    const { panelRef, elementRef, children, ...restProps } = props;
+    const {
+      panelRef,
+      elementRef,
+      panelRole,
+      minSize: propMinSize,
+      children,
+      ...restProps
+    } = props;
+
+    // Derived minSize from minSizeA / minSizeB if panelRole is set
+    const computedMinSize =
+      propMinSize ??
+      (panelRole === "a" && typeof minSizeA === "number"
+        ? minSizeA
+        : panelRole === "b" && typeof minSizeB === "number"
+          ? minSizeB
+          : undefined);
+
+    const handleInternalElementRef = (el: HTMLElement | null) => {
+      if (panelRole === "a") {
+        registerPanelAContentRef(el);
+      }
+      if (typeof elementRef === "function") {
+        elementRef(el as HTMLDivElement | null);
+      }
+    };
 
     return (
       <ChakraPanel
         panelRef={ref ?? panelRef}
-        elementRef={elementRef}
+        elementRef={handleInternalElementRef}
+        minSize={computedMinSize}
         display={"flex"}
         flexDir={"column"}
         overflow={"hidden"}
@@ -186,13 +612,19 @@ const SplitterResizeTrigger = forwardRef<
   const {
     orientation,
     variant: contextVariant,
+    triggerAlwaysVisible,
     resetLayout,
+    handleTriggerPointerDown,
+    handleTriggerPointerMove,
+    handleTriggerPointerUp,
+    handleTriggerPointerCancel,
   } = useContext(SplitterContext);
 
   // Props
   const {
     variant = contextVariant,
     transparentTrigger = false,
+    alwaysVisible = triggerAlwaysVisible,
     onDoubleClick,
     children,
     elementRef,
@@ -236,22 +668,35 @@ const SplitterResizeTrigger = forwardRef<
         outline={"none"}
         border={"none"}
         bg={isPlain ? "transparent" : "border.subtle"}
+        style={{
+          touchAction: "none",
+          userSelect: "none",
+          WebkitUserSelect: "none",
+        }}
+        onPointerDown={handleTriggerPointerDown}
+        onPointerMove={handleTriggerPointerMove}
+        onPointerUp={handleTriggerPointerUp}
+        onPointerCancel={handleTriggerPointerCancel}
         onDoubleClick={handleDoubleClick}
         _hover={{
           bg: "transparent",
         }}
         {...restProps}
       >
-        {/* Expanded hit area so user can easily grab and drag */}
+        {/* Expanded touch hit area - minimum 44px on perpendicular axis */}
         <Box
           pos={"absolute"}
-          top={isVertical ? "-4px" : 0}
-          bottom={isVertical ? "-4px" : 0}
-          left={isVertical ? 0 : "-4px"}
-          right={isVertical ? 0 : "-4px"}
+          top={isVertical ? "-22px" : 0}
+          bottom={isVertical ? "-22px" : 0}
+          left={isVertical ? 0 : "-22px"}
+          right={isVertical ? 0 : "-22px"}
           zIndex={0}
           cursor={isVertical ? "row-resize" : "col-resize"}
           transition={"background 150ms ease"}
+          style={{
+            touchAction: "none",
+            userSelect: "none",
+          }}
           _groupHover={{
             bg: isPlain || transparentTrigger ? "transparent" : "border.subtle",
           }}
@@ -274,7 +719,7 @@ const SplitterResizeTrigger = forwardRef<
             minH={isVertical ? "16px" : "80px"}
             maxH={isVertical ? "16px" : "80px"}
             flexShrink={0}
-            opacity={0}
+            opacity={alwaysVisible ? 1 : 0}
             pointerEvents={"none"}
             transition={"opacity 150ms ease, transform 150ms ease"}
             zIndex={2}

@@ -480,9 +480,9 @@ const Content = (_props: GisContentProps) => {
     <Splitter.Panel
       key={"content"}
       id={"content"}
+      panelRole={"a"}
       elementRef={contentPanelRef}
       defaultSize={isSmallViewport ? splitterSize[1] : splitterSize[0]}
-      minSize={15}
       alignItems={"end"}
       overflow={"auto"}
     >
@@ -491,7 +491,7 @@ const Content = (_props: GisContentProps) => {
         overflow={"auto"}
         minW={isSmallViewport ? 0 : [0, null, "360px"]}
         w={"full"}
-        minH={"300px"}
+        minH={isSmallViewport ? 0 : "300px"}
         layerStyle={"frosted"}
         bg={"bg.canvasAlpha"}
         // bg={"bg.canvas"}
@@ -507,8 +507,8 @@ const Content = (_props: GisContentProps) => {
     <Splitter.Panel
       key={"spacer"}
       id={"spacer"}
+      panelRole={"b"}
       defaultSize={isSmallViewport ? splitterSize[0] : splitterSize[1]}
-      minSize={isSmallViewport ? 20 : 30}
       minW={isSmallViewport ? "full" : "480px"}
       display={"flex"}
       flexDir={"column"}
@@ -517,7 +517,7 @@ const Content = (_props: GisContentProps) => {
     >
       <VStack
         pos={"relative"}
-        minH={"300px"}
+        minH={isSmallViewport ? 0 : "300px"}
         minW={isSmallViewport ? "full" : "480px"}
         w={"full"}
         h={"full"}
@@ -554,6 +554,10 @@ const Content = (_props: GisContentProps) => {
       <Splitter.Root
         variant={"plain"}
         flex={1}
+        mode={isSmallViewport ? "snappy" : "free"}
+        triggerAlwaysVisible={isSmallViewport}
+        minSizeA={isSmallViewport ? 100 : 360}
+        minSizeB={50}
         direction={isSmallViewport ? "vertical" : "horizontal"}
         defaultLayout={DEFAULT_SPLITTER_SIZE}
         onLayout={(layout: number[]) => {
