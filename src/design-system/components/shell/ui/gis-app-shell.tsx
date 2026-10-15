@@ -504,6 +504,7 @@ const Content = (_props: GisContentProps) => {
       id={"content"}
       domId={"gis-content-panel-a"}
       panelRole={"a"}
+      minSize={isSmallViewport ? 100 : 50}
       snapOnContentScroll={isSmallViewport}
       elementRef={contentPanelRef}
       defaultSize={isSmallViewport ? splitterSize[1] : splitterSize[0]}
@@ -532,6 +533,7 @@ const Content = (_props: GisContentProps) => {
       key={"spacer"}
       id={"spacer"}
       panelRole={"b"}
+      minSize={50}
       defaultSize={isSmallViewport ? splitterSize[0] : splitterSize[1]}
       minW={isSmallViewport ? "full" : "480px"}
       display={"flex"}
@@ -581,8 +583,6 @@ const Content = (_props: GisContentProps) => {
         flex={1}
         mode={isSmallViewport ? "snappy" : "free"}
         triggerAlwaysVisible={isSmallViewport}
-        minSizeA={isSmallViewport ? 100 : 50}
-        minSizeB={50}
         direction={isSmallViewport ? "vertical" : "horizontal"}
         defaultLayout={DEFAULT_SPLITTER_SIZE}
         onLayout={(layout: number[]) => {

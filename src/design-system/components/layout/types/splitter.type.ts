@@ -29,8 +29,6 @@ export type SplitterRootProps = Omit<HTMLChakraProps<"div">, "onResize" | "direc
     defaultLayout?: Layout | number[];
     mode?: SplitterMode;
     triggerAlwaysVisible?: boolean;
-    minSizeA?: number | string;
-    minSizeB?: number | string;
     onResize?: (details: { size: number[] }) => void;
     onLayout?: (layout: number[]) => void;
   };
@@ -70,14 +68,13 @@ export type SplitterContextValue = {
   variant: SplitterTriggerVariant;
   mode: SplitterMode;
   triggerAlwaysVisible: boolean;
-  minSizeA?: number | string;
-  minSizeB?: number | string;
   groupRef: React.RefObject<SplitterGroupHandle | null>;
   resetLayout: (targetSizes?: number[] | Record<string, number>) => void;
   snapNext: () => void;
   snapPrev: () => void;
   snapToStep: (step: 0 | 1 | 2) => void;
   activeSnapIndex: 0 | 1 | 2;
+  registerPanelMinSize: (panelId: string, minSize: number | string | undefined) => void;
   registerContentScrollRef: (el: HTMLElement | null, enabled?: boolean) => void;
   handleTriggerPointerDown: (e: React.PointerEvent<HTMLDivElement>) => void;
   handleTriggerPointerMove: (e: React.PointerEvent<HTMLDivElement>) => void;

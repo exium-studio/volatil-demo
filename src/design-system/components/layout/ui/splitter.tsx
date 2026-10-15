@@ -47,6 +47,7 @@ const SplitterContext = createContext<SplitterContextValue>({
   snapPrev: () => {},
   snapToStep: () => {},
   activeSnapIndex: 1,
+  registerPanelMinSize: () => {},
   registerContentScrollRef: () => {},
   handleTriggerPointerDown: () => {},
   handleTriggerPointerMove: () => {},
@@ -98,8 +99,6 @@ const SplitterRoot = forwardRef<SplitterGroupHandle, SplitterRootProps>(
       variant = "default",
       mode = "free",
       triggerAlwaysVisible = false,
-      minSizeA,
-      minSizeB,
       defaultLayout,
       onLayout,
       onResize,
@@ -117,8 +116,21 @@ const SplitterRoot = forwardRef<SplitterGroupHandle, SplitterRootProps>(
     const panelAContentRef = useRef<HTMLElement | null>(null);
     const animationFrameRef = useRef<number | null>(null);
     const snapIndexRef = useRef<0 | 1 | 2>(1);
+    const panelMinSizesRef = useRef<Map<string, number | string>>(new Map());
 
     const isVertical = direction === "vertical";
+
+    // Register minSize per panel id
+    const registerPanelMinSize = useCallback(
+      (panelId: string, minSize: number | string | undefined) => {
+        if (minSize === undefined) {
+          panelMinSizesRef.current.delete(panelId);
+        } else {
+          panelMinSizesRef.current.set(panelId, minSize);
+        }
+      },
+      [],
+    );
 
     // Effects
     useEffect(() => {
@@ -134,8 +146,21 @@ const SplitterRoot = forwardRef<SplitterGroupHandle, SplitterRootProps>(
 
     const calculateSnapPoints = useCallback(() => {
       const totalPx = getContainerDimension() || 800; // fallback if not yet measured
-      const minAPx = parseMinSizeToPixels(minSizeA, totalPx, 0);
-      const minBPx = parseMinSizeToPixels(minSizeB, totalPx, 0);
+      const group = internalGroupRef.current;
+      const layout = group?.getLayout() ?? {};
+      const panelIds = Object.keys(layout);
+
+      // In 2-panel or multi-panel snap logic:
+      // Primary panel (A) is panelIds[0] (or panelIds[1] in vertical mobile)
+      // Secondary panel (B) is opposite
+      const idA = isVertical ? panelIds[1] : panelIds[0];
+      const idB = isVertical ? panelIds[0] : panelIds[1];
+
+      const minAVal = idA ? panelMinSizesRef.current.get(idA) : undefined;
+      const minBVal = idB ? panelMinSizesRef.current.get(idB) : undefined;
+
+      const minAPx = parseMinSizeToPixels(minAVal, totalPx, 0);
+      const minBPx = parseMinSizeToPixels(minBVal, totalPx, 0);
 
       // Percentage bounds:
       // minPctA: min size of A in percentage
@@ -154,7 +179,7 @@ const SplitterRoot = forwardRef<SplitterGroupHandle, SplitterRootProps>(
       const s2 = maxPctA;
 
       return { s0, s1, s2, minPctA, maxPctA };
-    }, [getContainerDimension, minSizeA, minSizeB]);
+    }, [getContainerDimension, isVertical]);
 
     // Apply layout with smooth 200ms animation
     const animateToLayout = useCallback(
@@ -616,8 +641,6 @@ const SplitterRoot = forwardRef<SplitterGroupHandle, SplitterRootProps>(
         variant,
         mode,
         triggerAlwaysVisible,
-        minSizeA,
-        minSizeB,
         groupRef:
           internalGroupRef as React.RefObject<SplitterGroupHandle | null>,
         resetLayout,
@@ -625,6 +648,7 @@ const SplitterRoot = forwardRef<SplitterGroupHandle, SplitterRootProps>(
         snapPrev,
         snapToStep,
         activeSnapIndex,
+        registerPanelMinSize,
         registerContentScrollRef,
         handleTriggerPointerDown,
         handleTriggerPointerMove,
@@ -636,13 +660,12 @@ const SplitterRoot = forwardRef<SplitterGroupHandle, SplitterRootProps>(
         variant,
         mode,
         triggerAlwaysVisible,
-        minSizeA,
-        minSizeB,
         resetLayout,
         snapNext,
         snapPrev,
         snapToStep,
         activeSnapIndex,
+        registerPanelMinSize,
         registerContentScrollRef,
         handleTriggerPointerDown,
         handleTriggerPointerMove,
@@ -676,11 +699,12 @@ const SplitterRoot = forwardRef<SplitterGroupHandle, SplitterRootProps>(
 const SplitterPanel = forwardRef<SplitterPanelHandle, SplitterPanelProps>(
   (props, ref) => {
     // Context
-    const { registerContentScrollRef, minSizeA, minSizeB } =
+    const { registerContentScrollRef, registerPanelMinSize } =
       useContext(SplitterContext);
 
     // Props
     const {
+      id,
       panelRef,
       elementRef,
       panelRole,
@@ -691,14 +715,18 @@ const SplitterPanel = forwardRef<SplitterPanelHandle, SplitterPanelProps>(
       ...restProps
     } = props;
 
-    // Derived minSize from minSizeA / minSizeB if panelRole is set
-    const computedMinSize =
-      propMinSize ??
-      (panelRole === "a" && typeof minSizeA === "number"
-        ? minSizeA
-        : panelRole === "b" && typeof minSizeB === "number"
-          ? minSizeB
-          : undefined);
+    // Register minSize dynamically to SplitterRoot snap calculator
+    useEffect(() => {
+      const panelIdentifier = id || domId || panelRole;
+      if (panelIdentifier) {
+        registerPanelMinSize(panelIdentifier, propMinSize);
+      }
+      return () => {
+        if (panelIdentifier) {
+          registerPanelMinSize(panelIdentifier, undefined);
+        }
+      };
+    }, [id, domId, panelRole, propMinSize, registerPanelMinSize]);
 
     const isSnapScrollEnabled = snapOnContentScroll ?? panelRole === "a";
 
@@ -716,7 +744,7 @@ const SplitterPanel = forwardRef<SplitterPanelHandle, SplitterPanelProps>(
         id={domId}
         panelRef={ref ?? panelRef}
         elementRef={handleInternalElementRef}
-        minSize={computedMinSize}
+        minSize={propMinSize}
         display={"flex"}
         flexDir={"column"}
         overflow={"hidden"}
