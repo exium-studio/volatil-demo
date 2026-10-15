@@ -86,8 +86,25 @@ export const InternalUserGuideTableView = (
   const trackDownloadMutation = useTrackDownloadUserGuideMutation();
 
   // Derived Values
-  const isSearching = Boolean(params.search?.trim());
-  const searchQuery = params.search?.trim() || "...";
+  const isSearching = Boolean(
+    params.search?.trim() ||
+    params.category !== undefined ||
+    params.isPublished !== undefined,
+  );
+  const searchQuery = useMemo(() => {
+    const parts: string[] = [];
+    if (params.search?.trim()) {
+      parts.push(params.search.trim());
+    }
+    if (params.category) {
+      const catConfig = USER_GUIDE_CATEGORY_MAP[params.category];
+      parts.push(catConfig?.label ?? params.category);
+    }
+    if (params.isPublished !== undefined) {
+      parts.push(params.isPublished ? "Dipublikasikan" : "Draft");
+    }
+    return parts.length > 0 ? parts.join(", ") : "...";
+  }, [params.search, params.category, params.isPublished]);
 
   // Handlers
   const handleDownload = useCallback(

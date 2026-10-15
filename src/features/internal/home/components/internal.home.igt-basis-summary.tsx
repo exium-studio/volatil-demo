@@ -14,13 +14,23 @@ import { P } from "@/design-system/components/typography/ui/p";
 import { FormatNumber } from "@/design-system/components/utilities/ui/fornat-number";
 import { useInternalIgtBasisQuery } from "@/features/internal/home/hooks/use-internal-home.query";
 import type { InternalHomeIgtBasisSummaryProps } from "@/features/internal/home/types/internal.home.igt-basis-summary.type";
+import { useNavigate } from "@tanstack/react-router";
 import { Cell, Pie, PieChart, ResponsiveContainer } from "recharts";
 
 export const InternalHomeIgtBasisSummary = (
   props: InternalHomeIgtBasisSummaryProps,
 ) => {
   // Hooks
+  const navigate = useNavigate();
   const { igtBasis, isLoading } = useInternalIgtBasisQuery();
+
+  // Handlers
+  const handleFilterBasis = (basis: "bidang" | "kawasan") => {
+    void navigate({
+      to: "/internal/data-management",
+      search: { basisIgt: basis },
+    });
+  };
 
   if (isLoading) {
     return (
@@ -80,7 +90,16 @@ export const InternalHomeIgtBasisSummary = (
                   isAnimationActive={false}
                 >
                   {basisData.map((entry) => (
-                    <Cell key={entry.name} fill={entry.color} />
+                    <Cell
+                      key={entry.name}
+                      fill={entry.color}
+                      cursor={"pointer"}
+                      onClick={() =>
+                        handleFilterBasis(
+                          entry.name === "Bidang" ? "bidang" : "kawasan",
+                        )
+                      }
+                    />
                   ))}
                 </Pie>
               </PieChart>
@@ -112,7 +131,13 @@ export const InternalHomeIgtBasisSummary = (
             wrap={"wrap"}
             mt={"xs"}
           >
-            <HStack gap={"xs"} align={"center"}>
+            <HStack
+              gap={"xs"}
+              align={"center"}
+              cursor={"pointer"}
+              onClick={() => handleFilterBasis("bidang")}
+              _hover={{ opacity: 0.8 }}
+            >
               <Box w={"8px"} h={"8px"} rounded={"full"} bg={"blue.solid"} />
               <P fontSize={"xs"} color={"fg.subtle"}>
                 {"Bidang:"}
@@ -122,7 +147,13 @@ export const InternalHomeIgtBasisSummary = (
               </P>
             </HStack>
 
-            <HStack gap={"xs"} align={"center"}>
+            <HStack
+              gap={"xs"}
+              align={"center"}
+              cursor={"pointer"}
+              onClick={() => handleFilterBasis("kawasan")}
+              _hover={{ opacity: 0.8 }}
+            >
               <Box w={"8px"} h={"8px"} rounded={"full"} bg={"orange.solid"} />
               <P fontSize={"xs"} color={"fg.subtle"}>
                 {"Kawasan:"}

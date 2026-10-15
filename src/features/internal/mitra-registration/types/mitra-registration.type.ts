@@ -8,6 +8,10 @@ import type {
 
 export type { MitraRegistrationStatus };
 
+export type InternalMitraRegistrationSearch = {
+  status?: MitraRegistrationStatus | "all";
+};
+
 export type MitraRegistrationDocumentFile = {
   url: string;
   size?: number;

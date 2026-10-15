@@ -38,7 +38,10 @@ import { SelectionTypeBadge } from "@/features/shared/components/selection-type.
 import { StatusFilterSelect } from "@/features/shared/components/status-filter.select";
 import { TransactionDetailTrigger } from "@/features/shared/components/transaction-detail.modal";
 import { TteBadge } from "@/features/shared/components/tte.badge";
-import { ORDER_STATUS_FILTER_OPTIONS } from "@/features/shared/constants/volatil.ssot-map";
+import {
+  ORDER_STATUS_FILTER_OPTIONS,
+  ORDER_STATUS_MAP,
+} from "@/features/shared/constants/volatil.ssot-map";
 import { useLocale } from "@/shared/libs/i18n/locale-provider";
 import type { OrderStatus } from "@/shared/types/status.type";
 import { isEmptyArray } from "@/shared/utils/data/array";
@@ -75,6 +78,19 @@ export const InternalTransactionStatisticDataView = () => {
   // Derived Values
   const debouncedSearch = useDebouncedValue(params.search ?? "", 300);
   const preferredTimezone = useMemo(() => getPreferredUserTimezone(), []);
+
+  const isSearching = Boolean(debouncedSearch.trim() || params.orderStatus);
+  const searchQuery = useMemo(() => {
+    const parts: string[] = [];
+    if (debouncedSearch.trim()) {
+      parts.push(debouncedSearch.trim());
+    }
+    if (params.orderStatus) {
+      const statusConfig = ORDER_STATUS_MAP[params.orderStatus];
+      parts.push(statusConfig?.label ?? params.orderStatus);
+    }
+    return parts.length > 0 ? parts.join(", ") : "...";
+  }, [debouncedSearch, params.orderStatus]);
 
   // Queries
   const { transactions, isLoading, isFetching, isError, error, refetch } =
@@ -454,9 +470,9 @@ export const InternalTransactionStatisticDataView = () => {
               py={"xl"}
               bg={"bg.body"}
             >
-              {debouncedSearch || params.orderStatus ? (
+              {isSearching ? (
                 <StateNoResult
-                  query={debouncedSearch || undefined}
+                  query={searchQuery}
                   description={
                     "Tidak ada transaksi yang sesuai dengan kata kunci atau filter yang Anda pilih."
                   }

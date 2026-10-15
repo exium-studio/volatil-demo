@@ -377,6 +377,7 @@ export const MitraMyDataWorkspacesDataView = (_props: MitraMyDataViewProps) => {
           >
             {debouncedSearch ? (
               <StateNoResult
+                query={debouncedSearch}
                 description={
                   "Tidak ada workspace yang sesuai dengan kata kunci pencarian Anda."
                 }

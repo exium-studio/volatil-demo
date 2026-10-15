@@ -15,7 +15,9 @@ import { Span } from "@/design-system/components/typography/ui/span";
 import { FormatNumber } from "@/design-system/components/utilities/ui/fornat-number";
 import { useInternalMitraRegistrationQuery } from "@/features/internal/home/hooks/use-internal-home.query";
 import type { InternalHomeMitraRegistrationProps } from "@/features/internal/home/types/internal.home.mitra-registration.type";
+import type { MitraRegistrationStatus } from "@/features/internal/mitra-registration/types/mitra-registration.type";
 import { Chart, useChart } from "@chakra-ui/charts";
+import { useNavigate } from "@tanstack/react-router";
 import { Bar, BarChart, CartesianGrid, Cell, XAxis, YAxis } from "recharts";
 
 export const InternalHomeMitraRegistration = (
@@ -43,16 +45,30 @@ const InternalHomeMitraRegistrationContent = () => {
 const InternalHomeMitraRegistrationChart = (props: {
   mitraRegistration: { active: number; pendingVerification: number };
 }) => {
+  // Hooks
+  const navigate = useNavigate();
+
+  // Props
   const { mitraRegistration } = props;
+
+  // Handlers
+  const handleFilterMitra = (status: MitraRegistrationStatus) => {
+    void navigate({
+      to: "/internal/mitra-registration",
+      search: { status },
+    });
+  };
 
   const chartData = [
     {
-      status: "Mitra Aktif",
+      status: "Mitra Terverifikasi",
+      statusKey: "verified" as MitraRegistrationStatus,
       count: mitraRegistration.active,
       color: "teal.solid",
     },
     {
       status: "Pending Verifikasi",
+      statusKey: "pending_verification" as MitraRegistrationStatus,
       count: mitraRegistration.pendingVerification,
       color: "orange.solid",
     },
@@ -113,7 +129,12 @@ const InternalHomeMitraRegistrationChart = (props: {
               barSize={32}
             >
               {chartData.map((item) => (
-                <Cell key={item.status} fill={chart.color(item.color)} />
+                <Cell
+                  key={item.status}
+                  fill={chart.color(item.color)}
+                  cursor={"pointer"}
+                  onClick={() => handleFilterMitra(item.statusKey)}
+                />
               ))}
             </Bar>
           </BarChart>
@@ -127,10 +148,16 @@ const InternalHomeMitraRegistrationChart = (props: {
           wrap={"wrap"}
           mt={"xs"}
         >
-          <HStack gap={"xs"} align={"center"}>
+          <HStack
+            gap={"xs"}
+            align={"center"}
+            cursor={"pointer"}
+            onClick={() => handleFilterMitra("verified")}
+            _hover={{ opacity: 0.8 }}
+          >
             <Box w={"8px"} h={"8px"} rounded={"full"} bg={"teal.solid"} />
             <P fontSize={"xs"} color={"fg.subtle"}>
-              {"Aktif:"}
+              {"Terverifikasi:"}
             </P>
             <P fontSize={"xs"} fontWeight={"semibold"}>
               <FormatNumber value={mitraRegistration.active} />
@@ -140,7 +167,13 @@ const InternalHomeMitraRegistrationChart = (props: {
             </P>
           </HStack>
 
-          <HStack gap={"xs"} align={"center"}>
+          <HStack
+            gap={"xs"}
+            align={"center"}
+            cursor={"pointer"}
+            onClick={() => handleFilterMitra("pending_verification")}
+            _hover={{ opacity: 0.8 }}
+          >
             <Box w={"8px"} h={"8px"} rounded={"full"} bg={"orange.solid"} />
             <P fontSize={"xs"} color={"fg.subtle"}>
               {"Pending:"}

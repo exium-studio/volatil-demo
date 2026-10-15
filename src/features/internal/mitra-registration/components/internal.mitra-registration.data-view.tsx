@@ -32,13 +32,16 @@ import type {
 } from "@/features/internal/mitra-registration/types/mitra-registration.type";
 import { MitraRegistrationStatusBadge } from "@/features/shared/components/mitra-registration-status.badge";
 import { StatusFilterSelect } from "@/features/shared/components/status-filter.select";
-import { MITRA_REGISTRATION_STATUS_OPTIONS } from "@/features/shared/constants/volatil.ssot-map";
+import {
+  MITRA_REGISTRATION_STATUS_MAP,
+  MITRA_REGISTRATION_STATUS_OPTIONS,
+} from "@/features/shared/constants/volatil.ssot-map";
 import { isEmptyArray } from "@/shared/utils/data/array";
 import {
   formatUtcDateTime,
   getPreferredUserTimezone,
 } from "@/shared/utils/formatter/date.formatter";
-import { useNavigate } from "@tanstack/react-router";
+import { useNavigate, useSearch } from "@tanstack/react-router";
 import {
   CheckCircleIcon,
   EyeIcon,
@@ -52,16 +55,23 @@ export const InternalMitraRegistrationDataView = () => {
   // Hooks
   const navigate = useNavigate();
 
+  // Route Search Params
+  const searchParams = useSearch({
+    from: "/_private/internal/mitra-registration/",
+  });
+
   // Transitions
   const [_isPending, startTransition] = useTransition();
 
   // States — Centralized query parameters
-  const [params, setParams] = useState<InternalMitraRegistrationQueryParams>({
-    page: 1,
-    pageSize: DEFAULT_PAGE_SIZE_OPTIONS[0],
-    search: "",
-    status: "all",
-  });
+  const [params, setParams] = useState<InternalMitraRegistrationQueryParams>(
+    () => ({
+      page: 1,
+      pageSize: DEFAULT_PAGE_SIZE_OPTIONS[0],
+      search: "",
+      status: searchParams.status ?? "all",
+    }),
+  );
 
   // Queries
   const {
@@ -83,9 +93,21 @@ export const InternalMitraRegistrationDataView = () => {
   const preferredTimezone = useMemo(() => getPreferredUserTimezone(), []);
   const isSearching = Boolean(params.search?.trim() || params.status !== "all");
   const searchQuery = useMemo(() => {
-    if (params.search?.trim()) return params.search;
-    if (params.status !== "all") return params.status ?? "...";
-    return "...";
+    const parts: string[] = [];
+
+    if (params.search?.trim()) {
+      parts.push(params.search.trim());
+    }
+
+    if (params.status && params.status !== "all") {
+      const statusConfig =
+        MITRA_REGISTRATION_STATUS_MAP[
+          params.status as MitraRegistrationStatus
+        ];
+      parts.push(statusConfig?.label ?? params.status);
+    }
+
+    return parts.length > 0 ? parts.join(", ") : "...";
   }, [params.search, params.status]);
 
   // Derived Values - Headers, Items, BatchActions, ItemActions in 1 useMemo

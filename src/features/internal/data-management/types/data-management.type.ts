@@ -9,6 +9,11 @@ export type IgtBasisType = "bidang" | "kawasan";
 
 export type PublishStatusType = "all" | "published" | "draft";
 
+export type MasterIgtDataManagementSearch = {
+  basisIgt?: IgtBasisType;
+  isActive?: string | number | boolean;
+};
+
 export type PublishStatusTypeConfig = {
   value: PublishStatusType;
   label: string;

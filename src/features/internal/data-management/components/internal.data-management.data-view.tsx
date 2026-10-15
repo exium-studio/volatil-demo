@@ -30,7 +30,10 @@ import { Heading } from "@/design-system/components/typography/ui/heading";
 import { ClampedP, P } from "@/design-system/components/typography/ui/p";
 import { InternalDataManagementCreateTrigger } from "@/features/internal/data-management/components/internal.data-management.create-modal";
 import { InternalDataManagementEditTrigger } from "@/features/internal/data-management/components/internal.data-management.edit-modal";
-import { PUBLISH_STATUS_OPTIONS } from "@/features/internal/data-management/constants/data-management.config";
+import {
+  PUBLISH_STATUS_CONFIG_MAP,
+  PUBLISH_STATUS_OPTIONS,
+} from "@/features/internal/data-management/constants/data-management.config";
 import {
   useDeleteMasterIgtLayer,
   useMasterIgtLayersQuery,
@@ -38,12 +41,14 @@ import {
 import type {
   IgtBasisType,
   MasterIgtLayerItem,
+  PublishStatusType,
 } from "@/features/internal/data-management/types/data-management.type";
 import { useTriggerMitraLayerSyncMutation } from "@/features/internal/mitra-layer-sync-jobs/hooks/use-mitra-layer-sync-jobs.query";
 import { useFlyToLayer } from "@/features/mitra/data-request/hooks/use-fly-to-layer";
 import { IgtBasisFilterSelect } from "@/features/shared/components/igt-basis-filter.select";
 import { IgtBasisBadge } from "@/features/shared/components/igt-basis.badge";
 import { StatusFilterSelect } from "@/features/shared/components/status-filter.select";
+import { IGT_BASIS_MAP } from "@/features/shared/constants/volatil.ssot-map";
 import { isEmptyArray } from "@/shared/utils/data/array";
 import { normalizeApiUrl } from "@/shared/utils/url/url.utils";
 import {
@@ -60,11 +65,42 @@ import {
   RefreshCwIcon,
   Trash2Icon,
 } from "lucide-react";
+import { useSearch } from "@tanstack/react-router";
 import { useCallback, useMemo, useState, useTransition } from "react";
 
 export const InternalDataManagementDataView = () => {
+  // Route Search Params
+  const searchParams = useSearch({
+    from: "/_private/internal/data-management",
+  });
+
   // Transitions
   const [_isPending, startTransition] = useTransition();
+
+  // Derived Initial Values from search params
+  const initialPublishStatus = useMemo(() => {
+    if (searchParams.isActive === undefined || searchParams.isActive === null) {
+      return "all";
+    }
+    const val = String(searchParams.isActive).toLowerCase();
+    if (val === "1" || val === "true" || val === "published") {
+      return "published";
+    }
+    if (val === "0" || val === "false" || val === "draft") {
+      return "draft";
+    }
+    return "all";
+  }, [searchParams.isActive]);
+
+  const initialIgtBasis = useMemo(() => {
+    if (
+      searchParams.basisIgt === "bidang" ||
+      searchParams.basisIgt === "kawasan"
+    ) {
+      return searchParams.basisIgt;
+    }
+    return "all";
+  }, [searchParams.basisIgt]);
 
   // States — Centralized query/action parameters
   const [params, setParams] = useState<{
@@ -73,13 +109,13 @@ export const InternalDataManagementDataView = () => {
     search: string;
     igtBasis: string;
     publishStatus: string;
-  }>({
+  }>(() => ({
     page: 1,
     pageSize: DEFAULT_PAGE_SIZE_OPTIONS[0],
     search: "",
-    igtBasis: "all",
-    publishStatus: "all",
-  });
+    igtBasis: initialIgtBasis,
+    publishStatus: initialPublishStatus,
+  }));
 
   // Mutations
   const deleteMutation = useDeleteMasterIgtLayer();
@@ -116,13 +152,28 @@ export const InternalDataManagementDataView = () => {
     params.publishStatus !== "all",
   );
   const searchQuery = useMemo(() => {
-    if (params.search.trim()) return params.search;
-    if (params.igtBasis !== "all" && params.publishStatus !== "all") {
-      return `${params.igtBasis}, ${params.publishStatus}`;
+    const parts: string[] = [];
+
+    if (params.search.trim()) {
+      parts.push(params.search.trim());
     }
-    if (params.igtBasis !== "all") return params.igtBasis;
-    if (params.publishStatus !== "all") return params.publishStatus;
-    return "...";
+
+    if (params.igtBasis && params.igtBasis !== "all") {
+      const basisLabel =
+        IGT_BASIS_MAP[params.igtBasis as IgtBasisType]?.label ??
+        params.igtBasis;
+      parts.push(basisLabel);
+    }
+
+    if (params.publishStatus && params.publishStatus !== "all") {
+      const statusLabel =
+        PUBLISH_STATUS_CONFIG_MAP[
+          params.publishStatus as PublishStatusType
+        ]?.label ?? params.publishStatus;
+      parts.push(statusLabel);
+    }
+
+    return parts.length > 0 ? parts.join(", ") : "...";
   }, [params.search, params.igtBasis, params.publishStatus]);
 
   // Map Layer Store for toggling visibility

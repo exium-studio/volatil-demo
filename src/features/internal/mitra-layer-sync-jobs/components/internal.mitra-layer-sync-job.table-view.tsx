@@ -93,6 +93,22 @@ export const InternalMitraLayerSyncJobTableView = (
   const total = pagination?.totalItems ?? rawItems.length;
   const totalPages = pagination?.totalPages ?? 1;
 
+  const isSearching = Boolean(params.search?.trim() || params.status !== "all");
+  const searchQuery = useMemo(() => {
+    const parts: string[] = [];
+    if (params.search?.trim()) {
+      parts.push(params.search.trim());
+    }
+    if (params.status && params.status !== "all") {
+      const statusConfig =
+        MITRA_LAYER_SYNC_JOB_STATUS_MAP[
+          params.status as MitraLayerSyncJobStatus
+        ];
+      parts.push(statusConfig?.label ?? params.status);
+    }
+    return parts.length > 0 ? parts.join(", ") : "...";
+  }, [params.search, params.status]);
+
   const dataList = useMemo(() => {
     const headers: FormattedTableHeader[] = [
       { th: "ID Job", sortable: showPagination },
@@ -283,9 +299,9 @@ export const InternalMitraLayerSyncJobTableView = (
           <>
             {isEmptyArray(rawItems) && (
               <Center flex={1} w={"full"} py={"xl"} bg={"bg.body"}>
-                {params.search || params.status !== "all" ? (
+                {isSearching ? (
                   <StateNoResult
-                    query={params.search || params.status}
+                    query={searchQuery}
                     description={
                       "Tidak ada tugas sinkronisasi yang sesuai dengan filter atau kata kunci pencarian Anda."
                     }

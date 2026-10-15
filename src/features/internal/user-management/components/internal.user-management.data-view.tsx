@@ -67,6 +67,26 @@ export const InternalUserManagementDataView = () => {
 
   const preferredTimezone = useMemo(() => getPreferredUserTimezone(), []);
 
+  const isSearching = Boolean(
+    params.search?.trim() ||
+    (params.status && params.status !== "all") ||
+    (params.role && params.role !== "all"),
+  );
+
+  const searchQuery = useMemo(() => {
+    const parts: string[] = [];
+    if (params.search?.trim()) {
+      parts.push(params.search.trim());
+    }
+    if (params.role && params.role !== "all") {
+      parts.push(params.role === "internal" ? "Internal" : "Mitra");
+    }
+    if (params.status && params.status !== "all") {
+      parts.push(STATUS_MAP[params.status]?.label ?? params.status);
+    }
+    return parts.length > 0 ? parts.join(", ") : "...";
+  }, [params.search, params.role, params.status]);
+
   // Mutations
   const updateStatusMutation = useUpdateUserStatus();
   const deleteUserMutation = useDeleteUser();
@@ -308,9 +328,9 @@ export const InternalUserManagementDataView = () => {
             <>
               {isEmptyArray(users) && (
                 <Center flex={1} w={"full"} py={"xl"} bg={"bg.body"}>
-                  {params.search || params.status || params.role ? (
+                  {isSearching ? (
                     <StateNoResult
-                      query={params.search || params.status || params.role}
+                      query={searchQuery}
                       description={
                         "Tidak ada pengguna yang sesuai dengan filter atau kata kunci pencarian Anda."
                       }

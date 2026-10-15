@@ -14,12 +14,23 @@ import { P } from "@/design-system/components/typography/ui/p";
 import { FormatNumber } from "@/design-system/components/utilities/ui/fornat-number";
 import { useInternalPublishStatusQuery } from "@/features/internal/home/hooks/use-internal-home.query";
 import type { InternalHomePublishStatusSummaryProps } from "@/features/internal/home/types/internal.home.publish-status-summary.type";
+import { useNavigate } from "@tanstack/react-router";
 import { Cell, Pie, PieChart, ResponsiveContainer } from "recharts";
 
 export const InternalHomePublishStatusSummary = (
   props: InternalHomePublishStatusSummaryProps,
 ) => {
+  // Hooks
+  const navigate = useNavigate();
   const { igtPublicationStatus, isLoading } = useInternalPublishStatusQuery();
+
+  // Handlers
+  const handleFilterStatus = (isActive: 1 | 0) => {
+    void navigate({
+      to: "/internal/data-management",
+      search: { isActive },
+    });
+  };
 
   if (isLoading) {
     return (
@@ -84,7 +95,14 @@ export const InternalHomePublishStatusSummary = (
                   isAnimationActive={false}
                 >
                   {statusData.map((entry) => (
-                    <Cell key={entry.name} fill={entry.color} />
+                    <Cell
+                      key={entry.name}
+                      fill={entry.color}
+                      cursor={"pointer"}
+                      onClick={() =>
+                        handleFilterStatus(entry.name === "Aktif" ? 1 : 0)
+                      }
+                    />
                   ))}
                 </Pie>
               </PieChart>
@@ -116,7 +134,13 @@ export const InternalHomePublishStatusSummary = (
             wrap={"wrap"}
             mt={"xs"}
           >
-            <HStack gap={"xs"} align={"center"}>
+            <HStack
+              gap={"xs"}
+              align={"center"}
+              cursor={"pointer"}
+              onClick={() => handleFilterStatus(1)}
+              _hover={{ opacity: 0.8 }}
+            >
               <Box w={"8px"} h={"8px"} rounded={"full"} bg={"green.solid"} />
               <P fontSize={"xs"} color={"fg.subtle"}>
                 {"Aktif:"}
@@ -126,7 +150,13 @@ export const InternalHomePublishStatusSummary = (
               </P>
             </HStack>
 
-            <HStack gap={"xs"} align={"center"}>
+            <HStack
+              gap={"xs"}
+              align={"center"}
+              cursor={"pointer"}
+              onClick={() => handleFilterStatus(0)}
+              _hover={{ opacity: 0.8 }}
+            >
               <Box w={"8px"} h={"8px"} rounded={"full"} bg={"fg.subtle"} />
               <P fontSize={"xs"} color={"fg.subtle"}>
                 {"Non-aktif:"}

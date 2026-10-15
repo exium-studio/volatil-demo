@@ -829,8 +829,16 @@ export const MitraDataRequestIgtLayerDataView = memo(
                 <VStack flex={1} justify={"center"} align={"center"} p={"xl"}>
                   <StateNoResult
                     query={
-                      debouncedSearch ||
-                      (basisFilter !== "all" ? `Basis: ${basisFilter}` : "...")
+                      [
+                        debouncedSearch.trim(),
+                        basisFilter !== "all"
+                          ? basisFilter === "bidang"
+                            ? "Bidang"
+                            : "Kawasan"
+                          : undefined,
+                      ]
+                        .filter(Boolean)
+                        .join(", ") || "..."
                     }
                   />
                 </VStack>

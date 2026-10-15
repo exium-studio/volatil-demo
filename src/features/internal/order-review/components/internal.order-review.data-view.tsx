@@ -80,6 +80,19 @@ export const InternalOrderReviewDataView = () => {
   // Derived Values
   const preferredTimezone = useMemo(() => getPreferredUserTimezone(), []);
 
+  const isSearching = Boolean(params.search?.trim() || params.status !== "all");
+  const searchQuery = useMemo(() => {
+    const parts: string[] = [];
+    if (params.search?.trim()) {
+      parts.push(params.search.trim());
+    }
+    if (params.status && params.status !== "all") {
+      const opt = ORDER_STATUS_OPTIONS.find((o) => o.value === params.status);
+      parts.push(opt?.label ?? params.status);
+    }
+    return parts.length > 0 ? parts.join(", ") : "...";
+  }, [params.search, params.status]);
+
   // Queries
   const {
     items: orders,
@@ -378,8 +391,9 @@ export const InternalOrderReviewDataView = () => {
             </Center>
           ) : isEmptyArray(orders) ? (
             <Center flex={1} w={"full"} py={"xl"} bg={"bg.body"}>
-              {params.search || params.status !== "all" ? (
+              {isSearching ? (
                 <StateNoResult
+                  query={searchQuery}
                   description={
                     "Tidak ada pesanan permintaan yang sesuai dengan filter atau kata kunci pencarian Anda."
                   }

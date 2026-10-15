@@ -35,7 +35,10 @@ import { SelectionTypeBadge } from "@/features/shared/components/selection-type.
 import { StatusFilterSelect } from "@/features/shared/components/status-filter.select";
 import { TransactionDetailTrigger } from "@/features/shared/components/transaction-detail.modal";
 import { TteBadge } from "@/features/shared/components/tte.badge";
-import { ORDER_STATUS_FILTER_OPTIONS } from "@/features/shared/constants/volatil.ssot-map";
+import {
+  ORDER_STATUS_FILTER_OPTIONS,
+  ORDER_STATUS_MAP,
+} from "@/features/shared/constants/volatil.ssot-map";
 import type { OrderStatus } from "@/shared/types/status.type";
 import { isEmptyArray } from "@/shared/utils/data/array";
 import {
@@ -76,6 +79,19 @@ export const TransactionHistoryDataView = () => {
   // Derived Values
   const debouncedSearch = useDebouncedValue(params.search ?? "", 300);
   const preferredTimezone = useMemo(() => getPreferredUserTimezone(), []);
+
+  const isSearching = Boolean(debouncedSearch.trim() || params.status);
+  const searchQuery = useMemo(() => {
+    const parts: string[] = [];
+    if (debouncedSearch.trim()) {
+      parts.push(debouncedSearch.trim());
+    }
+    if (params.status) {
+      const statusConfig = ORDER_STATUS_MAP[params.status];
+      parts.push(statusConfig?.label ?? params.status);
+    }
+    return parts.length > 0 ? parts.join(", ") : "...";
+  }, [debouncedSearch, params.status]);
 
   // Queries
   const { transactionHistory, isLoading, isFetching, isError, error, refetch } =
@@ -431,8 +447,9 @@ export const TransactionHistoryDataView = () => {
             py={"xl"}
             bg={"bg.body"}
           >
-            {debouncedSearch || params.status ? (
+            {isSearching ? (
               <StateNoResult
+                query={searchQuery}
                 description={
                   "Tidak ada transaksi yang sesuai dengan kata kunci atau filter yang Anda pilih."
                 }

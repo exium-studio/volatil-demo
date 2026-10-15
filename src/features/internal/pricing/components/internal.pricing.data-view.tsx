@@ -70,6 +70,18 @@ export const InternalPricingDataView = () => {
   // Derived Values
   const preferredTimezone = useMemo(() => getPreferredUserTimezone(), []);
 
+  const isSearching = Boolean(params.search?.trim() || params.spatialBasis);
+  const searchQuery = useMemo(() => {
+    const parts: string[] = [];
+    if (params.search?.trim()) {
+      parts.push(params.search.trim());
+    }
+    if (params.spatialBasis) {
+      parts.push(params.spatialBasis === "bidang" ? "Bidang" : "Kawasan");
+    }
+    return parts.length > 0 ? parts.join(", ") : "...";
+  }, [params.search, params.spatialBasis]);
+
   const filteredItems = useMemo(() => {
     if (!params.search) return rawItems;
     const lower = params.search.toLowerCase();
@@ -275,9 +287,9 @@ export const InternalPricingDataView = () => {
             </Center>
           ) : isEmptyArray(filteredItems) ? (
             <Center flex={1} w={"full"} py={"xl"} bg={"bg.body"}>
-              {params.search || params.spatialBasis ? (
+              {isSearching ? (
                 <StateNoResult
-                  query={params.search || params.spatialBasis}
+                  query={searchQuery}
                   description={
                     "Tidak ada komponen tarif yang sesuai dengan filter atau kata kunci pencarian Anda."
                   }
