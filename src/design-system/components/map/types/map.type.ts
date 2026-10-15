@@ -195,9 +195,11 @@ export type UseGeolocationResult = {
 };
 
 export type MapViewPaddingOptions = {
-  contentPanelRef: import("react").RefObject<HTMLDivElement | null>;
-  sidebarPx: number;
-  isVertical: boolean;
+  contentPanelRef?: import("react").RefObject<HTMLElement | null>;
+  referenceElementRef?: import("react").RefObject<HTMLElement | null>;
+  referenceElementId?: string;
+  sidebarPx?: number;
+  isVertical?: boolean;
 };
 
 export type MapDrawStore = {

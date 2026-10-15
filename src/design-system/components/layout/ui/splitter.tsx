@@ -13,6 +13,7 @@ import type {
 } from "@/design-system/components/layout/types/splitter.type";
 import { Tooltip } from "@/design-system/components/overlay/ui/tooltip";
 import { t } from "@/shared/libs/i18n";
+import { mergeRefs } from "@/shared/utils/react/merge-refs";
 import { Box, chakra } from "@chakra-ui/react";
 import { GripHorizontal, GripVertical } from "lucide-react";
 import {
@@ -683,6 +684,7 @@ const SplitterPanel = forwardRef<SplitterPanelHandle, SplitterPanelProps>(
       panelRef,
       elementRef,
       panelRole,
+      domId,
       snapOnContentScroll,
       minSize: propMinSize,
       children,
@@ -700,20 +702,18 @@ const SplitterPanel = forwardRef<SplitterPanelHandle, SplitterPanelProps>(
 
     const isSnapScrollEnabled = snapOnContentScroll ?? panelRole === "a";
 
-    const handleInternalElementRef = useCallback(
-      (el: HTMLElement | null) => {
+    const handleInternalElementRef = useMemo(() => {
+      const internalCallback = (el: HTMLElement | null) => {
         if (isSnapScrollEnabled) {
           registerContentScrollRef(el, true);
         }
-        if (typeof elementRef === "function") {
-          elementRef(el as HTMLDivElement | null);
-        }
-      },
-      [elementRef, isSnapScrollEnabled, registerContentScrollRef],
-    );
+      };
+      return mergeRefs<HTMLElement | null>(internalCallback, elementRef);
+    }, [elementRef, isSnapScrollEnabled, registerContentScrollRef]);
 
     return (
       <ChakraPanel
+        id={domId}
         panelRef={ref ?? panelRef}
         elementRef={handleInternalElementRef}
         minSize={computedMinSize}

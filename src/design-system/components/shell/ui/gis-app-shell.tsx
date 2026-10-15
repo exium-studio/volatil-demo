@@ -492,7 +492,8 @@ const Content = (_props: GisContentProps) => {
   // Sync map padding — ResizeObserver inside hook handles splitter drag,
   // sidebar toggle triggers a smooth animated transition
   useMapViewPadding(map, {
-    contentPanelRef,
+    referenceElementRef: contentPanelRef,
+    referenceElementId: "gis-content-panel-a",
     sidebarPx,
     isVertical: isSmallViewport,
   });
@@ -501,6 +502,7 @@ const Content = (_props: GisContentProps) => {
     <Splitter.Panel
       key={"content"}
       id={"content"}
+      domId={"gis-content-panel-a"}
       panelRole={"a"}
       snapOnContentScroll={isSmallViewport}
       elementRef={contentPanelRef}

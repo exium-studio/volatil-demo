@@ -13,9 +13,9 @@ import { StateRetry } from "@/design-system/components/feedback/ui/state.retry";
 import { TopBarLoader } from "@/design-system/components/feedback/ui/top-bar-loader";
 import { SearchInput } from "@/design-system/components/input/ui/search-input";
 import { InfoTip } from "@/design-system/components/input/ui/toggle-tip";
+import { ActionHeaderScrollContainer } from "@/design-system/components/layout/ui/action-header-scroll-container";
 import { Center } from "@/design-system/components/layout/ui/center";
 import { Container } from "@/design-system/components/layout/ui/container";
-import { ActionHeaderScrollContainer } from "@/design-system/components/layout/ui/action-header-scroll-container";
 import { HStack, VStack } from "@/design-system/components/layout/ui/flex-box";
 import { Separator } from "@/design-system/components/layout/ui/separator";
 import { HeaderContainer } from "@/design-system/components/shell/ui/header-container";
@@ -34,7 +34,6 @@ import type {
 } from "@/features/internal/order-review/types/order-review.type";
 import type { CartOrderStatus } from "@/features/mitra/cart/types/mitra.cart.order.type";
 import { OrderStatusBadge } from "@/features/shared/components/order-status.badge";
-import { OrderedIgtLayers } from "@/features/shared/components/ordered-igt-layers";
 import { SelectionTypeBadge } from "@/features/shared/components/selection-type.badge";
 import { StatusFilterSelect } from "@/features/shared/components/status-filter.select";
 import { TteBadge } from "@/features/shared/components/tte.badge";
@@ -126,7 +125,9 @@ export const InternalOrderReviewDataView = () => {
       { th: "No. Pesanan", sortable: true, align: "start" },
       { th: "Nama Mitra Pemohon", sortable: true, align: "start" },
       { th: "Metode Pengajuan", sortable: false, align: "start" },
-      { th: "Daftar Layer IGT", sortable: false, align: "start" },
+      { th: "Jumlah Layer", sortable: false, align: "start" },
+      { th: "Cakupan Bidang", sortable: true },
+      { th: "Cakupan Kawasan", sortable: true },
       { th: "Status Pesanan", sortable: true, align: "start" },
       { th: "TTE & Faktur", sortable: false, align: "start" },
       { th: "Total Biaya", sortable: true, align: "end" },
@@ -165,20 +166,28 @@ export const InternalOrderReviewDataView = () => {
             align: "start" as const,
           },
           {
-            value: order.items.map((i) => i.sourceLayerTitle).join(", "),
+            value: order.items.length,
+            td: <P textAlign={"center"}>{`${order.items.length} Layer`}</P>,
+          },
+          {
+            value: order.bidangCoverageCount,
             td: (
-              <OrderedIgtLayers
-                items={order.items}
-                orderNumber={order.orderNumber || order.orderId}
-                coverageHa={
-                  order.kawasanCoverageHa ?? order.coverageHa ?? undefined
-                }
-                bidangCoverageCount={
-                  order.bidangCoverageCount ?? order.featuresCount ?? undefined
-                }
-              />
+              <P>
+                {order.bidangCoverageCount
+                  ? `${order.bidangCoverageCount} Bidang`
+                  : "-"}
+              </P>
             ),
-            align: "start" as const,
+          },
+          {
+            value: order.kawasanCoverageHa,
+            td: (
+              <P>
+                {order.kawasanCoverageHa
+                  ? `${order.kawasanCoverageHa} ha`
+                  : "-"}
+              </P>
+            ),
           },
           {
             value: order.status,
@@ -373,7 +382,13 @@ export const InternalOrderReviewDataView = () => {
         <Separator borderColor={"bg.canvas"} />
 
         {/* Table / Content */}
-        <VStack flex={1} minH={0} bg={"bg.canvas"} w={"full"} position={"relative"}>
+        <VStack
+          flex={1}
+          minH={0}
+          bg={"bg.canvas"}
+          w={"full"}
+          position={"relative"}
+        >
           {isLoading ? (
             <Skeleton p={"md"} rounded={0} />
           ) : isError ? (
@@ -409,7 +424,13 @@ export const InternalOrderReviewDataView = () => {
               )}
             </Center>
           ) : (
-            <VStack flex={1} minH={0} overflow={"hidden"} position={"relative"} w={"full"}>
+            <VStack
+              flex={1}
+              minH={0}
+              overflow={"hidden"}
+              position={"relative"}
+              w={"full"}
+            >
               <TopBarLoader isFetching={isFetching} />
 
               <DataViewTable.Root<InternalOrderItem>

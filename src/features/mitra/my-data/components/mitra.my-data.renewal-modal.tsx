@@ -219,11 +219,7 @@ export const MitraWorkspaceRenewalModalContent = (
               <HStack justify={"space-between"} align={"center"}>
                 <P color={"fg.subtle"}>{"Masa Aktif Baru"}</P>
                 <HStack gap={"2xs"} align={"center"}>
-                  <AppIcon
-                    icon={ArrowRightIcon}
-                    size={"xs"}
-                    color={"brand.fg"}
-                  />
+                  <AppIcon icon={ArrowRightIcon} color={"blue.fg"} />
                   <P fontWeight={"semibold"} color={"brand.fg"}>
                     {newExtendedExpiry}
                   </P>

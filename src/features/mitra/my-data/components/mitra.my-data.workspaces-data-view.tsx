@@ -95,7 +95,9 @@ export const MitraMyDataWorkspacesDataView = (_props: MitraMyDataViewProps) => {
       { th: "Nama Workspace", sortable: true },
       { th: "WMS URL (Interop)", sortable: false },
       { th: "No. Transaksi / Pesanan", sortable: true },
-      { th: "Jumlah Layer", sortable: true, align: "center" },
+      { th: "Jumlah Layer", sortable: true },
+      { th: "Cakupan Bidang", sortable: true },
+      { th: "Cakupan Kawasan", sortable: true },
       { th: "TTE & Faktur", sortable: false, align: "start" },
       { th: "Sisa Waktu", sortable: true },
       { th: "Tanggal Kedaluwarsa", sortable: true },
@@ -168,7 +170,26 @@ export const MitraMyDataWorkspacesDataView = (_props: MitraMyDataViewProps) => {
             {
               value: item.layersCount,
               td: <P textAlign={"center"}>{`${item.layersCount} Layer`}</P>,
-              align: "center" as const,
+            },
+            {
+              value: item.bidangCoverageCount,
+              td: (
+                <P>
+                  {item.bidangCoverageCount
+                    ? `${item.bidangCoverageCount} Bidang`
+                    : "-"}
+                </P>
+              ),
+            },
+            {
+              value: item.kawasanCoverageHa,
+              td: (
+                <P>
+                  {item.kawasanCoverageHa
+                    ? `${item.kawasanCoverageHa} ha`
+                    : "-"}
+                </P>
+              ),
             },
             {
               value: item.tte ? "TTE" : "Belum TTE",
