@@ -795,7 +795,56 @@ export const MitraMyDataWorkspaceDetailPage = () => {
           {/* Workspace Metadata Cards: AOI Polygon & URL Workspace */}
           <VStack gap={"sm"} p={"md"} align={"stretch"}>
             <SimpleGrid minChildWidth={"280px"} gap={"sm"} w={"full"}>
-              {/* Left Card: AOI Polygon */}
+              {/* Workspace WMS URL & Actions */}
+              <VStack
+                align={"start"}
+                justify={"space-between"}
+                p={"md"}
+                rounded={theme.radii.container}
+                border={"1px solid"}
+                borderColor={"border.subtle"}
+                minH={"110px"}
+              >
+                <P fontSize={"xs"} color={"fg.subtle"}>
+                  {"WMS URL Workspace (INTEROP Pusdatin)"}
+                </P>
+
+                <HStack gap={"2xs"} w={"full"} align={"center"}>
+                  <Url
+                    url={workspace.wmsUrl}
+                    label={"Salin WMS URL Workspace"}
+                    maxW={"full"}
+                  />
+
+                  <Tooltip content={"Zoom ke Workspace"}>
+                    <IconButton
+                      aria-label={"Zoom ke Workspace"}
+                      onClick={handleFlyToWorkspace}
+                    >
+                      <AppIcon icon={FocusIcon} />
+                    </IconButton>
+                  </Tooltip>
+
+                  <MitraWorkspaceRenewalTrigger
+                    workspace={workspace}
+                    renderTrigger={({ eligibility, open }) => (
+                      <Tooltip
+                        content={eligibility.reason ?? "Perpanjang Workspace"}
+                      >
+                        <IconButton
+                          aria-label={"Perpanjang Workspace"}
+                          disabled={!eligibility.canExtend}
+                          onClick={open}
+                        >
+                          <AppIcon icon={ClockPlusIcon} />
+                        </IconButton>
+                      </Tooltip>
+                    )}
+                  />
+                </HStack>
+              </VStack>
+
+              {/* AOI Polygon */}
               {workspace.aoiPolygon && (
                 <VStack
                   align={"start"}
@@ -848,55 +897,6 @@ export const MitraMyDataWorkspaceDetailPage = () => {
                   </HStack>
                 </VStack>
               )}
-
-              {/* Right Card: Workspace WMS URL & Actions */}
-              <VStack
-                align={"start"}
-                justify={"space-between"}
-                p={"md"}
-                rounded={theme.radii.container}
-                border={"1px solid"}
-                borderColor={"border.subtle"}
-                minH={"110px"}
-              >
-                <P fontSize={"xs"} color={"fg.subtle"}>
-                  {"WMS URL Workspace (INTEROP Pusdatin)"}
-                </P>
-
-                <HStack gap={"2xs"} w={"full"} align={"center"}>
-                  <Url
-                    url={workspace.wmsUrl}
-                    label={"Salin WMS URL Workspace"}
-                    maxW={"full"}
-                  />
-
-                  <Tooltip content={"Zoom ke Workspace"}>
-                    <IconButton
-                      aria-label={"Zoom ke Workspace"}
-                      onClick={handleFlyToWorkspace}
-                    >
-                      <AppIcon icon={FocusIcon} />
-                    </IconButton>
-                  </Tooltip>
-
-                  <MitraWorkspaceRenewalTrigger
-                    workspace={workspace}
-                    renderTrigger={({ eligibility, open }) => (
-                      <Tooltip
-                        content={eligibility.reason ?? "Perpanjang Workspace"}
-                      >
-                        <IconButton
-                          aria-label={"Perpanjang Workspace"}
-                          disabled={!eligibility.canExtend}
-                          onClick={open}
-                        >
-                          <AppIcon icon={ClockPlusIcon} />
-                        </IconButton>
-                      </Tooltip>
-                    )}
-                  />
-                </HStack>
-              </VStack>
             </SimpleGrid>
 
             <Box
