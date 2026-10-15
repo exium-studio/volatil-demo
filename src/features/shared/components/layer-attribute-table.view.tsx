@@ -10,7 +10,7 @@ import { AppIcon } from "@/design-system/components/icon/ui/app-icon";
 import { HStack, VStack } from "@/design-system/components/layout/ui/flex-box";
 import { Separator } from "@/design-system/components/layout/ui/separator";
 import { Tooltip } from "@/design-system/components/overlay/ui/tooltip";
-import { ClampedP, P } from "@/design-system/components/typography/ui/p";
+import { P } from "@/design-system/components/typography/ui/p";
 import { useFlyToLayer } from "@/features/mitra/data-request/hooks/use-fly-to-layer";
 import { useIgtWfsCatalog } from "@/features/mitra/data-request/hooks/use-igt-wfs-catalog";
 import { useSelectedIgtLayer } from "@/features/mitra/data-request/hooks/use-selected-igt-layer";
@@ -171,7 +171,7 @@ export const LayerAttributeTableView = memo(
           justify={"space-between"}
           align={"center"}
           w={"full"}
-          p={"md"}
+          p={"xs"}
           bg={"bg.body"}
         >
           <HStack gap={"sm"} align={"center"} minW={0}>
@@ -182,12 +182,6 @@ export const LayerAttributeTableView = memo(
                 <P fontWeight={"semibold"}>{`Detail Atribut: ${layerTitle}`}</P>
                 {igtBasis && <IgtBasisBadge>{igtBasis}</IgtBasisBadge>}
               </HStack>
-
-              {effectiveTypeName && (
-                <ClampedP fontSize={"sm"} color={"fg.subtle"}>
-                  {effectiveTypeName}
-                </ClampedP>
-              )}
             </VStack>
           </HStack>
 
