@@ -352,7 +352,7 @@ export const InternalOrderReviewDataView = () => {
                   }));
                 });
               }}
-              w={"240px"}
+              minW={"150px"}
             />
           </HStack>
         </ActionHeaderScrollContainer>
