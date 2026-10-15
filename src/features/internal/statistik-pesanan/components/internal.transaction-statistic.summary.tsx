@@ -13,6 +13,8 @@ import { Separator } from "@/design-system/components/layout/ui/separator";
 import { Heading } from "@/design-system/components/typography/ui/heading";
 import { useInternalTransactionStatisticsQuery } from "@/features/internal/statistik-pesanan/hooks/use-internal-transaction-statistic.query";
 import { IGT_BASIS_MAP } from "@/features/shared/constants/volatil.ssot-map";
+import { useInternalTransactionStatisticFilterStore } from "@/features/internal/statistik-pesanan/stores/internal.transaction-statistic.store";
+import type { OrderStatus } from "@/shared/types/status.type";
 import {
   CheckCircleIcon,
   CircleDollarSignIcon,
@@ -158,7 +160,7 @@ export const InternalTransactionWmsSummary = () => {
               }}
             >
               {
-                "Distribusi status provisioning layanan WMS spasial dari potensi keranjang belanja hingga kedaluwarsa."
+                "Distribusi status provisioning layanan WMS spasial dari potensi keranjang belanja hingga kedaluwarsa. Klik kartu untuk memfilter tabel."
               }
             </InfoTip>
           </HStack>
@@ -178,19 +180,32 @@ const InternalTransactionWmsStatsGrid = () => {
   // Contexts
   const { isSmContainer } = useContainerContext();
 
+  // Stores
+  const { toggleOrderStatus } =
+    useInternalTransactionStatisticFilterStore();
+
   // Queries
   const { statistics, isLoading } = useInternalTransactionStatisticsQuery();
 
   const cols = isSmContainer ? 1 : 4;
 
-  const STATS = [
+  const STATS: {
+    icon: typeof ShoppingCartIcon;
+    label: string;
+    value: number;
+    suffix: string;
+    color: string;
+    tooltip: string;
+    statusKey: OrderStatus;
+  }[] = [
     {
       icon: ShoppingCartIcon,
       label: "Potensi WMS",
       value: statistics.wmsPotential ?? 0,
       suffix: "pesanan",
-      color: "pink.fg",
+      color: "orange.fg",
       tooltip: "Diambil dari total item keranjang (cart) seluruh user mitra",
+      statusKey: "pending_payment",
     },
     {
       icon: LoaderIcon,
@@ -200,6 +215,7 @@ const InternalTransactionWmsStatsGrid = () => {
       color: "purple.fg",
       tooltip:
         "Pesanan dengan status processing (sedang menyiapkan layanan WMS)",
+      statusKey: "processing",
     },
     {
       icon: CheckCircleIcon,
@@ -208,14 +224,16 @@ const InternalTransactionWmsStatsGrid = () => {
       suffix: "layanan",
       color: "green.fg",
       tooltip: "Layanan data spasial berstatus ready / aktif",
+      statusKey: "ready",
     },
     {
       icon: TimerOffIcon,
-      label: "WMS Expired",
+      label: "WMS Kedaluwarsa",
       value: statistics.wmsExpired ?? 0,
       suffix: "layanan",
-      color: "red.fg",
+      color: "gray.fg",
       tooltip: "Layanan data spasial dengan status expired (kedaluwarsa)",
+      statusKey: "expired",
     },
   ];
 
@@ -223,7 +241,14 @@ const InternalTransactionWmsStatsGrid = () => {
     <StatGrid.Root columns={cols}>
       {STATS.map((stat, index) => {
         return (
-          <StatGrid.Item key={stat.label} index={index} columns={cols}>
+          <StatGrid.Item
+            key={stat.label}
+            index={index}
+            columns={cols}
+            cursor={"pointer"}
+            userSelect={"none"}
+            onClick={() => toggleOrderStatus(stat.statusKey)}
+          >
             <StatGrid.Header>
               <StatGrid.Label>{stat.label}</StatGrid.Label>
               <StatGrid.Icon icon={stat.icon} color={stat.color} />
@@ -240,3 +265,4 @@ const InternalTransactionWmsStatsGrid = () => {
     </StatGrid.Root>
   );
 };
+

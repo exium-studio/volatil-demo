@@ -31,6 +31,13 @@ import type {
   InternalTransactionItem,
   InternalTransactionQueryParams,
 } from "@/features/internal/statistik-pesanan/types/internal.transaction-statistic.type";
+import { InternalWmsStatusBadge } from "@/features/internal/statistik-pesanan/components/internal.wms-status.badge";
+import {
+  getWmsStatusKey,
+  ORDER_STATUS_WITH_WMS_FILTER_OPTIONS,
+  WMS_STATUS_MAP,
+} from "@/features/internal/statistik-pesanan/constants/internal.transaction-statistic.wms-map";
+import { useInternalTransactionStatisticFilterStore } from "@/features/internal/statistik-pesanan/stores/internal.transaction-statistic.store";
 import { OrderStatusBadge } from "@/features/shared/components/order-status.badge";
 import { OrderedIgtLayers } from "@/features/shared/components/ordered-igt-layers";
 import { PaymentMethodBadge } from "@/features/shared/components/payment-method.badge";
@@ -38,10 +45,7 @@ import { SelectionTypeBadge } from "@/features/shared/components/selection-type.
 import { StatusFilterSelect } from "@/features/shared/components/status-filter.select";
 import { TransactionDetailTrigger } from "@/features/shared/components/transaction-detail.modal";
 import { TteBadge } from "@/features/shared/components/tte.badge";
-import {
-  ORDER_STATUS_FILTER_OPTIONS,
-  ORDER_STATUS_MAP,
-} from "@/features/shared/constants/volatil.ssot-map";
+import { ORDER_STATUS_MAP } from "@/features/shared/constants/volatil.ssot-map";
 import { useLocale } from "@/shared/libs/i18n/locale-provider";
 import type { OrderStatus } from "@/shared/types/status.type";
 import { isEmptyArray } from "@/shared/utils/data/array";
@@ -55,8 +59,12 @@ import {
   FileCheckIcon,
   HistoryIcon,
   ReceiptTextIcon,
+  XIcon,
 } from "lucide-react";
-import { useMemo, useState, useTransition } from "react";
+import { useEffect, useMemo, useState, useTransition } from "react";
+import { IconButton } from "@/design-system/components/button/ui/button";
+import { Tooltip } from "@/design-system/components/overlay/ui/tooltip";
+import { AppIcon } from "@/design-system/components/icon/ui/app-icon";
 
 const ITEMS_PER_PAGE_DEFAULT = DEFAULT_PAGE_SIZE_OPTIONS[0];
 
@@ -67,6 +75,10 @@ export const InternalTransactionStatisticDataView = () => {
   // Contexts
   const { locale } = useLocale();
 
+  // Stores
+  const { selectedOrderStatus, setSelectedOrderStatus, resetFilter } =
+    useInternalTransactionStatisticFilterStore();
+
   // States — Centralized query/action parameters
   const [params, setParams] = useState<InternalTransactionQueryParams>({
     page: 1,
@@ -75,9 +87,25 @@ export const InternalTransactionStatisticDataView = () => {
     orderStatus: undefined,
   });
 
+  // Effects — Synchronize store filter selection to data-view params
+  useEffect(() => {
+    startTransition(() => {
+      setParams((prev) => ({
+        ...prev,
+        orderStatus: selectedOrderStatus,
+        page: 1,
+      }));
+    });
+  }, [selectedOrderStatus, startTransition]);
+
   // Derived Values
   const debouncedSearch = useDebouncedValue(params.search ?? "", 300);
   const preferredTimezone = useMemo(() => getPreferredUserTimezone(), []);
+
+  const activeWmsKey = getWmsStatusKey(params.orderStatus);
+  const activeWmsConfig = activeWmsKey
+    ? WMS_STATUS_MAP[activeWmsKey]
+    : undefined;
 
   const isSearching = Boolean(debouncedSearch.trim() || params.orderStatus);
   const searchQuery = useMemo(() => {
@@ -87,7 +115,9 @@ export const InternalTransactionStatisticDataView = () => {
     }
     if (params.orderStatus) {
       const statusConfig = ORDER_STATUS_MAP[params.orderStatus];
-      parts.push(statusConfig?.label ?? params.orderStatus);
+      const wmsKey = getWmsStatusKey(params.orderStatus);
+      const wmsLabel = wmsKey ? ` (${WMS_STATUS_MAP[wmsKey].label})` : "";
+      parts.push(`${statusConfig?.label ?? params.orderStatus}${wmsLabel}`);
     }
     return parts.length > 0 ? parts.join(", ") : "...";
   }, [debouncedSearch, params.orderStatus]);
@@ -108,6 +138,7 @@ export const InternalTransactionStatisticDataView = () => {
       { th: "Mitra Pemohon", sortable: true, align: "start" },
       { th: "No. Pesanan", sortable: true, align: "start" },
       { th: "Status Pesanan", sortable: true, align: "start" },
+      { th: "Status WMS", sortable: true, align: "start" },
       { th: "Kode Billing", sortable: false, align: "start" },
       { th: "Waktu Transaksi", sortable: true, align: "start" },
       { th: "Sisa Waktu Pembayaran", sortable: true, align: "start" },
@@ -188,6 +219,15 @@ export const InternalTransactionStatisticDataView = () => {
                 <P fontSize={"sm"} color={"fg.subtle"}>
                   {"-"}
                 </P>
+              ),
+              align: "start" as const,
+            },
+            {
+              value: effectiveOrderStatus ?? "",
+              td: (
+                <InternalWmsStatusBadge showIcon={true} size={"xs"}>
+                  {effectiveOrderStatus}
+                </InternalWmsStatusBadge>
               ),
               align: "start" as const,
             },
@@ -416,22 +456,72 @@ export const InternalTransactionStatisticDataView = () => {
             maxW={"260px"}
           />
 
-          <StatusFilterSelect
-            modalKey={"internal-tx-status-filter"}
-            value={params.orderStatus ?? ""}
-            options={ORDER_STATUS_FILTER_OPTIONS}
-            placeholder={"Status"}
-            onValueChange={(val) =>
-              startTransition(() => {
-                setParams((prev) => ({
-                  ...prev,
-                  orderStatus: val ? (val as OrderStatus) : undefined,
-                  page: 1,
-                }));
-              })
-            }
-            minW={"150px"}
-          />
+          <HStack align={"center"} gap={"xs"} minW={"auto"}>
+            <StatusFilterSelect
+              modalKey={"internal-tx-status-filter"}
+              value={params.orderStatus ?? ""}
+              options={ORDER_STATUS_WITH_WMS_FILTER_OPTIONS}
+              placeholder={"Status Pesanan"}
+              onValueChange={(val) => {
+                const nextStatus = val ? (val as OrderStatus) : undefined;
+                setSelectedOrderStatus(nextStatus);
+                startTransition(() => {
+                  setParams((prev) => ({
+                    ...prev,
+                    orderStatus: nextStatus,
+                    page: 1,
+                  }));
+                });
+              }}
+              minW={"180px"}
+            />
+
+            {activeWmsConfig && (
+              <HStack
+                align={"center"}
+                gap={"xs"}
+                h={"40px"}
+                px={"xs"}
+                rounded={"md"}
+                // border={"1px solid"}
+                borderColor={"border.subtle"}
+              >
+                <InternalWmsStatusBadge
+                  size={"xs"}
+                  variant={"subtle"}
+                  showIcon={true}
+                >
+                  {params.orderStatus}
+                </InternalWmsStatusBadge>
+
+                <Tooltip content={"Hapus filter Status WMS"}>
+                  <IconButton
+                    aria-label={"Hapus filter Status WMS"}
+                    size={"2xs"}
+                    variant={"ghost"}
+                    color={"fg.subtle"}
+                    rounded={"full"}
+                    _hover={{
+                      color: "fg",
+                      bg: "bg.muted",
+                    }}
+                    onClick={() => {
+                      resetFilter();
+                      startTransition(() => {
+                        setParams((prev) => ({
+                          ...prev,
+                          orderStatus: undefined,
+                          page: 1,
+                        }));
+                      });
+                    }}
+                  >
+                    <AppIcon icon={XIcon} boxSize={3} />
+                  </IconButton>
+                </Tooltip>
+              </HStack>
+            )}
+          </HStack>
         </ActionHeaderScrollContainer>
 
         <Separator borderColor={"bg.canvas"} />
