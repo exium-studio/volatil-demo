@@ -29,18 +29,6 @@ const FEATURE_INFO_CIRCLE_STROKE_COLOR = "#ffffff";
 
 const HIGHLIGHT_FILL_LAYER_ID = "map-feature-highlight-fill";
 
-/** Dynamically computes spatial degree radius from map zoom (approx 16 pixels on screen) */
-const calculateSpatialSearchDelta = (
-  map: maplibregl.Map,
-  pixelRadius = 16,
-): number => {
-  const zoom = map.getZoom();
-  const centerLat = map.getCenter().lat;
-  const degPerPixel =
-    (360 / (256 * Math.pow(2, zoom))) * Math.cos((centerLat * Math.PI) / 180);
-  return Math.max(0.00005, degPerPixel * pixelRadius);
-};
-
 /** Resolves WFS query URL from layer configuration dynamically without hardcoding */
 const resolveWfsUrl = (layer: MapLayerConfig): string => {
   if ("wfsUrl" in layer && layer.wfsUrl) return layer.wfsUrl;
@@ -382,7 +370,7 @@ export const useMapFeatureInfo = (
           });
 
           if (wmsResult?.features && wmsResult.features.length > 0) {
-            // Find feature containing clicked point or first feature
+            // Find feature strictly containing clicked point
             const clickPoint = turf.point([e.lngLat.lng, e.lngLat.lat]);
             const matchedPolygon = wmsResult.features.find((f) => {
               if (f.geometry && (f.geometry.type === "Polygon" || f.geometry.type === "MultiPolygon")) {
@@ -400,13 +388,14 @@ export const useMapFeatureInfo = (
               return false;
             });
 
-            const candidateFeat = matchedPolygon ?? wmsResult.features[0];
-            feat = {
-              ...candidateFeat,
-              geometry: candidateFeat.geometry
-                ? normalizeGeometryCoordinates(candidateFeat.geometry)
-                : candidateFeat.geometry,
-            };
+            if (matchedPolygon) {
+              feat = {
+                ...matchedPolygon,
+                geometry: matchedPolygon.geometry
+                  ? normalizeGeometryCoordinates(matchedPolygon.geometry)
+                  : matchedPolygon.geometry,
+              };
+            }
           }
 
           // 2. If WMS returned a feature but without full polygon geometry, query WFS for the exact feature by ID
@@ -470,7 +459,6 @@ export const useMapFeatureInfo = (
             }
           }
 
-
           // 3. If WMS GetFeatureInfo was empty or didn't yield polygon, query WFS using spatial point intersection
           if (!feat || !feat.geometry || feat.geometry.type === "Point") {
             try {
@@ -505,13 +493,14 @@ export const useMapFeatureInfo = (
                   return false;
                 });
 
-                const selected = matchingFeature ?? wfsPointRes.features[0];
-                feat = {
-                  ...selected,
-                  geometry: selected.geometry
-                    ? normalizeGeometryCoordinates(selected.geometry)
-                    : selected.geometry,
-                };
+                if (matchingFeature) {
+                  feat = {
+                    ...matchingFeature,
+                    geometry: matchingFeature.geometry
+                      ? normalizeGeometryCoordinates(matchingFeature.geometry)
+                      : matchingFeature.geometry,
+                  };
+                }
               }
             } catch {
               // Try fallback with the_geom if geom is not the column name
@@ -547,64 +536,18 @@ export const useMapFeatureInfo = (
                     return false;
                   });
 
-                  const selected = matchingFeature ?? wfsPointRes.features[0];
-                  feat = {
-                    ...selected,
-                    geometry: selected.geometry
-                      ? normalizeGeometryCoordinates(selected.geometry)
-                      : selected.geometry,
-                  };
+                  if (matchingFeature) {
+                    feat = {
+                      ...matchingFeature,
+                      geometry: matchingFeature.geometry
+                        ? normalizeGeometryCoordinates(matchingFeature.geometry)
+                        : matchingFeature.geometry,
+                    };
+                  }
                 }
               } catch {
                 // Ignore
               }
-            }
-          }
-
-          // 4. Fallback to dynamic zoom-aware bounding box if point search yielded nothing
-          if (!feat) {
-            try {
-              const delta = calculateSpatialSearchDelta(map, 10);
-              const wfsBboxRes = await fetchWfs({
-                typeName: wfsTypeName,
-                wfsUrl: wfsEndpoint,
-                bbox: [
-                  e.lngLat.lng - delta,
-                  e.lngLat.lat - delta,
-                  e.lngLat.lng + delta,
-                  e.lngLat.lat + delta,
-                ],
-                version: "1.1.0",
-                cqlFilter: cqlFilterRef.current,
-                maxFeatures: 5,
-              });
-              if (wfsBboxRes.features && wfsBboxRes.features.length > 0) {
-                const clickPoint = turf.point([e.lngLat.lng, e.lngLat.lat]);
-                const matchingFeature = wfsBboxRes.features.find((f) => {
-                  if (f.geometry && (f.geometry.type === "Polygon" || f.geometry.type === "MultiPolygon")) {
-                    try {
-                      return turf.booleanPointInPolygon(clickPoint, {
-                        type: "Feature",
-                        properties: f.properties ?? {},
-                        geometry: f.geometry as GeoJSON.Polygon | GeoJSON.MultiPolygon,
-                      });
-                    } catch {
-                      return false;
-                    }
-                  }
-                  return false;
-                });
-
-                const selected = matchingFeature ?? wfsBboxRes.features[0];
-                feat = {
-                  ...selected,
-                  geometry: selected.geometry
-                    ? normalizeGeometryCoordinates(selected.geometry)
-                    : selected.geometry,
-                };
-              }
-            } catch {
-              // Ignore
             }
           }
 

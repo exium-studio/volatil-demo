@@ -38,7 +38,7 @@ export const fetchWmsGetFeatureInfo = async (
     height: String(Math.round(height)),
     x: String(clickX),
     y: String(clickY),
-    buffer: "30", // Search tolerance in pixels so small parcels/polygons are never missed
+    buffer: "0", // Search tolerance in pixels so small parcels/polygons are never missed
     srs: "EPSG:4326",
     info_format: "application/json",
     feature_count: "10",
