@@ -519,7 +519,7 @@ const OrderSummary = (props: OrderSummaryProps) => {
 
         <VStack gap={"sm"}>
           {/* Middle Metric Cards Grid */}
-          <SimpleGrid minChildWidth={"200px"} gap={"sm"}>
+          <SimpleGrid minChildWidth={"240px"} gap={"sm"}>
             {/* Card: Total Estimasi PNBP */}
             <VStack
               align={"start"}
