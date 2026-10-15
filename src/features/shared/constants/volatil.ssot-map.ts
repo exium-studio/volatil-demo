@@ -409,7 +409,7 @@ export const SYSTEM_POLICY_MAP: Record<string, SystemPolicyConfig> = {
     label: "Batas Waktu Pembayaran",
     description:
       "Batas toleransi waktu penyelesaian pembayaran SIMPONI sebelum pesanan otomatis kedaluwarsa.",
-    colorPalette: "amber",
+    colorPalette: "grey",
     icon: HourglassIcon,
   },
   order_access_duration_days: {
@@ -443,7 +443,7 @@ export const getSystemPolicyConfig = (key: string): SystemPolicyConfig => {
     return {
       label: "Batas Waktu Pembayaran",
       description: "Batas toleransi waktu pembayaran pesanan.",
-      colorPalette: "amber",
+      colorPalette: "grey",
       icon: HourglassIcon,
     };
   }

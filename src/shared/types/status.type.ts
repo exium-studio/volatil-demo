@@ -1,5 +1,6 @@
 // src/shared/types/status.type.ts
 
+import type { ColorPalette } from "@/design-system/chakra/types/color.type";
 import type { LucideIcon } from "lucide-react";
 
 /**
@@ -80,6 +81,6 @@ export type MitraRegistrationStatusConfig = {
 export type SystemPolicyConfig = {
   label: string;
   description: string;
-  colorPalette: "amber" | "green" | "cyan" | "red" | "blue" | "purple" | "teal";
+  colorPalette: ColorPalette;
   icon: LucideIcon;
 };
