@@ -114,7 +114,7 @@ export const GisAppShell = (props: GisAppShellProps) => {
       flexDir={isSmallViewport ? "column" : "row"}
       pos={"relative"}
       overflow={"hidden"}
-      bg={"transparent"}
+      className={"debug"}
       {...restProps}
     >
       {!isSmallViewport && <GisAppSidebar />}
