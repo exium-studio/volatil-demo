@@ -35,13 +35,13 @@ export const SigninShell = (props: SigninShellProps) => {
   return (
     <PageContainer p={[2, 4, 6]} pos={"relative"}>
       <OutlineContourPerspective
-        className={"debug"}
+        border={"10px solid red"}
         pos={"absolute"}
         left={0}
-        bottom={"-300px"}
+        bottom={0}
         w={"full"}
         h={"full"}
-        opacity={0.1}
+        // opacity={0.1}
       />
 
       <SimpleGrid

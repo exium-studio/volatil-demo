@@ -50,14 +50,11 @@ export const UserGuideTrigger = (props: UserGuideTriggerProps) => {
           justify={"space-between"}
           w={"full"}
           p={"sm"}
-          bg={"bg.subtle"}
-          border={"1px solid"}
-          borderColor={"border.subtle"}
+          layerStyle={"glassTopRight"}
           rounded={theme.radii.component}
           cursor={"pointer"}
           transition={"200ms"}
           _hover={{
-            bg: "bg.canvas",
             borderColor: `${theme.colorPalette}.focusRing`,
           }}
           onClick={() => open()}

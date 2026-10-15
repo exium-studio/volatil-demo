@@ -10,7 +10,7 @@ import { useMemo } from "react";
 const SVG_URL = "/assets/svgs/decorative/outline-contour-perspective.svg";
 
 export const OutlineContourPerspective = (
-  props: OutlineContourPerspectiveProps
+  props: OutlineContourPerspectiveProps,
 ) => {
   // Props
   const { color, ...restProps } = props;
