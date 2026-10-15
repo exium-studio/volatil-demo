@@ -167,9 +167,8 @@ export const InternalDataManagementDataView = () => {
 
     if (params.publishStatus && params.publishStatus !== "all") {
       const statusLabel =
-        PUBLISH_STATUS_CONFIG_MAP[
-          params.publishStatus as PublishStatusType
-        ]?.label ?? params.publishStatus;
+        PUBLISH_STATUS_CONFIG_MAP[params.publishStatus as PublishStatusType]
+          ?.label ?? params.publishStatus;
       parts.push(statusLabel);
     }
 

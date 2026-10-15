@@ -123,6 +123,10 @@ export type MyDataResponse = PaginatedResponse<MyDataItem> & {
 
 export type MitraMyDataViewProps = StackProps;
 
+export type MitraMyDataSearch = {
+  activeStatus?: WorkspaceActiveStatus;
+};
+
 export type MitraMyDataWorkspaceDetailSearch = {
   layerId?: string;
   apiKey?: string;

@@ -2,16 +2,32 @@
 
 import { requireRoleGuard } from "@/features/auth/services/auth-guard.service";
 import { MitraMyDataPage } from "@/features/mitra/my-data/pages/mitra.my-data.page";
+import type {
+  MitraMyDataSearch,
+  WorkspaceActiveStatus,
+} from "@/features/mitra/my-data/types/my-data.type";
 import { createFileRoute } from "@tanstack/react-router";
 
-import { z } from "zod";
-
-const myDataSearchSchema = z.object({
-  activeStatus: z.enum(["all", "active", "almost_expired", "expired"]).optional(),
-});
+const VALID_ACTIVE_STATUSES: WorkspaceActiveStatus[] = [
+  "all",
+  "active",
+  "almost_expired",
+  "expired",
+];
 
 export const Route = createFileRoute("/_private/mitra/my-data/")({
-  validateSearch: (search) => myDataSearchSchema.parse(search),
+  validateSearch: (search: Record<string, unknown>): MitraMyDataSearch => {
+    const rawStatus = search.activeStatus;
+    const isValidStatus =
+      typeof rawStatus === "string" &&
+      VALID_ACTIVE_STATUSES.includes(rawStatus as WorkspaceActiveStatus);
+
+    return {
+      activeStatus: isValidStatus
+        ? (rawStatus as WorkspaceActiveStatus)
+        : undefined,
+    };
+  },
   beforeLoad: async () => {
     await requireRoleGuard("mitra");
   },

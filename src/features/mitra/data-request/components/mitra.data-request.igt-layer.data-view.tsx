@@ -677,25 +677,26 @@ export const MitraDataRequestIgtLayerDataView = memo(
                     );
                     if (bounds) {
                       const [minLng, minLat, maxLng, maxLat] = bounds;
-                      const bboxPolygonFeature: GeoJSON.Feature<GeoJSON.Polygon> = {
-                        type: "Feature",
-                        properties: {
-                          id: `bidang-bbox-${selectionType}`,
-                          title: "Cakupan Bidang",
-                        },
-                        geometry: {
-                          type: "Polygon",
-                          coordinates: [
-                            [
-                              [minLng, minLat],
-                              [maxLng, minLat],
-                              [maxLng, maxLat],
-                              [minLng, maxLat],
-                              [minLng, minLat],
+                      const bboxPolygonFeature: GeoJSON.Feature<GeoJSON.Polygon> =
+                        {
+                          type: "Feature",
+                          properties: {
+                            id: `bidang-bbox-${selectionType}`,
+                            title: "Cakupan Bidang",
+                          },
+                          geometry: {
+                            type: "Polygon",
+                            coordinates: [
+                              [
+                                [minLng, minLat],
+                                [maxLng, minLat],
+                                [maxLng, maxLat],
+                                [minLng, maxLat],
+                                [minLng, minLat],
+                              ],
                             ],
-                          ],
-                        },
-                      };
+                          },
+                        };
 
                       highlightFeatureOnMap(map, bboxPolygonFeature, {
                         fitCamera: true,

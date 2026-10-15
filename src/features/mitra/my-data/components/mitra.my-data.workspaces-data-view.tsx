@@ -17,7 +17,6 @@ import { StateNoResult } from "@/design-system/components/feedback/ui/state.no-r
 import { StateRetry } from "@/design-system/components/feedback/ui/state.retry";
 import { TopBarLoader } from "@/design-system/components/feedback/ui/top-bar-loader";
 import { AppIcon } from "@/design-system/components/icon/ui/app-icon";
-import { FocusSelectInput } from "@/design-system/components/input/ui/focus-select";
 import type { FocusSelectOption } from "@/design-system/components/input/types/focus-select.type";
 import { SearchInput } from "@/design-system/components/input/ui/search-input";
 import { ActionHeaderScrollContainer } from "@/design-system/components/layout/ui/action-header-scroll-container";
@@ -39,6 +38,7 @@ import type {
   WorkspaceActiveStatus,
 } from "@/features/mitra/my-data/types/my-data.type";
 import { checkOrderExtensionEligibility } from "@/features/mitra/my-data/utils/extension.utils";
+import { StatusFilterSelect } from "@/features/shared/components/status-filter.select";
 import { TteBadge } from "@/features/shared/components/tte.badge";
 import { MitraMyDataIndexRoute } from "@/shared/libs/tanstack-router/routes";
 import { isEmptyArray } from "@/shared/utils/data/array";
@@ -60,7 +60,7 @@ import {
 import { useMemo, useState } from "react";
 
 const ACTIVE_STATUS_OPTIONS: FocusSelectOption[] = [
-  { value: "all", label: "Semua Status Masa Aktif" },
+  { value: "all", label: "Semua Status" },
   { value: "active", label: "Aktif" },
   { value: "almost_expired", label: "Hampir Kedaluwarsa" },
   { value: "expired", label: "Kedaluwarsa" },
@@ -381,14 +381,14 @@ export const MitraMyDataWorkspacesDataView = (_props: MitraMyDataViewProps) => {
           maxW={"280px"}
         />
 
-        <FocusSelectInput
+        <StatusFilterSelect
           modalKey={"workspace-active-status-filter-modal"}
           title={"Filter Status Masa Aktif"}
-          placeholder={"Semua Status Masa Aktif"}
+          placeholder={"Status Masa Aktif"}
           options={ACTIVE_STATUS_OPTIONS}
           value={activeStatus}
           onValueChange={(val) => {
-            const nextStatus = (val as WorkspaceActiveStatus) ?? "all";
+            const nextStatus = (val as WorkspaceActiveStatus) || "all";
             setParams((prev) => ({
               ...prev,
               activeStatus: nextStatus,

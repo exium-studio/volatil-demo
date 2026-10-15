@@ -274,7 +274,8 @@ const MitraHomeLastTransactionDataView = (props: {
         label: "Bayar",
         icon: CreditCardIcon,
         hidden: (transaction: TransactionRecord) =>
-          transaction.transactionStatus !== "pending",
+          transaction.orderStatus !== "pending_payment" ||
+          transaction.transactionStatus === "expired",
         onClick: (transaction: TransactionRecord) => {
           if (transaction.billingCode) {
             void navigate({
