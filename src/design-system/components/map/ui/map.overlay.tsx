@@ -7,6 +7,7 @@ import type { MapOverlayProps } from "@/design-system/components/map/types/map.t
 import { MapAttribution } from "@/design-system/components/map/ui/map.basemap-attribution";
 import { MapControls } from "@/design-system/components/map/ui/map.controls";
 import { MapMasterIgtLayerManagement } from "@/design-system/components/map/ui/map.controls/map.master-igt-layer-management";
+import { MapWorkspaceLayerManagement } from "@/design-system/components/map/ui/map.controls/map.workspace-layer-management";
 import { MapCoordinates } from "@/design-system/components/map/ui/map.coordinates";
 import { MapFeatureInfoPanel } from "@/design-system/components/map/ui/map.feature-info-panel";
 import { MapSearch } from "@/design-system/components/map/ui/map.search";
@@ -15,7 +16,10 @@ import { useThemeStore } from "@/design-system/stores/theme-store";
 
 export const MapOverlay = (props: MapOverlayProps) => {
   // Props
-  const { showMasterIgtLayerSelect = true } = props;
+  const {
+    showMasterIgtLayerSelect = true,
+    showWorkspaceLayerSelect = false,
+  } = props;
 
   // Hooks
   const isSmallViewport = useIsSmallViewport();
@@ -49,6 +53,7 @@ export const MapOverlay = (props: MapOverlayProps) => {
         </Box>
 
         <HStack align={"center"} gap={2} pointerEvents={"none"} flexShrink={0}>
+          {showWorkspaceLayerSelect && <MapWorkspaceLayerManagement />}
           {showMasterIgtLayerSelect && <MapMasterIgtLayerManagement />}
           <MapAttribution />
         </HStack>

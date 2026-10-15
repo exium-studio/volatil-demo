@@ -304,6 +304,12 @@ export const MitraMyDataWorkspaceDetailPage = () => {
         });
         state.setLayerEnabled(layer.id, true);
       });
+
+      // Initialize layerOrder for workspace layers (descending by zIndex)
+      const sortedWorkspaceLayers = [...workspace.layers].sort(
+        (a, b) => (b.zIndex ?? 0) - (a.zIndex ?? 0),
+      );
+      state.setLayerOrder(sortedWorkspaceLayers.map((l) => l.id));
     }
 
     return () => {
@@ -788,11 +794,7 @@ export const MitraMyDataWorkspaceDetailPage = () => {
 
           {/* Workspace Metadata Cards: AOI Polygon & URL Workspace */}
           <VStack gap={"sm"} p={"md"} align={"stretch"}>
-            <SimpleGrid
-              columns={workspace.aoiPolygon ? { base: 1, md: 2 } : 1}
-              gap={"sm"}
-              w={"full"}
-            >
+            <SimpleGrid minChildWidth={"280px"} gap={"sm"} w={"full"}>
               {/* Left Card: AOI Polygon */}
               {workspace.aoiPolygon && (
                 <VStack

@@ -13,25 +13,46 @@ export const fetchLegendGraphic = async (
   const { layer, signal } = params;
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const raw = layer as any;
-  const rawWmsUrl = raw?.wms?.wmsUrl ?? raw?.wmsUrl;
+  const rawWmsUrl =
+    raw?.wms?.wmsUrl ??
+    raw?.wms?.url ??
+    raw?.externalWmsUrl ??
+    raw?.wmsUrl;
   const wmsUrl = normalizeApiUrl(rawWmsUrl);
   const layerName =
-    raw?.wms?.layers || raw?.layers || raw?.typeName || "";
+    raw?.wms?.layers ??
+    raw?.wmsLayers ??
+    raw?.layers ??
+    raw?.wfsTypeName ??
+    raw?.typeName ??
+    raw?.id ??
+    "";
+  const apiKey = raw?.apiKey;
 
   if (!wmsUrl || !layerName) {
     throw new Error("Konfigurasi WMS layer tidak valid atau belum tersedia.");
   }
 
   const separator = wmsUrl.includes("?") ? "&" : "?";
-  const url = `${wmsUrl}${separator}REQUEST=GetLegendGraphic&VERSION=1.0.0&FORMAT=application/json&LAYER=${encodeURIComponent(
+  let url = `${wmsUrl}${separator}REQUEST=GetLegendGraphic&VERSION=1.0.0&FORMAT=application/json&LAYER=${encodeURIComponent(
     layerName,
   )}`;
 
+  if (apiKey) {
+    url += `&apiKey=${encodeURIComponent(apiKey)}`;
+  }
+
+  const headers: Record<string, string> = {
+    Accept: "application/json",
+  };
+
+  if (apiKey) {
+    headers["X-API-KEY"] = apiKey;
+  }
+
   const response = await fetch(url, {
     method: "GET",
-    headers: {
-      Accept: "application/json",
-    },
+    headers,
     signal,
   });
 

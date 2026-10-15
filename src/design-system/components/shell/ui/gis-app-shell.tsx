@@ -322,9 +322,15 @@ const Content = (_props: GisContentProps) => {
   // Hooks
   const isSmallViewport = useIsSmallViewport();
   const hasInitializedDefaultsRef = useRef(false);
+  const location = useLocation();
 
   const userSession = getUserSession();
   const isAuthenticated = Boolean(userSession?.id);
+
+  // Derived Values
+  const isWorkspaceDetailRoute =
+    location.pathname.startsWith("/mitra/my-data/") &&
+    location.pathname.split("/").length > 3;
 
   // Derived Values — Build layer config from fetched layer list
   const { data: fetchedLayers } = useQuery({
@@ -418,11 +424,12 @@ const Content = (_props: GisContentProps) => {
       });
 
     // Also include any layer in enabledLayerIds (e.g. My Data / custom workspace layers)
+    const customConfigs: MapLayerConfig[] = [];
     Object.entries(enabledLayerIds).forEach(([layerId, isEnabled]) => {
       if (!configs.some((c) => c.id === layerId)) {
         const customOverride = customLayerConfigs[layerId];
         if (!customOverride?.wmsUrl || !customOverride?.layers) return;
-        configs.push({
+        customConfigs.push({
           id: layerId,
           type: "wms-raster",
           spatialBasis: customOverride.spatialBasis ?? "bidang",
@@ -434,6 +441,20 @@ const Content = (_props: GisContentProps) => {
         });
       }
     });
+
+    if (customConfigs.length > 0 && layerOrder.length > 0) {
+      customConfigs.sort((a, b) => {
+        const indexA = layerOrder.indexOf(a.id);
+        const indexB = layerOrder.indexOf(b.id);
+        if (indexA !== -1 && indexB !== -1) {
+          // Bottom-to-top rendering: item with higher index rendered below (added earlier)
+          return indexB - indexA;
+        }
+        return 0;
+      });
+    }
+
+    configs.push(...customConfigs);
 
     // Include isolated Order Review preview layers
     Object.entries(previewEnabledLayerIds).forEach(([layerId, isEnabled]) => {
@@ -528,6 +549,7 @@ const Content = (_props: GisContentProps) => {
           layers={mapLayers}
           cqlFilter={cqlFilter}
           showMasterIgtLayerSelect={true}
+          showWorkspaceLayerSelect={isWorkspaceDetailRoute}
         />
       </VStack>
     </Splitter.Panel>

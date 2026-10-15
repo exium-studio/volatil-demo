@@ -45,6 +45,7 @@ export type MyDataItem = {
   tteInvoiceUrl?: string | null;
   tte?: boolean;
   apiKey?: string | null;
+  zIndex?: number;
 };
 
 export type MitraWorkspaceItem = {
