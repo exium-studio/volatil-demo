@@ -141,9 +141,9 @@ export const MapFeatureInfoPanel = () => {
       animationDuration={"200ms"}
     >
       <VStack
-        w={isSmallViewport ? "240px" : "340px"}
+        w={isSmallViewport ? "280px" : "340px"}
         maxW={isSmallViewport ? "calc(100vw - 24px)" : "calc(100vw - 32px)"}
-        maxH={isSmallViewport ? "280px" : "460px"}
+        maxH={isSmallViewport ? "360px" : "460px"}
         bg={"bg.body"}
         border={"1px solid"}
         borderColor={"border.subtle"}
@@ -154,22 +154,11 @@ export const MapFeatureInfoPanel = () => {
         gap={0}
       >
         {/* Header */}
-        <HStack
-          align={"center"}
-          justify={"space-between"}
-          px={isSmallViewport ? "sm" : "md"}
-          py={isSmallViewport ? "xs" : "md"}
-        >
-          <P
-            fontSize={isSmallViewport ? "xs" : "md"}
-            fontWeight={"medium"}
-          >
-            {"Properties"}
-          </P>
+        <HStack align={"center"} justify={"space-between"} p={"md"}>
+          <P fontWeight={"medium"}>{"Properties"}</P>
 
           <Tooltip content={"Tutup"}>
             <HeaderCloseButton
-              size={isSmallViewport ? "xs" : "sm"}
               aria-label={"Tutup"}
               onClick={clearFeatureInfo}
             />
@@ -182,49 +171,32 @@ export const MapFeatureInfoPanel = () => {
           flexShrink={0}
           align={"center"}
           justify={"space-between"}
-          gap={isSmallViewport ? "xs" : "md"}
+          gap={"md"}
           w={"full"}
           h={"auto"}
-          minH={isSmallViewport ? "38px" : "48px"}
-          px={isSmallViewport ? "xs" : "sm"}
-          py={isSmallViewport ? "2xs" : "sm"}
+          minH={"48px"}
+          p={"sm"}
           borderBottom={"1px solid"}
           borderColor={"bg.canvas"}
         >
-          <HStack
-            gap={isSmallViewport ? "xs" : "md"}
-            align={"center"}
-            flex={1}
-            minW={0}
-          >
+          <HStack gap={"md"} align={"center"} flex={1} minW={0}>
             <Center
-              p={isSmallViewport ? "2xs" : "xs"}
+              p={"xs"}
               bg={`${colorPalette}.subtle`}
               rounded={theme.radii.component}
               flexShrink={0}
             >
-              <AppIcon
-                icon={LayerIcon}
-                size={isSmallViewport ? "xs" : "sm"}
-                color={`${colorPalette}.fg`}
-              />
+              <AppIcon icon={LayerIcon} color={`${colorPalette}.fg`} />
             </Center>
 
-            <VStack flex={1} align={"start"} gap={0}>
-              <ClampedP
-                fontSize={isSmallViewport ? "xs" : "md"}
-                fontWeight={"medium"}
-                lineHeight={"tight"}
-              >
+            <VStack flex={1} align={"start"}>
+              <ClampedP fontWeight={"medium"} lineHeight={"tight"}>
                 {displayFeature?.title ??
                   displayFeature?.layerTitle ??
                   "Informasi Fitur"}
               </ClampedP>
 
-              <ClampedP
-                fontSize={isSmallViewport ? "2xs" : "sm"}
-                color={"fg.subtle"}
-              >
+              <ClampedP fontSize={"sm"} color={"fg.subtle"}>
                 {basisLabel}
               </ClampedP>
             </VStack>
@@ -234,11 +206,11 @@ export const MapFeatureInfoPanel = () => {
             {(selectedFeature?.geometry || displayFeature?.geometry) && (
               <Tooltip content={"Zoom ke Fitur"}>
                 <IconButton
-                  size={isSmallViewport ? "xs" : "sm"}
+                  size={"sm"}
                   aria-label={"Zoom ke Fitur"}
                   onClick={handleZoomToFeature}
                 >
-                  <AppIcon icon={FocusIcon} size={isSmallViewport ? "xs" : "sm"} />
+                  <AppIcon icon={FocusIcon} />
                 </IconButton>
               </Tooltip>
             )}
@@ -247,21 +219,17 @@ export const MapFeatureInfoPanel = () => {
 
         {/* Content */}
         {isLoading && !displayFeature && (
-          <VStack w={"full"} p={isSmallViewport ? "xs" : "md"} gap={"sm"}>
-            <Skeleton h={"24px"} w={"full"} />
-            <Skeleton h={"14px"} w={"75%"} />
-            <Skeleton h={"14px"} w={"60%"} />
+          <VStack w={"full"} p={"md"} gap={"sm"}>
+            <Skeleton h={"28px"} w={"full"} />
+            <Skeleton h={"18px"} w={"75%"} />
+            <Skeleton h={"18px"} w={"60%"} />
+            <Skeleton h={"18px"} w={"90%"} />
           </VStack>
         )}
 
         {(!isLoading || Boolean(displayFeature)) &&
           isEmptyArray(allEntries) && (
-            <VStack
-              w={"full"}
-              p={isSmallViewport ? "sm" : "lg"}
-              align={"center"}
-              justify={"center"}
-            >
+            <VStack w={"full"} p={"lg"} align={"center"} justify={"center"}>
               <StateNoData description={"Tidak ada atribut fitur"} />
             </VStack>
           )}
@@ -270,9 +238,8 @@ export const MapFeatureInfoPanel = () => {
           !isEmptyArray(allEntries) && (
             <VStack w={"full"} flex={1} gap={0} overflowY={"auto"}>
               {allEntries.length > 5 && (
-                <Box p={isSmallViewport ? "2xs" : "sm"} w={"full"}>
+                <Box p={"sm"} w={"full"}>
                   <SearchInput
-                    size={isSmallViewport ? "xs" : "sm"}
                     placeholder={"Cari atribut..."}
                     value={searchQuery}
                     onValueChange={(val) => setSearchQuery(val)}
@@ -281,16 +248,11 @@ export const MapFeatureInfoPanel = () => {
                 </Box>
               )}
 
-              <VStack
-                w={"full"}
-                flex={1}
-                p={isSmallViewport ? "xs" : "sm"}
-                gap={isSmallViewport ? "2xs" : "xs"}
-              >
+              <VStack w={"full"} flex={1} p={"sm"} gap={"xs"}>
                 {isEmptyArray(filteredEntries) && (
                   <VStack
                     w={"full"}
-                    py={isSmallViewport ? "sm" : "md"}
+                    py={"md"}
                     align={"center"}
                     justify={"center"}
                   >
@@ -308,7 +270,7 @@ export const MapFeatureInfoPanel = () => {
                           : String(value);
 
                     return (
-                      <VStack key={key} w={"full"} gap={isSmallViewport ? "2xs" : "xs"}>
+                      <VStack key={key} w={"full"} gap={"xs"}>
                         {idx > 0 && <Separator borderColor={"border.subtle"} />}
                         {isSmallViewport && (
                           <VStack
@@ -318,7 +280,7 @@ export const MapFeatureInfoPanel = () => {
                             py={"2xs"}
                           >
                             <P
-                              fontSize={"2xs"}
+                              fontSize={"sm"}
                               color={"fg.muted"}
                               lineHeight={"tight"}
                               wordBreak={"break-word"}
@@ -327,7 +289,6 @@ export const MapFeatureInfoPanel = () => {
                             </P>
 
                             <P
-                              fontSize={"xs"}
                               fontWeight={"medium"}
                               lineHeight={"snug"}
                               wordBreak={"break-word"}
