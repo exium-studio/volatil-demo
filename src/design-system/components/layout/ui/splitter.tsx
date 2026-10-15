@@ -499,7 +499,11 @@ const SplitterRoot = forwardRef<SplitterGroupHandle, SplitterRootProps>(
           if (deltaX < 0) {
             let hasHorizontalScroll = false;
             let node = targetElement as HTMLElement | null;
-            while (node && node !== el.parentElement && node !== document.body) {
+            while (
+              node &&
+              node !== el.parentElement &&
+              node !== document.body
+            ) {
               if (node.scrollLeft > 1) {
                 hasHorizontalScroll = true;
                 break;
@@ -694,8 +698,7 @@ const SplitterPanel = forwardRef<SplitterPanelHandle, SplitterPanelProps>(
           ? minSizeB
           : undefined);
 
-    const isSnapScrollEnabled =
-      snapOnContentScroll ?? (panelRole === "a");
+    const isSnapScrollEnabled = snapOnContentScroll ?? panelRole === "a";
 
     const handleInternalElementRef = useCallback(
       (el: HTMLElement | null) => {
