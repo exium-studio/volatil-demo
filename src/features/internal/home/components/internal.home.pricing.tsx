@@ -20,7 +20,8 @@ import type {
   InternalHomePricingItem,
   InternalHomePricingProps,
 } from "@/features/internal/home/types/internal.home.pricing.type";
-import { LayersIcon, MapPinIcon, PencilIcon } from "lucide-react";
+import { IGT_BASIS_MAP } from "@/features/shared/constants/volatil.ssot-map";
+import { MapPinIcon, PencilIcon } from "lucide-react";
 import { useMemo } from "react";
 
 export const InternalHomePricing = (props: InternalHomePricingProps) => {
@@ -42,13 +43,15 @@ const InternalHomePricingContent = () => {
   const enrichedPricings = useMemo<InternalHomePricingItem[]>(() => {
     return pricings.map((item) => {
       const isBidang = item.igtBasis === "bidang";
+      const igtBasisConfig = IGT_BASIS_MAP[item.igtBasis];
+
       return {
         ...item,
         title: isBidang
           ? "Tarif Dasar per Bidang"
           : "Tarif Dasar per Hektar Kawasan",
-        icon: isBidang ? MapPinIcon : LayersIcon,
-        colorPalette: isBidang ? "blue" : "orange",
+        icon: igtBasisConfig.icon,
+        colorPalette: igtBasisConfig.colorPalette,
       };
     });
   }, [pricings]);
