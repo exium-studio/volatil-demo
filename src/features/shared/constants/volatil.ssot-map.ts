@@ -315,6 +315,14 @@ export const ORDER_STATUS_MAP: Record<OrderStatus, OrderStatusConfig> = {
     iconColor: "gray.fg",
     noticeDescription: "Masa aktif layanan data spasial telah berakhir.",
   },
+  renewed: {
+    label: "Diperbarui (Legacy)",
+    colorPalette: "neutral",
+    icon: RefreshCwIcon,
+    iconColor: "fg.subtle",
+    noticeDescription:
+      "Layanan data spasial telah diperpanjang/diperbarui dan berstatus legacy.",
+  },
 };
 
 export const ORDER_STATUS_OPTIONS: FocusSelectOption[] = [

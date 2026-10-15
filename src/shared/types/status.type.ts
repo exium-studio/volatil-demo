@@ -27,6 +27,7 @@ export type OrderStatus =
   | "pending_review"
   | "ready"
   | "expired"
+  | "renewed"
   // | "rejected"
   | "transaction_expired"
   | "transaction_failed";
