@@ -18,6 +18,7 @@ import type { MapFeatureInfoItem } from "@/design-system/components/map/types/ma
 import { Tooltip } from "@/design-system/components/overlay/ui/tooltip";
 import { toast } from "@/design-system/components/toast";
 import { ClampedP, P } from "@/design-system/components/typography/ui/p";
+import { useIsSmallViewport } from "@/design-system/hooks/use-is-small-viewport";
 import { useThemeStore } from "@/design-system/stores/theme-store";
 import { isEmptyArray } from "@/shared/utils/data/array";
 import * as turf from "@turf/turf";
@@ -31,6 +32,9 @@ export const MapFeatureInfoPanel = () => {
   const selectedFeature = useMapFeatureInfoStore((s) => s.selectedFeature);
   const isLoading = useMapFeatureInfoStore((s) => s.isLoading);
   const clearFeatureInfo = useMapFeatureInfoStore((s) => s.clearFeatureInfo);
+
+  // Hooks
+  const isSmallViewport = useIsSmallViewport();
 
   // States
   const [prevFeature, setPrevFeature] = useState<MapFeatureInfoItem | null>(
@@ -137,9 +141,9 @@ export const MapFeatureInfoPanel = () => {
       animationDuration={"200ms"}
     >
       <VStack
-        w={"340px"}
-        maxW={"calc(100vw - 32px)"}
-        maxH={"460px"}
+        w={isSmallViewport ? "240px" : "340px"}
+        maxW={isSmallViewport ? "calc(100vw - 24px)" : "calc(100vw - 32px)"}
+        maxH={isSmallViewport ? "280px" : "460px"}
         bg={"bg.body"}
         border={"1px solid"}
         borderColor={"border.subtle"}
@@ -150,11 +154,22 @@ export const MapFeatureInfoPanel = () => {
         gap={0}
       >
         {/* Header */}
-        <HStack align={"center"} justify={"space-between"} p={"md"}>
-          <P fontWeight={"medium"}>{"Properties"}</P>
+        <HStack
+          align={"center"}
+          justify={"space-between"}
+          px={isSmallViewport ? "sm" : "md"}
+          py={isSmallViewport ? "xs" : "md"}
+        >
+          <P
+            fontSize={isSmallViewport ? "xs" : "md"}
+            fontWeight={"medium"}
+          >
+            {"Properties"}
+          </P>
 
           <Tooltip content={"Tutup"}>
             <HeaderCloseButton
+              size={isSmallViewport ? "xs" : "sm"}
               aria-label={"Tutup"}
               onClick={clearFeatureInfo}
             />
@@ -167,32 +182,49 @@ export const MapFeatureInfoPanel = () => {
           flexShrink={0}
           align={"center"}
           justify={"space-between"}
-          gap={"md"}
+          gap={isSmallViewport ? "xs" : "md"}
           w={"full"}
           h={"auto"}
-          minH={"48px"}
-          p={"sm"}
+          minH={isSmallViewport ? "38px" : "48px"}
+          px={isSmallViewport ? "xs" : "sm"}
+          py={isSmallViewport ? "2xs" : "sm"}
           borderBottom={"1px solid"}
           borderColor={"bg.canvas"}
         >
-          <HStack gap={"md"} align={"center"} flex={1} minW={0}>
+          <HStack
+            gap={isSmallViewport ? "xs" : "md"}
+            align={"center"}
+            flex={1}
+            minW={0}
+          >
             <Center
-              p={"xs"}
+              p={isSmallViewport ? "2xs" : "xs"}
               bg={`${colorPalette}.subtle`}
               rounded={theme.radii.component}
               flexShrink={0}
             >
-              <AppIcon icon={LayerIcon} color={`${colorPalette}.fg`} />
+              <AppIcon
+                icon={LayerIcon}
+                size={isSmallViewport ? "xs" : "sm"}
+                color={`${colorPalette}.fg`}
+              />
             </Center>
 
-            <VStack flex={1} align={"start"}>
-              <ClampedP fontWeight={"medium"} lineHeight={"tight"}>
+            <VStack flex={1} align={"start"} gap={0}>
+              <ClampedP
+                fontSize={isSmallViewport ? "xs" : "md"}
+                fontWeight={"medium"}
+                lineHeight={"tight"}
+              >
                 {displayFeature?.title ??
                   displayFeature?.layerTitle ??
                   "Informasi Fitur"}
               </ClampedP>
 
-              <ClampedP fontSize={"sm"} color={"fg.subtle"}>
+              <ClampedP
+                fontSize={isSmallViewport ? "2xs" : "sm"}
+                color={"fg.subtle"}
+              >
                 {basisLabel}
               </ClampedP>
             </VStack>
@@ -202,11 +234,11 @@ export const MapFeatureInfoPanel = () => {
             {(selectedFeature?.geometry || displayFeature?.geometry) && (
               <Tooltip content={"Zoom ke Fitur"}>
                 <IconButton
-                  size={"sm"}
+                  size={isSmallViewport ? "xs" : "sm"}
                   aria-label={"Zoom ke Fitur"}
                   onClick={handleZoomToFeature}
                 >
-                  <AppIcon icon={FocusIcon} />
+                  <AppIcon icon={FocusIcon} size={isSmallViewport ? "xs" : "sm"} />
                 </IconButton>
               </Tooltip>
             )}
@@ -215,17 +247,21 @@ export const MapFeatureInfoPanel = () => {
 
         {/* Content */}
         {isLoading && !displayFeature && (
-          <VStack w={"full"} p={"md"} gap={"sm"}>
-            <Skeleton h={"28px"} w={"full"} />
-            <Skeleton h={"18px"} w={"75%"} />
-            <Skeleton h={"18px"} w={"60%"} />
-            <Skeleton h={"18px"} w={"90%"} />
+          <VStack w={"full"} p={isSmallViewport ? "xs" : "md"} gap={"sm"}>
+            <Skeleton h={"24px"} w={"full"} />
+            <Skeleton h={"14px"} w={"75%"} />
+            <Skeleton h={"14px"} w={"60%"} />
           </VStack>
         )}
 
         {(!isLoading || Boolean(displayFeature)) &&
           isEmptyArray(allEntries) && (
-            <VStack w={"full"} p={"lg"} align={"center"} justify={"center"}>
+            <VStack
+              w={"full"}
+              p={isSmallViewport ? "sm" : "lg"}
+              align={"center"}
+              justify={"center"}
+            >
               <StateNoData description={"Tidak ada atribut fitur"} />
             </VStack>
           )}
@@ -234,8 +270,9 @@ export const MapFeatureInfoPanel = () => {
           !isEmptyArray(allEntries) && (
             <VStack w={"full"} flex={1} gap={0} overflowY={"auto"}>
               {allEntries.length > 5 && (
-                <Box p={"sm"} w={"full"}>
+                <Box p={isSmallViewport ? "2xs" : "sm"} w={"full"}>
                   <SearchInput
+                    size={isSmallViewport ? "xs" : "sm"}
                     placeholder={"Cari atribut..."}
                     value={searchQuery}
                     onValueChange={(val) => setSearchQuery(val)}
@@ -244,11 +281,16 @@ export const MapFeatureInfoPanel = () => {
                 </Box>
               )}
 
-              <VStack w={"full"} flex={1} p={"sm"} gap={"xs"}>
+              <VStack
+                w={"full"}
+                flex={1}
+                p={isSmallViewport ? "xs" : "sm"}
+                gap={isSmallViewport ? "2xs" : "xs"}
+              >
                 {isEmptyArray(filteredEntries) && (
                   <VStack
                     w={"full"}
-                    py={"md"}
+                    py={isSmallViewport ? "sm" : "md"}
                     align={"center"}
                     justify={"center"}
                   >
@@ -266,33 +308,61 @@ export const MapFeatureInfoPanel = () => {
                           : String(value);
 
                     return (
-                      <VStack key={key} w={"full"} gap={"xs"}>
+                      <VStack key={key} w={"full"} gap={isSmallViewport ? "2xs" : "xs"}>
                         {idx > 0 && <Separator borderColor={"border.subtle"} />}
-                        <HStack
-                          w={"full"}
-                          justify={"space-between"}
-                          align={"start"}
-                          gap={"sm"}
-                          py={"2xs"}
-                        >
-                          <P
-                            fontSize={"sm"}
-                            color={"fg.muted"}
-                            w={"40%"}
-                            wordBreak={"break-word"}
+                        {isSmallViewport && (
+                          <VStack
+                            w={"full"}
+                            align={"start"}
+                            gap={"2xs"}
+                            py={"2xs"}
                           >
-                            {key}
-                          </P>
+                            <P
+                              fontSize={"2xs"}
+                              color={"fg.muted"}
+                              lineHeight={"tight"}
+                              wordBreak={"break-word"}
+                            >
+                              {key}
+                            </P>
 
-                          <P
-                            fontWeight={"medium"}
-                            w={"60%"}
-                            textAlign={"right"}
-                            wordBreak={"break-word"}
+                            <P
+                              fontSize={"xs"}
+                              fontWeight={"medium"}
+                              lineHeight={"snug"}
+                              wordBreak={"break-word"}
+                            >
+                              {stringVal}
+                            </P>
+                          </VStack>
+                        )}
+                        {!isSmallViewport && (
+                          <HStack
+                            w={"full"}
+                            justify={"space-between"}
+                            align={"start"}
+                            gap={"sm"}
+                            py={"2xs"}
                           >
-                            {stringVal}
-                          </P>
-                        </HStack>
+                            <P
+                              fontSize={"sm"}
+                              color={"fg.muted"}
+                              w={"40%"}
+                              wordBreak={"break-word"}
+                            >
+                              {key}
+                            </P>
+
+                            <P
+                              fontWeight={"medium"}
+                              w={"60%"}
+                              textAlign={"right"}
+                              wordBreak={"break-word"}
+                            >
+                              {stringVal}
+                            </P>
+                          </HStack>
+                        )}
                       </VStack>
                     );
                   })}
