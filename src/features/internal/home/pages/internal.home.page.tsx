@@ -20,8 +20,12 @@ import { queryKeys } from "@/shared/libs/tanstack-query/query.keys";
 import { useQueryClient } from "@tanstack/react-query";
 import { RefreshCwIcon } from "lucide-react";
 import { useState } from "react";
+import { useIsSmallViewport } from "@/design-system/hooks/use-is-small-viewport";
 
 export const InternalHomePage = () => {
+  // Contexts
+  const isSmallViewport = useIsSmallViewport();
+
   // Hooks
   const queryClient = useQueryClient();
   const { user } = useAuthSession();
@@ -77,7 +81,13 @@ export const InternalHomePage = () => {
   return (
     <AppContentContainer position={"relative"} h={"auto"}>
       {/* Dashboard Top Header */}
-      <HStack justify={"space-between"} align={"center"} w={"full"} mb={"xs"}>
+      <HStack
+        justify={"space-between"}
+        align={"center"}
+        w={"full"}
+        mt={isSmallViewport ? "md" : ""}
+        mb={"xs"}
+      >
         <HStack align={"center"} pl={"md"}>
           <Heading>{greetingText}</Heading>
         </HStack>
