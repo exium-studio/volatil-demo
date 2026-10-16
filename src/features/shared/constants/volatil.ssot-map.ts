@@ -25,6 +25,7 @@ import {
   CheckCircleIcon,
   CircleQuestionMarkIcon,
   ClockIcon,
+  ClockPlusIcon,
   CreditCardIcon,
   FolderArchiveIcon,
   Grid2X2Icon,
@@ -425,7 +426,7 @@ export const SYSTEM_POLICY_MAP: Record<string, SystemPolicyConfig> = {
     description:
       "Jumlah maksimum pengajuan perpanjangan masa aktif pesanan yang diizinkan untuk mitra.",
     colorPalette: "cyan",
-    icon: RefreshCwIcon,
+    icon: ClockPlusIcon,
     helperText: "Masukkan 0 untuk batas perpanjangan tak terbatas.",
   },
   order_extension_window_days: {

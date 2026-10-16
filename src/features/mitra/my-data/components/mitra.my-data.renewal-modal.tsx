@@ -202,7 +202,7 @@ export const MitraWorkspaceRenewalModalContent = (
             });
           } else {
             void navigate({
-              to: "/mitra/transaction-history",
+              to: "/mitra/my-data",
             });
           }
         },
