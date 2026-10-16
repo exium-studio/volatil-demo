@@ -394,16 +394,15 @@ export const MitraMyDataWorkspacesDataView = (_props: MitraMyDataViewProps) => {
               page: 1,
             }));
             // Clear URL param once user actively changes filter
-            if (searchRouteParams.activeStatus) {
-              void navigate({
-                to: "/mitra/my-data",
-                search: (prevSearch: Record<string, unknown>) => {
-                  const updated = { ...prevSearch };
-                  delete updated.activeStatus;
-                  return updated;
-                },
-              });
-            }
+            void navigate({
+              to: "/mitra/my-data",
+              replace: true,
+              search: (prevSearch: Record<string, unknown>) => {
+                const updated = { ...prevSearch };
+                delete updated.activeStatus;
+                return updated;
+              },
+            });
           }}
           w={"150px"}
         />

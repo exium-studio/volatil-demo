@@ -539,16 +539,15 @@ export const InternalDataManagementDataView = () => {
             startTransition(() => {
               setParams((prev) => ({ ...prev, igtBasis: val, page: 1 }));
             });
-            if (searchParams.basisIgt) {
-              void navigate({
-                to: "/internal/data-management",
-                search: (prev: Record<string, unknown>) => {
-                  const next = { ...prev };
-                  delete next.basisIgt;
-                  return next;
-                },
-              });
-            }
+            void navigate({
+              to: "/internal/data-management",
+              replace: true,
+              search: (prev: Record<string, unknown>) => {
+                const next = { ...prev };
+                delete next.basisIgt;
+                return next;
+              },
+            });
           }}
           w={"150px"}
         />
@@ -566,16 +565,15 @@ export const InternalDataManagementDataView = () => {
                 page: 1,
               }));
             });
-            if (searchParams.isActive !== undefined && searchParams.isActive !== null) {
-              void navigate({
-                to: "/internal/data-management",
-                search: (prev: Record<string, unknown>) => {
-                  const next = { ...prev };
-                  delete next.isActive;
-                  return next;
-                },
-              });
-            }
+            void navigate({
+              to: "/internal/data-management",
+              replace: true,
+              search: (prev: Record<string, unknown>) => {
+                const next = { ...prev };
+                delete next.isActive;
+                return next;
+              },
+            });
           }}
           w={"150px"}
         />
