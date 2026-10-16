@@ -112,13 +112,14 @@ export const MapFeatureInfoPanel = () => {
         properties: {},
         geometry: geom,
       });
+      const rightPadding = isSmallViewport ? 300 : 380;
       map.fitBounds(
         [
           [bbox[0], bbox[1]],
           [bbox[2], bbox[3]],
         ],
         {
-          padding: 80,
+          padding: { top: 80, bottom: 80, left: 80, right: rightPadding },
           maxZoom: 18,
           duration: 1000,
         },
