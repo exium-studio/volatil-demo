@@ -121,13 +121,32 @@ export const MitraMyDataWorkspacesDataView = (_props: MitraMyDataViewProps) => {
 
     const items: FormattedListItem<MitraWorkspaceItem>[] = workspaces.map(
       (item: MitraWorkspaceItem) => {
+        const isExpired =
+          item.status === "expired" ||
+          checkOrderExtensionEligibility(item, systemPolicies).reason ===
+            "Masa aktif pesanan telah habis (expired).";
+
         return {
           id: item.id,
           data: item,
           columns: [
             {
               value: item.workspaceName,
-              td: (
+              td: isExpired ? (
+                <VStack align={"start"} w={"300px"}>
+                  <ClampedP fontFamily={"mono"} color={"fg.muted"}>
+                    {item.workspaceName}
+                  </ClampedP>
+
+                  <ClampedP
+                    fontSize={"sm"}
+                    color={"fg.subtle"}
+                    fontFamily={"mono"}
+                  >
+                    {`ID: ${item.id}`}
+                  </ClampedP>
+                </VStack>
+              ) : (
                 <NavLink
                   to={"/mitra/my-data/$workspaceId"}
                   params={{ workspaceId: item.id }}
@@ -257,6 +276,21 @@ export const MitraMyDataWorkspacesDataView = (_props: MitraMyDataViewProps) => {
             params: { workspaceId: item.id },
           });
         },
+        disabled: (item: MitraWorkspaceItem) =>
+          item.status === "expired" ||
+          checkOrderExtensionEligibility(item, systemPolicies).reason ===
+            "Masa aktif pesanan telah habis (expired).",
+        tooltip: (item: MitraWorkspaceItem) => {
+          const isExpired =
+            item.status === "expired" ||
+            checkOrderExtensionEligibility(item, systemPolicies).reason ===
+              "Masa aktif pesanan telah habis (expired).";
+          return isExpired
+            ? "Workspace sudah kedaluwarsa, tidak dapat digunakan dan akan dihapus dalam 1 hari kerja"
+            : "Buka Layer IGT";
+        },
+        disabledMessage:
+          "Workspace sudah kedaluwarsa, tidak dapat digunakan dan akan dihapus dalam 1 hari kerja",
       },
       {
         key: "copy-workspace-url",

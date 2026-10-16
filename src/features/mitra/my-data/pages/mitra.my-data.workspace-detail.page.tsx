@@ -37,6 +37,7 @@ import {
   highlightFeatureOnMap,
   removeFeatureHighlightFromMap,
 } from "@/features/mitra/data-request/utils/highlight-feature-on-map";
+import { toast } from "@/design-system/components/toast";
 import { MitraMyDataEditTrigger } from "@/features/mitra/my-data/components/mitra.my-data.edit-modal";
 import { MitraWorkspaceRenewalTrigger } from "@/features/mitra/my-data/components/mitra.my-data.renewal-modal";
 import {
@@ -207,6 +208,23 @@ export const MitraMyDataWorkspaceDetailPage = () => {
 
   // States
   const [isAoiVisible, setIsAoiVisible] = useState(false);
+
+  // Effects — Intercept expired workspace, notify user and redirect to workspaces list
+  useEffect(() => {
+    if (!workspace) return;
+
+    const isExpired =
+      workspace.status === "expired" ||
+      (Boolean(workspace.expiresAt) &&
+        new Date(workspace.expiresAt).getTime() <= Date.now());
+
+    if (isExpired) {
+      toast.error(
+        "Workspace telah kedaluwarsa. Silakan perpanjang layanan terlebih dahulu.",
+      );
+      void navigate({ to: "/mitra/my-data" });
+    }
+  }, [workspace, navigate]);
 
   // Effects — Reactive sync for permanent AOI polygon layer (survives style ready)
   useEffect(() => {
