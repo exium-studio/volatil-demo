@@ -65,10 +65,13 @@ import {
   RefreshCwIcon,
   Trash2Icon,
 } from "lucide-react";
-import { useSearch } from "@tanstack/react-router";
+import { useNavigate, useSearch } from "@tanstack/react-router";
 import { useCallback, useMemo, useState, useTransition } from "react";
 
 export const InternalDataManagementDataView = () => {
+  // Navigation
+  const navigate = useNavigate();
+
   // Route Search Params
   const searchParams = useSearch({
     from: "/_private/internal/data-management",
@@ -532,11 +535,21 @@ export const InternalDataManagementDataView = () => {
         <IgtBasisFilterSelect
           modalKey={"data-management-igt-basis-filter"}
           value={params.igtBasis}
-          onValueChange={(val) =>
+          onValueChange={(val) => {
             startTransition(() => {
               setParams((prev) => ({ ...prev, igtBasis: val, page: 1 }));
-            })
-          }
+            });
+            if (searchParams.basisIgt) {
+              void navigate({
+                to: "/internal/data-management",
+                search: (prev: Record<string, unknown>) => {
+                  const next = { ...prev };
+                  delete next.basisIgt;
+                  return next;
+                },
+              });
+            }
+          }}
           w={"150px"}
         />
 
@@ -545,15 +558,25 @@ export const InternalDataManagementDataView = () => {
           options={PUBLISH_STATUS_OPTIONS}
           placeholder={"Semua Status"}
           value={params.publishStatus}
-          onValueChange={(val) =>
+          onValueChange={(val) => {
             startTransition(() => {
               setParams((prev) => ({
                 ...prev,
                 publishStatus: val,
                 page: 1,
               }));
-            })
-          }
+            });
+            if (searchParams.isActive !== undefined && searchParams.isActive !== null) {
+              void navigate({
+                to: "/internal/data-management",
+                search: (prev: Record<string, unknown>) => {
+                  const next = { ...prev };
+                  delete next.isActive;
+                  return next;
+                },
+              });
+            }
+          }}
           w={"150px"}
         />
       </ActionHeaderScrollContainer>

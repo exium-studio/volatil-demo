@@ -20,6 +20,7 @@ import { useInternalSystemPoliciesQuery } from "@/features/internal/system-polic
 import type { SystemPolicyItem } from "@/features/mitra/data-request/types/mitra.data-request.pricing-policy.type";
 import { getSystemPolicyConfig } from "@/features/shared/constants/volatil.ssot-map";
 import { PencilIcon } from "lucide-react";
+import { useMemo } from "react";
 
 export const InternalHomePolicies = (props: InternalHomePoliciesProps) => {
   return (
@@ -34,7 +35,69 @@ const InternalHomePoliciesContent = () => {
   const { isSmContainer } = useContainerContext();
 
   // Queries
-  const { items: policies, isLoading } = useInternalSystemPoliciesQuery();
+  const { items: rawPolicies, isLoading } = useInternalSystemPoliciesQuery();
+
+  // Derived Values
+  const policies = useMemo(() => {
+    const list = [...rawPolicies];
+    const existingKeys = new Set(list.map((it) => it.key));
+
+    const defaultPolicies: SystemPolicyItem[] = [
+      {
+        key: "payment_timeout_fallback_hours",
+        value: "24",
+        valueType: "number",
+        label: "Batas Waktu Pembayaran",
+        description:
+          "Batas toleransi waktu penyelesaian pembayaran SIMPONI sebelum pesanan otomatis kedaluwarsa.",
+        unit: "jam",
+      },
+      {
+        key: "order_access_duration_days",
+        value: "365",
+        valueType: "number",
+        label: "Durasi Akses Layanan",
+        description:
+          "Masa aktif layanan data spasial & streaming WMS setelah pesanan berstatus siap.",
+        unit: "hari",
+      },
+      {
+        key: "order_max_extension_count",
+        value: "1",
+        valueType: "number",
+        label: "Maksimal Perpanjangan",
+        description:
+          "Jumlah maksimum pengajuan perpanjangan masa aktif pesanan yang diizinkan untuk mitra.",
+        unit: "kali",
+      },
+      {
+        key: "order_extension_window_days",
+        value: "7",
+        valueType: "number",
+        label: "Jendela Pengajuan Perpanjangan",
+        description:
+          "Rentang waktu sebelum masa aktif berakhir ketika mitra dapat mengajukan perpanjangan.",
+        unit: "hari",
+      },
+      {
+        key: "mitra_sync_cycle_days",
+        value: "30",
+        valueType: "number",
+        label: "Siklus Pembaruan Data Mitra",
+        description:
+          "Interval waktu (dalam hari) untuk sinkronisasi otomatis layer spasial mitra dari master IGT ATR/BPN.",
+        unit: "hari",
+      },
+    ];
+
+    for (const def of defaultPolicies) {
+      if (!existingKeys.has(def.key)) {
+        list.push(def);
+      }
+    }
+
+    return list;
+  }, [rawPolicies]);
 
   if (isLoading) {
     return <Skeleton minH={isSmContainer ? "240px" : "180px"} w={"full"} />;
@@ -124,6 +187,12 @@ const InternalHomePoliciesContent = () => {
               </StatGrid.Header>
 
               <StatGrid.Value value={formattedValue} />
+
+              {config.helperText && (
+                <StatGrid.Description fontSize={"xs"} color={"fg.subtle"}>
+                  {config.helperText}
+                </StatGrid.Description>
+              )}
             </StatGrid.Item>
           );
         })}

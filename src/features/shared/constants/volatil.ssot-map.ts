@@ -23,6 +23,7 @@ import { IconPolygon } from "@tabler/icons-react";
 import {
   AlertCircleIcon,
   CheckCircleIcon,
+  CircleQuestionMarkIcon,
   ClockIcon,
   CreditCardIcon,
   FolderArchiveIcon,
@@ -425,6 +426,7 @@ export const SYSTEM_POLICY_MAP: Record<string, SystemPolicyConfig> = {
       "Jumlah maksimum pengajuan perpanjangan masa aktif pesanan yang diizinkan untuk mitra.",
     colorPalette: "cyan",
     icon: RefreshCwIcon,
+    helperText: "Masukkan 0 untuk batas perpanjangan tak terbatas.",
   },
   order_extension_window_days: {
     label: "Jendela Pengajuan Perpanjangan",
@@ -433,48 +435,24 @@ export const SYSTEM_POLICY_MAP: Record<string, SystemPolicyConfig> = {
     colorPalette: "red",
     icon: ShieldAlertIcon,
   },
+  mitra_sync_cycle_days: {
+    label: "Siklus Pembaruan Data Mitra",
+    description:
+      "Interval waktu (dalam hari) untuk sinkronisasi otomatis layer spasial mitra dari master IGT ATR/BPN.",
+    colorPalette: "purple",
+    icon: RefreshCwIcon,
+  },
 };
 
 export const getSystemPolicyConfig = (key: string): SystemPolicyConfig => {
   if (SYSTEM_POLICY_MAP[key]) {
     return SYSTEM_POLICY_MAP[key];
   }
-  if (key.includes("timeout")) {
-    return {
-      label: "Batas Waktu Pembayaran",
-      description: "Batas toleransi waktu pembayaran pesanan.",
-      colorPalette: "grey",
-      icon: HourglassIcon,
-    };
-  }
-  if (key.includes("duration") || key.includes("access")) {
-    return {
-      label: "Durasi Akses Layanan",
-      description: "Masa aktif layanan data spasial.",
-      colorPalette: "green",
-      icon: ClockIcon,
-    };
-  }
-  if (key.includes("extension_count") || key.includes("max_extension")) {
-    return {
-      label: "Maksimal Perpanjangan",
-      description: "Jumlah maksimum perpanjangan pesanan.",
-      colorPalette: "cyan",
-      icon: RefreshCwIcon,
-    };
-  }
-  if (key.includes("extension_window") || key.includes("window")) {
-    return {
-      label: "Jendela Pengajuan Perpanjangan",
-      description: "Rentang waktu pengajuan perpanjangan.",
-      colorPalette: "red",
-      icon: ShieldAlertIcon,
-    };
-  }
+
   return {
     label: key,
     description: "",
     colorPalette: "blue",
-    icon: ClockIcon,
+    icon: CircleQuestionMarkIcon,
   };
 };

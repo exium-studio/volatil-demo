@@ -83,4 +83,5 @@ export type SystemPolicyConfig = {
   description: string;
   colorPalette: ColorPalette;
   icon: LucideIcon;
+  helperText?: string;
 };

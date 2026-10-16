@@ -33,12 +33,7 @@ export const InternalHomeMitraLayerSyncJobsQuickView = () => {
             </HStack>
           </HStack>
 
-          <Button
-            asChild={true}
-            variant={"ghost"}
-            size={"sm"}
-            colorPalette={"gray"}
-          >
+          <Button asChild={true}>
             <NavLink to={"/internal/jobs"}>
               {"Lihat Semua Antrean"}
               <AppIcon icon={ArrowRightIcon} />

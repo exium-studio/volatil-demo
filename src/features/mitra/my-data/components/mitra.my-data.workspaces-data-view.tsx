@@ -76,15 +76,15 @@ export const MitraMyDataWorkspacesDataView = (_props: MitraMyDataViewProps) => {
   const extensionWindowDays = systemPolicies.order_extension_window_days ?? 7;
 
   // States
-  const [params, setParams] = useState<MitraWorkspaceQueryParams>({
+  const [params, setParams] = useState<MitraWorkspaceQueryParams>(() => ({
     page: 1,
     pageSize: DEFAULT_PAGE_SIZE_OPTIONS[0],
     search: "",
-  });
+    activeStatus: searchRouteParams.activeStatus ?? "all",
+  }));
 
   // Derived Values
-  const activeStatus: WorkspaceActiveStatus =
-    searchRouteParams.activeStatus ?? params.activeStatus ?? "all";
+  const activeStatus = params.activeStatus ?? "all";
   const debouncedSearch = useDebouncedValue(params.search ?? "");
   const preferredTimezone = useMemo(() => getPreferredUserTimezone(), []);
 
@@ -394,13 +394,17 @@ export const MitraMyDataWorkspacesDataView = (_props: MitraMyDataViewProps) => {
               activeStatus: nextStatus,
               page: 1,
             }));
-            void navigate({
-              to: "/mitra/my-data",
-              search: (prevSearch: Record<string, unknown>) => ({
-                ...prevSearch,
-                activeStatus: nextStatus === "all" ? undefined : nextStatus,
-              }),
-            });
+            // Clear URL param once user actively changes filter
+            if (searchRouteParams.activeStatus) {
+              void navigate({
+                to: "/mitra/my-data",
+                search: (prevSearch: Record<string, unknown>) => {
+                  const updated = { ...prevSearch };
+                  delete updated.activeStatus;
+                  return updated;
+                },
+              });
+            }
           }}
           w={"150px"}
         />

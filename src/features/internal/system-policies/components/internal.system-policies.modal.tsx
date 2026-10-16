@@ -104,6 +104,7 @@ const InternalSystemPolicyModalContent = (
               label={`Nilai Parameter (${policy.unit ?? "Satuan"})`}
               w={"full"}
               errorText={errors.value?.message}
+              helperText={config.helperText}
             >
               <NumberInput
                 w={"full"}

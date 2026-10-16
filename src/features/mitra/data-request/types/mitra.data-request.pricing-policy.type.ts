@@ -23,6 +23,7 @@ export type SystemPolicies = {
   order_access_duration_days?: number;
   order_max_extension_count?: number;
   order_extension_window_days?: number;
+  mitra_sync_cycle_days?: number;
   [key: string]: number | string | undefined;
 };
 

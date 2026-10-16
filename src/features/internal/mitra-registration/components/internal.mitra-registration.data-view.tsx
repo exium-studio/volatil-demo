@@ -352,6 +352,16 @@ export const InternalMitraRegistrationDataView = () => {
                   page: 1,
                 }));
               });
+              if (searchParams.status) {
+                void navigate({
+                  to: "/internal/mitra-registration",
+                  search: (prev: Record<string, unknown>) => {
+                    const next = { ...prev };
+                    delete next.status;
+                    return next;
+                  },
+                });
+              }
             }}
             placeholder={"Semua Status"}
             modalKey={"mitra-reg-status-filter"}

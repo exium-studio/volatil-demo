@@ -21,6 +21,15 @@ export function checkOrderExtensionEligibility(
   workspace: MitraWorkspaceItem,
   systemPolicies?: SystemPolicies,
 ): ExtensionEligibility {
+  // Orders with 'expired' status cannot be renewed
+  if (workspace.status === "expired") {
+    return {
+      canExtend: false,
+      daysRemaining: 0,
+      reason: "Pesanan dengan status kedaluwarsa (expired) tidak dapat diperpanjang.",
+    };
+  }
+
   // If BE directly provides renewalEligibility object, prioritize it
   if (workspace.renewalEligibility) {
     const beEligibility = workspace.renewalEligibility;
