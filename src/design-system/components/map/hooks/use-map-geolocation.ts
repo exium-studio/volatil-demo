@@ -48,7 +48,7 @@ export const useGeolocation = (
         const { longitude, latitude } = position.coords;
 
         removeMarker();
-        markerRef.current = new maplibregl.Marker({ color: "#475569" })
+        markerRef.current = new maplibregl.Marker({ color: "#94a3b8" })
           .setLngLat([longitude, latitude])
           .addTo(map);
 
