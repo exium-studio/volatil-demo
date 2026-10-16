@@ -29,6 +29,49 @@ const FEATURE_INFO_CIRCLE_STROKE_COLOR = "#ffffff";
 
 const HIGHLIGHT_FILL_LAYER_ID = "map-feature-highlight-fill";
 
+const createLoadingMarkerElement = (): HTMLElement => {
+  const container = document.createElement("div");
+  container.className = "map-feature-loading-marker";
+  container.style.cssText =
+    "display: flex; align-items: center; justify-content: center; width: 32px; height: 32px; pointer-events: none;";
+
+  const ring = document.createElement("div");
+  ring.style.cssText =
+    "width: 24px; height: 24px; border-radius: 50%; border: 3px solid rgba(249, 115, 22, 0.25); border-top-color: #f97316; animation: spin 0.75s linear infinite; box-shadow: 0 0 10px rgba(249, 115, 22, 0.5);";
+
+  const dot = document.createElement("div");
+  dot.style.cssText =
+    "position: absolute; width: 8px; height: 8px; border-radius: 50%; background-color: #f97316; box-shadow: 0 0 4px rgba(0, 0, 0, 0.3);";
+
+  // Inject keyframes for spin animation if not already injected
+  if (!document.getElementById("map-marker-spin-keyframes")) {
+    const style = document.createElement("style");
+    style.id = "map-marker-spin-keyframes";
+    style.textContent = `
+      @keyframes spin {
+        0% { transform: rotate(0deg); }
+        100% { transform: rotate(360deg); }
+      }
+    `;
+    document.head.appendChild(style);
+  }
+
+  container.appendChild(ring);
+  container.appendChild(dot);
+  return container;
+};
+
+const createStandardMarkerElement = (onToggleOff: () => void): HTMLElement => {
+  const marker = new maplibregl.Marker({ color: "#f97316" });
+  const element = marker.getElement();
+  element.style.cursor = "pointer";
+  element.onclick = (e) => {
+    e.stopPropagation();
+    onToggleOff();
+  };
+  return element;
+};
+
 /** Resolves WFS query URL from layer configuration dynamically without hardcoding */
 const resolveWfsUrl = (layer: MapLayerConfig): string => {
   if ("wfsUrl" in layer && layer.wfsUrl) return layer.wfsUrl;
@@ -79,20 +122,16 @@ export const useMapFeatureInfo = (
     if (!map) return;
 
     if (selectedFeature?.coordinate) {
-      if (!clickMarkerRef.current) {
-        clickMarkerRef.current = new maplibregl.Marker({ color: "#f97316" })
-          .setLngLat(selectedFeature.coordinate)
-          .addTo(map);
-      } else {
-        clickMarkerRef.current
-          .setLngLat(selectedFeature.coordinate)
-          .addTo(map);
-      }
+      clickMarkerRef.current?.remove();
+      const standardEl = createStandardMarkerElement(clearFeatureInfo);
+      clickMarkerRef.current = new maplibregl.Marker({ element: standardEl })
+        .setLngLat(selectedFeature.coordinate)
+        .addTo(map);
     } else {
       clickMarkerRef.current?.remove();
       clickMarkerRef.current = null;
     }
-  }, [map, selectedFeature]);
+  }, [map, selectedFeature, clearFeatureInfo]);
 
   // Clean up click marker on unmount
   useEffect(() => {
@@ -334,16 +373,12 @@ export const useMapFeatureInfo = (
       setIsLoading(true);
       setError(null);
 
-      // Immediately display orange pin indicator at clicked location
-      if (!clickMarkerRef.current) {
-        clickMarkerRef.current = new maplibregl.Marker({ color: "#f97316" })
-          .setLngLat([e.lngLat.lng, e.lngLat.lat])
-          .addTo(map);
-      } else {
-        clickMarkerRef.current
-          .setLngLat([e.lngLat.lng, e.lngLat.lat])
-          .addTo(map);
-      }
+      // Immediately display loading indicator marker at clicked location
+      clickMarkerRef.current?.remove();
+      const loadingEl = createLoadingMarkerElement();
+      clickMarkerRef.current = new maplibregl.Marker({ element: loadingEl })
+        .setLngLat([e.lngLat.lng, e.lngLat.lat])
+        .addTo(map);
 
       try {
         let foundFeature = false;
@@ -373,13 +408,21 @@ export const useMapFeatureInfo = (
             // Find feature strictly containing clicked point
             const clickPoint = turf.point([e.lngLat.lng, e.lngLat.lat]);
             const matchedPolygon = wmsResult.features.find((f) => {
-              if (f.geometry && (f.geometry.type === "Polygon" || f.geometry.type === "MultiPolygon")) {
+              if (
+                f.geometry &&
+                (f.geometry.type === "Polygon" ||
+                  f.geometry.type === "MultiPolygon")
+              ) {
                 try {
-                  const normalizedGeom = normalizeGeometryCoordinates(f.geometry);
+                  const normalizedGeom = normalizeGeometryCoordinates(
+                    f.geometry,
+                  );
                   return turf.booleanPointInPolygon(clickPoint, {
                     type: "Feature",
                     properties: f.properties ?? {},
-                    geometry: normalizedGeom as GeoJSON.Polygon | GeoJSON.MultiPolygon,
+                    geometry: normalizedGeom as
+                      | GeoJSON.Polygon
+                      | GeoJSON.MultiPolygon,
                   });
                 } catch {
                   return false;
@@ -401,7 +444,8 @@ export const useMapFeatureInfo = (
           // 2. If WMS returned a feature but without full polygon geometry, query WFS for the exact feature by ID
           if (feat && (!feat.geometry || feat.geometry.type === "Point")) {
             const props = (feat.properties as Record<string, unknown>) ?? {};
-            const rawId = props.id ?? props.gid ?? props.OBJECTID ?? props.ID ?? feat.id;
+            const rawId =
+              props.id ?? props.gid ?? props.OBJECTID ?? props.ID ?? feat.id;
             const featureIdStr = rawId != null ? String(rawId) : "";
 
             if (featureIdStr) {
@@ -418,8 +462,14 @@ export const useMapFeatureInfo = (
                 });
 
                 // Try 2: If no result and property id exists, filter by property in CQL
-                if ((!wfsByIdRes.features || wfsByIdRes.features.length === 0) && props.id != null) {
-                  const idFilter = typeof props.id === "number" ? `id = ${props.id}` : `id = '${props.id}'`;
+                if (
+                  (!wfsByIdRes.features || wfsByIdRes.features.length === 0) &&
+                  props.id != null
+                ) {
+                  const idFilter =
+                    typeof props.id === "number"
+                      ? `id = ${props.id}`
+                      : `id = '${props.id}'`;
                   wfsByIdRes = await fetchWfs({
                     typeName: wfsTypeName,
                     wfsUrl: wfsEndpoint,
@@ -431,8 +481,14 @@ export const useMapFeatureInfo = (
                 }
 
                 // Try 3: If gid exists, filter by gid
-                if ((!wfsByIdRes.features || wfsByIdRes.features.length === 0) && props.gid != null) {
-                  const gidFilter = typeof props.gid === "number" ? `gid = ${props.gid}` : `gid = '${props.gid}'`;
+                if (
+                  (!wfsByIdRes.features || wfsByIdRes.features.length === 0) &&
+                  props.gid != null
+                ) {
+                  const gidFilter =
+                    typeof props.gid === "number"
+                      ? `gid = ${props.gid}`
+                      : `gid = '${props.gid}'`;
                   wfsByIdRes = await fetchWfs({
                     typeName: wfsTypeName,
                     wfsUrl: wfsEndpoint,
@@ -446,7 +502,9 @@ export const useMapFeatureInfo = (
                 if (wfsByIdRes.features && wfsByIdRes.features[0]?.geometry) {
                   feat = {
                     ...feat,
-                    geometry: normalizeGeometryCoordinates(wfsByIdRes.features[0].geometry),
+                    geometry: normalizeGeometryCoordinates(
+                      wfsByIdRes.features[0].geometry,
+                    ),
                     properties: {
                       ...feat.properties,
                       ...wfsByIdRes.features[0].properties,
@@ -479,12 +537,18 @@ export const useMapFeatureInfo = (
               if (wfsPointRes.features && wfsPointRes.features.length > 0) {
                 const clickPoint = turf.point([e.lngLat.lng, e.lngLat.lat]);
                 const matchingFeature = wfsPointRes.features.find((f) => {
-                  if (f.geometry && (f.geometry.type === "Polygon" || f.geometry.type === "MultiPolygon")) {
+                  if (
+                    f.geometry &&
+                    (f.geometry.type === "Polygon" ||
+                      f.geometry.type === "MultiPolygon")
+                  ) {
                     try {
                       return turf.booleanPointInPolygon(clickPoint, {
                         type: "Feature",
                         properties: f.properties ?? {},
-                        geometry: f.geometry as GeoJSON.Polygon | GeoJSON.MultiPolygon,
+                        geometry: f.geometry as
+                          | GeoJSON.Polygon
+                          | GeoJSON.MultiPolygon,
                       });
                     } catch {
                       return false;
@@ -522,12 +586,18 @@ export const useMapFeatureInfo = (
                 if (wfsPointRes.features && wfsPointRes.features.length > 0) {
                   const clickPoint = turf.point([e.lngLat.lng, e.lngLat.lat]);
                   const matchingFeature = wfsPointRes.features.find((f) => {
-                    if (f.geometry && (f.geometry.type === "Polygon" || f.geometry.type === "MultiPolygon")) {
+                    if (
+                      f.geometry &&
+                      (f.geometry.type === "Polygon" ||
+                        f.geometry.type === "MultiPolygon")
+                    ) {
                       try {
                         return turf.booleanPointInPolygon(clickPoint, {
                           type: "Feature",
                           properties: f.properties ?? {},
-                          geometry: f.geometry as GeoJSON.Polygon | GeoJSON.MultiPolygon,
+                          geometry: f.geometry as
+                            | GeoJSON.Polygon
+                            | GeoJSON.MultiPolygon,
                         });
                       } catch {
                         return false;
@@ -550,8 +620,6 @@ export const useMapFeatureInfo = (
               }
             }
           }
-
-
 
           if (feat) {
             const humanTitle = layer.title ?? layer.layers ?? layer.id;
@@ -608,9 +676,13 @@ export const useMapFeatureInfo = (
         }
 
         if (!foundFeature) {
+          clickMarkerRef.current?.remove();
+          clickMarkerRef.current = null;
           clearFeatureInfo();
         }
       } catch (err) {
+        clickMarkerRef.current?.remove();
+        clickMarkerRef.current = null;
         setError(err instanceof Error ? err.message : "Gagal mengambil data");
       } finally {
         setIsLoading(false);
