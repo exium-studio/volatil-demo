@@ -383,7 +383,6 @@ export const MitraMyDataWorkspacesDataView = (_props: MitraMyDataViewProps) => {
 
         <StatusFilterSelect
           modalKey={"workspace-active-status-filter-modal"}
-          title={"Filter Status Masa Aktif"}
           placeholder={"Status Masa Aktif"}
           options={ACTIVE_STATUS_OPTIONS}
           value={activeStatus}
