@@ -5,6 +5,7 @@ import {
   deleteMasterIgtLayer,
   getGeoServerWorkspaceLayers,
   getGeoServerWorkspaces,
+  getMasterIgtLayerById,
   getMasterIgtLayers,
   updateMasterIgtLayer,
   updateMasterIgtLayerAttributes,
@@ -41,9 +42,7 @@ export const useMasterIgtLayerDetailQuery = (layerId?: string) => {
     queryKey: queryKeys.internal.dataManagement.layers({ id: layerId }),
     queryFn: async ({ signal }) => {
       if (!layerId) return null;
-      const res = await getMasterIgtLayers(undefined, signal);
-      const found = res.items.find((item) => item.id === layerId);
-      return found ?? null;
+      return getMasterIgtLayerById(layerId, signal);
     },
     enabled: Boolean(layerId),
   });

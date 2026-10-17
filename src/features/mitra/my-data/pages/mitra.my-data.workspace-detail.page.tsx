@@ -810,6 +810,8 @@ export const MitraMyDataWorkspaceDetailPage = () => {
             </HStack>
           </HeaderContainer>
 
+          <Separator borderColor={"bg.canvas"} />
+
           {/* Workspace Metadata Cards: AOI Polygon & URL Workspace */}
           <VStack gap={"sm"} p={"md"} align={"stretch"}>
             <SimpleGrid minChildWidth={"280px"} gap={"sm"} w={"full"}>

@@ -70,6 +70,39 @@ export const fetchMasterIgtLayersApi = async (
   }
 };
 
+export const fetchMasterIgtLayerByIdApi = async (
+  id: string,
+  signal?: AbortSignal,
+): Promise<MasterIgtLayerItem | null> => {
+  try {
+    const response = await apiClient.get<
+      ApiResponse<MasterIgtLayerItem> | MasterIgtLayerItem
+    >(`/api/internal/igt-layers/${id}`, { signal });
+
+    const resultData =
+      response && "data" in response && response.data
+        ? response.data
+        : (response as MasterIgtLayerItem);
+
+    if (resultData && typeof resultData === "object" && "id" in resultData) {
+      return resultData;
+    }
+
+    if (isDummyDataEnabled()) {
+      const found = DUMMY_MASTER_IGT_LAYERS.find((item) => item.id === id);
+      return found ?? null;
+    }
+
+    return null;
+  } catch (error) {
+    if (isDummyDataEnabled()) {
+      const found = DUMMY_MASTER_IGT_LAYERS.find((item) => item.id === id);
+      return found ?? null;
+    }
+    throw error;
+  }
+};
+
 export const fetchGeoServerWorkspacesApi = async (
   geoserverId: string,
   signal?: AbortSignal,

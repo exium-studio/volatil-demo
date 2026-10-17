@@ -12,6 +12,7 @@ import { Container } from "@/design-system/components/layout/ui/container";
 import { HStack, VStack } from "@/design-system/components/layout/ui/flex-box";
 import { SimpleGrid } from "@/design-system/components/layout/ui/grid";
 import { AppContentContainer } from "@/design-system/components/layout/ui/page-container";
+import { Separator } from "@/design-system/components/layout/ui/separator";
 import { useMapLayerStore } from "@/design-system/components/map/stores/map.layer.store";
 import { Tooltip } from "@/design-system/components/overlay/ui/tooltip";
 import { HeaderContainer } from "@/design-system/components/shell/ui/header-container";
@@ -229,6 +230,8 @@ export const InternalDataManagementDetailPage = () => {
               </HStack>
             </HStack>
           </HeaderContainer>
+
+          <Separator borderColor={"bg.canvas"} />
 
           <VStack gap={"sm"}>
             {/* Metadata Overview Cards */}
