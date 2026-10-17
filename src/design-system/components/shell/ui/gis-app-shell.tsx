@@ -542,10 +542,11 @@ const Content = (_props: GisContentProps) => {
     >
       <VStack
         pos={"relative"}
-        minH={isSmallViewport ? 0 : "300px"}
+        minH={"300px"}
         minW={isSmallViewport ? "full" : "480px"}
         w={"full"}
         h={"full"}
+        flexShrink={0}
         pointerEvents={"none"}
       >
         <MapShell
