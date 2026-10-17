@@ -388,9 +388,9 @@ export const MitraMyDataWorkspacesDataView = (_props: MitraMyDataViewProps) => {
             <HStack align={"center"} gap={"xs"}>
               <AppIcon icon={KeyRoundIcon} />
 
-              <P color={"fg.muted"} fontFamily={"mono"}>
+              <ClampedP color={"fg.muted"} fontFamily={"mono"}>
                 {"API Key:"}
-              </P>
+              </ClampedP>
             </HStack>
 
             <MaskedText

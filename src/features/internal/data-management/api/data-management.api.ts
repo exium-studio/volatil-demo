@@ -7,6 +7,7 @@ import type {
   GeoServerWorkspacesResponse,
   MasterIgtLayersQueryParams,
   MasterIgtLayersResponse,
+  UpdateMasterIgtLayerAttributesPayload,
   UpdateMasterIgtLayerPayload,
 } from "@/features/internal/data-management/types/data-management.type";
 import {
@@ -173,6 +174,31 @@ export const updateMasterIgtLayerApi = async (
     payload,
     { signal },
   );
+};
+
+export const updateMasterIgtLayerAttributesApi = async (
+  payload: UpdateMasterIgtLayerAttributesPayload,
+  signal?: AbortSignal,
+): Promise<ApiResponse<void>> => {
+  try {
+    return await apiClient.put<ApiResponse<void>>(
+      `/api/internal/igt-layers/${payload.id}/attributes`,
+      { attributes: payload.attributes },
+      { signal },
+    );
+  } catch (error) {
+    if (isDummyDataEnabled()) {
+      const found = DUMMY_MASTER_IGT_LAYERS.find((l) => l.id === payload.id);
+      if (found) {
+        found.attributes = payload.attributes;
+      }
+      return {
+        success: true,
+        message: "Whitelist atribut layer berhasil diperbarui (mode demo/dummy)",
+      };
+    }
+    throw error;
+  }
 };
 
 export const createMasterIgtLayerApi = async (

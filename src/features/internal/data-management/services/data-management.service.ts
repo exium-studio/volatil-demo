@@ -7,6 +7,7 @@ import {
   fetchGeoServerWorkspacesApi,
   fetchMasterIgtLayersApi,
   updateMasterIgtLayerApi,
+  updateMasterIgtLayerAttributesApi,
 } from "@/features/internal/data-management/api/data-management.api";
 import type {
   CreateMasterIgtLayerPayload,
@@ -14,6 +15,7 @@ import type {
   GeoServerWorkspacesResponse,
   MasterIgtLayersQueryParams,
   MasterIgtLayersResponse,
+  UpdateMasterIgtLayerAttributesPayload,
   UpdateMasterIgtLayerPayload,
 } from "@/features/internal/data-management/types/data-management.type";
 
@@ -53,6 +55,13 @@ export const updateMasterIgtLayer = async (
   signal?: AbortSignal,
 ): Promise<void> => {
   await updateMasterIgtLayerApi(payload, signal);
+};
+
+export const updateMasterIgtLayerAttributes = async (
+  payload: UpdateMasterIgtLayerAttributesPayload,
+  signal?: AbortSignal,
+): Promise<void> => {
+  await updateMasterIgtLayerAttributesApi(payload, signal);
 };
 
 export const deleteMasterIgtLayer = async (

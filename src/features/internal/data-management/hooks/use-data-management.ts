@@ -7,10 +7,12 @@ import {
   getGeoServerWorkspaces,
   getMasterIgtLayers,
   updateMasterIgtLayer,
+  updateMasterIgtLayerAttributes,
 } from "@/features/internal/data-management/services/data-management.service";
 import type {
   CreateMasterIgtLayerPayload,
   MasterIgtLayersQueryParams,
+  UpdateMasterIgtLayerAttributesPayload,
   UpdateMasterIgtLayerPayload,
 } from "@/features/internal/data-management/types/data-management.type";
 import { queryKeys } from "@/shared/libs/tanstack-query/query.keys";
@@ -31,6 +33,24 @@ export const useMasterIgtLayersQuery = (
     ...query,
     items: query.data?.items ?? [],
     pagination: query.data?.pagination,
+  };
+};
+
+export const useMasterIgtLayerDetailQuery = (layerId?: string) => {
+  const query = useQuery({
+    queryKey: queryKeys.internal.dataManagement.layers({ id: layerId }),
+    queryFn: async ({ signal }) => {
+      if (!layerId) return null;
+      const res = await getMasterIgtLayers(undefined, signal);
+      const found = res.items.find((item) => item.id === layerId);
+      return found ?? null;
+    },
+    enabled: Boolean(layerId),
+  });
+
+  return {
+    ...query,
+    layer: query.data ?? null,
   };
 };
 
@@ -91,6 +111,38 @@ export const useUpdateMasterIgtLayer = () => {
   return useMutation({
     mutationFn: (payload: UpdateMasterIgtLayerPayload) =>
       updateMasterIgtLayer(payload),
+    onMutate: toastHandlers.onLoading,
+    onSuccess: () => {
+      toastHandlers.onSuccess();
+      void queryClient.invalidateQueries({
+        queryKey: queryKeys.internal.dataManagement.all,
+      });
+      void queryClient.invalidateQueries({
+        queryKey: queryKeys.map.all,
+      });
+    },
+    onError: toastHandlers.onError,
+  });
+};
+
+export const useUpdateMasterIgtLayerAttributes = () => {
+  const queryClient = useQueryClient();
+  const toastHandlers = mutationToastHandlers("update-master-igt-layer-attributes", {
+    group: "Manajemen Master Layer IGT",
+    loadingMessage: {
+      title: "Menyimpan whitelist atribut layer...",
+    },
+    successMessage: {
+      title: "Whitelist atribut layer berhasil diperbarui",
+    },
+    errorMessage: {
+      title: "Gagal memperbarui whitelist atribut layer",
+    },
+  });
+
+  return useMutation({
+    mutationFn: (payload: UpdateMasterIgtLayerAttributesPayload) =>
+      updateMasterIgtLayerAttributes(payload),
     onMutate: toastHandlers.onLoading,
     onSuccess: () => {
       toastHandlers.onSuccess();

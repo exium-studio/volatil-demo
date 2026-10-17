@@ -28,8 +28,8 @@ import { HeaderContainer } from "@/design-system/components/shell/ui/header-cont
 import { Badge } from "@/design-system/components/typography/ui/badge";
 import { Heading } from "@/design-system/components/typography/ui/heading";
 import { ClampedP, P } from "@/design-system/components/typography/ui/p";
+import { NavLink } from "@/design-system/components/navigation/ui/link";
 import { InternalDataManagementCreateTrigger } from "@/features/internal/data-management/components/internal.data-management.create-modal";
-import { InternalDataManagementEditTrigger } from "@/features/internal/data-management/components/internal.data-management.edit-modal";
 import {
   PUBLISH_STATUS_CONFIG_MAP,
   PUBLISH_STATUS_OPTIONS,
@@ -74,7 +74,7 @@ export const InternalDataManagementDataView = () => {
 
   // Route Search Params
   const searchParams = useSearch({
-    from: "/_private/internal/data-management",
+    from: "/_private/internal/data-management/",
   });
 
   // Transitions
@@ -246,7 +246,21 @@ export const InternalDataManagementDataView = () => {
         columns: [
           {
             value: item.title,
-            td: <ClampedP w={"200px"}>{item.title}</ClampedP>,
+            td: (
+              <NavLink
+                to={"/internal/data-management/$layerId"}
+                params={{ layerId: item.id }}
+              >
+                <ClampedP
+                  w={"200px"}
+                  fontWeight={"medium"}
+                  color={"colorPalette.fg"}
+                  _hover={{ textDecoration: "underline" }}
+                >
+                  {item.title}
+                </ClampedP>
+              </NavLink>
+            ),
             align: "start" as const,
           },
           {
@@ -419,15 +433,13 @@ export const InternalDataManagementDataView = () => {
       },
       {
         key: "edit-layer",
-        label: "Ubah Layer",
+        label: "Konfigurasi & Detail Layer",
         icon: PencilIcon,
-        modal: {
-          triggerComponent: (layer: MasterIgtLayerItem) => (
-            <InternalDataManagementEditTrigger
-              modalKey={`layer-edit-${layer.id}`}
-              item={layer}
-            />
-          ),
+        onClick: (layer: MasterIgtLayerItem) => {
+          void navigate({
+            to: "/internal/data-management/$layerId",
+            params: { layerId: layer.id },
+          });
         },
       },
       {
@@ -487,6 +499,7 @@ export const InternalDataManagementDataView = () => {
     deleteMutation,
     syncMitraMutation,
     flyTo,
+    navigate,
   ]);
 
   return (

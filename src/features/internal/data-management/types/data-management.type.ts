@@ -25,6 +25,12 @@ export type MasterIgtLayerServiceConfig = {
   baseUrl: string;
 };
 
+export type MasterIgtLayerAttributeConfig = {
+  attribute: string;
+  visible: boolean;
+  dataType?: string;
+};
+
 export type MasterIgtLayerItem = {
   id: string;
   title: string;
@@ -46,6 +52,7 @@ export type MasterIgtLayerItem = {
   typeName: string; // Not null: either "workspace:layer" or "workspace"
   wms: MasterIgtLayerServiceConfig;
   wfs: MasterIgtLayerServiceConfig;
+  attributes?: MasterIgtLayerAttributeConfig[];
   createdAt: string;
   updatedAt: string;
 };
@@ -146,5 +153,24 @@ export type InternalDataManagementEditModalContentProps = {
   modalKey: string;
   item: MasterIgtLayerItem;
   close: () => void;
+};
+
+export type MasterIgtLayerDetailSearch = {
+  tab?: "config" | "attribute";
+};
+
+export type InternalDataManagementConfigFormProps = {
+  item: MasterIgtLayerItem;
+  onSuccess?: () => void;
+};
+
+export type UpdateMasterIgtLayerAttributesPayload = {
+  id: string;
+  attributes: MasterIgtLayerAttributeConfig[];
+};
+
+export type InternalDataManagementAttributeListProps = {
+  item: MasterIgtLayerItem;
+  onSuccess?: () => void;
 };
 

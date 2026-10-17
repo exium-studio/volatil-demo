@@ -30,7 +30,7 @@ export const ClampedHeading = forwardRef<HTMLHeadingElement, HeadingProps>(
           ref={ref}
           fontSize={"lg"}
           fontWeight={"semibold"}
-          lineHeight={1}
+          lineHeight={1.2}
           lineClamp={1}
           wordBreak={"break-all"}
           {...restProps}

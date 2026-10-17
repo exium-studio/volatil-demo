@@ -39,12 +39,14 @@ import { Route as PrivateMitraHelpCenterIndexRouteImport } from './routes/_priva
 import { Route as PrivateInternalOrderReviewIndexRouteImport } from './routes/_private/internal/order-review.index'
 import { Route as PrivateInternalMitraRegistrationIndexRouteImport } from './routes/_private/internal/mitra-registration.index'
 import { Route as PrivateInternalHelpCenterIndexRouteImport } from './routes/_private/internal/help-center.index'
+import { Route as PrivateInternalDataManagementIndexRouteImport } from './routes/_private/internal/data-management.index'
 import { Route as PrivateMitraMyDataWorkspaceIdRouteImport } from './routes/_private/mitra/my-data.$workspaceId'
 import { Route as PrivateMitraHelpCenterTicketIdRouteImport } from './routes/_private/mitra/help-center.$ticketId'
 import { Route as PrivateMitraBillingBillingCodeRouteImport } from './routes/_private/mitra/billing.$billingCode'
 import { Route as PrivateInternalOrderReviewOrderIdRouteImport } from './routes/_private/internal/order-review.$orderId'
 import { Route as PrivateInternalMitraRegistrationRegistrationIdRouteImport } from './routes/_private/internal/mitra-registration.$registrationId'
 import { Route as PrivateInternalHelpCenterTicketIdRouteImport } from './routes/_private/internal/help-center.$ticketId'
+import { Route as PrivateInternalDataManagementLayerIdRouteImport } from './routes/_private/internal/data-management.$layerId'
 import { Route as PrivateInternalOrderReviewOrderIdIndexRouteImport } from './routes/_private/internal/order-review.$orderId.index'
 import { Route as PrivateInternalOrderReviewOrderIdLayerLayerIdRouteImport } from './routes/_private/internal/order-review.$orderId.layer.$layerId'
 
@@ -211,6 +213,12 @@ const PrivateInternalHelpCenterIndexRoute =
     path: '/internal/help-center/',
     getParentRoute: () => PrivateRouteRoute,
   } as any)
+const PrivateInternalDataManagementIndexRoute =
+  PrivateInternalDataManagementIndexRouteImport.update({
+    id: '/',
+    path: '/',
+    getParentRoute: () => PrivateInternalDataManagementRoute,
+  } as any)
 const PrivateMitraMyDataWorkspaceIdRoute =
   PrivateMitraMyDataWorkspaceIdRouteImport.update({
     id: '/$workspaceId',
@@ -247,6 +255,12 @@ const PrivateInternalHelpCenterTicketIdRoute =
     path: '/internal/help-center/$ticketId',
     getParentRoute: () => PrivateRouteRoute,
   } as any)
+const PrivateInternalDataManagementLayerIdRoute =
+  PrivateInternalDataManagementLayerIdRouteImport.update({
+    id: '/$layerId',
+    path: '/$layerId',
+    getParentRoute: () => PrivateInternalDataManagementRoute,
+  } as any)
 const PrivateInternalOrderReviewOrderIdIndexRoute =
   PrivateInternalOrderReviewOrderIdIndexRouteImport.update({
     id: '/',
@@ -267,7 +281,7 @@ export interface FileRoutesByFullPath {
   '/register': typeof PublicRegisterRoute
   '/registration-status': typeof PublicRegistrationStatusRoute
   '/design-system/ui': typeof DesignSystemUiRoute
-  '/internal/data-management': typeof PrivateInternalDataManagementRoute
+  '/internal/data-management': typeof PrivateInternalDataManagementRouteWithChildren
   '/internal/home': typeof PrivateInternalHomeRoute
   '/internal/jobs': typeof PrivateInternalJobsRoute
   '/internal/master-geoserver': typeof PrivateInternalMasterGeoserverRoute
@@ -285,12 +299,14 @@ export interface FileRoutesByFullPath {
   '/mitra/transaction-history': typeof PrivateMitraTransactionHistoryRoute
   '/mitra/welcome': typeof PrivateMitraWelcomeRoute
   '/auth/callback/keycloak': typeof AuthCallbackKeycloakRoute
+  '/internal/data-management/$layerId': typeof PrivateInternalDataManagementLayerIdRoute
   '/internal/help-center/$ticketId': typeof PrivateInternalHelpCenterTicketIdRoute
   '/internal/mitra-registration/$registrationId': typeof PrivateInternalMitraRegistrationRegistrationIdRoute
   '/internal/order-review/$orderId': typeof PrivateInternalOrderReviewOrderIdRouteWithChildren
   '/mitra/billing/$billingCode': typeof PrivateMitraBillingBillingCodeRoute
   '/mitra/help-center/$ticketId': typeof PrivateMitraHelpCenterTicketIdRoute
   '/mitra/my-data/$workspaceId': typeof PrivateMitraMyDataWorkspaceIdRoute
+  '/internal/data-management/': typeof PrivateInternalDataManagementIndexRoute
   '/internal/help-center/': typeof PrivateInternalHelpCenterIndexRoute
   '/internal/mitra-registration/': typeof PrivateInternalMitraRegistrationIndexRoute
   '/internal/order-review/': typeof PrivateInternalOrderReviewIndexRoute
@@ -306,7 +322,6 @@ export interface FileRoutesByTo {
   '/register': typeof PublicRegisterRoute
   '/registration-status': typeof PublicRegistrationStatusRoute
   '/design-system/ui': typeof DesignSystemUiRoute
-  '/internal/data-management': typeof PrivateInternalDataManagementRoute
   '/internal/home': typeof PrivateInternalHomeRoute
   '/internal/jobs': typeof PrivateInternalJobsRoute
   '/internal/master-geoserver': typeof PrivateInternalMasterGeoserverRoute
@@ -321,11 +336,13 @@ export interface FileRoutesByTo {
   '/mitra/transaction-history': typeof PrivateMitraTransactionHistoryRoute
   '/mitra/welcome': typeof PrivateMitraWelcomeRoute
   '/auth/callback/keycloak': typeof AuthCallbackKeycloakRoute
+  '/internal/data-management/$layerId': typeof PrivateInternalDataManagementLayerIdRoute
   '/internal/help-center/$ticketId': typeof PrivateInternalHelpCenterTicketIdRoute
   '/internal/mitra-registration/$registrationId': typeof PrivateInternalMitraRegistrationRegistrationIdRoute
   '/mitra/billing/$billingCode': typeof PrivateMitraBillingBillingCodeRoute
   '/mitra/help-center/$ticketId': typeof PrivateMitraHelpCenterTicketIdRoute
   '/mitra/my-data/$workspaceId': typeof PrivateMitraMyDataWorkspaceIdRoute
+  '/internal/data-management': typeof PrivateInternalDataManagementIndexRoute
   '/internal/help-center': typeof PrivateInternalHelpCenterIndexRoute
   '/internal/mitra-registration': typeof PrivateInternalMitraRegistrationIndexRoute
   '/internal/order-review': typeof PrivateInternalOrderReviewIndexRoute
@@ -343,7 +360,7 @@ export interface FileRoutesById {
   '/_public/register': typeof PublicRegisterRoute
   '/_public/registration-status': typeof PublicRegistrationStatusRoute
   '/design-system/ui': typeof DesignSystemUiRoute
-  '/_private/internal/data-management': typeof PrivateInternalDataManagementRoute
+  '/_private/internal/data-management': typeof PrivateInternalDataManagementRouteWithChildren
   '/_private/internal/home': typeof PrivateInternalHomeRoute
   '/_private/internal/jobs': typeof PrivateInternalJobsRoute
   '/_private/internal/master-geoserver': typeof PrivateInternalMasterGeoserverRoute
@@ -361,12 +378,14 @@ export interface FileRoutesById {
   '/_private/mitra/transaction-history': typeof PrivateMitraTransactionHistoryRoute
   '/_private/mitra/welcome': typeof PrivateMitraWelcomeRoute
   '/auth/callback/keycloak': typeof AuthCallbackKeycloakRoute
+  '/_private/internal/data-management/$layerId': typeof PrivateInternalDataManagementLayerIdRoute
   '/_private/internal/help-center/$ticketId': typeof PrivateInternalHelpCenterTicketIdRoute
   '/_private/internal/mitra-registration/$registrationId': typeof PrivateInternalMitraRegistrationRegistrationIdRoute
   '/_private/internal/order-review/$orderId': typeof PrivateInternalOrderReviewOrderIdRouteWithChildren
   '/_private/mitra/billing/$billingCode': typeof PrivateMitraBillingBillingCodeRoute
   '/_private/mitra/help-center/$ticketId': typeof PrivateMitraHelpCenterTicketIdRoute
   '/_private/mitra/my-data/$workspaceId': typeof PrivateMitraMyDataWorkspaceIdRoute
+  '/_private/internal/data-management/': typeof PrivateInternalDataManagementIndexRoute
   '/_private/internal/help-center/': typeof PrivateInternalHelpCenterIndexRoute
   '/_private/internal/mitra-registration/': typeof PrivateInternalMitraRegistrationIndexRoute
   '/_private/internal/order-review/': typeof PrivateInternalOrderReviewIndexRoute
@@ -402,12 +421,14 @@ export interface FileRouteTypes {
     | '/mitra/transaction-history'
     | '/mitra/welcome'
     | '/auth/callback/keycloak'
+    | '/internal/data-management/$layerId'
     | '/internal/help-center/$ticketId'
     | '/internal/mitra-registration/$registrationId'
     | '/internal/order-review/$orderId'
     | '/mitra/billing/$billingCode'
     | '/mitra/help-center/$ticketId'
     | '/mitra/my-data/$workspaceId'
+    | '/internal/data-management/'
     | '/internal/help-center/'
     | '/internal/mitra-registration/'
     | '/internal/order-review/'
@@ -423,7 +444,6 @@ export interface FileRouteTypes {
     | '/register'
     | '/registration-status'
     | '/design-system/ui'
-    | '/internal/data-management'
     | '/internal/home'
     | '/internal/jobs'
     | '/internal/master-geoserver'
@@ -438,11 +458,13 @@ export interface FileRouteTypes {
     | '/mitra/transaction-history'
     | '/mitra/welcome'
     | '/auth/callback/keycloak'
+    | '/internal/data-management/$layerId'
     | '/internal/help-center/$ticketId'
     | '/internal/mitra-registration/$registrationId'
     | '/mitra/billing/$billingCode'
     | '/mitra/help-center/$ticketId'
     | '/mitra/my-data/$workspaceId'
+    | '/internal/data-management'
     | '/internal/help-center'
     | '/internal/mitra-registration'
     | '/internal/order-review'
@@ -477,12 +499,14 @@ export interface FileRouteTypes {
     | '/_private/mitra/transaction-history'
     | '/_private/mitra/welcome'
     | '/auth/callback/keycloak'
+    | '/_private/internal/data-management/$layerId'
     | '/_private/internal/help-center/$ticketId'
     | '/_private/internal/mitra-registration/$registrationId'
     | '/_private/internal/order-review/$orderId'
     | '/_private/mitra/billing/$billingCode'
     | '/_private/mitra/help-center/$ticketId'
     | '/_private/mitra/my-data/$workspaceId'
+    | '/_private/internal/data-management/'
     | '/_private/internal/help-center/'
     | '/_private/internal/mitra-registration/'
     | '/_private/internal/order-review/'
@@ -715,6 +739,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof PrivateInternalHelpCenterIndexRouteImport
       parentRoute: typeof PrivateRouteRoute
     }
+    '/_private/internal/data-management/': {
+      id: '/_private/internal/data-management/'
+      path: '/'
+      fullPath: '/internal/data-management/'
+      preLoaderRoute: typeof PrivateInternalDataManagementIndexRouteImport
+      parentRoute: typeof PrivateInternalDataManagementRoute
+    }
     '/_private/mitra/my-data/$workspaceId': {
       id: '/_private/mitra/my-data/$workspaceId'
       path: '/$workspaceId'
@@ -757,6 +788,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof PrivateInternalHelpCenterTicketIdRouteImport
       parentRoute: typeof PrivateRouteRoute
     }
+    '/_private/internal/data-management/$layerId': {
+      id: '/_private/internal/data-management/$layerId'
+      path: '/$layerId'
+      fullPath: '/internal/data-management/$layerId'
+      preLoaderRoute: typeof PrivateInternalDataManagementLayerIdRouteImport
+      parentRoute: typeof PrivateInternalDataManagementRoute
+    }
     '/_private/internal/order-review/$orderId/': {
       id: '/_private/internal/order-review/$orderId/'
       path: '/'
@@ -773,6 +811,24 @@ declare module '@tanstack/react-router' {
     }
   }
 }
+
+interface PrivateInternalDataManagementRouteChildren {
+  PrivateInternalDataManagementLayerIdRoute: typeof PrivateInternalDataManagementLayerIdRoute
+  PrivateInternalDataManagementIndexRoute: typeof PrivateInternalDataManagementIndexRoute
+}
+
+const PrivateInternalDataManagementRouteChildren: PrivateInternalDataManagementRouteChildren =
+  {
+    PrivateInternalDataManagementLayerIdRoute:
+      PrivateInternalDataManagementLayerIdRoute,
+    PrivateInternalDataManagementIndexRoute:
+      PrivateInternalDataManagementIndexRoute,
+  }
+
+const PrivateInternalDataManagementRouteWithChildren =
+  PrivateInternalDataManagementRoute._addFileChildren(
+    PrivateInternalDataManagementRouteChildren,
+  )
 
 interface PrivateInternalMitraRegistrationRouteChildren {
   PrivateInternalMitraRegistrationRegistrationIdRoute: typeof PrivateInternalMitraRegistrationRegistrationIdRoute
@@ -841,7 +897,7 @@ const PrivateMitraMyDataRouteWithChildren =
   PrivateMitraMyDataRoute._addFileChildren(PrivateMitraMyDataRouteChildren)
 
 interface PrivateRouteRouteChildren {
-  PrivateInternalDataManagementRoute: typeof PrivateInternalDataManagementRoute
+  PrivateInternalDataManagementRoute: typeof PrivateInternalDataManagementRouteWithChildren
   PrivateInternalHomeRoute: typeof PrivateInternalHomeRoute
   PrivateInternalJobsRoute: typeof PrivateInternalJobsRoute
   PrivateInternalMasterGeoserverRoute: typeof PrivateInternalMasterGeoserverRoute
@@ -866,7 +922,8 @@ interface PrivateRouteRouteChildren {
 }
 
 const PrivateRouteRouteChildren: PrivateRouteRouteChildren = {
-  PrivateInternalDataManagementRoute: PrivateInternalDataManagementRoute,
+  PrivateInternalDataManagementRoute:
+    PrivateInternalDataManagementRouteWithChildren,
   PrivateInternalHomeRoute: PrivateInternalHomeRoute,
   PrivateInternalJobsRoute: PrivateInternalJobsRoute,
   PrivateInternalMasterGeoserverRoute: PrivateInternalMasterGeoserverRoute,
