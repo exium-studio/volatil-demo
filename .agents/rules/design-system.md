@@ -184,7 +184,7 @@ const dataList = useMemo(
       { th: "ID Bidang", sortable: true },
       { th: "Tema IGT-PR" },
       { th: "Basis IGT-PR", sortable: true },
-      { th: "Deskripsi", headerCellProps: { minW: "200px" } },
+      { th: "Deskripsi", cellProps: { minW: "200px" } },
     ],
 
     items: itemsData.map((item) => ({

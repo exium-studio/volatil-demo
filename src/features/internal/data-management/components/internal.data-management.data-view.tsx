@@ -252,16 +252,18 @@ export const InternalDataManagementDataView = () => {
                 params={{ layerId: item.id }}
               >
                 <ClampedP
-                  w={"200px"}
                   fontWeight={"medium"}
                   color={"colorPalette.fg"}
-                  _hover={{ textDecoration: "underline" }}
+                  _hover={{ color: "blue.fg" }}
                 >
                   {item.title}
                 </ClampedP>
               </NavLink>
             ),
             align: "start" as const,
+            cellProps: {
+              w: "200px",
+            },
           },
           {
             value: item.isActive ? "Publik" : "Draft",

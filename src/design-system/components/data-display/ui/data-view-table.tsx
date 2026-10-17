@@ -384,7 +384,7 @@ const DataListTableHeader = (props: DataViewTableHeaderProps) => {
           justify={header.align}
           cursor={header.sortable ? "pointer" : "auto"}
           onClick={header.sortable ? () => toggleSort(index) : undefined}
-          {...header?.headerCellProps}
+          {...header?.cellProps}
         >
           <P fontSize={"sm"} fontWeight={"medium"} color={"fg.subtle"}>
             {header.th}
@@ -528,7 +528,7 @@ const DataListTableRow = memo(
             opacity={item.dim || col.dim ? 0.5 : 1}
             whiteSpace={"nowrap"}
             bg={cellBg}
-            {...col?.bodyCellProps}
+            {...col?.cellProps}
           >
             {renderTdCell
               ? renderTdCell(col, item, colIndex)
