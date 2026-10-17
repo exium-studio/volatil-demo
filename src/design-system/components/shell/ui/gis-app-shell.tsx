@@ -504,7 +504,7 @@ const Content = (_props: GisContentProps) => {
       id={"content"}
       domId={"gis-content-panel-a"}
       panelRole={"a"}
-      minSize={isSmallViewport ? 100 : 50}
+      minSize={isSmallViewport ? 80 : 50}
       elementRef={contentPanelRef}
       defaultSize={isSmallViewport ? splitterSize[1] : splitterSize[0]}
       alignItems={"end"}
