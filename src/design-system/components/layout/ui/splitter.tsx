@@ -13,7 +13,6 @@ import type {
 } from "@/design-system/components/layout/types/splitter.type";
 import { Tooltip } from "@/design-system/components/overlay/ui/tooltip";
 import { t } from "@/shared/libs/i18n";
-import { mergeRefs } from "@/shared/utils/react/merge-refs";
 import { Box, chakra } from "@chakra-ui/react";
 import { GripHorizontal, GripVertical } from "lucide-react";
 import {
@@ -48,7 +47,6 @@ const SplitterContext = createContext<SplitterContextValue>({
   snapToStep: () => {},
   activeSnapIndex: 1,
   registerPanelMinSize: () => {},
-  registerContentScrollRef: () => {},
   handleTriggerPointerDown: () => {},
   handleTriggerPointerMove: () => {},
   handleTriggerPointerUp: () => {},
@@ -113,7 +111,6 @@ const SplitterRoot = forwardRef<SplitterGroupHandle, SplitterRootProps>(
     // Refs
     const internalGroupRef = useRef<GroupImperativeHandle | null>(null);
     const containerRef = useRef<HTMLDivElement | null>(null);
-    const panelAContentRef = useRef<HTMLElement | null>(null);
     const animationFrameRef = useRef<number | null>(null);
     const snapIndexRef = useRef<0 | 1 | 2>(1);
     const panelMinSizesRef = useRef<Map<string, number | string>>(new Map());
@@ -393,7 +390,17 @@ const SplitterRoot = forwardRef<SplitterGroupHandle, SplitterRootProps>(
           return;
         }
 
-        // 2. Otherwise snap to nearest snap point (Google Maps drawer behavior)
+        // 2. If short tap/click on trigger without substantial drag (< 10px), cycle snap step:
+        // S1 (50%) -> S2 (full) -> S0 (min) -> S1 (50%)
+        if (absDelta < 10) {
+          const currentSnap = snapIndexRef.current;
+          const nextStep: 0 | 1 | 2 =
+            currentSnap === 1 ? 2 : currentSnap === 2 ? 0 : 1;
+          snapToStep(nextStep);
+          return;
+        }
+
+        // 3. Otherwise snap to nearest snap point based on current dragged position
         const group = internalGroupRef.current;
         const currentLayout = group?.getLayout() ?? {};
         const panelIds = Object.keys(currentLayout);
@@ -445,114 +452,6 @@ const SplitterRoot = forwardRef<SplitterGroupHandle, SplitterRootProps>(
       },
       [mode, snapToStep],
     );
-
-    // Panel content gesture handling (touch swipe up / down on content)
-    const registerContentScrollRef = useCallback(
-      (el: HTMLElement | null, enabled = true) => {
-        panelAContentRef.current = enabled ? el : null;
-      },
-      [],
-    );
-
-    useEffect(() => {
-      if (mode !== "snappy") return;
-      const el = panelAContentRef.current;
-      if (!el) return;
-
-      let touchStartY = 0;
-      let touchStartX = 0;
-      let touchStartTime = 0;
-      let isTrackingTouch = false;
-
-      const hasScrolledAncestor = (target: EventTarget | null): boolean => {
-        let node = target as HTMLElement | null;
-        while (node && node !== el.parentElement && node !== document.body) {
-          if (node.scrollTop > 1) {
-            return true;
-          }
-          node = node.parentElement;
-        }
-        return false;
-      };
-
-      const onTouchStart = (e: TouchEvent) => {
-        const touch = e.touches[0];
-        if (!touch) return;
-        touchStartY = touch.clientY;
-        touchStartX = touch.clientX;
-        touchStartTime = performance.now();
-        isTrackingTouch = true;
-      };
-
-      const onTouchEnd = (e: TouchEvent) => {
-        if (!isTrackingTouch) return;
-        isTrackingTouch = false;
-        const touch = e.changedTouches[0];
-        if (!touch) return;
-
-        const deltaY = touch.clientY - touchStartY;
-        const deltaX = touch.clientX - touchStartX;
-        const deltaTime = performance.now() - touchStartTime;
-
-        const delta = isVertical ? deltaY : deltaX;
-        const absDelta = Math.abs(delta);
-        const velocity = absDelta / Math.max(1, deltaTime);
-
-        if (absDelta < 25 && velocity < 0.25) return;
-
-        const currentSnap = snapIndexRef.current;
-        const targetElement =
-          document.elementFromPoint(touch.clientX, touch.clientY) ??
-          touch.target;
-
-        if (isVertical) {
-          if (deltaY > 0) {
-            // Swiping DOWN
-            // Only snap down if NO scrollable ancestor along the touched hierarchy has scrollTop > 1
-            if (!hasScrolledAncestor(targetElement)) {
-              snapPrev();
-            }
-          } else {
-            // Swiping UP
-            // If A is not at S2 and user swipes up: step up
-            // After A reaches S2, allow normal content scroll
-            if (currentSnap < 2) {
-              snapNext();
-            }
-          }
-        } else {
-          // Horizontal equivalent
-          if (deltaX < 0) {
-            let hasHorizontalScroll = false;
-            let node = targetElement as HTMLElement | null;
-            while (
-              node &&
-              node !== el.parentElement &&
-              node !== document.body
-            ) {
-              if (node.scrollLeft > 1) {
-                hasHorizontalScroll = true;
-                break;
-              }
-              node = node.parentElement;
-            }
-            if (!hasHorizontalScroll) {
-              snapPrev();
-            }
-          } else if (currentSnap < 2) {
-            snapNext();
-          }
-        }
-      };
-
-      el.addEventListener("touchstart", onTouchStart, { passive: true });
-      el.addEventListener("touchend", onTouchEnd, { passive: true });
-
-      return () => {
-        el.removeEventListener("touchstart", onTouchStart);
-        el.removeEventListener("touchend", onTouchEnd);
-      };
-    }, [isVertical, mode, snapNext, snapPrev]);
 
     // Handle Window Resize: recalculate snap points and maintain current snap step
     useEffect(() => {
@@ -649,7 +548,6 @@ const SplitterRoot = forwardRef<SplitterGroupHandle, SplitterRootProps>(
         snapToStep,
         activeSnapIndex,
         registerPanelMinSize,
-        registerContentScrollRef,
         handleTriggerPointerDown,
         handleTriggerPointerMove,
         handleTriggerPointerUp,
@@ -666,7 +564,6 @@ const SplitterRoot = forwardRef<SplitterGroupHandle, SplitterRootProps>(
         snapToStep,
         activeSnapIndex,
         registerPanelMinSize,
-        registerContentScrollRef,
         handleTriggerPointerDown,
         handleTriggerPointerMove,
         handleTriggerPointerUp,
@@ -699,8 +596,7 @@ const SplitterRoot = forwardRef<SplitterGroupHandle, SplitterRootProps>(
 const SplitterPanel = forwardRef<SplitterPanelHandle, SplitterPanelProps>(
   (props, ref) => {
     // Context
-    const { registerContentScrollRef, registerPanelMinSize } =
-      useContext(SplitterContext);
+    const { registerPanelMinSize } = useContext(SplitterContext);
 
     // Props
     const {
@@ -709,7 +605,7 @@ const SplitterPanel = forwardRef<SplitterPanelHandle, SplitterPanelProps>(
       elementRef,
       panelRole,
       domId,
-      snapOnContentScroll,
+      snapOnContentScroll: _snapOnContentScroll,
       minSize: propMinSize,
       children,
       ...restProps
@@ -728,22 +624,11 @@ const SplitterPanel = forwardRef<SplitterPanelHandle, SplitterPanelProps>(
       };
     }, [id, domId, panelRole, propMinSize, registerPanelMinSize]);
 
-    const isSnapScrollEnabled = snapOnContentScroll ?? panelRole === "a";
-
-    const handleInternalElementRef = useMemo(() => {
-      const internalCallback = (el: HTMLElement | null) => {
-        if (isSnapScrollEnabled) {
-          registerContentScrollRef(el, true);
-        }
-      };
-      return mergeRefs<HTMLElement | null>(internalCallback, elementRef);
-    }, [elementRef, isSnapScrollEnabled, registerContentScrollRef]);
-
     return (
       <ChakraPanel
         id={domId}
         panelRef={ref ?? panelRef}
-        elementRef={handleInternalElementRef}
+        elementRef={elementRef}
         minSize={propMinSize}
         display={"flex"}
         flexDir={"column"}

@@ -75,7 +75,6 @@ export type SplitterContextValue = {
   snapToStep: (step: 0 | 1 | 2) => void;
   activeSnapIndex: 0 | 1 | 2;
   registerPanelMinSize: (panelId: string, minSize: number | string | undefined) => void;
-  registerContentScrollRef: (el: HTMLElement | null, enabled?: boolean) => void;
   handleTriggerPointerDown: (e: React.PointerEvent<HTMLDivElement>) => void;
   handleTriggerPointerMove: (e: React.PointerEvent<HTMLDivElement>) => void;
   handleTriggerPointerUp: (e: React.PointerEvent<HTMLDivElement>) => void;
