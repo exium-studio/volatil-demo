@@ -223,7 +223,7 @@ export const ToastItem = memo(function ToastItem(
                 whiteSpace={"nowrap"}
                 ml={"auto"}
                 mr={1}
-                alignSelf={"center"}
+                mt={"2px"}
               >
                 {formatRelativeTime(toastData.createdAt, locale)}
               </P>
