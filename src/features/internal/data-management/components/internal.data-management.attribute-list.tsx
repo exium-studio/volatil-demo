@@ -28,7 +28,7 @@ import type {
 import { fetchWfs } from "@/design-system/components/map/utils/fetch-wfs";
 import { normalizeApiUrl } from "@/shared/utils/url/url.utils";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
-import { CheckCheckIcon, XIcon } from "lucide-react";
+import { CheckCheckIcon, SaveIcon, XIcon } from "lucide-react";
 import { useCallback, useMemo, useState } from "react";
 import { Box } from "@/design-system/components/layout/ui/box";
 import { useThemeStore } from "@/design-system/stores/theme-store";
@@ -272,7 +272,6 @@ export const InternalDataManagementAttributeList = (
       { th: "Nama Atribut", sortable: true },
       { th: "Tipe Data", sortable: true },
       { th: "Status Tampilan", align: "start", sortable: true },
-      { th: "Aksi", align: "center" },
     ];
 
     const items: FormattedListItem<MasterIgtLayerAttributeConfig>[] =
@@ -300,16 +299,15 @@ export const InternalDataManagementAttributeList = (
             {
               value: attr.visible ? "Aktif" : "Nonaktif",
               td: (
-                <Badge colorPalette={attr.visible ? "green" : "gray"}>
-                  {attr.visible ? "Ditampilkan" : "Disembunyikan"}
-                </Badge>
-              ),
-              align: "start" as const,
-            },
-            {
-              value: attr.visible ? "Aktif" : "Nonaktif",
-              td: (
-                <Center>
+                <HStack align={"center"} gap={"md"}>
+                  <Badge
+                    colorPalette={attr.visible ? "green" : "gray"}
+                    w={"120px"}
+                    justifyContent={"center"}
+                  >
+                    {attr.visible ? "Ditampilkan" : "Disembunyikan"}
+                  </Badge>
+
                   <Switch
                     checked={attr.visible}
                     onCheckedChange={({ checked }) =>
@@ -322,9 +320,9 @@ export const InternalDataManagementAttributeList = (
                     }
                     size={"sm"}
                   />
-                </Center>
+                </HStack>
               ),
-              align: "center" as const,
+              align: "start" as const,
             },
           ],
         };
@@ -434,7 +432,7 @@ export const InternalDataManagementAttributeList = (
       )}
 
       {/* Bottom Save Action Bar */}
-      <HStack justify={"end"} gap={"sm"} pt={"sm"}>
+      <HStack justify={"end"} gap={"sm"} p={"md"}>
         <Button
           type={"button"}
           disabled={
@@ -454,6 +452,7 @@ export const InternalDataManagementAttributeList = (
           disabled={updateAttributesMutation.isPending}
           onClick={handleSaveAttributes}
         >
+          <AppIcon icon={SaveIcon} />
           {"Simpan Pengaturan Atribut"}
         </Button>
       </HStack>
