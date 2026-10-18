@@ -1,6 +1,9 @@
 // src/features/internal/data-management/components/internal.data-management.attribute-list.tsx
 
-import { Button } from "@/design-system/components/button/ui/button";
+import {
+  Button,
+  IconButton,
+} from "@/design-system/components/button/ui/button";
 import type {
   FormattedListItem,
   FormattedTableHeader,
@@ -28,12 +31,17 @@ import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { CheckCheckIcon, XIcon } from "lucide-react";
 import { useCallback, useMemo, useState } from "react";
 import { Box } from "@/design-system/components/layout/ui/box";
+import { useThemeStore } from "@/design-system/stores/theme-store";
+import { Tooltip } from "@/design-system/components/overlay/ui/tooltip";
 
 export const InternalDataManagementAttributeList = (
   props: InternalDataManagementAttributeListProps,
 ) => {
   // Props
   const { item, onSuccess } = props;
+
+  // Stores
+  const { theme } = useThemeStore();
 
   // States
   const [search, setSearch] = useState<string>("");
@@ -263,8 +271,8 @@ export const InternalDataManagementAttributeList = (
     const headers: FormattedTableHeader[] = [
       { th: "Nama Atribut", sortable: true },
       { th: "Tipe Data", sortable: true },
-      { th: "Status Whitelist", align: "center", sortable: true },
-      { th: "Aksi (Tampilkan via Proxy)", align: "center" },
+      { th: "Status Tampilan", align: "start", sortable: true },
+      { th: "Aksi", align: "center" },
     ];
 
     const items: FormattedListItem<MasterIgtLayerAttributeConfig>[] =
@@ -296,7 +304,7 @@ export const InternalDataManagementAttributeList = (
                   {attr.visible ? "Ditampilkan" : "Disembunyikan"}
                 </Badge>
               ),
-              align: "center" as const,
+              align: "start" as const,
             },
             {
               value: attr.visible ? "Aktif" : "Nonaktif",
@@ -309,8 +317,8 @@ export const InternalDataManagementAttributeList = (
                     }
                     tooltip={
                       attr.visible
-                        ? "Sembunyikan atribut dari respons WMS/WFS"
-                        : "Tampilkan atribut di respons WMS/WFS"
+                        ? "Sembunyikan atribut dari respons layanan"
+                        : "Tampilkan atribut pada respons layanan"
                     }
                     size={"sm"}
                   />
@@ -368,15 +376,17 @@ export const InternalDataManagementAttributeList = (
         />
 
         <HStack align={"center"} gap={"xs"} minW={"fit"}>
-          <Button onClick={() => handleSetAllVisibility(true)}>
-            <AppIcon icon={CheckCheckIcon} />
-            {"Aktifkan Semua"}
-          </Button>
+          <Tooltip content={"Nonaktifkan semua"}>
+            <IconButton onClick={() => handleSetAllVisibility(false)}>
+              <AppIcon icon={XIcon} />
+            </IconButton>
+          </Tooltip>
 
-          <Button onClick={() => handleSetAllVisibility(false)}>
-            <AppIcon icon={XIcon} />
-            {"Nonaktifkan Semua"}
-          </Button>
+          <Tooltip content={"Aktifkan semua"}>
+            <IconButton onClick={() => handleSetAllVisibility(true)}>
+              <AppIcon icon={CheckCheckIcon} />
+            </IconButton>
+          </Tooltip>
         </HStack>
       </ActionHeaderScrollContainer>
 
@@ -387,12 +397,12 @@ export const InternalDataManagementAttributeList = (
           gap={"sm"}
           p={"sm"}
           bg={"bg.subtle"}
-          rounded={"component"}
+          rounded={theme.radii.component}
           justify={"space-between"}
         >
           <P fontSize={"xs"} color={"fg.subtle"}>
             {
-              "Hanya atribut yang berstatus 'Ditampilkan' yang akan diteruskan oleh backend proxy ke respon WMS/WFS Mitra."
+              "Hanya atribut dengan status 'Ditampilkan' yang akan diteruskan ke respons layanan data spasial Mitra."
             }
           </P>
           <P fontSize={"xs"} fontWeight={"medium"}>
@@ -435,7 +445,7 @@ export const InternalDataManagementAttributeList = (
             setOverrideState({ itemId: item.id, overrides: {} });
           }}
         >
-          {"Reset Perubahan"}
+          {"Atur Ulang"}
         </Button>
 
         <Button
@@ -444,7 +454,7 @@ export const InternalDataManagementAttributeList = (
           disabled={updateAttributesMutation.isPending}
           onClick={handleSaveAttributes}
         >
-          {"Simpan Whitelist Atribut"}
+          {"Simpan Pengaturan Atribut"}
         </Button>
       </HStack>
     </VStack>
