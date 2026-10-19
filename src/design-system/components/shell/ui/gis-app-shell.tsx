@@ -155,9 +155,21 @@ const SidebarHeader = () => {
     (s) => s.expandedByKey[SIDE_BAR_KEY] ?? DEFAULT_SIDEBAR_EXPANDED,
   );
 
+  // Hooks
+  const pathname = useLocation().pathname;
+
+  // Derived Values
+  const userData = getUserSession();
+  const role = pathname.startsWith("/internal")
+    ? "internal"
+    : pathname.startsWith("/mitra")
+      ? "mitra"
+      : (userData?.role ?? "mitra");
+  const logoPath = role === "internal" ? "/admin" : "/";
+
   return (
     <Sidebar.Header>
-      <NavLink to={"/"}>
+      <NavLink to={logoPath}>
         <HStack align={"center"} gap={"sm"}>
           <IgtLogo flexShrink={0} boxSize={"24px"} ml={1} />
 
