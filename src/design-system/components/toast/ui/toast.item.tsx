@@ -184,7 +184,11 @@ export const ToastItem = memo(function ToastItem(
                 mr={toastData.description ? 0 : 1}
                 fontWeight={"medium"}
                 color={TOAST_VARIANT_MAP[toastData.variant].color}
-                lineClamp={stackExpanded ? 0 : 1}
+                lineClamp={
+                  (stackExpanded && !toastData.description) || toastItemExpanded
+                    ? 0
+                    : 1
+                }
                 w={
                   stackExpanded || toastItemExpanded || !toastData.description
                     ? "fit"
