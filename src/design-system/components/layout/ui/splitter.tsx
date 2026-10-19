@@ -732,11 +732,22 @@ const SplitterResizeTrigger = forwardRef<
           right={isVertical ? 0 : "-22px"}
           zIndex={0}
           cursor={isVertical ? "row-resize" : "col-resize"}
-          transition={"background 150ms ease"}
           style={{
             touchAction: "none",
             userSelect: "none",
           }}
+        />
+
+        {/* Hover highlight bar - 8px width/height */}
+        <Box
+          pos={"absolute"}
+          top={isVertical ? "-3.5px" : 0}
+          bottom={isVertical ? "-3.5px" : 0}
+          left={isVertical ? 0 : "-3.5px"}
+          right={isVertical ? 0 : "-3.5px"}
+          zIndex={0}
+          pointerEvents={"none"}
+          transition={"background 150ms ease"}
           _groupHover={{
             bg: isPlain || transparentTrigger ? "transparent" : "border.subtle",
           }}
