@@ -54,15 +54,14 @@ const InternalHomeTrendContent = () => {
   const [period, setPeriod] = useState<HomePeriod>("all");
 
   // Queries / Data
-  const { acquisitionTrends, isLoading, isFetching, isError, error, refetch } =
+  const { acquisitionTrends, isLoading, isError, error, refetch } =
     useInternalAcquisitionTrendsQuery(period);
 
   // Derived Values
   const isEmpty = isEmptyArray(acquisitionTrends);
-  const showFetchingSkeleton = isFetching;
-  const showError = !isFetching && isError;
-  const showEmpty = !isFetching && !isError && isEmpty;
-  const showContent = !isFetching && !isError && !isEmpty;
+  const showError = !isLoading && isError;
+  const showEmpty = !isLoading && !isError && isEmpty;
+  const showContent = !isLoading && !isError && !isEmpty;
 
   if (isLoading) {
     return <Skeleton minH={"356px"} w={"full"} />;
@@ -71,8 +70,6 @@ const InternalHomeTrendContent = () => {
   return (
     <Container.Body gap={"md"} pt={"md"} pb={"md"}>
       <InternalHomeTrendHeader period={period} onPeriodChange={setPeriod} />
-
-      {showFetchingSkeleton && <Skeleton minH={"296px"} w={"full"} p={"md"} />}
 
       {showError && (
         <Box

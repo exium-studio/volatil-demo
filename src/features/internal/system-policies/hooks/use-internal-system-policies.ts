@@ -50,9 +50,6 @@ export const useUpdateInternalSystemPolicy = () => {
       void queryClient.invalidateQueries({
         queryKey: queryKeys.mitra.dataRequest.policies(),
       });
-      void queryClient.invalidateQueries({
-        queryKey: queryKeys.internal.home.all,
-      });
     },
     onError: toastHandlers.onError,
   });
