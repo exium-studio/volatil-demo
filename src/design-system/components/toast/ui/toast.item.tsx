@@ -190,6 +190,11 @@ export const ToastItem = memo(function ToastItem(
                     ? "fit"
                     : "140px"
                 }
+                wordBreak={
+                  stackExpanded || toastItemExpanded
+                    ? "break-word"
+                    : "break-all"
+                }
               >
                 {toastData.title}
               </ClampedP>
