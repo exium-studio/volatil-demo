@@ -45,6 +45,7 @@ import { DateInput } from "@/design-system/components/input/ui/date-input";
 import { Field } from "@/design-system/components/input/ui/field";
 import { Fieldset } from "@/design-system/components/input/ui/fieldset";
 import { FileInput } from "@/design-system/components/input/ui/file-input";
+import { FocusSelectInput } from "@/design-system/components/input/ui/focus-select";
 import { Input } from "@/design-system/components/input/ui/input";
 import {
   NumberInput,
@@ -733,7 +734,9 @@ const Layout = () => {
           <Splitter.Root
             direction={"horizontal"}
             defaultLayout={DEFAULT_DEMO_SPLITTER_SIZE}
-            onLayout={(layout: number[]) => setSplitterSize("demo-layout", layout)}
+            onLayout={(layout: number[]) =>
+              setSplitterSize("demo-layout", layout)
+            }
             borderWidth={"1px"}
             h={"300px"}
             w={"full"}
@@ -904,7 +907,7 @@ export const Inputs = () => {
               <SearchInput placeholder={"Search..."} />
             </FieldTemplate>
 
-            <FieldTemplate invalid={invalid}>
+            <FieldTemplate label={"Date Input"} invalid={invalid}>
               <DateInput
                 modalKey={"date-input"}
                 datePickerSubtitle={"Pick a day for your leaves"}
@@ -912,8 +915,21 @@ export const Inputs = () => {
               />
             </FieldTemplate>
 
-            <FieldTemplate invalid={invalid}>
+            <FieldTemplate label={"Select Input"} invalid={invalid}>
               <Select
+                options={[
+                  { label: "Option 1", value: "option-1" },
+                  { label: "Option 2", value: "option-2" },
+                  { label: "Option 3", value: "option-3" },
+                  { label: "Option 4", value: "option-4" },
+                  { label: "Option 5", value: "option-5" },
+                ]}
+                w={"200px"}
+              />
+            </FieldTemplate>
+
+            <FieldTemplate label={"Focus Select Input"} invalid={invalid}>
+              <FocusSelectInput
                 options={[
                   { label: "Option 1", value: "option-1" },
                   { label: "Option 2", value: "option-2" },

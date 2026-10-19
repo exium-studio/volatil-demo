@@ -30,6 +30,7 @@ export type FieldInputProps = {
   onValueChange: (field: FieldKey, value: string) => void;
   onAutoAdvance: (fromField: FieldKey) => void;
   onArrowNavigate: (fromField: FieldKey, direction: "left" | "right") => void;
+  showPlaceholder?: boolean;
   onBlur: (e: FocusEvent<HTMLInputElement>) => void;
   inputRef: import("react").RefObject<HTMLInputElement | null>;
 };

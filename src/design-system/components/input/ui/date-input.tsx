@@ -20,6 +20,7 @@ import {
 
 import { IconButton } from "@/design-system/components/button/ui/button";
 import { AppIcon } from "@/design-system/components/icon/ui/app-icon";
+import { useFieldContextValue } from "@/design-system/components/input/context/field.context";
 import type {
   DateInputProps,
   FieldInputProps,
@@ -28,7 +29,6 @@ import type {
 } from "@/design-system/components/input/types/date-input.type";
 import type { DateValue } from "@/design-system/components/input/types/date-picker.type";
 import { DatePickerTrigger } from "@/design-system/components/input/ui/date-picker";
-import { Input } from "@/design-system/components/input/ui/input";
 import {
   getFieldOrder,
   getMaxLength,
@@ -37,9 +37,11 @@ import {
   toISODate,
   validateFromFields,
 } from "@/design-system/components/input/utils/date.utils";
+import { Box } from "@/design-system/components/layout/ui/box";
 import { HStack } from "@/design-system/components/layout/ui/flex-box";
 import { usePopModal } from "@/design-system/components/overlay/hooks/use-pop-modal";
-import { P } from "@/design-system/components/typography/ui/p";
+import { Badge } from "@/design-system/components/typography/ui/badge";
+import { ClampedP, P } from "@/design-system/components/typography/ui/p";
 import { useThemeStore } from "@/design-system/stores/theme-store";
 import { useFieldContext } from "@chakra-ui/react";
 import { CalendarIcon } from "lucide-react";
@@ -99,6 +101,7 @@ const FieldInput = memo(function FieldInput(props: FieldInputProps) {
     onValueChange,
     onAutoAdvance,
     onArrowNavigate,
+    showPlaceholder = true,
     inputRef,
     onBlur,
   } = props;
@@ -106,7 +109,8 @@ const FieldInput = memo(function FieldInput(props: FieldInputProps) {
   // Derived Values
   const maxLen = getMaxLength(fieldKey);
   const placeholder = getPlaceholder(fieldKey);
-  const width = fieldKey === "year" ? "52px" : "36px";
+  const width =
+    fieldKey === "year" ? "4.5ch" : fieldKey === "month" ? "3ch" : "2.5ch";
 
   // Handlers
   function handleChange(e: ChangeEvent<HTMLInputElement>) {
@@ -148,25 +152,36 @@ const FieldInput = memo(function FieldInput(props: FieldInputProps) {
   }
 
   return (
-    <Input
+    <input
       id={id}
-      ref={inputRef}
+      ref={inputRef as RefObject<HTMLInputElement>}
+      type={"text"}
       value={value}
-      minW={width}
-      w={width}
-      maxW={width}
-      p={0}
-      border={"none"}
-      outline={"none"}
-      inputMode={"numeric"}
-      textAlign={"center"}
-      placeholder={placeholder}
+      placeholder={showPlaceholder ? placeholder : ""}
       maxLength={maxLen}
       disabled={disabled}
+      inputMode={"numeric"}
+      aria-label={fieldKey}
       onChange={handleChange}
       onBlur={onBlur}
       onKeyDown={handleKeyDown}
-      aria-label={fieldKey}
+      style={{
+        width,
+        minWidth: width,
+        maxWidth: width,
+        padding: 0,
+        margin: 0,
+        border: "none",
+        outline: "none",
+        background: "transparent",
+        textAlign: "center",
+        fontSize: "14px",
+        fontVariantNumeric: "tabular-nums",
+        fontFeatureSettings: '"tnum"',
+        color: "inherit",
+        cursor: "text",
+        boxSizing: "content-box",
+      }}
     />
   );
 });
@@ -201,8 +216,14 @@ export const DateInput = memo(
     const { theme } = useThemeStore();
 
     // Contexts
-    const fieldContext = useFieldContext();
-    const isFieldInvalid = fieldContext?.invalid;
+    const chakraFieldContext = useFieldContext();
+    const customFieldContext = useFieldContextValue();
+    const isFloatingVariant = customFieldContext?.variant === "floating";
+    const floatingLabel = isFloatingVariant
+      ? customFieldContext?.label
+      : undefined;
+    const isOptional = customFieldContext?.optional;
+    const isFieldInvalid = chakraFieldContext?.invalid;
 
     // Hooks
     const { modalKey } = usePopModal({
@@ -210,6 +231,7 @@ export const DateInput = memo(
     });
 
     // States
+    const [isFocused, setIsFocused] = useState<boolean>(false);
     const [internalValue, setInternalValue] = useState<DateValue>(
       () => defaultValue ?? null,
     );
@@ -265,6 +287,15 @@ export const DateInput = memo(
     // Commit value from fields
     const commitFields = useCallback(
       (nextFields: FieldValues) => {
+        if (
+          nextFields.day === "" &&
+          nextFields.month === "" &&
+          nextFields.year === ""
+        ) {
+          handleValueChange(null);
+          return;
+        }
+
         const day = parseInt(nextFields.day, 10);
         const month = parseInt(nextFields.month, 10);
         const year = parseInt(nextFields.year, 10);
@@ -302,6 +333,14 @@ export const DateInput = memo(
       const nextFields = { ...fields, [field]: rawValue };
       fieldsRef.current = nextFields; // sync ref before autoAdvance can trigger a stale blur
       setFields(nextFields);
+
+      if (
+        nextFields.day === "" &&
+        nextFields.month === "" &&
+        nextFields.year === ""
+      ) {
+        handleValueChange(null);
+      }
     }
 
     function handleFieldBlur(e: FocusEvent<HTMLInputElement>) {
@@ -339,8 +378,11 @@ export const DateInput = memo(
       const target = e.target as HTMLElement;
       if (target.closest("input, button")) return; // don't hijack clicks on field/button
 
-      const emptyField = fieldOrder.find((field) => fields[field] === "");
-      const targetField = emptyField ?? fieldOrder[fieldOrder.length - 1];
+      // First click lands on "day" segment
+      const targetField = fieldRefs.current.day?.current
+        ? "day"
+        : (fieldOrder.find((field) => fields[field] === "") ??
+          fieldOrder[fieldOrder.length - 1]);
 
       fieldRefs.current[targetField]?.current?.focus();
     }
@@ -381,56 +423,80 @@ export const DateInput = memo(
 
     const showError = !isFieldsValid;
 
-    return (
-      <>
-        <input
-          type="hidden"
-          name={name}
-          ref={ref}
-          value={committedValue || ""}
-        />
+    const allFieldsEmpty =
+      fields.day === "" && fields.month === "" && fields.year === "";
+    const hasValue =
+      !allFieldsEmpty &&
+      (Boolean(committedValue) ||
+        fields.day !== "" ||
+        fields.month !== "" ||
+        fields.year !== "");
+    const isLabelFloating =
+      !isFloatingVariant || !floatingLabel || isFocused || hasValue;
+    const showSegmentsPlaceholder = isLabelFloating;
 
+    const inputCore = (
+      <HStack
+        justify={"space-between"}
+        gap={1}
+        border={"1px solid"}
+        borderColor={
+          showError || isFieldInvalid ? "border.error" : "border.muted"
+        }
+        rounded={theme.radii.component}
+        opacity={disabled ? 0.5 : 1}
+        pointerEvents={disabled ? "none" : undefined}
+        transition={"200ms"}
+        px={2}
+        cursor={"text"}
+        h={isFloatingVariant && floatingLabel ? "60px" : 10}
+        w={restProps.w || "full"}
+        onClick={handleContainerClick}
+        onFocusCapture={() => setIsFocused(true)}
+        onBlurCapture={() => setIsFocused(false)}
+        {...restProps}
+      >
         <HStack
-          justify={"space-between"}
-          gap={1}
-          border={"1px solid"}
-          borderColor={
-            showError || isFieldInvalid ? "border.error" : "border.muted"
-          }
-          rounded={theme.radii.component}
-          opacity={disabled ? 0.5 : 1}
-          pointerEvents={disabled ? "none" : undefined}
-          transition={"200ms"}
-          px={2}
-          h={10}
-          onClick={handleContainerClick}
-          {...restProps}
+          flex={1}
+          align={"center"}
+          h={"full"}
+          cursor={"text"}
+          {...(isFloatingVariant &&
+            floatingLabel && {
+              pt: "16px",
+            })}
         >
-          <HStack flex={1} align={"center"}>
-            {fieldOrder.map((field, idx) => (
-              <Fragment key={field}>
-                <FieldInput
-                  id={`${modalKey}-${field}`}
-                  fieldKey={field}
-                  value={fields[field]}
-                  disabled={disabled}
-                  onValueChange={handleFieldChange}
-                  onAutoAdvance={handleAutoAdvance}
-                  onArrowNavigate={handleArrowNavigate}
-                  onBlur={handleFieldBlur}
-                  inputRef={fieldRefs.current[field]}
-                />
+          {fieldOrder.map((field, idx) => (
+            <Fragment key={field}>
+              <FieldInput
+                id={`${modalKey}-${field}`}
+                fieldKey={field}
+                value={fields[field]}
+                disabled={disabled}
+                onValueChange={handleFieldChange}
+                onAutoAdvance={handleAutoAdvance}
+                onArrowNavigate={handleArrowNavigate}
+                showPlaceholder={showSegmentsPlaceholder}
+                onBlur={handleFieldBlur}
+                inputRef={fieldRefs.current[field]}
+              />
 
-                {idx < fieldOrder.length - 1 && (
-                  <P color="fg.muted" lineHeight={1} userSelect="none">
-                    -
-                  </P>
-                )}
-              </Fragment>
-            ))}
-          </HStack>
+              {idx < fieldOrder.length - 1 && (
+                <P
+                  color={"fg.muted"}
+                  lineHeight={1}
+                  userSelect={"none"}
+                  visibility={showSegmentsPlaceholder ? "visible" : "hidden"}
+                >
+                  {"-"}
+                </P>
+              )}
+            </Fragment>
+          ))}
+        </HStack>
 
-          {modalKey && (
+        {modalKey && (
+          <Box display={"inline-flex"} alignItems={"center"} my={"auto"} mr={1}>
             <DatePickerTrigger
               modalKey={modalKey}
               datePickerSubtitle={datePickerSubtitle}
@@ -447,15 +513,66 @@ export const DateInput = memo(
                 size={"xs"}
                 variant={"ghost"}
                 aspectRatio={"square"}
-                mr={-1}
-                my={"auto"}
                 aria-label={"Open date picker"}
               >
                 <AppIcon icon={CalendarIcon} />
               </IconButton>
             </DatePickerTrigger>
-          )}
-        </HStack>
+          </Box>
+        )}
+      </HStack>
+    );
+
+    return (
+      <>
+        <input
+          type="hidden"
+          name={name}
+          ref={ref}
+          value={committedValue || ""}
+        />
+
+        {isFloatingVariant && floatingLabel ? (
+          <Box position={"relative"} w={restProps.w || "full"}>
+            <Box
+              position={"absolute"}
+              left={"12px"}
+              top={"7px"}
+              zIndex={1}
+              pointerEvents={"none"}
+              transform={isLabelFloating ? "translateY(0)" : "translateY(12px)"}
+              transition={
+                "transform 0.18s cubic-bezier(0.4, 0, 0.2, 1), font-size 0.18s cubic-bezier(0.4, 0, 0.2, 1), color 0.18s ease"
+              }
+            >
+              <HStack align={"center"} gap={2}>
+                <ClampedP
+                  fontSize={isLabelFloating ? "xs" : "md"}
+                  fontWeight={"medium"}
+                  color={"fg.subtle"}
+                  transition={"font-size 0.18s cubic-bezier(0.4, 0, 0.2, 1)"}
+                >
+                  {floatingLabel}
+                </ClampedP>
+
+                {isOptional && (
+                  <Badge
+                    size={"xs"}
+                    fontSize={"2xs"}
+                    colorPalette={"gray"}
+                    color={"fg.subtle"}
+                  >
+                    Optional
+                  </Badge>
+                )}
+              </HStack>
+            </Box>
+
+            {inputCore}
+          </Box>
+        ) : (
+          inputCore
+        )}
       </>
     );
   }),

@@ -282,11 +282,11 @@ export function getFieldOrder(format: DateFormat): FieldOrder {
 export function getPlaceholder(field: "day" | "month" | "year"): string {
   switch (field) {
     case "day":
-      return "DD";
+      return "dd";
     case "month":
-      return "MM";
+      return "mm";
     case "year":
-      return "YYYY";
+      return "yyyy";
   }
 }
 
