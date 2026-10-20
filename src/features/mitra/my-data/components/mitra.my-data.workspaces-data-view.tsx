@@ -134,7 +134,11 @@ export const MitraMyDataWorkspacesDataView = (_props: MitraMyDataViewProps) => {
               value: item.workspaceName,
               td: isExpired ? (
                 <VStack align={"start"} w={"300px"}>
-                  <ClampedP fontFamily={"mono"} color={"fg.muted"}>
+                  <ClampedP
+                    fontFamily={"mono"}
+                    color={"fg.muted"}
+                    textDecor={"line-through"}
+                  >
                     {item.workspaceName}
                   </ClampedP>
 
