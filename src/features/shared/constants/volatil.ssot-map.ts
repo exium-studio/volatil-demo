@@ -442,6 +442,7 @@ export const SYSTEM_POLICY_MAP: Record<string, SystemPolicyConfig> = {
       "Interval waktu (dalam hari) untuk sinkronisasi otomatis layer spasial mitra dari master IGT ATR/BPN.",
     colorPalette: "purple",
     icon: RefreshCwIcon,
+    helperText: "Pembaruan otomatis dieksekusi setiap pukul 02.00 WIB.",
   },
 };
 
