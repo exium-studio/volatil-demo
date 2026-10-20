@@ -78,3 +78,9 @@
   background-color: transparent;
   border-radius: 0 0 8px 8px;
 }
+
+/* Text Selection */
+::selection {
+  background-color: var(--chakra-colors-blue-solid, #2563eb);
+  color: #ffffff;
+}

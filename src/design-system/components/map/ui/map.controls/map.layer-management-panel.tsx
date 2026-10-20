@@ -28,11 +28,10 @@ import { isEmptyArray } from "@/shared/utils/data/array";
 import { LayersIcon } from "lucide-react";
 import React, { memo, useCallback, useEffect, useMemo, useState } from "react";
 
-export const MapLayerManagementPanel = memo(
-  <T extends GenericMapLayer = GenericMapLayer>(
-    props: MapLayerManagementPanelProps<T>,
-  ) => {
-    // Props
+function MapLayerManagementPanelComponent<
+  T extends GenericMapLayer = GenericMapLayer,
+>(props: MapLayerManagementPanelProps<T>) {
+  // Props
     const {
       title,
       tooltipContent = "Manajemen Layer",
@@ -57,9 +56,7 @@ export const MapLayerManagementPanel = memo(
       enabledLayerIds,
       enabledSymbologyLayerIds,
       layerOpacities,
-      globalOpacity,
       layerOrder,
-      setGlobalOpacity,
       toggleLayerId,
       toggleSymbologyLayerId,
       setLayerOpacity,
@@ -117,6 +114,16 @@ export const MapLayerManagementPanel = memo(
       return orderedLayers.length > 0 && enabledCount === orderedLayers.length;
     }, [orderedLayers.length, enabledCount]);
 
+    // Calculate average opacity for the layers in this panel
+    const panelOpacity = useMemo(() => {
+      if (orderedLayers.length === 0) return 1.0;
+      const total = orderedLayers.reduce(
+        (acc, l) => acc + (layerOpacities[l.id] ?? 1.0),
+        0,
+      );
+      return total / orderedLayers.length;
+    }, [orderedLayers, layerOpacities]);
+
     // Handlers
     const handleToggleAll = useCallback(
       (checked: boolean) => {
@@ -143,6 +150,15 @@ export const MapLayerManagementPanel = memo(
         toggleLayerId(layerId);
       },
       [orderedLayers, onToggleLayer, enabledLayerIds, toggleLayerId],
+    );
+
+    const handleBatchOpacityChange = useCallback(
+      (value: number) => {
+        orderedLayers.forEach((l) => {
+          setLayerOpacity(l.id, value);
+        });
+      },
+      [orderedLayers, setLayerOpacity],
     );
 
     return (
@@ -242,18 +258,18 @@ export const MapLayerManagementPanel = memo(
                           fontWeight={"semibold"}
                           color={"fg.muted"}
                         >
-                          {`${Math.round(globalOpacity * 100)}%`}
+                          {`${Math.round(panelOpacity * 100)}%`}
                         </P>
                       </HStack>
 
                       <Slider
-                        value={[Math.round(globalOpacity * 100)]}
+                        value={[Math.round(panelOpacity * 100)]}
                         min={0}
                         max={100}
                         step={1}
                         showValue={false}
                         onValueChange={(details) =>
-                          setGlobalOpacity(details.value[0] / 100)
+                          handleBatchOpacityChange(details.value[0] / 100)
                         }
                       />
                     </VStack>
@@ -268,7 +284,7 @@ export const MapLayerManagementPanel = memo(
                   </HStack>
                 )}
 
-                <VStack>
+                <VStack mt={"sm"}>
                   {orderedLayers.map((layer, index) => {
                     const isEnabled = Boolean(enabledLayerIds[layer.id]);
                     const isSymbologyEnabled = Boolean(
@@ -276,6 +292,7 @@ export const MapLayerManagementPanel = memo(
                     );
                     const opacity = layerOpacities[layer.id] ?? 1.0;
                     const isFirstIndex = index === 0;
+                    const isLastIndex = index === orderedLayers.length - 1;
 
                     return (
                       <MapLayerManagementItem
@@ -291,6 +308,8 @@ export const MapLayerManagementPanel = memo(
                         onOpacityChange={setLayerOpacity}
                         onReorder={reorderLayer}
                         onFlyTo={onFlyToLayer}
+                        pt={isFirstIndex ? 0 : "xs"}
+                        pb={isLastIndex ? 0 : "xs"}
                         borderTop={"1px solid"}
                         borderColor={
                           isFirstIndex ? "transparent" : "border.subtle"
@@ -305,5 +324,10 @@ export const MapLayerManagementPanel = memo(
         </Popover.Content>
       </Popover.Root>
     );
-  },
-);
+}
+
+export const MapLayerManagementPanel = memo(
+  MapLayerManagementPanelComponent,
+) as <T extends GenericMapLayer = GenericMapLayer>(
+  props: MapLayerManagementPanelProps<T>,
+) => React.ReactElement;

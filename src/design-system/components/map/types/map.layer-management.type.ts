@@ -4,7 +4,8 @@ import type React from "react";
 
 export type GenericMapLayer = {
   id: string;
-  title: string;
+  title?: string;
+  label?: string | null;
   spatialBasis?: "bidang" | "kawasan";
   igtBasis?: "bidang" | "kawasan";
   bbox?: [number, number, number, number];
@@ -12,6 +13,7 @@ export type GenericMapLayer = {
   wfs?: {
     wfsTypeName?: string;
     wfsUrl?: string | null;
+    [key: string]: unknown;
   };
   [key: string]: unknown;
 };

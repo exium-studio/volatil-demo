@@ -57,11 +57,17 @@ export const MapWorkspaceLayerManagement = memo(
     const handleToggleLayer = useCallback(
       (item: MyDataItem, checked: boolean) => {
         if (checked) {
-          if (!workspace?.wmsUrl) return;
+          const wmsUrl = workspace?.wmsUrl ?? item.wms?.url;
+          if (!wmsUrl) return;
+
+          const layerName =
+            item.wmsLayers ??
+            item.wfsTypeName ??
+            item.id;
 
           setCustomLayerConfig(item.id, {
-            wmsUrl: workspace.wmsUrl,
-            layers: item.wmsLayers || item.wfsTypeName || "",
+            wmsUrl,
+            layers: layerName,
             spatialBasis: item.spatialBasis,
           });
           setLayerEnabled(item.id, true);
@@ -87,7 +93,7 @@ export const MapWorkspaceLayerManagement = memo(
 
     return (
       <MapLayerManagementPanel<MyDataItem>
-        title={"Manajemen Layer Workspace"}
+        title={"Manajemen Layer Data Saya"}
         tooltipContent={"Manajemen Layer Data Saya"}
         badgeLabel={`${enrichedLayers.length} layer`}
         loadingLabel={"Memuat layer workspace..."}

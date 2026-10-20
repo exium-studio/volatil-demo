@@ -63,8 +63,17 @@ export const LayerAttributeTableView = memo(
         return targetLayer.typeName;
       if ("wfs" in targetLayer && targetLayer.wfs) {
         const wfs = targetLayer.wfs as Record<string, unknown>;
+        if (typeof wfs.typeName === "string" && wfs.typeName) {
+          return wfs.typeName;
+        }
         if (typeof wfs.wfsTypeName === "string" && wfs.wfsTypeName) {
           return wfs.wfsTypeName;
+        }
+      }
+      if ("wms" in targetLayer && targetLayer.wms) {
+        const wms = targetLayer.wms as Record<string, unknown>;
+        if (typeof wms.layers === "string" && wms.layers) {
+          return wms.layers;
         }
       }
       if ("wfsTypeName" in targetLayer && targetLayer.wfsTypeName)

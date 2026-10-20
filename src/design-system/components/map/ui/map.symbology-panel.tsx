@@ -3,7 +3,7 @@
 import { IconButton } from "@/design-system/components/button/ui/button";
 import { Accordion } from "@/design-system/components/disclosure/ui/accordion";
 import { Presence } from "@/design-system/components/disclosure/ui/presence";
-import { Skeleton } from "@/design-system/components/feedback/ui/skeleton";
+import { Loader } from "@/design-system/components/feedback/ui/loader";
 import { StateRetry } from "@/design-system/components/feedback/ui/state.retry";
 import { AppIcon } from "@/design-system/components/icon/ui/app-icon";
 import { Box } from "@/design-system/components/layout/ui/box";
@@ -239,62 +239,63 @@ export const MapSymbologyPanel = memo((props: MapSymbologyPanelProps) => {
   );
 });
 
-export const LayerSymbologyContent = memo((props: LayerSymbologyContentProps) => {
-  // Props
-  const { layer } = props;
+export const LayerSymbologyContent = memo(
+  (props: LayerSymbologyContentProps) => {
+    // Props
+    const { layer } = props;
 
-  // Queries — Fetch SLD / GetLegendGraphic rules from GeoServer
-  const {
-    data: rules,
-    isLoading,
-    isError,
-    error,
-    refetch,
-  } = useQuery({
-    queryKey: ["map", "legend-graphic", layer.id],
-    queryFn: ({ signal }) => fetchLegendGraphic({ layer, signal }),
-    staleTime: 1000 * 60 * 15,
-  });
+    // Queries — Fetch SLD / GetLegendGraphic rules from GeoServer
+    const {
+      data: rules,
+      isLoading,
+      isError,
+      error,
+      refetch,
+    } = useQuery({
+      queryKey: ["map", "legend-graphic", layer.id],
+      queryFn: ({ signal }) => fetchLegendGraphic({ layer, signal }),
+      staleTime: 1000 * 60 * 15,
+    });
 
-  if (isLoading) {
+    if (isLoading) {
+      return (
+        <Center minH={"140px"}>
+          <Loader />
+        </Center>
+      );
+    }
+
+    if (isError || !rules || rules.length === 0) {
+      return (
+        <Center w={"full"} py={"xs"}>
+          <StateRetry
+            title={"Gagal Memuat Simbologi"}
+            description={
+              error instanceof Error
+                ? error.message
+                : "Tidak dapat memuat aturan SLD dari GeoServer."
+            }
+            onRetry={() => {
+              void refetch();
+            }}
+          />
+        </Center>
+      );
+    }
+
     return (
-      <VStack w={"full"} py={"xs"} gap={"xs"}>
-        <Skeleton h={"18px"} w={"full"} />
-        <Skeleton h={"18px"} w={"75%"} />
+      <VStack w={"full"} gap={"xs"} align={"stretch"} pt={"2xs"}>
+        {rules.map((rule, idx) => (
+          <LegendRuleItem
+            key={rule.name ?? idx}
+            rule={rule}
+            fallbackBasis={layer.spatialBasis}
+          />
+        ))}
       </VStack>
     );
-  }
-
-  if (isError || !rules || rules.length === 0) {
-    return (
-      <Center w={"full"} py={"xs"}>
-        <StateRetry
-          title={"Gagal Memuat Simbologi"}
-          description={
-            error instanceof Error
-              ? error.message
-              : "Tidak dapat memuat aturan SLD dari GeoServer."
-          }
-          onRetry={() => {
-            void refetch();
-          }}
-        />
-      </Center>
-    );
-  }
-
-  return (
-    <VStack w={"full"} gap={"xs"} align={"stretch"} pt={"2xs"}>
-      {rules.map((rule, idx) => (
-        <LegendRuleItem
-          key={rule.name ?? idx}
-          rule={rule}
-          fallbackBasis={layer.spatialBasis}
-        />
-      ))}
-    </VStack>
-  );
-});
+  },
+);
 
 const LegendRuleItem = memo((props: LegendRuleItemProps) => {
   // Props
