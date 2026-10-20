@@ -4,13 +4,12 @@ import { Button } from "@/design-system/components/button/ui/button";
 import { ConfirmationTrigger } from "@/design-system/components/feedback/ui/confirmation-trigger";
 import { Loader } from "@/design-system/components/feedback/ui/loader";
 import { StateNoData } from "@/design-system/components/feedback/ui/state.no-data";
-import { AppIcon } from "@/design-system/components/icon/ui/app-icon";
 import { Center } from "@/design-system/components/layout/ui/center";
 import { HStack, VStack } from "@/design-system/components/layout/ui/flex-box";
 import { NotificationGroupStackCard } from "@/features/notification/components/notification.item";
 import type { NotificationToastHistoryContentProps } from "@/features/notification/types/notification.type";
 import { t } from "@/shared/libs/i18n";
-import { BellIcon, Trash2Icon } from "lucide-react";
+import { BellIcon } from "lucide-react";
 import { memo } from "react";
 
 export const NotificationToastHistoryDataView = memo(
@@ -80,7 +79,7 @@ export const NotificationToastHistoryDataView = memo(
             onConfirm={onClearAllHistory}
           >
             <Button colorPalette={"red"} size={"xs"}>
-              <AppIcon icon={Trash2Icon} />
+              {/* <AppIcon icon={Trash2Icon} /> */}
               {t["action.clear_all"]()}
             </Button>
           </ConfirmationTrigger>

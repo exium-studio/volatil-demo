@@ -15,6 +15,7 @@ import { HStack, VStack } from "@/design-system/components/layout/ui/flex-box";
 import { Badge } from "@/design-system/components/typography/ui/badge";
 import { ClampedP, P } from "@/design-system/components/typography/ui/p";
 import { useThemeStore } from "@/design-system/stores/theme-store";
+import { resolveInboxUI } from "@/features/notification/constants/inbox-code-resolver";
 import {
   useClearAllInbox,
   useDeleteInboxItem,
@@ -23,18 +24,11 @@ import {
   useMarkInboxAsRead,
 } from "@/features/notification/hooks/use-inbox.query";
 import type { InboxCardItemProps } from "@/features/notification/types/inbox.type";
-import { resolveInboxUI } from "@/features/notification/constants/inbox-code-resolver";
 import { t } from "@/shared/libs/i18n";
 import { isEmptyArray } from "@/shared/utils/data/array";
 import { formatRelativeTime } from "@/shared/utils/formatter/date.formatter";
 import { useNavigate } from "@tanstack/react-router";
-import {
-  ArrowRightIcon,
-  CheckCheckIcon,
-  InboxIcon,
-  Trash2Icon,
-  XIcon,
-} from "lucide-react";
+import { ArrowRightIcon, CheckCheckIcon, InboxIcon, XIcon } from "lucide-react";
 import { memo, useCallback, useMemo } from "react";
 
 export const NotificationInboxDataView = memo(() => {
@@ -130,7 +124,7 @@ export const NotificationInboxDataView = memo(() => {
               colorPalette={"red"}
               loading={clearAllInboxMutation.isPending}
             >
-              <AppIcon icon={Trash2Icon} />
+              {/* <AppIcon icon={Trash2Icon} /> */}
               {t["action.clear_all"]()}
             </Button>
           </ConfirmationTrigger>
