@@ -435,7 +435,7 @@ export const InternalDataManagementDataView = () => {
       },
       {
         key: "edit-layer",
-        label: "Konfigurasi & Detail Layer",
+        label: "Konfigurasi Layer",
         icon: PencilIcon,
         onClick: (layer: MasterIgtLayerItem) => {
           void navigate({
