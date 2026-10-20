@@ -30,18 +30,26 @@ const FEATURE_INFO_CIRCLE_STROKE_COLOR = "#ffffff";
 const HIGHLIGHT_FILL_LAYER_ID = "map-feature-highlight-fill";
 
 const createLoadingMarkerElement = (): HTMLElement => {
+  const isDark =
+    document.documentElement.classList.contains("dark") ||
+    document.body.classList.contains("dark") ||
+    document.documentElement.getAttribute("data-theme") === "dark";
+
   const container = document.createElement("div");
   container.className = "map-feature-loading-marker";
-  container.style.cssText =
-    "display: flex; align-items: center; justify-content: center; width: 32px; height: 32px; pointer-events: none;";
+  container.style.cssText = isDark
+    ? "display: flex; align-items: center; justify-content: center; width: 36px; height: 36px; pointer-events: none; border-radius: 50%; background-color: rgba(24, 24, 27, 0.95); box-shadow: 0 0 0 1.5px rgba(255, 255, 255, 0.2), 0 4px 12px rgba(0, 0, 0, 0.7);"
+    : "display: flex; align-items: center; justify-content: center; width: 36px; height: 36px; pointer-events: none; border-radius: 50%; background-color: rgba(255, 255, 255, 0.95); box-shadow: 0 0 0 1.5px rgba(0, 0, 0, 0.15), 0 4px 12px rgba(0, 0, 0, 0.35);";
 
   const ring = document.createElement("div");
-  ring.style.cssText =
-    "width: 24px; height: 24px; border-radius: 50%; border: 3px solid rgba(148, 163, 184, 0.3); border-top-color: #94a3b8; animation: spin 0.75s linear infinite; box-shadow: 0 0 10px rgba(148, 163, 184, 0.5);";
+  ring.style.cssText = isDark
+    ? "width: 22px; height: 22px; border-radius: 50%; border: 3px solid rgba(148, 163, 184, 0.25); border-top-color: #94a3b8; animation: spin 0.75s linear infinite;"
+    : "width: 22px; height: 22px; border-radius: 50%; border: 3px solid rgba(148, 163, 184, 0.35); border-top-color: #64748b; animation: spin 0.75s linear infinite;";
 
   const dot = document.createElement("div");
-  dot.style.cssText =
-    "position: absolute; width: 8px; height: 8px; border-radius: 50%; background-color: #94a3b8; box-shadow: 0 0 4px rgba(0, 0, 0, 0.3);";
+  dot.style.cssText = isDark
+    ? "position: absolute; width: 8px; height: 8px; border-radius: 50%; background-color: #94a3b8; border: 1.5px solid #18181b; box-shadow: 0 1px 3px rgba(0, 0, 0, 0.6);"
+    : "position: absolute; width: 8px; height: 8px; border-radius: 50%; background-color: #64748b; border: 1.5px solid #ffffff; box-shadow: 0 1px 3px rgba(0, 0, 0, 0.3);";
 
   // Inject keyframes for spin animation if not already injected
   if (!document.getElementById("map-marker-spin-keyframes")) {
@@ -135,7 +143,10 @@ export const useMapFeatureInfo = (
         .toLowerCase();
       const pinColor = rawBasis === "bidang" ? "#3b82f6" : "#f97316";
 
-      const standardEl = createStandardMarkerElement(pinColor, clearFeatureInfo);
+      const standardEl = createStandardMarkerElement(
+        pinColor,
+        clearFeatureInfo,
+      );
       clickMarkerRef.current = new maplibregl.Marker({ element: standardEl })
         .setLngLat(selectedFeature.coordinate)
         .addTo(map);
