@@ -178,8 +178,8 @@ export const InternalDataManagementDetailPage = () => {
   }
 
   return (
-    <AppContentContainer>
-      <Container.Root withContext={true} flex={1}>
+    <AppContentContainer overflowY={"auto"}>
+      <Container.Root withContext={true} flex={1} overflowY={"auto"}>
         <Container.Body overflowY={"auto"}>
           {/* Header */}
           <HeaderContainer px={"xs"}>
@@ -233,7 +233,7 @@ export const InternalDataManagementDetailPage = () => {
 
           <Separator borderColor={"bg.canvas"} />
 
-          <VStack gap={"sm"}>
+          <VStack gap={"sm"} overflowY={"auto"}>
             {/* Metadata Overview Cards */}
             <SimpleGrid minChildWidth={"260px"} gap={"sm"} w={"full"} p={"md"}>
               {/* Card 1: WMS Endpoint */}
