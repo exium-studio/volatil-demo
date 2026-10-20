@@ -104,7 +104,7 @@ export const NotificationInboxDataView = memo(() => {
               loading={markAllAsReadMutation.isPending}
               onClick={() => markAllAsReadMutation.mutate()}
             >
-              <AppIcon icon={CheckCheckIcon} />
+              {/* <AppIcon icon={CheckCheckIcon} /> */}
               {"Tandai Semua Dibaca"}
             </Button>
           )}
