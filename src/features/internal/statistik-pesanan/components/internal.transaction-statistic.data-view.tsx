@@ -134,7 +134,6 @@ export const InternalTransactionStatisticDataView = () => {
   // Derived Values - DataList headers & items
   const dataList = useMemo(() => {
     const headers: FormattedTableHeader[] = [
-      { th: "No. Transaksi", sortable: true, align: "start" },
       { th: "Mitra Pemohon", sortable: true, align: "start" },
       { th: "No. Pesanan", sortable: true, align: "start" },
       { th: "Status Pesanan", sortable: true, align: "start" },
@@ -183,11 +182,6 @@ export const InternalTransactionStatisticDataView = () => {
           id: item.id,
           data: item,
           columns: [
-            {
-              value: item.transactionNumber,
-              td: <P fontSize={"sm"}>{item.transactionNumber}</P>,
-              align: "start" as const,
-            },
             {
               value: item.mitra.name,
               td: (
@@ -290,7 +284,7 @@ export const InternalTransactionStatisticDataView = () => {
               td: (
                 <OrderedIgtLayers
                   items={item.items}
-                  orderNumber={item.orderNumber || item.transactionNumber}
+                  orderNumber={item.orderNumber || item.orderId}
                   coverageHa={effectiveKawasanHa ?? undefined}
                   bidangCoverageCount={effectiveBidangCount ?? undefined}
                 />
@@ -446,7 +440,7 @@ export const InternalTransactionStatisticDataView = () => {
         {/* Filter Bar */}
         <ActionHeaderScrollContainer>
           <SearchInput
-            placeholder={"Cari transaksi, mitra, billing..."}
+            placeholder={"Cari pesanan, mitra, billing..."}
             value={params.search}
             onValueChange={(val) =>
               startTransition(() => {

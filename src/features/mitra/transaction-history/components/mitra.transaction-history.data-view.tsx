@@ -105,7 +105,6 @@ export const TransactionHistoryDataView = () => {
   // Derived Values - DataList headers & items
   const dataList = useMemo(() => {
     const headers: FormattedTableHeader[] = [
-      { th: "No. Transaksi", sortable: true, align: "start" },
       { th: "No. Pesanan", sortable: true, align: "start" },
       { th: "Status Pesanan", sortable: true, align: "start" },
       { th: "Tanggal Pemesanan", sortable: true, align: "start" },
@@ -153,13 +152,8 @@ export const TransactionHistoryDataView = () => {
           data: item,
           columns: [
             {
-              value: item.transactionNumber,
-              td: <P>{item.transactionNumber}</P>,
-              align: "start" as const,
-            },
-            {
               value: item.orderNumber,
-              td: <P color={"fg.muted"}>{item.orderNumber}</P>,
+              td: <P>{item.orderNumber}</P>,
               align: "start" as const,
             },
             {
@@ -227,7 +221,7 @@ export const TransactionHistoryDataView = () => {
               td: (
                 <OrderedIgtLayers
                   items={item.items}
-                  orderNumber={item.orderNumber || item.transactionNumber}
+                  orderNumber={item.orderNumber}
                   coverageHa={effectiveKawasanHa ?? undefined}
                   bidangCoverageCount={effectiveBidangCount ?? undefined}
                 />
@@ -377,7 +371,7 @@ export const TransactionHistoryDataView = () => {
           onValueChange={(val) => {
             setParams((prev) => ({ ...prev, search: val, page: 1 }));
           }}
-          placeholder={"Cari no. transaksi / order / billing..."}
+          placeholder={"Cari no. pesanan / billing..."}
           maxW={"300px"}
         />
 

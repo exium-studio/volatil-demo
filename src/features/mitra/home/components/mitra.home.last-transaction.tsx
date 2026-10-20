@@ -146,7 +146,6 @@ const MitraHomeLastTransactionDataView = (props: {
   // Derived Values - DataList headers & items
   const dataList = useMemo(() => {
     const headers: FormattedTableHeader[] = [
-      { th: "No. Transaksi", sortable: false, align: "start" },
       { th: "No. Pesanan", sortable: false, align: "start" },
       { th: "Status Pesanan", sortable: false, align: "start" },
       { th: "Kode Billing", sortable: false, align: "start" },
@@ -175,13 +174,8 @@ const MitraHomeLastTransactionDataView = (props: {
           data: item,
           columns: [
             {
-              value: item.transactionNumber,
-              td: <P>{item.transactionNumber}</P>,
-              align: "start" as const,
-            },
-            {
               value: item.orderNumber,
-              td: <P color={"fg.muted"}>{item.orderNumber}</P>,
+              td: <P>{item.orderNumber}</P>,
               align: "start" as const,
             },
             {
@@ -223,7 +217,7 @@ const MitraHomeLastTransactionDataView = (props: {
               td: (
                 <OrderedIgtLayers
                   items={item.items}
-                  orderNumber={item.orderNumber || item.transactionNumber}
+                  orderNumber={item.orderNumber}
                   coverageHa={
                     item.kawasanCoverageHa ?? item.coverageHa ?? undefined
                   }

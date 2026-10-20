@@ -354,7 +354,7 @@ export const TransactionDetailModalContent = (
           <Modal.Title>{"Detail Transaksi & Pesanan"}</Modal.Title>
 
           <P fontSize={"sm"} textAlign={"center"} color={"fg.muted"}>
-            {transaction.transactionNumber}
+            {transaction.orderNumber || transaction.orderId || "-"}
           </P>
         </VStack>
       </Modal.Header>

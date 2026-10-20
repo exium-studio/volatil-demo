@@ -143,7 +143,7 @@ export const HelpCenterDetailPage = () => {
                     {[
                       `ID Laporan: #${ticket.id}`,
                       ticket.orderNumber || ticket.transactionId
-                        ? `Transaksi: ${ticket.orderNumber ?? ticket.transactionId}`
+                        ? `No. Pesanan: ${ticket.orderNumber ?? ticket.transactionId}`
                         : null,
                     ]
                       .filter(Boolean)

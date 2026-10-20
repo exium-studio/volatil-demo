@@ -110,7 +110,7 @@ export const MitraMyDataWorkspacesDataView = (_props: MitraMyDataViewProps) => {
     const headers: FormattedTableHeader[] = [
       { th: "Nama Workspace", sortable: true },
       { th: "WMS URL (Interop)", sortable: false },
-      { th: "No. Transaksi / Pesanan", sortable: true },
+      { th: "No. Pesanan", sortable: true },
       { th: "Jumlah Layer", sortable: true },
       { th: "Cakupan Bidang", sortable: true },
       { th: "Cakupan Kawasan", sortable: true },
@@ -194,15 +194,9 @@ export const MitraMyDataWorkspacesDataView = (_props: MitraMyDataViewProps) => {
             {
               value: item.orderNumber || item.orderId,
               td: (
-                <VStack>
-                  {item.transactionNumber && (
-                    <P fontSize={"sm"}>{item.transactionNumber}</P>
-                  )}
-
-                  <P fontSize={"sm"} color={"fg.subtle"}>
-                    {item.orderNumber || item.orderId}
-                  </P>
-                </VStack>
+                <P fontSize={"sm"}>
+                  {item.orderNumber || item.orderId}
+                </P>
               ),
               align: "start" as const,
             },
