@@ -25,6 +25,7 @@ import {
   USER_GUIDE_PUBLISH_STATUS_OPTIONS,
   USER_GUIDE_TARGET_ROLE_MAP,
 } from "@/features/user-guide/constants/user-guide.constants";
+import type { UserGuideCategory } from "@/features/user-guide/types/user-guide.type";
 import { UserGuideFormModal } from "@/features/user-guide/components/user-guide.form-modal";
 import {
   useDeleteUserGuideMutation,
@@ -97,7 +98,8 @@ export const InternalUserGuideTableView = (
       parts.push(params.search.trim());
     }
     if (params.category) {
-      const catConfig = USER_GUIDE_CATEGORY_MAP[params.category];
+      const catConfig =
+        USER_GUIDE_CATEGORY_MAP[params.category as UserGuideCategory];
       parts.push(catConfig?.label ?? params.category);
     }
     if (params.isPublished !== undefined) {

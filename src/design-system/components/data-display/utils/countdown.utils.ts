@@ -30,9 +30,7 @@ export const getCountdownParts = (
   return {
     days: Math.floor(totalSeconds / DAY_IN_SECONDS),
     hours: Math.floor((totalSeconds % DAY_IN_SECONDS) / HOUR_IN_SECONDS),
-    minutes: Math.floor(
-      (totalSeconds % HOUR_IN_SECONDS) / MINUTE_IN_SECONDS,
-    ),
+    minutes: Math.floor((totalSeconds % HOUR_IN_SECONDS) / MINUTE_IN_SECONDS),
     seconds: totalSeconds % MINUTE_IN_SECONDS,
     isFinished: false,
   };
@@ -42,7 +40,7 @@ export const formatCountdownParts = (
   parts: CountdownParts,
   format?: string,
 ): string => {
-  if (parts.isFinished) return "Kedaluwarsa";
+  if (parts.isFinished) return "-";
 
   if (!format) {
     const pad = (n: number) => String(n).padStart(2, "0");

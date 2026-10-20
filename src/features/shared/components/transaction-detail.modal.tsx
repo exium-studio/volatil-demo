@@ -503,7 +503,6 @@ export const TransactionDetailModalContent = (
                       finishedAt={targetExpiry}
                       fontWeight={"medium"}
                       fontSize={"md"}
-                      color={isExpired ? "fg.subtle" : "orange.fg"}
                     />
                   </VStack>
                 )}

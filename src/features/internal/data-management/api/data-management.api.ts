@@ -5,6 +5,7 @@ import type {
   GeoServerWorkspaceLayerOption,
   GeoServerWorkspaceLayersResponse,
   GeoServerWorkspacesResponse,
+  MasterIgtLayerItem,
   MasterIgtLayersQueryParams,
   MasterIgtLayersResponse,
   UpdateMasterIgtLayerAttributesPayload,
@@ -12,6 +13,7 @@ import type {
 } from "@/features/internal/data-management/types/data-management.type";
 import {
   DUMMY_GEOSERVER_WORKSPACES,
+  DUMMY_MASTER_IGT_LAYERS,
   DUMMY_MASTER_IGT_LAYERS_RESPONSE,
   getGeoServerWorkspaceLayersFallback,
 } from "@/shared/constants/dummy-data/dummy-master-igt-layers";
@@ -228,6 +230,8 @@ export const updateMasterIgtLayerAttributesApi = async (
       return {
         success: true,
         message: "Whitelist atribut layer berhasil diperbarui (mode demo/dummy)",
+        data: undefined,
+        timestamp: new Date().toISOString(),
       };
     }
     throw error;

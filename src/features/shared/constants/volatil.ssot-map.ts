@@ -233,14 +233,14 @@ export const TRANSACTION_STATUS_OPTIONS: FocusSelectOption[] = [
 // -----------------------------------------------------------------
 
 export const ORDER_STATUS_MAP: Record<OrderStatus, OrderStatusConfig> = {
-  // requesting: {
-  //   label: "Menyiapkan Data IGT",
-  //   colorPalette: "blue",
-  //   icon: LoaderIcon,
-  //   iconColor: "blue.fg",
-  //   noticeDescription:
-  //     "Sedang mengkalkulasi clipping, luas kawasan & estimasi harga di server...",
-  // },
+  requesting: {
+    label: "Menyiapkan Data IGT",
+    colorPalette: "blue",
+    icon: LoaderIcon,
+    iconColor: "blue.fg",
+    noticeDescription:
+      "Sedang mengkalkulasi clipping, luas kawasan & estimasi harga di server...",
+  },
   pending_payment: {
     label: "Menunggu Pembayaran",
     colorPalette: "orange",
@@ -303,13 +303,13 @@ export const ORDER_STATUS_MAP: Record<OrderStatus, OrderStatusConfig> = {
     iconColor: "green.fg",
     noticeDescription: "Layanan data spasial siap digunakan.",
   },
-  // rejected: {
-  //   label: "Ditolak",
-  //   colorPalette: "red",
-  //   icon: XCircleIcon,
-  //   iconColor: "red.fg",
-  //   noticeDescription: "Pesanan data spasial ditolak oleh Admin Internal.",
-  // },
+  rejected: {
+    label: "Ditolak",
+    colorPalette: "red",
+    icon: XCircleIcon,
+    iconColor: "red.fg",
+    noticeDescription: "Pesanan data spasial ditolak oleh Admin Internal.",
+  },
   expired: {
     label: "Kedaluwarsa",
     colorPalette: "gray",

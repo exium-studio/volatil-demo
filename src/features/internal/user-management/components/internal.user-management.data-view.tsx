@@ -69,8 +69,8 @@ export const InternalUserManagementDataView = () => {
 
   const isSearching = Boolean(
     params.search?.trim() ||
-    (params.status && params.status !== "all") ||
-    (params.role && params.role !== "all"),
+    params.status ||
+    params.role,
   );
 
   const searchQuery = useMemo(() => {
@@ -78,10 +78,10 @@ export const InternalUserManagementDataView = () => {
     if (params.search?.trim()) {
       parts.push(params.search.trim());
     }
-    if (params.role && params.role !== "all") {
+    if (params.role) {
       parts.push(params.role === "internal" ? "Internal" : "Mitra");
     }
-    if (params.status && params.status !== "all") {
+    if (params.status) {
       parts.push(STATUS_MAP[params.status]?.label ?? params.status);
     }
     return parts.length > 0 ? parts.join(", ") : "...";

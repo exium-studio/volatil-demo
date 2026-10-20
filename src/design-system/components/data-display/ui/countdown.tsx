@@ -19,7 +19,7 @@ export const Countdown = (props: CountdownProps) => {
     dangerThresholdMinutes,
     color,
     dangerColor = "fg.error",
-    finishColor = "fg.error",
+    finishColor = "fg",
     ...restProps
   } = props;
   const [countdown, setCountdown] = useState(() =>
@@ -54,9 +54,9 @@ export const Countdown = (props: CountdownProps) => {
   const isNearExpiry =
     !countdown.isFinished &&
     !isDanger &&
-    ((warningThresholdHours !== undefined
+    (warningThresholdHours !== undefined
       ? countdown.days === 0 && countdown.hours < warningThresholdHours
-      : warningThresholdDays > 0 && countdown.days < warningThresholdDays));
+      : warningThresholdDays > 0 && countdown.days < warningThresholdDays);
 
   const dynamicColor =
     color ??

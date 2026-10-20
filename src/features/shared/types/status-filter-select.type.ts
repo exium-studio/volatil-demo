@@ -5,16 +5,9 @@ import type {
   FocusSelectOption,
 } from "@/design-system/components/input/types/focus-select.type";
 
-export type StatusFilterSelectProps = FocusSelectInputProps & {
-  value?: string;
-  defaultValue?: string;
-  onValueChange?: (value: string) => void;
+export type StatusFilterSelectProps = Omit<
+  FocusSelectInputProps,
+  "options"
+> & {
   options?: FocusSelectOption[];
-  placeholder?: string;
-  modalKey?: string;
-  w?: string | number;
-  disabled?: boolean;
-  clearable?: boolean;
-  isLoading?: boolean;
-  isFetching?: boolean;
 };
