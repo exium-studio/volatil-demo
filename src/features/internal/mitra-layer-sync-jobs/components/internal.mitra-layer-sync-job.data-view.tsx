@@ -9,8 +9,8 @@ import { HStack } from "@/design-system/components/layout/ui/flex-box";
 import { AppContentContainer } from "@/design-system/components/layout/ui/page-container";
 import { Separator } from "@/design-system/components/layout/ui/separator";
 import { HeaderContainer } from "@/design-system/components/shell/ui/header-container";
-import { Badge } from "@/design-system/components/typography/ui/badge";
 import { Heading } from "@/design-system/components/typography/ui/heading";
+import { P } from "@/design-system/components/typography/ui/p";
 import { InternalMitraLayerSyncJobTableView } from "@/features/internal/mitra-layer-sync-jobs/components/internal.mitra-layer-sync-job.table-view";
 import type { MitraLayerSyncJobDataViewProps } from "@/features/internal/mitra-layer-sync-jobs/types/mitra-layer-sync-job.type";
 import { RadioIcon } from "lucide-react";
@@ -64,11 +64,9 @@ export const InternalMitraLayerSyncJobDataView = (
                 </HStack>
               </HStack>
 
-              <HStack gap={"xs"} align={"center"}>
-                <Badge colorPalette={"green"} variant={"subtle"}>
-                  <AppIcon icon={RadioIcon} />
-                  {"Sinkronisasi Langsung Aktif"}
-                </Badge>
+              <HStack align={"center"} gap={"xs"} color={"green.fg"}>
+                <AppIcon icon={RadioIcon} />
+                <P>{"Sinkronisasi Langsung Aktif"}</P>
               </HStack>
             </HStack>
           </HeaderContainer>
