@@ -66,7 +66,7 @@ const InternalHomePricingContent = () => {
     <Container.Body>
       <HeaderContainer>
         <HStack align={"center"} gap={"xs"}>
-          <Heading size={"md"}>{"Master Tarif & PNBP"}</Heading>
+          <Heading size={"md"}>{"Tarif & PNBP"}</Heading>
           <InfoTip
             variant={"icon"}
             appIconProps={{
