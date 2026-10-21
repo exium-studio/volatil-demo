@@ -145,7 +145,7 @@ export const InternalDataManagementDetailPage = () => {
             <VStack flex={1} gap={"md"} p={"md"}>
               <Skeleton h={"60px"} w={"full"} />
               <Skeleton h={"120px"} w={"full"} />
-              <Skeleton h={"400px"} w={"full"} />
+              <Skeleton minH={"400px"} w={"full"} />
             </VStack>
           </Container.Body>
         </Container.Root>
