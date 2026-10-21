@@ -19,6 +19,7 @@ import { InternalSystemPolicyModalTrigger } from "@/features/internal/system-pol
 import { useInternalSystemPoliciesQuery } from "@/features/internal/system-policies/hooks/use-internal-system-policies";
 import type { SystemPolicyItem } from "@/features/mitra/data-request/types/mitra.data-request.pricing-policy.type";
 import { getSystemPolicyConfig } from "@/features/shared/constants/volatil.ssot-map";
+import { formatDurationMs } from "@/shared/utils/date/duration.utils";
 import { PencilIcon } from "lucide-react";
 import { useMemo } from "react";
 
@@ -72,12 +73,12 @@ const InternalHomePoliciesContent = () => {
       },
       {
         key: "mitra_sync_cycle_days",
-        value: "30",
+        value: "2592000000",
         valueType: "number",
         label: "Siklus Pembaruan Data Mitra",
         description:
-          "Interval waktu (dalam hari) untuk sinkronisasi otomatis layer spasial mitra dari master IGT ATR/BPN.",
-        unit: "hari",
+          "Interval waktu untuk sinkronisasi otomatis layer spasial mitra dari master IGT ATR/BPN.",
+        unit: "ms",
       },
     ];
 
@@ -128,16 +129,23 @@ const InternalHomePoliciesContent = () => {
           const label = config.label;
           const description = config.description || policy.description;
 
+          const isDuration =
+            policy.key === "mitra_sync_cycle_days" ||
+            policy.unit === "ms" ||
+            policy.unit === "milidetik";
           const isCurrency = policy.unit === "IDR" || policy.unit === "Rupiah";
+          const rawNum = Number(policy.value);
           const formattedValue =
-            policy.valueType === "number" && !Number.isNaN(Number(policy.value))
-              ? isCurrency
-                ? new Intl.NumberFormat("id-ID", {
-                    style: "currency",
-                    currency: "IDR",
-                    maximumFractionDigits: 0,
-                  }).format(Number(policy.value))
-                : `${new Intl.NumberFormat("id-ID").format(Number(policy.value))} ${policy.unit ?? ""}`
+            policy.valueType === "number" && !Number.isNaN(rawNum)
+              ? isDuration
+                ? formatDurationMs(rawNum)
+                : isCurrency
+                  ? new Intl.NumberFormat("id-ID", {
+                      style: "currency",
+                      currency: "IDR",
+                      maximumFractionDigits: 0,
+                    }).format(rawNum)
+                  : `${new Intl.NumberFormat("id-ID").format(rawNum)} ${policy.unit ?? ""}`
               : `${policy.value} ${policy.unit ?? ""}`;
 
           return (

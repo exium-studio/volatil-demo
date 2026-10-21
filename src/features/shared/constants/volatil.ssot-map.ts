@@ -439,10 +439,10 @@ export const SYSTEM_POLICY_MAP: Record<string, SystemPolicyConfig> = {
   mitra_sync_cycle_days: {
     label: "Siklus Pembaruan Data Mitra",
     description:
-      "Interval waktu (dalam hari) untuk sinkronisasi otomatis layer spasial mitra dari master IGT ATR/BPN.",
+      "Interval waktu untuk sinkronisasi otomatis layer spasial mitra dari master IGT ATR/BPN.",
     colorPalette: "purple",
     icon: RefreshCwIcon,
-    helperText: "Pembaruan otomatis dieksekusi setiap pukul 02.00 WIB.",
+    helperText: "Pembaruan otomatis dieksekusi secara berkala sesuai durasi yang ditentukan.",
   },
 };
 

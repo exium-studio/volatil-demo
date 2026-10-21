@@ -1,6 +1,7 @@
 // src/features/internal/system-policies/components/internal.system-policies.modal.tsx
 
 import { Button } from "@/design-system/components/button/ui/button";
+import { DurationInput } from "@/design-system/components/input/ui/duration-input";
 import { Field } from "@/design-system/components/input/ui/field";
 import { NumberInput } from "@/design-system/components/input/ui/number-input";
 import { VStack } from "@/design-system/components/layout/ui/flex-box";
@@ -16,7 +17,7 @@ import type {
 } from "@/features/internal/system-policies/types/internal.system-policies.type";
 import { getSystemPolicyConfig } from "@/features/shared/constants/volatil.ssot-map";
 import { t } from "@/shared/libs/i18n";
-import { useForm } from "react-hook-form";
+import { Controller, useForm } from "react-hook-form";
 
 export const InternalSystemPolicyModalTrigger = (
   props: InternalSystemPolicyModalTriggerProps,
@@ -55,7 +56,13 @@ const InternalSystemPolicyModalContent = (
 
   const updateMutation = useUpdateInternalSystemPolicy();
 
+  const isDuration =
+    policy.key === "mitra_sync_cycle_days" ||
+    policy.unit === "ms" ||
+    policy.unit === "milidetik";
+
   const {
+    control,
     handleSubmit,
     register,
     formState: { errors },
@@ -100,38 +107,64 @@ const InternalSystemPolicyModalContent = (
               </P>
             )}
 
-            <Field
-              label={`Nilai Parameter (${policy.unit ?? "Satuan"})`}
-              w={"full"}
-              errorText={errors.value?.message}
-              helperText={config.helperText}
-            >
-              <NumberInput
+            {isDuration ? (
+              <Field
+                label={`Nilai Parameter (${label})`}
                 w={"full"}
-                defaultValue={String(policy.value)}
-                formatOptions={
-                  isPrice
-                    ? {
-                        style: "currency",
-                        currency: "IDR",
-                        maximumFractionDigits: 0,
-                      }
-                    : undefined
-                }
-                inputProps={register("value", {
-                  required: "Nilai parameter wajib diisi",
-                  min: { value: 0, message: "Nilai tidak boleh negatif" },
-                })}
-                min={0}
-                step={isPrice ? 1000 : 1}
-              />
-            </Field>
+                errorText={errors.value?.message}
+                helperText={config.helperText}
+              >
+                <Controller
+                  name={"value"}
+                  control={control}
+                  rules={{
+                    required: "Nilai parameter wajib diisi",
+                    min: { value: 0, message: "Nilai tidak boleh negatif" },
+                  }}
+                  render={({ field }) => (
+                    <DurationInput
+                      w={"full"}
+                      value={field.value}
+                      onValueChange={(ms) => field.onChange(ms)}
+                      min={0}
+                    />
+                  )}
+                />
+              </Field>
+            ) : (
+              <Field
+                label={`Nilai Parameter (${policy.unit ?? "Satuan"})`}
+                w={"full"}
+                errorText={errors.value?.message}
+                helperText={config.helperText}
+              >
+                <NumberInput
+                  w={"full"}
+                  defaultValue={String(policy.value)}
+                  formatOptions={
+                    isPrice
+                      ? {
+                          style: "currency",
+                          currency: "IDR",
+                          maximumFractionDigits: 0,
+                        }
+                      : undefined
+                  }
+                  inputProps={register("value", {
+                    required: "Nilai parameter wajib diisi",
+                    min: { value: 0, message: "Nilai tidak boleh negatif" },
+                  })}
+                  min={0}
+                  step={isPrice ? 1000 : 1}
+                />
+              </Field>
+            )}
           </VStack>
         </Modal.Body>
 
         <Modal.Footer>
           <VStack gap={"xs"} w={"full"}>
-            <Button primary type={"submit"} loading={updateMutation.isPending}>
+            <Button primary={true} type={"submit"} loading={updateMutation.isPending}>
               {"Simpan"}
             </Button>
 

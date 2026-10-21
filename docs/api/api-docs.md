@@ -2281,18 +2281,34 @@ type UpdateMasterIgtLayerRequest = {
         "label": "Minimum Pembelian Tutupan Kawasan",
         "description": "Batas minimal luas tutupan kawasan (Hektar) yang wajib dibeli mitra per transaksi",
         "unit": "ha"
+      },
+      {
+        "key": "mitra_sync_cycle_days",
+        "value": 2592000000,
+        "valueType": "number",
+        "label": "Siklus Pembaruan Data Mitra",
+        "description": "Interval waktu untuk sinkronisasi otomatis layer spasial mitra dari master IGT ATR/BPN",
+        "unit": "ms"
       }
     ]
   }
   ```
+
+> [!NOTE]
+> **Kebijakan Durasi Siklus Pembaruan Data Mitra (`mitra_sync_cycle_days`)**:
+> - Disimpan dan dikirim dalam satuan **milidetik (`ms`)** (contoh: 30 hari = `2592000000`, 15 menit = `900000`, 90 detik = `90000`).
+> - Backend harus mengembalikan nilai berbasis milidetik (`value: number` dalam ms, `unit: "ms"`).
+> - Frontend otomatis merender nilai durasi ke unit terbaik yang fleksibel dan mudah dibaca (misal jam, menit, hari).
+
 - **UPDATE POLICY (Admin)**: `PUT /api/internal/policies/:key`
-  - URL Param `:key` = String key kebijakan (contoh: `/api/internal/policies/MIN_PURCHASE_BIDANG`)
+  - URL Param `:key` = String key kebijakan (contoh: `/api/internal/policies/mitra_sync_cycle_days` atau `/api/internal/policies/MIN_PURCHASE_BIDANG`)
   - Request Body:
   ```json
   {
-    "value": 10
+    "value": 2592000000
   }
   ```
+  *(Catatan: Untuk `mitra_sync_cycle_days`, nilai yang dikirimkan adalah integer dalam satuan milidetik)*
 
 ---
 
