@@ -288,5 +288,14 @@
       "title": "Tentang",
       "description": "Informasi tentang aplikasi dan detail versi."
     }
+  },
+
+  "duration": {
+    "unit_millisecond": "Milidetik",
+    "unit_second": "Detik",
+    "unit_minute": "Menit",
+    "unit_hour": "Jam",
+    "unit_day": "Hari",
+    "unit_week": "Minggu"
   }
 }

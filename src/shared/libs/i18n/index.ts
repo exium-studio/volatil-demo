@@ -13,6 +13,10 @@ export const t = new Proxy(m, {
       if (normalizedKey in target) {
         return Reflect.get(target, normalizedKey, receiver);
       }
+      const dottedFirstKey = prop.replace("_", ".");
+      if (dottedFirstKey in target) {
+        return Reflect.get(target, dottedFirstKey, receiver);
+      }
     }
     return Reflect.get(target, prop, receiver);
   },

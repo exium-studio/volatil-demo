@@ -36,6 +36,7 @@ import { StateNoData } from "@/design-system/components/feedback/ui/state.no-dat
 import { FocusAlertItem } from "@/design-system/components/focus-alert/ui/focus-alert";
 import { AppIcon } from "@/design-system/components/icon/ui/app-icon";
 import { Checkbox } from "@/design-system/components/input/ui/checkbox";
+import { DurationInput } from "@/design-system/components/input/ui/duration-input";
 import { Field } from "@/design-system/components/input/ui/field";
 import { FocusSelectInput } from "@/design-system/components/input/ui/focus-select";
 import { Input } from "@/design-system/components/input/ui/input";
@@ -521,6 +522,79 @@ export const COMPONENTS_REGISTRY: Record<string, ComponentDocSpec> = {
           placeholder={props.placeholder as string}
           size={(props.size as "xs" | "sm" | "md" | "lg") || "md"}
           maxLength={Number(props.maxLength) || 20}
+          disabled={Boolean(props.disabled)}
+        />
+      </Box>
+    ),
+  },
+
+  duration_input: {
+    key: "duration_input",
+    title: "DurationInput",
+    category: "Form Inputs",
+    description:
+      "Input durasi 2-segmen (nilai numerik dan unit waktu). Nilai hakiki disimpan dalam milidetik (ms) dan mendukung floating label terintegrasi.",
+    importPath:
+      'import { DurationInput } from "@/design-system/components/input/ui/duration-input";',
+    component: DurationInput,
+    defaultProps: {
+      defaultValue: 120000,
+      defaultUnit: "minute",
+      placeholder: "0",
+      disabled: false,
+    },
+    propsSpec: [
+      {
+        name: "defaultValue",
+        type: "number",
+        defaultValue: 120000,
+        description: "Nilai awal dalam milidetik (ms).",
+        controlKind: "number",
+      },
+      {
+        name: "defaultUnit",
+        type: '"millisecond" | "second" | "minute" | "hour" | "day" | "week"',
+        defaultValue: "minute",
+        description: "Satuan default saat nilai awal belum ditentukan.",
+        controlKind: "select",
+        options: [
+          "millisecond",
+          "second",
+          "minute",
+          "hour",
+          "day",
+          "week",
+        ],
+      },
+      {
+        name: "placeholder",
+        type: "string",
+        defaultValue: "0",
+        description: "Placeholder segmen angka.",
+        controlKind: "text",
+      },
+      {
+        name: "disabled",
+        type: "boolean",
+        defaultValue: false,
+        description: "Status nonaktif kontrol input.",
+        controlKind: "boolean",
+      },
+    ],
+    renderPlayground: (props) => (
+      <Box w={"280px"}>
+        <DurationInput
+          defaultValue={Number(props.defaultValue) || 120000}
+          defaultUnit={
+            (props.defaultUnit as
+              | "millisecond"
+              | "second"
+              | "minute"
+              | "hour"
+              | "day"
+              | "week") || "minute"
+          }
+          placeholder={(props.placeholder as string) || "0"}
           disabled={Boolean(props.disabled)}
         />
       </Box>
