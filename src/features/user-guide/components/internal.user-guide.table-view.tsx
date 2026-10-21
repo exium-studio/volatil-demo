@@ -318,59 +318,57 @@ export const InternalUserGuideTableView = (
       {/* Filters Toolbar */}
       {showFilters && (
         <ActionHeaderScrollContainer>
-          <HStack align={"center"} gap={"xs"} w={"full"} p={"xs"} wrap={"wrap"}>
-            <SearchInput
-              value={params.search ?? ""}
-              onValueChange={(val: string) => {
-                setParams((prev) => ({
-                  ...prev,
-                  search: val,
-                  page: 1,
-                }));
-              }}
-              placeholder={"Cari judul dokumen atau nama berkas..."}
-              maxW={"300px"}
-            />
+          <SearchInput
+            value={params.search ?? ""}
+            onValueChange={(val: string) => {
+              setParams((prev) => ({
+                ...prev,
+                search: val,
+                page: 1,
+              }));
+            }}
+            placeholder={"Cari judul dokumen atau nama berkas..."}
+            maxW={"300px"}
+          />
 
-            <StatusFilterSelect
-              modalKey={"internal-user-guide-category-filter"}
-              options={USER_GUIDE_CATEGORY_OPTIONS}
-              value={params.category ?? "all"}
-              onValueChange={(val) => {
-                setParams((prev) => ({
-                  ...prev,
-                  category: val !== "all" ? val : undefined,
-                  page: 1,
-                }));
-              }}
-              placeholder={"Semua Kategori"}
-            />
+          <StatusFilterSelect
+            modalKey={"internal-user-guide-category-filter"}
+            options={USER_GUIDE_CATEGORY_OPTIONS}
+            value={params.category ?? "all"}
+            onValueChange={(val) => {
+              setParams((prev) => ({
+                ...prev,
+                category: val !== "all" ? val : undefined,
+                page: 1,
+              }));
+            }}
+            placeholder={"Semua Kategori"}
+          />
 
-            <StatusFilterSelect
-              modalKey={"internal-user-guide-status-filter"}
-              options={USER_GUIDE_PUBLISH_STATUS_OPTIONS}
-              value={
-                params.isPublished === undefined
-                  ? "all"
-                  : params.isPublished
-                    ? "published"
-                    : "draft"
-              }
-              onValueChange={(val) => {
-                setParams((prev) => ({
-                  ...prev,
-                  isPublished:
-                    val === "published"
-                      ? true
-                      : val === "draft"
-                        ? false
-                        : undefined,
-                  page: 1,
-                }));
-              }}
-              placeholder={"Semua Status"}
-            />
-          </HStack>
+          <StatusFilterSelect
+            modalKey={"internal-user-guide-status-filter"}
+            options={USER_GUIDE_PUBLISH_STATUS_OPTIONS}
+            value={
+              params.isPublished === undefined
+                ? "all"
+                : params.isPublished
+                  ? "published"
+                  : "draft"
+            }
+            onValueChange={(val) => {
+              setParams((prev) => ({
+                ...prev,
+                isPublished:
+                  val === "published"
+                    ? true
+                    : val === "draft"
+                      ? false
+                      : undefined,
+                page: 1,
+              }));
+            }}
+            placeholder={"Semua Status"}
+          />
         </ActionHeaderScrollContainer>
       )}
 

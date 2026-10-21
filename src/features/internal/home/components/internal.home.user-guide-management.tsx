@@ -19,18 +19,16 @@ export const InternalHomeUserGuideManagement = () => {
         {/* Header */}
         <HeaderContainer justify={"space-between"} pr={"xs"}>
           <HStack wrap={"wrap"} gap={"sm"} py={"sm"}>
-            <HStack wrap={"wrap"} align={"center"} gap={"sm"}>
-              <Heading>{"Manajemen Dokumen Panduan Pengguna"}</Heading>
+            <Heading>{"Manajemen Dokumen Panduan Pengguna"}</Heading>
 
-              <InfoTip
-                variant={"icon"}
-                appIconProps={{ size: "xs", color: "fg.subtle" }}
-              >
-                {
-                  "Kelola daftar buku panduan, spesifikasi teknis, dan manual book sistem IGT yang dapat diakses dan diunduh oleh Mitra dan staf Internal."
-                }
-              </InfoTip>
-            </HStack>
+            <InfoTip
+              variant={"icon"}
+              appIconProps={{ size: "xs", color: "fg.subtle" }}
+            >
+              {
+                "Kelola daftar buku panduan, spesifikasi teknis, dan manual book sistem IGT yang dapat diakses dan diunduh oleh Mitra dan staf Internal."
+              }
+            </InfoTip>
           </HStack>
 
           <UserGuideFormModal mode={"create"}>
