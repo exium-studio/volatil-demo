@@ -40,7 +40,9 @@ const InternalHomePoliciesContent = () => {
 
   // Derived Values
   const policies = useMemo(() => {
-    const list = rawPolicies.filter((it) => it.key !== "order_max_extension_count");
+    const list = rawPolicies.filter(
+      (it) => it.key !== "order_max_extension_count",
+    );
     const existingKeys = new Set(list.map((it) => it.key));
 
     const defaultPolicies: SystemPolicyItem[] = [
@@ -186,12 +188,6 @@ const InternalHomePoliciesContent = () => {
               </StatGrid.Header>
 
               <StatGrid.Value value={formattedValue} />
-
-              {config.helperText && (
-                <StatGrid.Description fontSize={"xs"} color={"fg.subtle"}>
-                  {config.helperText}
-                </StatGrid.Description>
-              )}
             </StatGrid.Item>
           );
         })}
@@ -199,4 +195,3 @@ const InternalHomePoliciesContent = () => {
     </Container.Body>
   );
 };
-

@@ -217,6 +217,23 @@ export const DurationInput = forwardRef<HTMLInputElement, DurationInputProps>(
           />
         </Box>
 
+        {/* Divider Segment (Only separates input and select, doesn't cross floating label) */}
+        <Box
+          display={"flex"}
+          alignItems={"center"}
+          h={"full"}
+          {...(isFloatingVariant &&
+            floatingLabel && {
+              pt: "18px",
+            })}
+        >
+          <Box
+            w={"1px"}
+            h={"20px"}
+            bg={"border.subtle"}
+          />
+        </Box>
+
         {/* 2. Unit Select Segment (Design System SelectInput) */}
         <Box
           w={"auto"}
@@ -224,8 +241,6 @@ export const DurationInput = forwardRef<HTMLInputElement, DurationInputProps>(
           h={"full"}
           display={"flex"}
           alignItems={"center"}
-          borderLeftWidth={"1px"}
-          borderLeftColor={"border.subtle"}
           css={{
             "& .chakra-select__control, & [data-part='control'], & .chakra-select__trigger, & [data-part='trigger'], & button":
               {
