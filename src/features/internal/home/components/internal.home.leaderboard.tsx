@@ -347,7 +347,7 @@ const TopIgtLayersLeaderboardCard = (props: LeaderboardCardProps) => {
                       alignSelf={"stretch"}
                       justify={"center"}
                     >
-                      <P fontWeight={"bold"} fontSize={"md"}>
+                      <P fontWeight={"semibold"} fontSize={"md"}>
                         <FormatNumber
                           value={layer.totalPnbpRevenue}
                           style={"currency"}
