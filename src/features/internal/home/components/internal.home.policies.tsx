@@ -39,7 +39,7 @@ const InternalHomePoliciesContent = () => {
 
   // Derived Values
   const policies = useMemo(() => {
-    const list = [...rawPolicies];
+    const list = rawPolicies.filter((it) => it.key !== "order_max_extension_count");
     const existingKeys = new Set(list.map((it) => it.key));
 
     const defaultPolicies: SystemPolicyItem[] = [
@@ -60,15 +60,6 @@ const InternalHomePoliciesContent = () => {
         description:
           "Masa aktif layanan data spasial & streaming WMS setelah pesanan berstatus siap.",
         unit: "hari",
-      },
-      {
-        key: "order_max_extension_count",
-        value: "1",
-        valueType: "number",
-        label: "Maksimal Perpanjangan",
-        description:
-          "Jumlah maksimum pengajuan perpanjangan masa aktif pesanan yang diizinkan untuk mitra.",
-        unit: "kali",
       },
       {
         key: "order_extension_window_days",

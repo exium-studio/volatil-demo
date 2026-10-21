@@ -7,7 +7,7 @@ import type {
 } from "@/features/mitra/my-data/types/my-data.type";
 
 const DEFAULT_EXTENSION_WINDOW_DAYS = 7;
-const DEFAULT_MAX_EXTENSION_COUNT = 1;
+const DEFAULT_MAX_EXTENSION_COUNT = 0; // 0 = unlimited
 
 /**
  * Validates whether a workspace order can be extended based on system policies and H-7 extension window.
@@ -15,7 +15,7 @@ const DEFAULT_MAX_EXTENSION_COUNT = 1;
  * Rules:
  * 1. Order status must be "ready".
  * 2. Days remaining must be: 0 < daysRemaining <= order_extension_window_days (default H-7 window).
- * 3. Extension count must not exceed order_max_extension_count (default 1x).
+ * 3. Extension count must not exceed order_max_extension_count (0 = unlimited).
  */
 export function checkOrderExtensionEligibility(
   workspace: MitraWorkspaceItem,
@@ -70,7 +70,7 @@ export function checkOrderExtensionEligibility(
   }
 
   const currentCount = workspace.extensionCount ?? 0;
-  if (currentCount >= maxExtensionCount) {
+  if (maxExtensionCount > 0 && currentCount >= maxExtensionCount) {
     return {
       canExtend: false,
       daysRemaining: 0,

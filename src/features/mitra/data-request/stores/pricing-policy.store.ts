@@ -7,7 +7,7 @@ import { create } from "zustand";
 const INITIAL_SYSTEM_POLICIES: SystemPolicies = {
   payment_timeout_fallback_hours: 24,
   order_access_duration_days: 365,
-  order_max_extension_count: 1,
+  order_max_extension_count: 0,
   order_extension_window_days: 7,
 };
 
@@ -21,7 +21,7 @@ export const usePricingPolicyStore = create<PricingPolicyState>((set, get) => ({
   pnbpCode: "",
   paymentTimeoutFallbackHours: 24,
   accessDurationDays: 365,
-  maxExtensionCount: 1,
+  maxExtensionCount: 0,
   extensionWindowDays: 7,
   systemPolicies: INITIAL_SYSTEM_POLICIES,
   isInitialized: false,

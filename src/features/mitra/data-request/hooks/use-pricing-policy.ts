@@ -108,7 +108,7 @@ export const usePricingPolicy = (): MitraPricingPolicy => {
         accessDurationPolicy?.value ?? storedSystemPolicies.order_access_duration_days ?? 365,
       ),
       order_max_extension_count: Number(
-        maxExtensionPolicy?.value ?? storedSystemPolicies.order_max_extension_count ?? 1,
+        maxExtensionPolicy?.value ?? storedSystemPolicies.order_max_extension_count ?? 0,
       ),
       order_extension_window_days: Number(
         extensionWindowPolicy?.value ?? storedSystemPolicies.order_extension_window_days ?? 7,
