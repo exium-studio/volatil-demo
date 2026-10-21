@@ -22,6 +22,7 @@ import {
   useCallback,
   useEffect,
   useMemo,
+  useRef,
   useState,
   type ChangeEvent,
 } from "react";
@@ -79,20 +80,31 @@ export const DurationInput = forwardRef<HTMLInputElement, DurationInputProps>(
     );
     const [isFocused, setIsFocused] = useState<boolean>(false);
 
-    // Synchronize when controlled value changes externally
+    // Refs to track internal changes and prevent auto-switching unit during typing
+    const lastEmittedMsRef = useRef<number | undefined>(initialMs);
+
+    // Synchronize ONLY when controlled value changes externally (not from user typing)
     useEffect(() => {
-      if (isControlled) {
-        if (controlledValue === undefined) {
-          setNumValue("");
-          return;
-        }
-        const resolved = msToBestDuration(controlledValue, {
-          allowedUnits,
-          defaultUnit: selectedUnit,
-        });
-        setNumValue(String(resolved.value));
-        setSelectedUnit(resolved.unit);
+      if (!isControlled) return;
+
+      if (controlledValue === undefined) {
+        setNumValue("");
+        lastEmittedMsRef.current = undefined;
+        return;
       }
+
+      // If the incoming value matches what this input just emitted, DO NOT auto-switch unit or recalculate
+      if (controlledValue === lastEmittedMsRef.current) {
+        return;
+      }
+
+      lastEmittedMsRef.current = controlledValue;
+      const resolved = msToBestDuration(controlledValue, {
+        allowedUnits,
+        defaultUnit: selectedUnit,
+      });
+      setNumValue(String(resolved.value));
+      setSelectedUnit(resolved.unit);
     }, [controlledValue, isControlled, allowedUnits, selectedUnit]);
 
     // Derived Values
@@ -118,6 +130,8 @@ export const DurationInput = forwardRef<HTMLInputElement, DurationInputProps>(
         const newMs = Number.isNaN(parsed)
           ? 0
           : durationToMs(parsed, selectedUnit);
+
+        lastEmittedMsRef.current = newMs;
         onValueChange?.(newMs, {
           value: Number.isNaN(parsed) ? 0 : parsed,
           unit: selectedUnit,
@@ -133,6 +147,8 @@ export const DurationInput = forwardRef<HTMLInputElement, DurationInputProps>(
 
         const parsed = parseFloat(numValue);
         const newMs = Number.isNaN(parsed) ? 0 : durationToMs(parsed, newUnit);
+
+        lastEmittedMsRef.current = newMs;
         onValueChange?.(newMs, {
           value: Number.isNaN(parsed) ? 0 : parsed,
           unit: newUnit,
@@ -227,11 +243,7 @@ export const DurationInput = forwardRef<HTMLInputElement, DurationInputProps>(
               pt: "18px",
             })}
         >
-          <Box
-            w={"1px"}
-            h={"20px"}
-            bg={"border.subtle"}
-          />
+          <Box w={"1px"} h={"20px"} bg={"border.subtle"} />
         </Box>
 
         {/* 2. Unit Select Segment (Design System SelectInput) */}
