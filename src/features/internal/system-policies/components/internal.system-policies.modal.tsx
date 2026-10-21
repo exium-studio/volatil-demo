@@ -7,7 +7,6 @@ import { NumberInput } from "@/design-system/components/input/ui/number-input";
 import { VStack } from "@/design-system/components/layout/ui/flex-box";
 import { usePopModal } from "@/design-system/components/overlay/hooks/use-pop-modal";
 import { Modal } from "@/design-system/components/overlay/ui/modal";
-import { P } from "@/design-system/components/typography/ui/p";
 import { useMountTimeout } from "@/design-system/hooks/use-mount-timeout";
 import { useUpdateInternalSystemPolicy } from "@/features/internal/system-policies/hooks/use-internal-system-policies";
 import type {
@@ -52,7 +51,6 @@ const InternalSystemPolicyModalContent = (
   const { policy, close } = props;
   const config = getSystemPolicyConfig(policy.key);
   const label = config.label;
-  const description = config.description || policy.description;
 
   const updateMutation = useUpdateInternalSystemPolicy();
 
@@ -101,15 +99,9 @@ const InternalSystemPolicyModalContent = (
       <form onSubmit={handleSubmit(handleFormSubmit)}>
         <Modal.Body p={"md"}>
           <VStack align={"stretch"} gap={"md"}>
-            {description && (
-              <P color={"fg.subtle"} fontSize={"sm"}>
-                {description}
-              </P>
-            )}
-
             {isDuration ? (
               <Field
-                label={`Nilai Parameter (${label})`}
+                label={label}
                 w={"full"}
                 errorText={errors.value?.message}
                 helperText={config.helperText}
@@ -164,7 +156,11 @@ const InternalSystemPolicyModalContent = (
 
         <Modal.Footer>
           <VStack gap={"xs"} w={"full"}>
-            <Button primary={true} type={"submit"} loading={updateMutation.isPending}>
+            <Button
+              primary={true}
+              type={"submit"}
+              loading={updateMutation.isPending}
+            >
               {"Simpan"}
             </Button>
 
