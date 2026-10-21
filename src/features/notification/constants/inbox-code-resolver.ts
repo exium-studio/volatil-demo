@@ -235,9 +235,7 @@ export const resolveInboxUI = (item: InboxItem): InboxResolvedUI => {
         title: item.title ?? `Layanan Kedaluwarsa: ${meta.workspaceName ?? ""}`,
         message:
           item.message ??
-          "Masa aktif akses WMS/WFS telah habis. Silakan aktifkan kembali untuk mengakses layer.",
-        actionUrl: `/mitra/my-data/${meta.workspaceId ?? meta.workspaceName ?? ""}`,
-        actionLabel: "Aktifkan kembali",
+          "Masa aktif akses WMS/WFS telah habis dan tidak dapat diperpanjang atau diaktifkan kembali.",
         icon: XCircleIcon,
         colorPalette: "red",
       };

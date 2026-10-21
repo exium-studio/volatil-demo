@@ -220,7 +220,7 @@ export const MitraMyDataWorkspaceDetailPage = () => {
 
     if (isExpired) {
       toast.error(
-        "Workspace telah kedaluwarsa. Silakan perpanjang layanan terlebih dahulu.",
+        "Workspace telah kedaluwarsa dan tidak dapat diperpanjang atau digunakan kembali.",
       );
       void navigate({ to: "/mitra/my-data" });
     }
