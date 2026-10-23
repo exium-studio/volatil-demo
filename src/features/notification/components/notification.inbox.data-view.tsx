@@ -288,14 +288,8 @@ const InboxCardItem = memo((props: InboxCardItemProps) => {
         </Box>
 
         {/* Action Footer: Navigation Button / Mark As Read */}
-        <HStack
-          justify={"space-between"}
-          align={"center"}
-          wrap={"wrap"}
-          gap={"xs"}
-          mt={"xs"}
-        >
-          {hasAction ? (
+        <HStack align={"center"} wrap={"wrap"} gap={"xs"} mt={"xs"}>
+          {hasAction && (
             <Button
               variant={"outline"}
               size={"xs"}
@@ -305,8 +299,6 @@ const InboxCardItem = memo((props: InboxCardItemProps) => {
               {resolved.actionLabel || "Buka"}
               <AppIcon icon={ArrowRightIcon} />
             </Button>
-          ) : (
-            <Box />
           )}
 
           {!item.isRead && (
