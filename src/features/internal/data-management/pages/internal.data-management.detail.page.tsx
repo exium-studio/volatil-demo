@@ -196,11 +196,11 @@ export const InternalDataManagementDetailPage = () => {
 
                 <ClampedHeading>{layer.title}</ClampedHeading>
 
+                <IgtBasisBadge>{layer.igtBasis}</IgtBasisBadge>
+
                 <Badge colorPalette={layer.isActive ? "green" : "gray"}>
                   {layer.isActive ? "Publik" : "Draft"}
                 </Badge>
-
-                <IgtBasisBadge>{layer.igtBasis}</IgtBasisBadge>
               </HStack>
 
               <HStack gap={"xs"} align={"center"}>
