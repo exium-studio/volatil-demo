@@ -59,7 +59,7 @@ const InternalHomePoliciesContent = () => {
         key: "order_access_duration_days",
         value: "365",
         valueType: "number",
-        label: "Durasi Akses Layanan",
+        label: "Masa Aktif Akses Layanan",
         description:
           "Masa aktif layanan data spasial & streaming WMS setelah pesanan berstatus siap.",
         unit: "hari",
