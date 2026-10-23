@@ -15,7 +15,7 @@ export type InboxResolvedUI = {
   actionUrl?: string;
   actionLabel?: string;
   icon: ComponentType;
-  colorPalette: "blue" | "green" | "orange" | "red" | "purple" | "gray";
+  colorPalette: "blue" | "green" | "orange" | "red" | "purple" | "gray" | "teal";
 };
 
 export type InboxCode =
@@ -44,13 +44,15 @@ export type InboxCode =
   | "MITRA_REGISTRATION_REJECTED"
   | "SECURITY_PASSWORD_CHANGED"
   | "SECURITY_TOTP_ENABLED"
+  // Pembaruan Data Spasial
+  | "DATA_SYNC_COMPLETED"
   // Internal
   | "INTERNAL_NEW_ORDER_REVIEW"
   | "INTERNAL_NEW_REGISTRATION"
   | "SYSTEM_ANNOUNCEMENT";
 
 export type InboxItemMetadata = {
-  orderId?: string;
+  orderId?: string | number;
   orderNumber?: string;
   billingCode?: string;
   totalAmount?: number;
@@ -71,6 +73,10 @@ export type InboxItemMetadata = {
   enabledAt?: string;
   mitraName?: string;
   announcementId?: string;
+  jobId?: string;
+  layerId?: string;
+  layerTitle?: string;
+  syncedAt?: string;
   [key: string]: unknown;
 };
 

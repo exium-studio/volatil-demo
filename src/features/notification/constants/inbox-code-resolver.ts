@@ -13,6 +13,7 @@ import {
   CreditCardIcon,
   FileTextIcon,
   HelpCircleIcon,
+  RefreshCwIcon,
   ShieldCheckIcon,
   UserCheckIcon,
   XCircleIcon,
@@ -69,6 +70,11 @@ export const resolveInboxUI = (item: InboxItem): InboxResolvedUI => {
       code = "ORDER_REJECTED";
     } else if (title.includes("Dibatalkan") || meta.orderStatus === "cancelled") {
       code = "ORDER_CANCELLED";
+    } else if (
+      title.toLowerCase().includes("pembaruan data spasial") ||
+      Boolean(meta.jobId && meta.layerId)
+    ) {
+      code = "DATA_SYNC_COMPLETED";
     }
   }
 
@@ -324,6 +330,24 @@ export const resolveInboxUI = (item: InboxItem): InboxResolvedUI => {
         icon: ShieldCheckIcon,
         colorPalette: "green",
       };
+
+    // ── Kategori Pembaruan Data Spasial (Sync Mitra) ────────────────────────
+    case "DATA_SYNC_COMPLETED": {
+      const workspaceRef = meta.workspaceName ?? meta.workspaceId;
+      const targetUrl = workspaceRef
+        ? `/mitra/my-data/${workspaceRef}`
+        : item.actionUrl ?? "/mitra/my-data";
+      return {
+        title: item.title ?? `Pembaruan Data Spasial: ${meta.layerTitle ?? ""}`,
+        message:
+          item.message ??
+          `Layer spasial '${meta.layerTitle ?? ""}' pada pesanan ${meta.orderNumber ?? ""} telah diperbarui dengan data master terbaru.`,
+        actionUrl: targetUrl,
+        actionLabel: item.actionLabel ?? "Buka Data Saya",
+        icon: RefreshCwIcon,
+        colorPalette: "teal",
+      };
+    }
 
     // ── Kategori Internal ───────────────────────────────────────────────────
     case "INTERNAL_NEW_ORDER_REVIEW":

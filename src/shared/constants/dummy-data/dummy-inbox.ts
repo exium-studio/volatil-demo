@@ -51,4 +51,25 @@ export const DUMMY_INBOX_ITEMS: InboxItem[] = [
       "Akan dilakukan pemeliharaan server GeoServer pada hari Sabtu pukul 01:00 - 04:00 WIB. Layanan WMS/WFS mungkin mengalami kendala sesaat.",
     createdAt: "2026-10-01T12:00:00Z",
   },
+  {
+    id: "inbox-5",
+    code: "DATA_SYNC_COMPLETED",
+    category: "sistem",
+    title: "Pembaruan Data Spasial: Batas Wilayah Administrasi",
+    message:
+      "Layer spasial 'Batas Wilayah Administrasi' pada pesanan ORD-2026-0012 telah berhasil diperbarui dengan data master terbaru ATR/BPN.",
+    actionUrl: "/mitra/my-data/mitra_workspace_12",
+    actionLabel: "Buka Data Saya",
+    isRead: false,
+    createdAt: "2026-10-23T02:18:10.000Z",
+    metadata: {
+      jobId: "job_01j9a8bcde",
+      layerId: "layer_batas_wilayah",
+      layerTitle: "Batas Wilayah Administrasi",
+      orderId: 12,
+      orderNumber: "ORD-2026-0012",
+      workspaceName: "mitra_workspace_12",
+      syncedAt: "2026-10-23T02:18:10.000Z",
+    },
+  },
 ];
