@@ -16,7 +16,13 @@ export const apiClient = {
     endpoint: string,
     options: RequestOptions = {},
   ): Promise<T> => {
-    const { body, params, headers: customHeaders, ...restOptions } = options;
+    const {
+      body,
+      params,
+      headers: customHeaders,
+      method: rawMethod = "GET",
+      ...restOptions
+    } = options;
 
     const baseUrl = import.meta.env.VITE_API_BASE_URL || "";
     let url =
@@ -54,9 +60,17 @@ export const apiClient = {
       }
     }
 
+    // Tunnel PUT / PATCH / DELETE via POST with X-HTTP-Method-Override header for strict firewalls/WAFs
+    let method = rawMethod.toUpperCase();
+    if (["PUT", "PATCH", "DELETE"].includes(method)) {
+      headers["X-HTTP-Method-Override"] = method;
+      method = "POST";
+    }
+
     try {
       const response = await fetch(url, {
         ...restOptions,
+        method,
         headers,
         body: serializedBody,
       });
