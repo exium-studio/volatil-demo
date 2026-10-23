@@ -15,13 +15,13 @@ import { Separator } from "@/design-system/components/layout/ui/separator";
 import { useMapFeatureInfoStore } from "@/design-system/components/map/stores/map.feature-info.store";
 import { useMapInstanceStore } from "@/design-system/components/map/stores/map.instance.store";
 import type { MapFeatureInfoItem } from "@/design-system/components/map/types/map.feature-info.type";
+import { zoomToFeatureSafe } from "@/design-system/components/map/utils/map-camera";
 import { Tooltip } from "@/design-system/components/overlay/ui/tooltip";
 import { toast } from "@/design-system/components/toast";
 import { ClampedP, P } from "@/design-system/components/typography/ui/p";
 import { useIsSmallViewport } from "@/design-system/hooks/use-is-small-viewport";
 import { useThemeStore } from "@/design-system/stores/theme-store";
 import { isEmptyArray } from "@/shared/utils/data/array";
-import * as turf from "@turf/turf";
 import { FocusIcon, Grid2X2Icon, Layers2Icon } from "lucide-react";
 import { useMemo, useState } from "react";
 
@@ -105,25 +105,10 @@ export const MapFeatureInfoPanel = () => {
 
   const handleZoomToFeature = () => {
     const geom = selectedFeature?.geometry ?? displayFeature?.geometry;
-    if (!map || !geom) return;
+    const coord = selectedFeature?.coordinate ?? displayFeature?.coordinate;
+    if (!map) return;
     try {
-      const bbox = turf.bbox({
-        type: "Feature",
-        properties: {},
-        geometry: geom,
-      });
-      const rightPadding = isSmallViewport ? 300 : 380;
-      map.fitBounds(
-        [
-          [bbox[0], bbox[1]],
-          [bbox[2], bbox[3]],
-        ],
-        {
-          padding: { top: 80, bottom: 80, left: 80, right: rightPadding },
-          maxZoom: 18,
-          duration: 1000,
-        },
-      );
+      zoomToFeatureSafe(map, geom, coord, isSmallViewport);
     } catch {
       toast.error("Gagal melakukan zoom ke fitur.");
     }

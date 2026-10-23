@@ -8,6 +8,8 @@ import type { MapLayerConfig } from "@/design-system/components/map/types/map.ty
 import { fetchWfs } from "@/design-system/components/map/utils/fetch-wfs";
 import { normalizeGeometryCoordinates } from "@/design-system/components/map/utils/geometry";
 import { fetchWmsGetFeatureInfo } from "@/design-system/components/map/utils/wms-get-feature-info";
+import { zoomToFeatureSafe } from "@/design-system/components/map/utils/map-camera";
+import { useIsSmallViewport } from "@/design-system/hooks/use-is-small-viewport";
 import { useThemeStore } from "@/design-system/stores/theme-store";
 
 import * as turf from "@turf/turf";
@@ -115,7 +117,15 @@ export const useMapFeatureInfo = (
   const setError = useMapFeatureInfoStore((s) => s.setError);
   const clearFeatureInfo = useMapFeatureInfoStore((s) => s.clearFeatureInfo);
 
+  // Hooks
+  const isSmallViewport = useIsSmallViewport();
+
   // Refs
+  const isSmallViewportRef = useRef(isSmallViewport);
+  useEffect(() => {
+    isSmallViewportRef.current = isSmallViewport;
+  }, [isSmallViewport]);
+
   const layersRef = useRef(layers);
   useEffect(() => {
     layersRef.current = layers;
@@ -662,38 +672,12 @@ export const useMapFeatureInfo = (
             });
             foundFeature = true;
 
-            if (feat.geometry && feat.geometry.type !== "Point") {
-              try {
-                const bbox = turf.bbox({
-                  type: "Feature",
-                  properties: {},
-                  geometry: feat.geometry,
-                });
-                map.fitBounds(
-                  [
-                    [bbox[0], bbox[1]],
-                    [bbox[2], bbox[3]],
-                  ],
-                  {
-                    padding: { top: 80, bottom: 80, left: 80, right: 380 },
-                    maxZoom: 18,
-                    duration: 1000,
-                  },
-                );
-              } catch {
-                map.flyTo({
-                  center: [e.lngLat.lng, e.lngLat.lat],
-                  zoom: 17,
-                  duration: 1000,
-                });
-              }
-            } else {
-              map.flyTo({
-                center: [e.lngLat.lng, e.lngLat.lat],
-                zoom: 17,
-                duration: 1000,
-              });
-            }
+            zoomToFeatureSafe(
+              map,
+              feat.geometry ?? null,
+              [e.lngLat.lng, e.lngLat.lat],
+              isSmallViewportRef.current,
+            );
             break;
           }
         }
