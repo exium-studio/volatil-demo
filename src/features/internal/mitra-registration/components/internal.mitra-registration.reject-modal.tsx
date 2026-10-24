@@ -77,8 +77,11 @@ const InternalMitraRegistrationRejectModalContent = (
       },
       {
         onSuccess: () => {
-          if (isOpen) back();
-          onSuccessRedirect?.();
+          if (onSuccessRedirect) {
+            onSuccessRedirect();
+          } else if (isOpen) {
+            back();
+          }
         },
       },
     );

@@ -81,12 +81,13 @@ export const InternalMitraRegistrationApproveModalContent = (
       },
       {
         onSuccess: () => {
-          if (close) {
+          if (onSuccessRedirect) {
+            onSuccessRedirect();
+          } else if (close) {
             close();
           } else if (isOpen) {
             back();
           }
-          onSuccessRedirect?.();
         },
       },
     );

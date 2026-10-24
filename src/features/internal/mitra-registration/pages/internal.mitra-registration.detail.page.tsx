@@ -398,7 +398,13 @@ export function InternalMitraRegistrationDetailPage() {
                   <InternalMitraRegistrationApproveTrigger
                     registration={registration}
                     onSuccessRedirect={() => {
-                      void navigate({ to: "/internal/mitra-registration" });
+                      void navigate({
+                        to: "/internal/mitra-registration",
+                        replace: true,
+                        search: {
+                          status: undefined,
+                        },
+                      });
                     }}
                   >
                     <Button primary={true} colorPalette={"green"}>
