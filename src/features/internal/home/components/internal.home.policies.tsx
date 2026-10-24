@@ -40,11 +40,6 @@ const InternalHomePoliciesContent = () => {
 
   // Derived Values
   const policies = useMemo(() => {
-    const list = rawPolicies.filter(
-      (it) => it.key !== "order_max_extension_count",
-    );
-    const existingKeys = new Set(list.map((it) => it.key));
-
     const defaultPolicies: SystemPolicyItem[] = [
       {
         key: "payment_timeout_fallback_hours",
@@ -74,15 +69,27 @@ const InternalHomePoliciesContent = () => {
         unit: "hari",
       },
       {
-        key: "mitra_sync_cycle_days",
-        value: "2592000000",
-        valueType: "number",
+        key: "mitra_sync_schedule",
+        value: '{"unit":"days","milestones":[30,59]}',
+        valueType: "json",
         label: "Siklus Pembaruan Data Mitra",
         description:
-          "Interval waktu untuk sinkronisasi otomatis layer spasial mitra dari master IGT ATR/BPN.",
-        unit: "ms",
+          "Jadwal pembaruan berkala layer spasial mitra dari tanggal pembelian/perpanjangan.",
+        unit: "schedule",
       },
     ];
+
+    const hasSyncSchedule = rawPolicies.some(
+      (p) => p.key === "mitra_sync_schedule",
+    );
+    const filteredRaw = (
+      hasSyncSchedule
+        ? rawPolicies.filter((p) => p.key !== "mitra_sync_cycle_days")
+        : rawPolicies
+    ).filter((it) => it.key !== "order_max_extension_count");
+
+    const existingKeys = new Set(filteredRaw.map((p) => p.key));
+    const list = [...filteredRaw];
 
     for (const def of defaultPolicies) {
       if (!existingKeys.has(def.key)) {
@@ -137,18 +144,40 @@ const InternalHomePoliciesContent = () => {
             policy.unit === "milidetik";
           const isCurrency = policy.unit === "IDR" || policy.unit === "Rupiah";
           const rawNum = Number(policy.value);
+
           const formattedValue =
-            policy.valueType === "number" && !Number.isNaN(rawNum)
-              ? isDuration
-                ? formatDurationMs(rawNum)
-                : isCurrency
-                  ? new Intl.NumberFormat("id-ID", {
-                      style: "currency",
-                      currency: "IDR",
-                      maximumFractionDigits: 0,
-                    }).format(rawNum)
-                  : `${new Intl.NumberFormat("id-ID").format(rawNum)} ${policy.unit ?? ""}`
-              : `${policy.value} ${policy.unit ?? ""}`;
+            policy.key === "mitra_sync_schedule"
+              ? (() => {
+                  try {
+                    const parsed =
+                      typeof policy.value === "string"
+                        ? JSON.parse(policy.value)
+                        : policy.value;
+                    const unitLabel =
+                      parsed.unit === "minutes"
+                        ? "Menit"
+                        : parsed.unit === "week"
+                          ? "Minggu"
+                          : "Hari";
+                    const milestones = Array.isArray(parsed.milestones)
+                      ? parsed.milestones.join(", ")
+                      : "30, 59";
+                    return `${parsed.milestones?.length || 2}x (${milestones} ${unitLabel})`;
+                  } catch {
+                    return "2x (30, 59 Hari)";
+                  }
+                })()
+              : policy.valueType === "number" && !Number.isNaN(rawNum)
+                ? isDuration
+                  ? formatDurationMs(rawNum)
+                  : isCurrency
+                    ? new Intl.NumberFormat("id-ID", {
+                        style: "currency",
+                        currency: "IDR",
+                        maximumFractionDigits: 0,
+                      }).format(rawNum)
+                    : `${new Intl.NumberFormat("id-ID").format(rawNum)} ${policy.unit ?? ""}`
+                : `${policy.value} ${policy.unit ?? ""}`;
 
           return (
             <StatGrid.Item key={policy.key} index={index} columns={cols}>

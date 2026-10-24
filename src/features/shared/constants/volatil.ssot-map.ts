@@ -444,6 +444,14 @@ export const SYSTEM_POLICY_MAP: Record<string, SystemPolicyConfig> = {
     icon: RefreshCwIcon,
     helperText: "Pembaruan otomatis dieksekusi secara berkala sesuai durasi yang ditentukan.",
   },
+  mitra_sync_schedule: {
+    label: "Siklus Pembaruan Data Mitra",
+    description:
+      "Jadwal pembaruan berkala layer spasial mitra dari tanggal pembelian/perpanjangan.",
+    colorPalette: "purple",
+    icon: RefreshCwIcon,
+    helperText: "Tentukan jatah dan titik waktu pembaruan otomatis data mitra.",
+  },
 };
 
 export const getSystemPolicyConfig = (key: string): SystemPolicyConfig => {

@@ -183,9 +183,11 @@ export const createDummyMitraLayerSyncJobsResponse = (params?: {
     const q = params.search.toLowerCase().trim();
     filtered = filtered.filter(
       (j) =>
-        j.layerTitle.toLowerCase().includes(q) ||
+        (j.layerTitle?.toLowerCase().includes(q) ?? false) ||
         j.id.toLowerCase().includes(q) ||
-        j.typeName.toLowerCase().includes(q),
+        (j.typeName?.toLowerCase().includes(q) ?? false) ||
+        (j.orderNumber?.toLowerCase().includes(q) ?? false) ||
+        (j.mitraName?.toLowerCase().includes(q) ?? false),
     );
   }
 

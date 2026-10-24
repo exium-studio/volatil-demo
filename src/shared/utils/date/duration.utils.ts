@@ -53,7 +53,10 @@ export function msToBestDuration(
   },
 ): DurationValue {
   const allowed = options?.allowedUnits ?? DURATION_UNITS_DESC;
-  const fallbackUnit = options?.defaultUnit ?? "minute";
+  const fallbackUnit =
+    options?.defaultUnit && allowed.includes(options.defaultUnit)
+      ? options.defaultUnit
+      : (allowed[0] ?? "minute");
 
   if (ms === undefined || ms === null || !Number.isFinite(ms) || ms === 0) {
     return { value: 0, unit: fallbackUnit };

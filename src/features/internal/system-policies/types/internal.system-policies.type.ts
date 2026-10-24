@@ -15,5 +15,7 @@ export type InternalSystemPolicyModalContentProps = {
 };
 
 export type PolicyFormValues = {
-  value: number;
+  value?: number;
+  scheduleUnit?: string;
+  scheduleMilestones?: string;
 };

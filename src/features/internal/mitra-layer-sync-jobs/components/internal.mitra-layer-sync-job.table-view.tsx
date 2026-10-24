@@ -112,9 +112,10 @@ export const InternalMitraLayerSyncJobTableView = (
   const dataList = useMemo(() => {
     const headers: FormattedTableHeader[] = [
       { th: "ID Job", sortable: showPagination },
-      { th: "Layer Target", sortable: showPagination },
+      { th: "Order & Mitra", sortable: showPagination },
+      { th: "Tahap Pembaruan", sortable: showPagination },
       { th: "Status", sortable: showPagination, align: "start" },
-      { th: "Progres Sinkronisasi", sortable: showPagination },
+      { th: "Progres Layer", sortable: showPagination },
       { th: "Dijalankan Oleh", sortable: showPagination },
       { th: "Waktu Dijadwalkan", sortable: showPagination },
       { th: "Waktu Selesai", sortable: showPagination },
@@ -137,13 +138,33 @@ export const InternalMitraLayerSyncJobTableView = (
             align: "start" as const,
           },
           {
-            value: job.layerTitle,
+            value: job.orderNumber || job.layerTitle || job.id,
             td: (
-              <VStack align={"start"} gap={"2xs"} minW={"200px"}>
-                <ClampedP>{job.layerTitle}</ClampedP>
+              <VStack align={"start"} gap={"2xs"} minW={"180px"}>
+                <ClampedP fontWeight={"medium"}>
+                  {job.orderNumber || job.orderId || "-"}
+                </ClampedP>
                 <P fontSize={"xs"} color={"fg.subtle"}>
-                  {job.typeName}
+                  {job.mitraName || "Mitra"}
                 </P>
+              </VStack>
+            ),
+            align: "start" as const,
+          },
+          {
+            value: job.milestoneIndex ? `Tahap ${job.milestoneIndex}` : "-",
+            td: (
+              <VStack align={"start"} gap={"2xs"} minW={"120px"}>
+                <P fontSize={"sm"} fontWeight={"medium"}>
+                  {job.milestoneIndex
+                    ? `Pembaruan Ke-${job.milestoneIndex}`
+                    : "-"}
+                </P>
+                {job.layerTitle && (
+                  <ClampedP fontSize={"2xs"} color={"fg.subtle"}>
+                    {job.layerTitle}
+                  </ClampedP>
+                )}
               </VStack>
             ),
             align: "start" as const,

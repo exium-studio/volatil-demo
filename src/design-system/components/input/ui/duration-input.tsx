@@ -61,14 +61,17 @@ export const DurationInput = forwardRef<HTMLInputElement, DurationInputProps>(
     const isControlled = controlledValue !== undefined;
     const initialMs = isControlled ? controlledValue : defaultValue;
 
+    const effectiveDefaultUnit = allowedUnits.includes(defaultUnit)
+      ? defaultUnit
+      : (allowedUnits[0] ?? "minute");
+
     const initialDuration = useMemo(
       () =>
         msToBestDuration(initialMs, {
           allowedUnits,
-          defaultUnit,
+          defaultUnit: effectiveDefaultUnit,
         }),
-      // eslint-disable-next-line react-hooks/exhaustive-deps
-      [],
+      [initialMs, allowedUnits, effectiveDefaultUnit],
     );
 
     // States
@@ -101,11 +104,19 @@ export const DurationInput = forwardRef<HTMLInputElement, DurationInputProps>(
       lastEmittedMsRef.current = controlledValue;
       const resolved = msToBestDuration(controlledValue, {
         allowedUnits,
-        defaultUnit: selectedUnit,
+        defaultUnit: allowedUnits.includes(selectedUnit)
+          ? selectedUnit
+          : effectiveDefaultUnit,
       });
       setNumValue(String(resolved.value));
       setSelectedUnit(resolved.unit);
-    }, [controlledValue, isControlled, allowedUnits, selectedUnit]);
+    }, [
+      controlledValue,
+      isControlled,
+      allowedUnits,
+      selectedUnit,
+      effectiveDefaultUnit,
+    ]);
 
     // Derived Values
     const computedMs = useMemo(() => {
