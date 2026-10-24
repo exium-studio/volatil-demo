@@ -88,7 +88,8 @@
     "settings": "Pengaturan",
     "notifications": "Notifikasi",
     "dismiss_all": "Singkirkan semua",
-    "link_not_found": "Tautan tidak ditemukan"
+    "link_not_found": "Tautan tidak ditemukan",
+    "page_size": "Jumlah Data"
   },
   "action": {
     "actions": "Aksi",

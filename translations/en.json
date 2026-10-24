@@ -89,7 +89,8 @@
     "settings": "Settings",
     "dismiss_all": "Dismiss all",
     "notifications": "Notifications",
-    "link_not_found": "Link not found"
+    "link_not_found": "Link not found",
+    "page_size": "Page Size"
   },
   "action": {
     "actions": "Actions",

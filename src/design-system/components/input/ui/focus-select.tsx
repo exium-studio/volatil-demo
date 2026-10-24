@@ -53,6 +53,7 @@ export function FocusSelectInput(props: FocusSelectInputProps) {
     size = "md",
     variant = "outline",
     w = "full",
+    suffixLabel,
     trigger,
     children,
     renderOption,
@@ -280,6 +281,8 @@ export function FocusSelectInput(props: FocusSelectInputProps) {
               >
                 {selectedOption?.label ?? placeholder}
               </P>
+
+              {suffixLabel && <P>{suffixLabel}</P>}
             </>
           )}
         </HStack>

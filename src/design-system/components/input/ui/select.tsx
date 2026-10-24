@@ -111,11 +111,14 @@ export default function SelectInput(props: SelectProps) {
           if (!isControlled) {
             setInternalValue(val);
           }
-          const matched = options.find((opt) => String(opt.value) === String(val));
+          const matched = options.find(
+            (opt) => String(opt.value) === String(val),
+          );
           onValueChange?.(val, matched);
         }}
         disabled={disabled}
         clearable={clearable}
+        suffixLabel={suffixLabel}
         iconSize={iconSize}
         isFetching={isFetching}
         isLoading={isLoading}
@@ -127,9 +130,9 @@ export default function SelectInput(props: SelectProps) {
         renderOption={
           renderOption
             ? (opt) => {
-                const originalOpt = options.find(
-                  (o) => String(o.value) === String(opt.value),
-                ) ?? (opt as unknown as SelectOption);
+                const originalOpt =
+                  options.find((o) => String(o.value) === String(opt.value)) ??
+                  (opt as unknown as SelectOption);
                 return renderOption(originalOpt);
               }
             : undefined
