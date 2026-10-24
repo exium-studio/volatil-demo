@@ -20,7 +20,7 @@ export const InternalHomeMitraLayerSyncJobsQuickView = () => {
         <HeaderContainer justify={"space-between"} pr={"xs"}>
           <HStack wrap={"wrap"} gap={"sm"} py={"sm"}>
             <HStack wrap={"wrap"} align={"center"} gap={"sm"}>
-              <ClampedHeading>{"Antrean Pembaruan Layer Mitra"}</ClampedHeading>
+              <ClampedHeading>{"Antrean Pembaruan Data Mitra"}</ClampedHeading>
 
               <InfoTip
                 variant={"icon"}

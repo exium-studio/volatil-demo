@@ -49,7 +49,7 @@ export const InternalMitraLayerSyncJobDataView = (
 
                 <HStack gap={"xs"} align={"center"}>
                   <ClampedHeading>
-                    {"Antrean Pembaruan Layer Mitra"}
+                    {"Antrean Pembaruan Data Mitra"}
                   </ClampedHeading>
 
                   <InfoTip
