@@ -16,15 +16,16 @@ import { TopBarLoader } from "@/design-system/components/feedback/ui/top-bar-loa
 import { AppIcon } from "@/design-system/components/icon/ui/app-icon";
 import { SearchInput } from "@/design-system/components/input/ui/search-input";
 import { InfoTip } from "@/design-system/components/input/ui/toggle-tip";
+import { ActionHeaderScrollContainer } from "@/design-system/components/layout/ui/action-header-scroll-container";
 import { Center } from "@/design-system/components/layout/ui/center";
 import { Container } from "@/design-system/components/layout/ui/container";
-import { ActionHeaderScrollContainer } from "@/design-system/components/layout/ui/action-header-scroll-container";
 import { HStack, VStack } from "@/design-system/components/layout/ui/flex-box";
 import { Separator } from "@/design-system/components/layout/ui/separator";
 import { ExternalLink } from "@/design-system/components/navigation/ui/link";
 import { HeaderContainer } from "@/design-system/components/shell/ui/header-container";
+import { toast } from "@/design-system/components/toast";
 import { Badge } from "@/design-system/components/typography/ui/badge";
-import { Heading } from "@/design-system/components/typography/ui/heading";
+import { ClampedHeading } from "@/design-system/components/typography/ui/heading";
 import { ClampedP, P } from "@/design-system/components/typography/ui/p";
 import { InternalMasterGeoserverCreateTrigger } from "@/features/internal/master-geoserver/components/internal.master-geoserver.create-modal";
 import { InternalMasterGeoserverEditTrigger } from "@/features/internal/master-geoserver/components/internal.master-geoserver.edit-modal";
@@ -38,7 +39,6 @@ import type {
   MasterGeoserverQueryParams,
 } from "@/features/internal/master-geoserver/types/master-geoserver.type";
 import { queryKeys } from "@/shared/libs/tanstack-query/query.keys";
-import { toast } from "@/design-system/components/toast";
 import { isEmptyArray } from "@/shared/utils/data/array";
 import {
   formatUtcDateTime,
@@ -52,7 +52,7 @@ import {
   ServerOffIcon,
   Trash2Icon,
 } from "lucide-react";
-import { useMemo, useCallback, useState, useTransition } from "react";
+import { useCallback, useMemo, useState, useTransition } from "react";
 
 export const InternalMasterGeoserverDataView = () => {
   // Hooks
@@ -333,7 +333,7 @@ export const InternalMasterGeoserverDataView = () => {
         <HeaderContainer pr={"xs"}>
           <HStack justify={"space-between"} align={"center"} w={"full"}>
             <HStack gap={"xs"} align={"center"}>
-              <Heading>{"Manajemen Master GeoServer"}</Heading>
+              <ClampedHeading>{"Manajemen Master GeoServer"}</ClampedHeading>
 
               <InfoTip
                 variant={"icon"}

@@ -7,6 +7,7 @@ import { StateNoResult } from "@/design-system/components/feedback/ui/state.no-r
 import { StateRetry } from "@/design-system/components/feedback/ui/state.retry";
 import { AppIcon } from "@/design-system/components/icon/ui/app-icon";
 import { SearchInput } from "@/design-system/components/input/ui/search-input";
+import { ActionHeaderScrollContainer } from "@/design-system/components/layout/ui/action-header-scroll-container";
 import { Center } from "@/design-system/components/layout/ui/center";
 import { HStack, VStack } from "@/design-system/components/layout/ui/flex-box";
 import { Separator } from "@/design-system/components/layout/ui/separator";
@@ -18,6 +19,7 @@ import { ClampedP, P } from "@/design-system/components/typography/ui/p";
 import { DownloadTrigger } from "@/design-system/components/utilities/ui/download-trigger";
 import { useMountTimeout } from "@/design-system/hooks/use-mount-timeout";
 import { useThemeStore } from "@/design-system/stores/theme-store";
+import { StatusFilterSelect } from "@/features/shared/components/status-filter.select";
 import {
   resolveUserGuideMimeType,
   USER_GUIDE_CATEGORY_MAP,
@@ -29,7 +31,6 @@ import type {
   UserGuideItem,
   UserGuideModalProps,
 } from "@/features/user-guide/types/user-guide.type";
-import { StatusFilterSelect } from "@/features/shared/components/status-filter.select";
 import { isEmptyArray } from "@/shared/utils/data/array";
 import { formatByte } from "@/shared/utils/formatter/byte.formatter";
 import { DownloadIcon, ExternalLinkIcon, FileTextIcon } from "lucide-react";
@@ -131,7 +132,12 @@ const UserGuideModalContent = (props: {
       <Modal.Body p={0}>
         <VStack gap={"md"} align={"stretch"}>
           {/* Search & Category Filter Bar */}
-          <HStack gap={"xs"} align={"center"} w={"full"} p={"md"}>
+          <ActionHeaderScrollContainer
+            gap={"xs"}
+            align={"center"}
+            w={"full"}
+            p={"md"}
+          >
             <SearchInput
               value={search}
               onValueChange={setSearch}
@@ -147,7 +153,7 @@ const UserGuideModalContent = (props: {
               placeholder={"Semua Kategori"}
               w={"180px"}
             />
-          </HStack>
+          </ActionHeaderScrollContainer>
 
           {/* Loading Skeleton */}
           {isLoading && (

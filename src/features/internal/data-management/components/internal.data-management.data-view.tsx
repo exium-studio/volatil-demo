@@ -24,11 +24,11 @@ import { Center } from "@/design-system/components/layout/ui/center";
 import { HStack, VStack } from "@/design-system/components/layout/ui/flex-box";
 import { Separator } from "@/design-system/components/layout/ui/separator";
 import { useMapLayerStore } from "@/design-system/components/map/stores/map.layer.store";
+import { NavLink } from "@/design-system/components/navigation/ui/link";
 import { HeaderContainer } from "@/design-system/components/shell/ui/header-container";
 import { Badge } from "@/design-system/components/typography/ui/badge";
-import { Heading } from "@/design-system/components/typography/ui/heading";
+import { ClampedHeading } from "@/design-system/components/typography/ui/heading";
 import { ClampedP, P } from "@/design-system/components/typography/ui/p";
-import { NavLink } from "@/design-system/components/navigation/ui/link";
 import { InternalDataManagementCreateTrigger } from "@/features/internal/data-management/components/internal.data-management.create-modal";
 import {
   PUBLISH_STATUS_CONFIG_MAP,
@@ -50,12 +50,13 @@ import { IgtBasisBadge } from "@/features/shared/components/igt-basis.badge";
 import { StatusFilterSelect } from "@/features/shared/components/status-filter.select";
 import { IGT_BASIS_MAP } from "@/features/shared/constants/volatil.ssot-map";
 import { isEmptyArray } from "@/shared/utils/data/array";
-import { normalizeApiUrl } from "@/shared/utils/url/url.utils";
 import {
   formatUtcDateTime,
   getPreferredUserTimezone,
 } from "@/shared/utils/formatter/date.formatter";
+import { normalizeApiUrl } from "@/shared/utils/url/url.utils";
 import { IconLayersOff } from "@tabler/icons-react";
+import { useNavigate, useSearch } from "@tanstack/react-router";
 import {
   EyeIcon,
   EyeOffIcon,
@@ -65,7 +66,6 @@ import {
   RefreshCwIcon,
   Trash2Icon,
 } from "lucide-react";
-import { useNavigate, useSearch } from "@tanstack/react-router";
 import { useCallback, useMemo, useState, useTransition } from "react";
 
 export const InternalDataManagementDataView = () => {
@@ -507,9 +507,14 @@ export const InternalDataManagementDataView = () => {
   return (
     <>
       <HeaderContainer pr={"xs"}>
-        <HStack justify={"space-between"} align={"center"} w={"full"}>
+        <HStack
+          justify={"space-between"}
+          align={"center"}
+          gap={"md"}
+          w={"full"}
+        >
           <HStack gap={"xs"} align={"center"}>
-            <Heading>{"Manajemen Master Layer IGT"}</Heading>
+            <ClampedHeading>{"Manajemen Master Layer IGT"}</ClampedHeading>
 
             <InfoTip
               variant={"icon"}

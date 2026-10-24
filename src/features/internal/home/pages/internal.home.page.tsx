@@ -84,6 +84,7 @@ export const InternalHomePage = () => {
       <HStack
         justify={"space-between"}
         align={"center"}
+        gap={"md"}
         w={"full"}
         mt={isSmallViewport ? "md" : ""}
         mb={"xs"}
