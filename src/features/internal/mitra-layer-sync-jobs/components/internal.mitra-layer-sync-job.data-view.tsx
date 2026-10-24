@@ -8,9 +8,10 @@ import { Container } from "@/design-system/components/layout/ui/container";
 import { HStack } from "@/design-system/components/layout/ui/flex-box";
 import { AppContentContainer } from "@/design-system/components/layout/ui/page-container";
 import { Separator } from "@/design-system/components/layout/ui/separator";
+import { Tooltip } from "@/design-system/components/overlay/ui/tooltip";
 import { HeaderContainer } from "@/design-system/components/shell/ui/header-container";
-import { Heading } from "@/design-system/components/typography/ui/heading";
-import { P } from "@/design-system/components/typography/ui/p";
+import { Badge } from "@/design-system/components/typography/ui/badge";
+import { ClampedHeading } from "@/design-system/components/typography/ui/heading";
 import { InternalMitraLayerSyncJobTableView } from "@/features/internal/mitra-layer-sync-jobs/components/internal.mitra-layer-sync-job.table-view";
 import type { MitraLayerSyncJobDataViewProps } from "@/features/internal/mitra-layer-sync-jobs/types/mitra-layer-sync-job.type";
 import { RadioIcon } from "lucide-react";
@@ -38,7 +39,6 @@ export const InternalMitraLayerSyncJobDataView = (
           {/* Title Header */}
           <HeaderContainer pl={"xs"}>
             <HStack
-              wrap={"wrap"}
               justify={"space-between"}
               align={"center"}
               gap={"sm"}
@@ -48,7 +48,9 @@ export const InternalMitraLayerSyncJobDataView = (
                 <BackButton />
 
                 <HStack gap={"xs"} align={"center"}>
-                  <Heading>{"Antrean Pembaruan Layer Mitra"}</Heading>
+                  <ClampedHeading>
+                    {"Antrean Pembaruan Layer Mitra"}
+                  </ClampedHeading>
 
                   <InfoTip
                     variant={"icon"}
@@ -64,10 +66,11 @@ export const InternalMitraLayerSyncJobDataView = (
                 </HStack>
               </HStack>
 
-              <HStack align={"center"} gap={"xs"} color={"green.fg"}>
-                <AppIcon icon={RadioIcon} />
-                <P>{"Sinkronisasi Langsung Aktif"}</P>
-              </HStack>
+              <Tooltip content={"Pembaruan realtime"}>
+                <Badge colorPalette={"green"}>
+                  <AppIcon icon={RadioIcon} />
+                </Badge>
+              </Tooltip>
             </HStack>
           </HeaderContainer>
 
