@@ -20,11 +20,14 @@ import { AppIcon } from "@/design-system/components/icon/ui/app-icon";
 import type { FocusSelectOption } from "@/design-system/components/input/types/focus-select.type";
 import { SearchInput } from "@/design-system/components/input/ui/search-input";
 import { ActionHeaderScrollContainer } from "@/design-system/components/layout/ui/action-header-scroll-container";
+import { Box } from "@/design-system/components/layout/ui/box";
 import { Center } from "@/design-system/components/layout/ui/center";
 import { HStack, VStack } from "@/design-system/components/layout/ui/flex-box";
 import { Separator } from "@/design-system/components/layout/ui/separator";
 import { NavLink } from "@/design-system/components/navigation/ui/link";
+import { Popover } from "@/design-system/components/overlay/ui/popover";
 import { toast } from "@/design-system/components/toast/core/toast.manager";
+import { Badge } from "@/design-system/components/typography/ui/badge";
 import { ClampedP, P, TNum } from "@/design-system/components/typography/ui/p";
 import { Url } from "@/design-system/components/typography/ui/url";
 import { useDebouncedValue } from "@/design-system/hooks/use-debounced-value";
@@ -49,6 +52,8 @@ import {
 import { formatNumber } from "@/shared/utils/formatter/number.formatter";
 import { useNavigate } from "@tanstack/react-router";
 import {
+  CheckCircle2Icon,
+  ClockIcon,
   ClockPlusIcon,
   CopyIcon,
   FileCheckIcon,
@@ -115,6 +120,7 @@ export const MitraMyDataWorkspacesDataView = (_props: MitraMyDataViewProps) => {
       { th: "Jumlah Layer", sortable: true },
       { th: "Cakupan Bidang", sortable: true },
       { th: "Cakupan Kawasan", sortable: true },
+      { th: "Periode Pembaruan", sortable: false, align: "start" },
       { th: "TTE & Faktur", sortable: false, align: "start" },
       { th: "Sisa Waktu", sortable: true },
       { th: "Tanggal Kedaluwarsa", sortable: true },
@@ -126,6 +132,11 @@ export const MitraMyDataWorkspacesDataView = (_props: MitraMyDataViewProps) => {
           item.status === "expired" ||
           checkOrderExtensionEligibility(item, systemPolicies).reason ===
             "Masa aktif pesanan telah habis (expired).";
+
+        const totalPeriods = item.updatePeriods?.length ?? 0;
+        const completedPeriods =
+          item.updatePeriods?.filter((p) => p.completed).length ?? 0;
+        const updatesLeft = totalPeriods - completedPeriods;
 
         return {
           id: item.id,
@@ -194,11 +205,7 @@ export const MitraMyDataWorkspacesDataView = (_props: MitraMyDataViewProps) => {
             },
             {
               value: item.orderNumber || item.orderId,
-              td: (
-                <P fontSize={"sm"}>
-                  {item.orderNumber || item.orderId}
-                </P>
-              ),
+              td: <P fontSize={"sm"}>{item.orderNumber || item.orderId}</P>,
               align: "start" as const,
             },
             {
@@ -238,6 +245,135 @@ export const MitraMyDataWorkspacesDataView = (_props: MitraMyDataViewProps) => {
                   )}
                 </P>
               ),
+            },
+            {
+              value: updatesLeft,
+              td: (
+                <HStack align={"center"}>
+                  {totalPeriods === 0 && <P color={"fg.subtle"}>{"-"}</P>}
+
+                  {totalPeriods > 0 && (
+                    <Popover.Root
+                      positioning={{ placement: "bottom-start", gutter: 8 }}
+                    >
+                      <Popover.Trigger asChild={true}>
+                        <Box cursor={"pointer"} outline={"none"}>
+                          {updatesLeft > 0 && (
+                            <Badge
+                              colorPalette={"blue"}
+                              variant={"subtle"}
+                              cursor={"pointer"}
+                            >
+                              <TNum>{formatNumber(updatesLeft)}</TNum>
+                              {` / ${totalPeriods} update tersisa`}
+                            </Badge>
+                          )}
+                          {updatesLeft === 0 && (
+                            <Badge
+                              colorPalette={"green"}
+                              variant={"subtle"}
+                              cursor={"pointer"}
+                            >
+                              {"Selesai diperbarui"}
+                            </Badge>
+                          )}
+                        </Box>
+                      </Popover.Trigger>
+
+                      <Popover.Content w={"340px"}>
+                        <Popover.Header pb={"md"}>
+                          <HStack
+                            justify={"space-between"}
+                            align={"center"}
+                            w={"full"}
+                          >
+                            <VStack align={"start"} gap={0}>
+                              <Popover.Title fontWeight={"medium"}>
+                                {"Jadwal Pembaruan"}
+                              </Popover.Title>
+                            </VStack>
+                          </HStack>
+                        </Popover.Header>
+
+                        <Popover.Body p={0}>
+                          <VStack align={"stretch"} gap={0}>
+                            {item.updatePeriods?.map((period, pIdx) => {
+                              const unitLabel =
+                                period.unit === "minutes"
+                                  ? "menit"
+                                  : period.unit === "week"
+                                    ? "minggu"
+                                    : "hari";
+                              const formattedTarget = period.targetAt
+                                ? formatUtcDateTime(
+                                    period.targetAt,
+                                    preferredTimezone,
+                                  )
+                                : "-";
+
+                              return (
+                                <Box
+                                  key={pIdx}
+                                  px={4}
+                                  py={3}
+                                  borderTop={"1px solid"}
+                                  borderColor={"border.subtle"}
+                                  _hover={{ bg: "bg.subtle" }}
+                                  transition={"background 0.2s"}
+                                >
+                                  <HStack
+                                    justify={"space-between"}
+                                    align={"center"}
+                                  >
+                                    <VStack align={"start"} gap={1}>
+                                      <HStack gap={"xs"} align={"center"}>
+                                        <P fontWeight={"medium"}>
+                                          {`Tahap ${period.milestone}`}
+                                        </P>
+                                        <Badge
+                                          variant={"subtle"}
+                                          colorPalette={"gray"}
+                                        >
+                                          {`+${period.offset} ${unitLabel}`}
+                                        </Badge>
+                                      </HStack>
+
+                                      <P color={"fg.muted"} fontSize={"sm"}>
+                                        {formattedTarget}
+                                      </P>
+                                    </VStack>
+
+                                    {period.completed && (
+                                      <Badge
+                                        colorPalette={"green"}
+                                        variant={"subtle"}
+                                      >
+                                        <AppIcon icon={CheckCircle2Icon} />
+                                        {"Selesai"}
+                                      </Badge>
+                                    )}
+                                    {!period.completed && (
+                                      <Badge
+                                        colorPalette={"blue"}
+                                        variant={"subtle"}
+                                        alignItems={"center"}
+                                      >
+                                        <AppIcon icon={ClockIcon} size={"xs"} />
+                                        {"Menunggu"}
+                                      </Badge>
+                                    )}
+                                  </HStack>
+                                </Box>
+                              );
+                            })}
+                          </VStack>
+                        </Popover.Body>
+                      </Popover.Content>
+                    </Popover.Root>
+                  )}
+                </HStack>
+              ),
+              align: "start" as const,
             },
             {
               value: item.tte ? "TTE" : "Belum TTE",

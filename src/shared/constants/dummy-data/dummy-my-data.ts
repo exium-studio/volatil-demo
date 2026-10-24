@@ -137,6 +137,17 @@ export const dummyMitraWorkspaces: MitraWorkspaceItem[] = [
     selectionType: "draw_aoi",
     kawasanCoverageHa: 25.5,
     bidangCoverageCount: 0,
+    updatePeriods: [
+      {
+        unit: "minutes",
+        jobId: null,
+        offset: 15,
+        targetAt: "2026-10-24T06:52:58.510Z",
+        completed: false,
+        milestone: 1,
+        executedAt: null,
+      },
+    ],
     aoiPolygon: {
       type: "Polygon",
       coordinates: [

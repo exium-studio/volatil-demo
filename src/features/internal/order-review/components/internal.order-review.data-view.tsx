@@ -19,7 +19,6 @@ import { Container } from "@/design-system/components/layout/ui/container";
 import { HStack, VStack } from "@/design-system/components/layout/ui/flex-box";
 import { Separator } from "@/design-system/components/layout/ui/separator";
 import { HeaderContainer } from "@/design-system/components/shell/ui/header-container";
-import { Badge } from "@/design-system/components/typography/ui/badge";
 import { Heading } from "@/design-system/components/typography/ui/heading";
 import { P, TNum } from "@/design-system/components/typography/ui/p";
 import { InternalOrderReviewApproveTrigger } from "@/features/internal/order-review/components/internal.order-review.approve-modal";
@@ -132,7 +131,6 @@ export const InternalOrderReviewDataView = () => {
       { th: "Jumlah Layer", sortable: false, align: "start" },
       { th: "Cakupan Bidang", sortable: true },
       { th: "Cakupan Kawasan", sortable: true },
-      { th: "Periode Pembaruan", sortable: false, align: "start" },
       { th: "Status Pesanan", sortable: true, align: "start" },
       { th: "TTE & Faktur", sortable: false, align: "start" },
       { th: "Total Biaya", sortable: true, align: "end" },
@@ -141,10 +139,6 @@ export const InternalOrderReviewDataView = () => {
 
     const items = orders.map((order) => {
       const displayOrderNumber = order.orderNumber || order.orderId;
-      const totalPeriods = order.updatePeriods?.length ?? 0;
-      const completedPeriods =
-        order.updatePeriods?.filter((p) => p.completed).length ?? 0;
-      const updatesLeft = totalPeriods - completedPeriods;
 
       return {
         id: order.orderId,
@@ -211,26 +205,6 @@ export const InternalOrderReviewDataView = () => {
                 )}
               </P>
             ),
-          },
-          {
-            value: updatesLeft,
-            td: (
-              <HStack align={"center"}>
-                {totalPeriods === 0 ? (
-                  <P color={"fg.subtle"}>{"-"}</P>
-                ) : updatesLeft > 0 ? (
-                  <Badge colorPalette={"blue"} variant={"subtle"}>
-                    <TNum>{formatNumber(updatesLeft)}</TNum>
-                    {` / ${totalPeriods} update tersisa`}
-                  </Badge>
-                ) : (
-                  <Badge colorPalette={"green"} variant={"subtle"}>
-                    {"Selesai diperbarui"}
-                  </Badge>
-                )}
-              </HStack>
-            ),
-            align: "start" as const,
           },
           {
             value: order.status,
