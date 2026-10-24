@@ -416,13 +416,13 @@ const Content = (_props: GisContentProps) => {
           const baseConfig = getWmsRasterConfigFromIgtLayer(
             layer,
             wmsVisible && isEnabled,
-            individualOpacity,
+            individualOpacity * globalOpacity,
           );
           return {
             ...baseConfig,
             ...customOverride,
             visible: wmsVisible && isEnabled,
-            opacity: layerOpacities[layer.id] ?? 1.0,
+            opacity: (layerOpacities[layer.id] ?? 1.0) * globalOpacity,
           };
         }
 
@@ -445,7 +445,7 @@ const Content = (_props: GisContentProps) => {
           type: "wms-raster",
           spatialBasis: customOverride.spatialBasis ?? "bidang",
           visible: wmsVisible && Boolean(isEnabled),
-          opacity: layerOpacities[layerId] ?? 1.0,
+          opacity: (layerOpacities[layerId] ?? 1.0) * globalOpacity,
           wmsUrl: customOverride.wmsUrl,
           layers: customOverride.layers,
           ...customOverride,

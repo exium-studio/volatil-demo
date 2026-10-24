@@ -56,10 +56,12 @@ function MapLayerManagementPanelComponent<
       enabledLayerIds,
       enabledSymbologyLayerIds,
       layerOpacities,
+      globalOpacity,
       layerOrder,
       toggleLayerId,
       toggleSymbologyLayerId,
       setLayerOpacity,
+      setGlobalOpacity,
       setAllLayersEnabled,
       setLayerOrder,
       reorderLayer,
@@ -113,17 +115,6 @@ function MapLayerManagementPanelComponent<
     const isAllEnabled = useMemo(() => {
       return orderedLayers.length > 0 && enabledCount === orderedLayers.length;
     }, [orderedLayers.length, enabledCount]);
-
-    // Calculate average opacity for the layers in this panel
-    const panelOpacity = useMemo(() => {
-      if (orderedLayers.length === 0) return 1.0;
-      const total = orderedLayers.reduce(
-        (acc, l) => acc + (layerOpacities[l.id] ?? 1.0),
-        0,
-      );
-      return total / orderedLayers.length;
-    }, [orderedLayers, layerOpacities]);
-
     // Handlers
     const handleToggleAll = useCallback(
       (checked: boolean) => {
@@ -151,16 +142,6 @@ function MapLayerManagementPanelComponent<
       },
       [orderedLayers, onToggleLayer, enabledLayerIds, toggleLayerId],
     );
-
-    const handleBatchOpacityChange = useCallback(
-      (value: number) => {
-        orderedLayers.forEach((l) => {
-          setLayerOpacity(l.id, value);
-        });
-      },
-      [orderedLayers, setLayerOpacity],
-    );
-
     return (
       <Popover.Root
         positioning={{
@@ -258,18 +239,18 @@ function MapLayerManagementPanelComponent<
                           fontWeight={"semibold"}
                           color={"fg.muted"}
                         >
-                          {`${Math.round(panelOpacity * 100)}%`}
+                          {`${Math.round(globalOpacity * 100)}%`}
                         </P>
                       </HStack>
 
                       <Slider
-                        value={[Math.round(panelOpacity * 100)]}
+                        value={[Math.round(globalOpacity * 100)]}
                         min={0}
                         max={100}
                         step={1}
                         showValue={false}
                         onValueChange={(details) =>
-                          handleBatchOpacityChange(details.value[0] / 100)
+                          setGlobalOpacity(details.value[0] / 100)
                         }
                       />
                     </VStack>
