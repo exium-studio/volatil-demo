@@ -231,7 +231,6 @@ export const MapSearch = () => {
         <MapOverlayContainer
           overflow={"clip"}
           w={isOpened ? "full" : "36px"}
-          bg={"bg.body"}
           transition={"width 200ms ease"}
           cursor={isOpened ? "text" : "pointer"}
           pointerEvents={"auto"}
@@ -246,6 +245,7 @@ export const MapSearch = () => {
             w={"full"}
             minW={"0"}
             border={"none"}
+            layerStyle={"frosted"}
             outline={"none"}
             bg={"transparent"}
             onFocus={handleFocus}
