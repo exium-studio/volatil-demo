@@ -150,6 +150,16 @@ const InternalSystemPolicyModalContent = (
         ? "Minggu"
         : "Hari";
 
+  const hasEmptyMilestone = useMemo(
+    () =>
+      isSyncSchedule &&
+      milestonesList.some((item) => item.value.trim() === ""),
+    [isSyncSchedule, milestonesList],
+  );
+
+  const isSaveDisabled =
+    updateMutation.isPending || (isSyncSchedule && hasEmptyMilestone);
+
   // Handlers for milestones
   const handleAddMilestone = () => {
     setMilestoneError(null);
@@ -352,6 +362,7 @@ const InternalSystemPolicyModalContent = (
               primary={true}
               type={"submit"}
               loading={updateMutation.isPending}
+              disabled={isSaveDisabled}
             >
               {"Simpan"}
             </Button>
