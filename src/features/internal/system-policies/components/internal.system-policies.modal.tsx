@@ -1,13 +1,16 @@
 // src/features/internal/system-policies/components/internal.system-policies.modal.tsx
 
-import { Button } from "@/design-system/components/button/ui/button";
+import {
+  Button,
+  IconButton,
+} from "@/design-system/components/button/ui/button";
 import type { DurationUnit } from "@/design-system/components/input/types/duration-input.type";
 import { DurationInput } from "@/design-system/components/input/ui/duration-input";
 import { Field } from "@/design-system/components/input/ui/field";
-import { Input } from "@/design-system/components/input/ui/input";
 import { NumberInput } from "@/design-system/components/input/ui/number-input";
 import SelectInput from "@/design-system/components/input/ui/select";
-import { VStack } from "@/design-system/components/layout/ui/flex-box";
+import { HStack, VStack } from "@/design-system/components/layout/ui/flex-box";
+import { AppIcon } from "@/design-system/components/icon/ui/app-icon";
 import { usePopModal } from "@/design-system/components/overlay/hooks/use-pop-modal";
 import { Modal } from "@/design-system/components/overlay/ui/modal";
 import { useMountTimeout } from "@/design-system/hooks/use-mount-timeout";
@@ -19,8 +22,9 @@ import type {
 } from "@/features/internal/system-policies/types/internal.system-policies.type";
 import { getSystemPolicyConfig } from "@/features/shared/constants/volatil.ssot-map";
 import { t } from "@/shared/libs/i18n";
-import { useMemo } from "react";
-import { Controller, useForm } from "react-hook-form";
+import { PlusIcon, XIcon } from "lucide-react";
+import { useMemo, useState } from "react";
+import { Controller, useForm, useWatch } from "react-hook-form";
 
 export const InternalSystemPolicyModalTrigger = (
   props: InternalSystemPolicyModalTriggerProps,
@@ -74,22 +78,38 @@ const InternalSystemPolicyModalContent = (
     policy.unit === "Rupiah" ||
     policy.key.includes("price");
 
-  const parsedSchedule = useMemo(() => {
-    if (!isSyncSchedule) return { unit: "minutes", milestones: "2, 5" };
+  const parsedSchedule: { unit: string; milestones: number[] } = useMemo(() => {
+    if (!isSyncSchedule) {
+      return { unit: "minutes", milestones: [2, 5] };
+    }
     try {
       const parsed =
         typeof policy.value === "string"
           ? JSON.parse(policy.value)
           : policy.value;
       const unit = parsed?.unit || "minutes";
-      const milestones = Array.isArray(parsed?.milestones)
-        ? parsed.milestones.join(", ")
-        : "2, 5";
+      const rawMilestones = Array.isArray(parsed?.milestones)
+        ? parsed.milestones
+        : [];
+      const milestones = rawMilestones
+        .map((n: unknown) => Number(n))
+        .filter((n: number) => !Number.isNaN(n) && n > 0);
       return { unit, milestones };
     } catch {
-      return { unit: "minutes", milestones: "2, 5" };
+      return { unit: "minutes", milestones: [2, 5] };
     }
   }, [isSyncSchedule, policy.value]);
+
+  // States
+  const [milestonesList, setMilestonesList] = useState<
+    Array<{ id: string; value: string }>
+  >(() =>
+    parsedSchedule.milestones.map((m: number) => ({
+      id: crypto.randomUUID(),
+      value: String(m),
+    })),
+  );
+  const [milestoneError, setMilestoneError] = useState<string | null>(null);
 
   const scheduleUnitOptions = useMemo(
     () => [
@@ -114,11 +134,43 @@ const InternalSystemPolicyModalContent = (
     defaultValues: {
       value: Number(policy.value) || 0,
       scheduleUnit: parsedSchedule.unit,
-      scheduleMilestones: parsedSchedule.milestones,
     },
   });
 
-  // Handlers
+  const watchedUnit = useWatch({
+    control,
+    name: "scheduleUnit",
+    defaultValue: parsedSchedule.unit,
+  });
+  const selectedUnit = watchedUnit || parsedSchedule.unit;
+  const unitLabel =
+    selectedUnit === "minutes"
+      ? "Menit"
+      : selectedUnit === "week"
+        ? "Minggu"
+        : "Hari";
+
+  // Handlers for milestones
+  const handleAddMilestone = () => {
+    setMilestoneError(null);
+    setMilestonesList((prev) => [
+      ...prev,
+      { id: crypto.randomUUID(), value: "" },
+    ]);
+  };
+
+  const handleRemoveMilestone = (id: string) => {
+    setMilestoneError(null);
+    setMilestonesList((prev) => prev.filter((item) => item.id !== id));
+  };
+
+  const handleMilestoneChange = (id: string, val: string) => {
+    setMilestoneError(null);
+    setMilestonesList((prev) =>
+      prev.map((item) => (item.id === id ? { ...item, value: val } : item)),
+    );
+  };
+
   const handleFormSubmit = async (values: PolicyFormValues) => {
     try {
       let payloadValue: number | string =
@@ -127,14 +179,24 @@ const InternalSystemPolicyModalContent = (
           : String(values.value ?? "");
 
       if (isSyncSchedule) {
-        const milestones = (values.scheduleMilestones || "")
-          .split(",")
-          .map((s) => parseInt(s.trim(), 10))
+        // Validate items: if there are added items, each must be filled with a valid positive number
+        const hasEmpty = milestonesList.some(
+          (item) => item.value.trim() === "",
+        );
+        if (hasEmpty) {
+          setMilestoneError(
+            "Nilai titik waktu tidak boleh kosong. Isi angka atau hapus item tersebut.",
+          );
+          return;
+        }
+
+        const parsedNums = milestonesList
+          .map((item) => Number(item.value.trim()))
           .filter((n) => !Number.isNaN(n) && n > 0);
 
         payloadValue = JSON.stringify({
           unit: values.scheduleUnit || "minutes",
-          milestones: milestones.length > 0 ? milestones : [30, 59],
+          milestones: parsedNums,
         });
       }
 
@@ -160,11 +222,7 @@ const InternalSystemPolicyModalContent = (
           <VStack align={"stretch"} gap={"md"}>
             {isSyncSchedule ? (
               <>
-                <Field
-                  label={"Satuan Waktu Siklus"}
-                  w={"full"}
-                  helperText={"Pilih unit waktu untuk jadwal pembaruan."}
-                >
+                <Field label={"Satuan Waktu"} w={"full"}>
                   <Controller
                     name={"scheduleUnit"}
                     control={control}
@@ -182,20 +240,54 @@ const InternalSystemPolicyModalContent = (
                 </Field>
 
                 <Field
-                  label={"Titik Waktu Pembaruan (Offset)"}
+                  variant={"default"}
+                  label={"Jadwal Pembaruan"}
                   w={"full"}
-                  errorText={errors.scheduleMilestones?.message}
-                  helperText={
-                    "Masukkan angka titik waktu dipisahkan koma. Contoh: 2, 5 (Menit ke 2, 5) atau 30, 59 (Hari ke 30, 59)."
-                  }
+                  errorText={milestoneError ?? undefined}
+                  helperText={`Tentukan offset titik ${unitLabel.toLowerCase()} pembaruan data spasial mitra. Jika kosong, tidak ada jadwal otomatis.`}
                 >
-                  <Input
-                    w={"full"}
-                    placeholder={"2, 5 atau 30, 59"}
-                    {...register("scheduleMilestones", {
-                      required: "Jadwal pembaruan wajib diisi",
-                    })}
-                  />
+                  <VStack align={"stretch"} gap={"xs"} w={"full"}>
+                    {milestonesList.map((item, idx) => (
+                      <HStack
+                        key={item.id}
+                        gap={"xs"}
+                        align={"center"}
+                        w={"full"}
+                      >
+                        <NumberInput
+                          id={`milestone-${item.id}`}
+                          ids={{ input: `milestone-${item.id}` }}
+                          w={"full"}
+                          value={item.value}
+                          min={1}
+                          placeholder={`${idx === 0 ? "15" : idx === 1 ? "30" : "60"}`}
+                          onValueChange={(details) =>
+                            handleMilestoneChange(
+                              item.id,
+                              details.formattedValue,
+                            )
+                          }
+                        />
+
+                        <IconButton
+                          aria-label={`Hapus ${unitLabel} ke-${idx + 1}`}
+                          variant={"outline"}
+                          onClick={() => handleRemoveMilestone(item.id)}
+                        >
+                          <AppIcon icon={XIcon} />
+                        </IconButton>
+                      </HStack>
+                    ))}
+
+                    <Button
+                      variant={"outline"}
+                      onClick={handleAddMilestone}
+                      w={"full"}
+                    >
+                      <AppIcon icon={PlusIcon} />
+                      {`Tambah ${unitLabel}`}
+                    </Button>
+                  </VStack>
                 </Field>
               </>
             ) : isDuration ? (

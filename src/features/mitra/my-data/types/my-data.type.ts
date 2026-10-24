@@ -48,6 +48,16 @@ export type MyDataItem = {
   zIndex?: number;
 };
 
+export type MitraUpdatePeriodItem = {
+  milestone: number;
+  offset: number;
+  unit: string;
+  targetAt: string;
+  completed: boolean;
+  executedAt?: string | null;
+  jobId?: string | null;
+};
+
 export type MitraWorkspaceItem = {
   id: string;
   workspaceName: string;
@@ -82,6 +92,8 @@ export type MitraWorkspaceItem = {
   bidangCoverageCount?: number | null;
   canRenew?: boolean;
   renewalEligibility?: RenewalEligibilityInfo | null;
+  updatePeriods?: MitraUpdatePeriodItem[];
+  nextSyncAt?: string | null;
 };
 
 export type WorkspaceActiveStatus = "all" | "active" | "almost_expired" | "expired";

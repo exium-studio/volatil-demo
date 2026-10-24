@@ -161,7 +161,10 @@ const InternalHomePoliciesContent = () => {
                           : "Hari";
                     const milestones = Array.isArray(parsed.milestones)
                       ? parsed.milestones.join(", ")
-                      : "30, 59";
+                      : "";
+                    if (!milestones) {
+                      return `${unitLabel} (Tidak ada jadwal)`;
+                    }
                     return `${unitLabel} ke ${milestones}`;
                   } catch {
                     return "Hari ke 30, 59";

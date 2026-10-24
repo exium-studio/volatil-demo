@@ -18,4 +18,5 @@ export type PolicyFormValues = {
   value?: number;
   scheduleUnit?: string;
   scheduleMilestones?: string;
+  scheduleMilestoneItems?: string[];
 };
