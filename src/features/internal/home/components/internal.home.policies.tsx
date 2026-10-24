@@ -162,9 +162,9 @@ const InternalHomePoliciesContent = () => {
                     const milestones = Array.isArray(parsed.milestones)
                       ? parsed.milestones.join(", ")
                       : "30, 59";
-                    return `${parsed.milestones?.length || 2}x (${milestones} ${unitLabel})`;
+                    return `${unitLabel} ke ${milestones}`;
                   } catch {
-                    return "2x (30, 59 Hari)";
+                    return "Hari ke 30, 59";
                   }
                 })()
               : policy.valueType === "number" && !Number.isNaN(rawNum)

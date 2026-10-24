@@ -186,7 +186,7 @@ const InternalSystemPolicyModalContent = (
                   w={"full"}
                   errorText={errors.scheduleMilestones?.message}
                   helperText={
-                    "Masukkan angka offset dipisahkan koma. Contoh: 2, 5 (menit) atau 30, 59 (hari)."
+                    "Masukkan angka titik waktu dipisahkan koma. Contoh: 2, 5 (Menit ke 2, 5) atau 30, 59 (Hari ke 30, 59)."
                   }
                 >
                   <Input
