@@ -14,7 +14,7 @@ import { ActionHeaderScrollContainer } from "@/design-system/components/layout/u
 import { Center } from "@/design-system/components/layout/ui/center";
 import { HStack, VStack } from "@/design-system/components/layout/ui/flex-box";
 import { Separator } from "@/design-system/components/layout/ui/separator";
-import { ClampedP, P } from "@/design-system/components/typography/ui/p";
+import { ClampedP, P, TNum } from "@/design-system/components/typography/ui/p";
 import {
   MITRA_LAYER_SYNC_JOB_STATUS_MAP,
   MITRA_LAYER_SYNC_JOB_STATUS_OPTIONS,
@@ -113,7 +113,7 @@ export const InternalMitraLayerSyncJobTableView = (
     const headers: FormattedTableHeader[] = [
       { th: "ID Job", sortable: showPagination },
       { th: "Order & Mitra", sortable: showPagination },
-      { th: "Tahap Pembaruan", sortable: showPagination },
+      { th: "Pembaruan", sortable: showPagination },
       { th: "Status", sortable: showPagination, align: "start" },
       { th: "Progres Layer", sortable: showPagination },
       { th: "Dijalankan Oleh", sortable: showPagination },
@@ -152,13 +152,15 @@ export const InternalMitraLayerSyncJobTableView = (
             align: "start" as const,
           },
           {
-            value: job.milestoneIndex ? `Tahap ${job.milestoneIndex}` : "-",
+            value: job.milestoneIndex ?? 0,
             td: (
               <VStack align={"start"} gap={"2xs"} minW={"120px"}>
                 <P fontSize={"sm"} fontWeight={"medium"}>
-                  {job.milestoneIndex
-                    ? `Pembaruan Ke-${job.milestoneIndex}`
-                    : "-"}
+                  {job.milestoneIndex ? (
+                    <TNum>{job.milestoneIndex}</TNum>
+                  ) : (
+                    "-"
+                  )}
                 </P>
                 {job.layerTitle && (
                   <ClampedP fontSize={"2xs"} color={"fg.subtle"}>

@@ -162,6 +162,19 @@ const normalizeInternalOrderItem = (raw: any): InternalOrderItem => {
       raw.workspaceName ??
       raw.workspace_name ??
       `ws_${idVal}`,
+    updatePeriods: Array.isArray(raw.updatePeriods ?? raw.update_periods)
+      ? (raw.updatePeriods ?? raw.update_periods).map(
+          (p: Record<string, unknown>) => ({
+            unit: String(p.unit ?? "minutes"),
+            jobId: (p.jobId as string | undefined) ?? (p.job_id as string | undefined) ?? null,
+            offset: Number(p.offset ?? 0),
+            targetAt: String(p.targetAt ?? p.target_at ?? ""),
+            completed: Boolean(p.completed),
+            milestone: Number(p.milestone ?? 1),
+            executedAt: (p.executedAt as string | undefined) ?? (p.executed_at as string | undefined) ?? null,
+          }),
+        )
+      : undefined,
   };
 };
 

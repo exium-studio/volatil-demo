@@ -25,7 +25,7 @@ import { HStack, VStack } from "@/design-system/components/layout/ui/flex-box";
 import { Separator } from "@/design-system/components/layout/ui/separator";
 import { NavLink } from "@/design-system/components/navigation/ui/link";
 import { toast } from "@/design-system/components/toast/core/toast.manager";
-import { ClampedP, P } from "@/design-system/components/typography/ui/p";
+import { ClampedP, P, TNum } from "@/design-system/components/typography/ui/p";
 import { Url } from "@/design-system/components/typography/ui/url";
 import { useDebouncedValue } from "@/design-system/hooks/use-debounced-value";
 import { usePricingPolicy } from "@/features/mitra/data-request/hooks/use-pricing-policy";
@@ -46,6 +46,7 @@ import {
   formatUtcDateTime,
   getPreferredUserTimezone,
 } from "@/shared/utils/formatter/date.formatter";
+import { formatNumber } from "@/shared/utils/formatter/number.formatter";
 import { useNavigate } from "@tanstack/react-router";
 import {
   ClockPlusIcon,
@@ -208,9 +209,14 @@ export const MitraMyDataWorkspacesDataView = (_props: MitraMyDataViewProps) => {
               value: item.bidangCoverageCount,
               td: (
                 <P>
-                  {item.bidangCoverageCount
-                    ? `${item.bidangCoverageCount} Bidang`
-                    : "-"}
+                  {item.bidangCoverageCount ? (
+                    <>
+                      <TNum>{formatNumber(item.bidangCoverageCount)}</TNum>{" "}
+                      {"Bidang"}
+                    </>
+                  ) : (
+                    "-"
+                  )}
                 </P>
               ),
             },
@@ -218,9 +224,18 @@ export const MitraMyDataWorkspacesDataView = (_props: MitraMyDataViewProps) => {
               value: item.kawasanCoverageHa,
               td: (
                 <P>
-                  {item.kawasanCoverageHa
-                    ? `${item.kawasanCoverageHa} ha`
-                    : "-"}
+                  {item.kawasanCoverageHa ? (
+                    <>
+                      <TNum>
+                        {formatNumber(item.kawasanCoverageHa, {
+                          maximumFractionDigits: 2,
+                        })}
+                      </TNum>{" "}
+                      {"ha"}
+                    </>
+                  ) : (
+                    "-"
+                  )}
                 </P>
               ),
             },

@@ -129,6 +129,26 @@ export const DUMMY_INTERNAL_ORDERS: InternalOrderItem[] = [
           "/api/proxy/wfs?layerId=mitra_demo_20261012_040113_kawasan%3Aigt_4_4b5d2a8f_accd_4789_896c_1d32648a463b_bd265828",
       },
     ],
+    updatePeriods: [
+      {
+        unit: "minutes",
+        jobId: null,
+        offset: 15,
+        targetAt: "2026-10-24T06:52:58.510Z",
+        completed: false,
+        milestone: 1,
+        executedAt: null,
+      },
+      {
+        unit: "minutes",
+        jobId: null,
+        offset: 30,
+        targetAt: "2026-10-24T07:07:58.510Z",
+        completed: false,
+        milestone: 2,
+        executedAt: null,
+      },
+    ],
   },
   {
     orderId: "59e91f9c-c7ca-4292-a37e-4670c557fa59",

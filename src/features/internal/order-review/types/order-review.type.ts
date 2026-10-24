@@ -66,6 +66,16 @@ export type InternalOrderReviewTteModalContentProps = {
   close: () => void;
 };
 
+export type UpdatePeriodItem = {
+  unit: string;
+  jobId?: string | null;
+  offset: number;
+  targetAt: string;
+  completed: boolean;
+  milestone: number;
+  executedAt?: string | null;
+};
+
 export type InternalOrderItem = {
   orderId: string;
   orderNumber?: string;
@@ -96,6 +106,7 @@ export type InternalOrderItem = {
   internalWorkspaceUrl?: string | null;
   workspaceInteropUrl?: string | null;
   workspaceName?: string | null;
+  updatePeriods?: UpdatePeriodItem[];
 };
 
 export type InternalOrderListQueryParams = PaginatedParams & {
