@@ -70,11 +70,9 @@ export const ConfirmationTrigger = (props: ConfirmationTriggerProps) => {
         <Modal.Trigger>{children}</Modal.Trigger>
 
         <Modal.Content>
-          <Modal.Header>
-            <Modal.CloseButton />
-          </Modal.Header>
+          <Modal.CloseButton zIndex={2} />
 
-          <Modal.Body pt={0} pb={"lg"}>
+          <Modal.Body pt={"xl"} pb={"lg"}>
             <VStack align={"center"} gap={"md"}>
               <Circle
                 pos={"relative"}

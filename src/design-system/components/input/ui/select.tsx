@@ -14,6 +14,9 @@ import { isEmptyArray } from "@/shared/utils/data/array";
 import { Tooltip } from "@/design-system/components/overlay/ui/tooltip";
 import { P } from "@/design-system/components/typography/ui/p";
 import { useThemeStore } from "@/design-system/stores/theme-store";
+import { useIsSmallViewport } from "@/design-system/hooks/use-is-small-viewport";
+import { FocusSelectInput } from "@/design-system/components/input/ui/focus-select";
+import type { FocusSelectOption } from "@/design-system/components/input/types/focus-select.type";
 import {
   Select as ChakraSelect,
   createListCollection,
@@ -26,6 +29,9 @@ import { isValidElement, useMemo, useState } from "react";
 const EMPTY_OPTIONS: SelectOption[] = [];
 
 export default function SelectInput(props: SelectProps) {
+  // Hooks
+  const isSmallViewport = useIsSmallViewport();
+
   // Props
   const {
     value: controlledValue,
@@ -50,6 +56,8 @@ export default function SelectInput(props: SelectProps) {
     onRetry,
     errorTitle,
     errorMessage,
+    title,
+    modalKey,
     ...restProps
   } = props;
 
@@ -65,16 +73,70 @@ export default function SelectInput(props: SelectProps) {
   const currentValue = isControlled ? controlledValue : internalValue;
 
   // Derived Values
+  const focusSelectOptions: FocusSelectOption[] = useMemo(() => {
+    return options.map((opt) => ({
+      label: opt.label,
+      value: String(opt.value),
+      description: opt.description,
+      startElement: opt.startElement,
+      icon: opt.icon,
+    }));
+  }, [options]);
+
   const selectedOption = useMemo(() => {
     return options.find((opt) => String(opt.value) === String(currentValue));
   }, [options, currentValue]);
 
-  // States
-  const collection = createListCollection({
-    items: options,
-    itemToString: (item) => item.label,
-    itemToValue: (item) => String(item.value),
-  });
+  const collection = useMemo(
+    () =>
+      createListCollection({
+        items: options,
+        itemToString: (item) => item.label,
+        itemToValue: (item) => String(item.value),
+      }),
+    [options],
+  );
+
+  // Render FocusSelectInput when on small viewport
+  if (isSmallViewport) {
+    return (
+      <FocusSelectInput
+        modalKey={modalKey}
+        title={title ?? placeholder}
+        placeholder={placeholder}
+        options={focusSelectOptions}
+        value={currentValue}
+        defaultValue={defaultValue}
+        onValueChange={(val) => {
+          if (!isControlled) {
+            setInternalValue(val);
+          }
+          const matched = options.find((opt) => String(opt.value) === String(val));
+          onValueChange?.(val, matched);
+        }}
+        disabled={disabled}
+        clearable={clearable}
+        iconSize={iconSize}
+        isFetching={isFetching}
+        isLoading={isLoading}
+        isError={isError}
+        onRetry={onRetry}
+        errorTitle={errorTitle}
+        errorMessage={errorMessage}
+        size={size}
+        renderOption={
+          renderOption
+            ? (opt) => {
+                const originalOpt = options.find(
+                  (o) => String(o.value) === String(opt.value),
+                ) ?? (opt as unknown as SelectOption);
+                return renderOption(originalOpt);
+              }
+            : undefined
+        }
+      />
+    );
+  }
 
   // Handlers
   const handleClear = (e: React.MouseEvent) => {
