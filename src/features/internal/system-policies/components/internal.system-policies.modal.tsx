@@ -113,7 +113,7 @@ const InternalSystemPolicyModalContent = (
 
   const scheduleUnitOptions = useMemo(
     () => [
-      { value: "minutes", label: "Menit (Testing)" },
+      { value: "minutes", label: "Menit" },
       { value: "days", label: "Hari" },
       { value: "week", label: "Minggu" },
     ],
