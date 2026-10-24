@@ -183,7 +183,7 @@ function MapLayerManagementItemComponent<
         {closestEdge === "top" && (
           <Box
             position={"absolute"}
-            top={"-1px"}
+            top={"-8px"}
             left={0}
             right={0}
             height={"2px"}
@@ -196,7 +196,7 @@ function MapLayerManagementItemComponent<
         {closestEdge === "bottom" && (
           <Box
             position={"absolute"}
-            bottom={"-1px"}
+            bottom={"-8px"}
             left={0}
             right={0}
             height={"2px"}
