@@ -48,6 +48,7 @@ import type {
   WorkspaceActiveStatus,
 } from "@/features/mitra/my-data/types/my-data.type";
 import { checkOrderExtensionEligibility } from "@/features/mitra/my-data/utils/extension.utils";
+import { OrderStatusBadge } from "@/features/shared/components/order-status.badge";
 import { StatusFilterSelect } from "@/features/shared/components/status-filter.select";
 import { TteBadge } from "@/features/shared/components/tte.badge";
 import { MitraMyDataIndexRoute } from "@/shared/libs/tanstack-router/routes";
@@ -137,6 +138,7 @@ export const MitraMyDataWorkspacesDataView = (_props: MitraMyDataViewProps) => {
       { th: "Cakupan Kawasan", sortable: true },
       { th: "Periode Pembaruan", sortable: false, align: "start" },
       { th: "TTE & Faktur", sortable: false, align: "start" },
+      { th: "Status Pesanan", sortable: true },
       { th: "Sisa Waktu", sortable: true },
       { th: "Tanggal Kedaluwarsa", sortable: true },
     ];
@@ -152,6 +154,7 @@ export const MitraMyDataWorkspacesDataView = (_props: MitraMyDataViewProps) => {
         const completedPeriods =
           item.updatePeriods?.filter((p) => p.completed).length ?? 0;
         const updatesLeft = totalPeriods - completedPeriods;
+        const effectiveStatus = isExpired ? "expired" : item.status;
 
         return {
           id: item.id,
@@ -399,6 +402,11 @@ export const MitraMyDataWorkspacesDataView = (_props: MitraMyDataViewProps) => {
                   tteInvoiceUrl={item.tteInvoiceUrl}
                 />
               ),
+              align: "start" as const,
+            },
+            {
+              value: effectiveStatus,
+              td: <OrderStatusBadge>{effectiveStatus}</OrderStatusBadge>,
               align: "start" as const,
             },
             {
