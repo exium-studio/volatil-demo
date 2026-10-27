@@ -138,6 +138,25 @@ export type InternalMitraRegistrationRejectModalContentProps = {
   onSuccessRedirect?: () => void;
 };
 
+export type ResendMitraSsoCredentialsPayload = {
+  id: string | number;
+  ssoUsername?: string;
+  ssoPassword?: string;
+};
+
+export type InternalMitraRegistrationResendSsoTriggerProps = {
+  modalKey?: string;
+  registration: InternalMitraRegistrationItem;
+  children?: ReactNode;
+  onSuccess?: () => void;
+};
+
+export type InternalMitraRegistrationResendSsoModalContentProps = {
+  registration: InternalMitraRegistrationItem;
+  isOpen: boolean;
+  onSuccess?: () => void;
+};
+
 export type MitraRegistrationDocumentItem = {
   title: string;
   url?: string | null;

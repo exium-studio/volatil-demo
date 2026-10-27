@@ -5,6 +5,7 @@ import {
   fetchMitraRegistrationDetailApi,
   fetchMitraRegistrationsApi,
   rejectMitraRegistrationApi,
+  resendMitraSsoCredentialsApi,
 } from "@/features/internal/mitra-registration/api/mitra-registration.api";
 import type {
   ApproveMitraRegistrationPayload,
@@ -12,6 +13,7 @@ import type {
   InternalMitraRegistrationListResponse,
   InternalMitraRegistrationQueryParams,
   RejectMitraRegistrationPayload,
+  ResendMitraSsoCredentialsPayload,
 } from "@/features/internal/mitra-registration/types/mitra-registration.type";
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -238,4 +240,11 @@ export const rejectInternalMitraRegistration = async (
     throw new Error(response?.message || "Gagal menolak pendaftaran mitra.");
   }
   return normalizeMitraRegistrationItem(raw);
+};
+
+export const resendInternalMitraSsoCredentials = async (
+  payload: ResendMitraSsoCredentialsPayload,
+  signal?: AbortSignal,
+) => {
+  return resendMitraSsoCredentialsApi(payload, signal);
 };

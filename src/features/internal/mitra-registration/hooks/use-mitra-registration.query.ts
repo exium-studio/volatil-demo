@@ -6,6 +6,7 @@ import {
   getInternalMitraRegistrationDetail,
   getInternalMitraRegistrationsList,
   rejectInternalMitraRegistration,
+  resendInternalMitraSsoCredentials,
 } from "@/features/internal/mitra-registration/services/mitra-registration.service";
 import type {
   ApproveMitraRegistrationPayload,
@@ -13,6 +14,7 @@ import type {
   InternalMitraRegistrationListResponse,
   InternalMitraRegistrationQueryParams,
   RejectMitraRegistrationPayload,
+  ResendMitraSsoCredentialsPayload,
 } from "@/features/internal/mitra-registration/types/mitra-registration.type";
 import { queryKeys } from "@/shared/libs/tanstack-query/query.keys";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
@@ -99,6 +101,34 @@ export const useRejectMitraRegistration = () => {
     onError: (error) => {
       toast.error("Gagal Menolak Pendaftaran", {
         description: error.message || "Terjadi kesalahan saat memproses penolakan.",
+      });
+    },
+  });
+};
+
+export const useResendMitraSsoCredentials = () => {
+  const queryClient = useQueryClient();
+
+  return useMutation<
+    unknown,
+    Error,
+    ResendMitraSsoCredentialsPayload
+  >({
+    mutationFn: (payload) => resendInternalMitraSsoCredentials(payload),
+    onSuccess: (_, variables) => {
+      toast.success("Kredensial SSO Terkirim", {
+        description: "Kredensial akun SSO berhasil dikirimkan ke email resmi mitra.",
+      });
+      void queryClient.invalidateQueries({
+        queryKey: queryKeys.internal.mitraRegistration.detail(variables.id),
+      });
+      void queryClient.invalidateQueries({
+        queryKey: queryKeys.internal.mitraRegistration.all,
+      });
+    },
+    onError: (error) => {
+      toast.error("Gagal Mengirim Kredensial SSO", {
+        description: error.message || "Terjadi kesalahan saat memproses pengiriman kredensial via SMTP.",
       });
     },
   });

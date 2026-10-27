@@ -24,6 +24,7 @@ import { Heading } from "@/design-system/components/typography/ui/heading";
 import { ClampedP, P } from "@/design-system/components/typography/ui/p";
 import { InternalMitraRegistrationApproveTrigger } from "@/features/internal/mitra-registration/components/internal.mitra-registration.approve-modal";
 import { InternalMitraRegistrationRejectTrigger } from "@/features/internal/mitra-registration/components/internal.mitra-registration.reject-modal";
+import { InternalMitraRegistrationResendSsoTrigger } from "@/features/internal/mitra-registration/components/internal.mitra-registration.resend-sso-modal";
 import { useInternalMitraRegistrationsQuery } from "@/features/internal/mitra-registration/hooks/use-mitra-registration.query";
 import type {
   InternalMitraRegistrationItem,
@@ -47,6 +48,7 @@ import {
   EyeIcon,
   HandshakeIcon,
   FilePenLine,
+  KeyRoundIcon,
   XCircleIcon,
 } from "lucide-react";
 import { useMemo, useState, useTransition } from "react";
@@ -280,6 +282,22 @@ export const InternalMitraRegistrationDataView = () => {
             triggerComponent: (reg: InternalMitraRegistrationItem) => (
               <InternalMitraRegistrationRejectTrigger
                 modalKey={`reject-mitra-reg-${reg.id}`}
+                registration={reg}
+              />
+            ),
+          },
+        },
+        {
+          key: "resend-sso-credential",
+          label: "Kirim Kredensial SSO",
+          icon: KeyRoundIcon,
+          colorPalette: "blue",
+          hidden: (reg: InternalMitraRegistrationItem) =>
+            reg.status !== "verified",
+          modal: {
+            triggerComponent: (reg: InternalMitraRegistrationItem) => (
+              <InternalMitraRegistrationResendSsoTrigger
+                modalKey={`resend-sso-${reg.id}`}
                 registration={reg}
               />
             ),
