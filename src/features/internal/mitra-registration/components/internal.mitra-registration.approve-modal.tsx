@@ -202,7 +202,7 @@ export const InternalMitraRegistrationApproveModalContent = (
 
             {/* SSO Username */}
             <Field
-              label={"Username Akun SSO (Wajib)"}
+              label={"Username Akun SSO"}
               invalid={Boolean(errors.ssoUsername)}
               errorText={errors.ssoUsername?.message}
             >
@@ -215,7 +215,7 @@ export const InternalMitraRegistrationApproveModalContent = (
 
             {/* SSO Password */}
             <Field
-              label={"Kata Sandi Akun SSO (Wajib)"}
+              label={"Kata Sandi Akun SSO"}
               invalid={Boolean(errors.ssoPassword)}
               errorText={errors.ssoPassword?.message}
             >

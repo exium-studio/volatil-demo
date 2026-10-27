@@ -182,17 +182,20 @@ const InternalMitraRegistrationResendSsoForm = (props: {
 
           {/* SSO Password Input */}
           <Field
-            label={"Kata Sandi Akun SSO (Opsional)"}
+            label={"Kata Sandi Akun SSO"}
             helperText={
               "Kosongkan jika ingin mengirim ulang kata sandi saat ini. Masukkan atau klik 'Acak' jika ingin mereset/me-roll kata sandi baru."
             }
+            optional
           >
             <HStack gap={"xs"} w={"full"}>
               <Box flex={1}>
                 <PasswordInput
                   value={ssoPassword}
                   onChange={(e) => setSsoPassword(e.target.value)}
-                  placeholder={"Kosongkan untuk pakai sandi saat ini, atau buat yang baru..."}
+                  placeholder={
+                    "Kosongkan untuk pakai sandi saat ini, atau buat yang baru..."
+                  }
                 />
               </Box>
 
