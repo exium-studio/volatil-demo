@@ -64,6 +64,8 @@ export type InternalMitraRegistrationItem = {
   suratKomitmenEvaluasi?: string | null;
   suratKomitmenPerbaikan?: string | null;
   proposalTeknis?: string | null;
+  ssoUsername?: string | null;
+  ssoPassword?: string | null;
 };
 
 export type InternalMitraRegistrationQueryParams = PaginatedParams & {
@@ -79,6 +81,8 @@ export type ApproveMitraRegistrationPayload = {
   id: string | number;
   contractDocument: File;
   workspaceInteropUrl?: string;
+  ssoUsername?: string;
+  ssoPassword?: string;
 };
 
 export type RejectMitraRegistrationPayload = {

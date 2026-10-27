@@ -101,9 +101,7 @@ export const InternalMitraRegistrationDataView = () => {
 
     if (params.status && params.status !== "all") {
       const statusConfig =
-        MITRA_REGISTRATION_STATUS_MAP[
-          params.status as MitraRegistrationStatus
-        ];
+        MITRA_REGISTRATION_STATUS_MAP[params.status as MitraRegistrationStatus];
       parts.push(statusConfig?.label ?? params.status);
     }
 
@@ -135,9 +133,7 @@ export const InternalMitraRegistrationDataView = () => {
             value: reg.organizationName ?? reg.namaInstansi,
             td: (
               <VStack gap={"2xs"}>
-                <ClampedP>
-                  {reg.organizationName ?? reg.namaInstansi}
-                </ClampedP>
+                <ClampedP>{reg.organizationName ?? reg.namaInstansi}</ClampedP>
                 <P fontSize={"sm"} color={"fg.subtle"}>
                   {`NIB: ${reg.nib}`}
                 </P>

@@ -49,6 +49,12 @@ export const approveMitraRegistrationApi = async (
     formData.append("workspaceInteropUrl", payload.workspaceInteropUrl);
     formData.append("workspaceUrl", payload.workspaceInteropUrl);
   }
+  if (payload.ssoUsername) {
+    formData.append("ssoUsername", payload.ssoUsername);
+  }
+  if (payload.ssoPassword) {
+    formData.append("ssoPassword", payload.ssoPassword);
+  }
 
   return apiClient.post<ApiResponse<InternalMitraRegistrationItem>>(
     `/api/internal/mitra-registrations/${payload.id}/approve`,

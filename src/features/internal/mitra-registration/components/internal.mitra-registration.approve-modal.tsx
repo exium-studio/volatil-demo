@@ -5,8 +5,10 @@ import { Alert } from "@/design-system/components/feedback/ui/alert";
 import { AppIcon } from "@/design-system/components/icon/ui/app-icon";
 import { Field } from "@/design-system/components/input/ui/field";
 import { FileInput } from "@/design-system/components/input/ui/file-input";
+import { Input } from "@/design-system/components/input/ui/input";
+import { PasswordInput } from "@/design-system/components/input/ui/password-input";
 import { Box } from "@/design-system/components/layout/ui/box";
-import { VStack } from "@/design-system/components/layout/ui/flex-box";
+import { HStack, VStack } from "@/design-system/components/layout/ui/flex-box";
 import { usePopModal } from "@/design-system/components/overlay/hooks/use-pop-modal";
 import { Modal } from "@/design-system/components/overlay/ui/modal";
 import { P } from "@/design-system/components/typography/ui/p";
@@ -16,7 +18,7 @@ import type {
   InternalMitraRegistrationApproveTriggerProps,
 } from "@/features/internal/mitra-registration/types/mitra-registration.type";
 import { back } from "@/shared/utils/client/navigation";
-import { CheckCircleIcon, InfoIcon } from "lucide-react";
+import { CheckCircleIcon, InfoIcon, KeyRoundIcon } from "lucide-react";
 import { useState } from "react";
 
 export const InternalMitraRegistrationApproveTrigger = (
@@ -66,18 +68,36 @@ export const InternalMitraRegistrationApproveModalContent = (
 
   // States
   const [contractFiles, setContractFiles] = useState<File[]>([]);
+  const [ssoUsername, setSsoUsername] = useState<string>(
+    registration.ssoUsername ?? registration.email ?? "",
+  );
+  const [ssoPassword, setSsoPassword] = useState<string>(
+    registration.ssoPassword ?? "",
+  );
 
   // Mutations
   const approveMutation = useApproveMitraRegistration();
 
   // Handlers
+  const handleGeneratePassword = () => {
+    const chars =
+      "abcdefghjkmnpqrstuvwxyzABCDEFGHJKMNPQRSTUVWXYZ23456789!@#$%&*";
+    let generated = "";
+    for (let i = 0; i < 12; i++) {
+      generated += chars.charAt(Math.floor(Math.random() * chars.length));
+    }
+    setSsoPassword(generated);
+  };
+
   const handleApprove = () => {
-    if (!contractFiles[0]) return;
+    if (!contractFiles[0] || !ssoUsername.trim() || !ssoPassword.trim()) return;
 
     approveMutation.mutate(
       {
         id: registration.id,
         contractDocument: contractFiles[0],
+        ssoUsername: ssoUsername.trim(),
+        ssoPassword: ssoPassword.trim(),
       },
       {
         onSuccess: () => {
@@ -101,7 +121,12 @@ export const InternalMitraRegistrationApproveModalContent = (
     }
   };
 
-  const isSubmitDisabled = !contractFiles[0] || approveMutation.isPending;
+  // Derived Values
+  const isSubmitDisabled =
+    !contractFiles[0] ||
+    !ssoUsername.trim() ||
+    !ssoPassword.trim() ||
+    approveMutation.isPending;
 
   return (
     <Modal.Content>
@@ -123,7 +148,7 @@ export const InternalMitraRegistrationApproveModalContent = (
             <AppIcon icon={InfoIcon} />
             <Alert.Description>
               {
-                "Pastikan seluruh dokumen legalitas dan proposal teknis pemohon telah diverifikasi. Unggah dokumen kontrak kemitraan resmi untuk menyelesaikan proses aktivasi mitra."
+                "Pastikan seluruh dokumen legalitas dan proposal teknis pemohon telah diverifikasi. Unggah dokumen kontrak resmi dan masukkan kredensial akun SSO yang akan dikirimkan ke mitra."
               }
             </Alert.Description>
           </Alert.Root>
@@ -140,6 +165,47 @@ export const InternalMitraRegistrationApproveModalContent = (
                 onFileAccept={(details) => setContractFiles(details.files)}
               />
             </Box>
+          </Field>
+
+          {/* SSO Username / Email */}
+          <Field
+            variant={"default"}
+            label={"Email / Username Akun SSO (Wajib)"}
+            helperText={
+              "Kredensial SSO ini akan dikirimkan langsung ke email resmi mitra."
+            }
+          >
+            <Input
+              value={ssoUsername}
+              onChange={(e) => setSsoUsername(e.target.value)}
+              placeholder={"Masukkan email atau username SSO..."}
+            />
+          </Field>
+
+          {/* SSO Password */}
+          <Field
+            variant={"default"}
+            label={"Kata Sandi Akun SSO (Wajib)"}
+            helperText={"Kata sandi untuk akses awal sistem SSO oleh mitra."}
+          >
+            <HStack gap={"xs"} w={"full"}>
+              <Box flex={1}>
+                <PasswordInput
+                  value={ssoPassword}
+                  onChange={(e) => setSsoPassword(e.target.value)}
+                  placeholder={"Masukkan kata sandi SSO..."}
+                />
+              </Box>
+              <Button
+                type={"button"}
+                variant={"outline"}
+                size={"sm"}
+                onClick={handleGeneratePassword}
+              >
+                <AppIcon icon={KeyRoundIcon} />
+                {"Acak"}
+              </Button>
+            </HStack>
           </Field>
         </VStack>
       </Modal.Body>
@@ -167,4 +233,3 @@ export const InternalMitraRegistrationApproveModalContent = (
     </Modal.Content>
   );
 };
-

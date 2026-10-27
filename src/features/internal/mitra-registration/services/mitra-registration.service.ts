@@ -125,6 +125,8 @@ const normalizeMitraRegistrationItem = (raw: any): InternalMitraRegistrationItem
     rejectionReason: raw.rejectionReason ?? raw.rejection_reason ?? null,
     verifiedAt: raw.verifiedAt ?? raw.verified_at ?? null,
     verifiedBy: raw.verifiedBy ?? raw.verified_by ?? null,
+    ssoUsername: raw.ssoUsername ?? raw.sso_username ?? null,
+    ssoPassword: raw.ssoPassword ?? raw.sso_password ?? null,
     createdAt: raw.createdAt ?? raw.created_at ?? new Date().toISOString(),
     updatedAt: raw.updatedAt ?? raw.updated_at ?? undefined,
 
