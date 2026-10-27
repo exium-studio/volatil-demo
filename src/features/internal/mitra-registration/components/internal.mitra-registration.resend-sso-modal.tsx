@@ -6,8 +6,7 @@ import { AppIcon } from "@/design-system/components/icon/ui/app-icon";
 import { Field } from "@/design-system/components/input/ui/field";
 import { Input } from "@/design-system/components/input/ui/input";
 import { PasswordInput } from "@/design-system/components/input/ui/password-input";
-import { Box } from "@/design-system/components/layout/ui/box";
-import { HStack, VStack } from "@/design-system/components/layout/ui/flex-box";
+import { VStack } from "@/design-system/components/layout/ui/flex-box";
 import { usePopModal } from "@/design-system/components/overlay/hooks/use-pop-modal";
 import { Modal } from "@/design-system/components/overlay/ui/modal";
 import { P } from "@/design-system/components/typography/ui/p";
@@ -21,7 +20,7 @@ import type {
   InternalMitraRegistrationResendSsoTriggerProps,
 } from "@/features/internal/mitra-registration/types/mitra-registration.type";
 import { back } from "@/shared/utils/client/navigation";
-import { InfoIcon, KeyRoundIcon, MailIcon } from "lucide-react";
+import { InfoIcon, MailIcon } from "lucide-react";
 import { useState } from "react";
 
 export const InternalMitraRegistrationResendSsoTrigger = (
@@ -115,16 +114,6 @@ const InternalMitraRegistrationResendSsoForm = (props: {
   const resendMutation = useResendMitraSsoCredentials();
 
   // Handlers
-  const handleGeneratePassword = () => {
-    const chars =
-      "abcdefghjkmnpqrstuvwxyzABCDEFGHJKMNPQRSTUVWXYZ23456789!@#$%&*";
-    let generated = "";
-    for (let i = 0; i < 12; i++) {
-      generated += chars.charAt(Math.floor(Math.random() * chars.length));
-    }
-    setSsoPassword(generated);
-  };
-
   const handleSubmit = () => {
     if (!ssoUsername.trim()) return;
 
@@ -184,30 +173,18 @@ const InternalMitraRegistrationResendSsoForm = (props: {
           <Field
             label={"Kata Sandi Akun SSO"}
             helperText={
-              "Kosongkan jika ingin mengirim ulang kata sandi saat ini. Masukkan atau klik 'Acak' jika ingin mereset/me-roll kata sandi baru."
+              "Kosongkan jika ingin mengirim ulang kata sandi saat ini. Masukkan kata sandi baru jika ingin memperbarui akun SSO mitra."
             }
             optional
           >
-            <HStack gap={"xs"} w={"full"}>
-              <Box flex={1}>
-                <PasswordInput
-                  value={ssoPassword}
-                  onChange={(e) => setSsoPassword(e.target.value)}
-                  placeholder={
-                    "Kosongkan untuk pakai sandi saat ini, atau buat yang baru..."
-                  }
-                />
-              </Box>
-
-              <Button
-                variant={"outline"}
-                h={"60px"}
-                onClick={handleGeneratePassword}
-              >
-                <AppIcon icon={KeyRoundIcon} />
-                {"Acak"}
-              </Button>
-            </HStack>
+            <PasswordInput
+              value={ssoPassword}
+              onChange={(e) => setSsoPassword(e.target.value)}
+              placeholder={
+                "Kosongkan untuk pakai sandi saat ini, atau buat yang baru..."
+              }
+              w={"full"}
+            />
           </Field>
         </VStack>
       </Modal.Body>

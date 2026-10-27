@@ -8,7 +8,7 @@ import { FileInput } from "@/design-system/components/input/ui/file-input";
 import { Input } from "@/design-system/components/input/ui/input";
 import { PasswordInput } from "@/design-system/components/input/ui/password-input";
 import { Box } from "@/design-system/components/layout/ui/box";
-import { HStack, VStack } from "@/design-system/components/layout/ui/flex-box";
+import { VStack } from "@/design-system/components/layout/ui/flex-box";
 import { usePopModal } from "@/design-system/components/overlay/hooks/use-pop-modal";
 import { Modal } from "@/design-system/components/overlay/ui/modal";
 import { P } from "@/design-system/components/typography/ui/p";
@@ -21,7 +21,7 @@ import {
 } from "@/features/internal/mitra-registration/types/mitra-registration.type";
 import { back } from "@/shared/utils/client/navigation";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { CheckCircleIcon, InfoIcon, KeyRoundIcon } from "lucide-react";
+import { CheckCircleIcon, InfoIcon } from "lucide-react";
 import { Controller, useForm } from "react-hook-form";
 
 export const InternalMitraRegistrationApproveTrigger = (
@@ -74,7 +74,6 @@ export const InternalMitraRegistrationApproveModalContent = (
     register,
     handleSubmit,
     control,
-    setValue,
     formState: { errors, isValid, isSubmitting },
   } = useForm<ApproveMitraRegistrationFormValues>({
     resolver: zodResolver(approveMitraRegistrationSchema),
@@ -88,20 +87,6 @@ export const InternalMitraRegistrationApproveModalContent = (
 
   // Mutations
   const approveMutation = useApproveMitraRegistration();
-
-  // Handlers
-  const handleGeneratePassword = () => {
-    const chars =
-      "abcdefghjkmnpqrstuvwxyzABCDEFGHJKMNPQRSTUVWXYZ23456789!@#$%&*";
-    let generated = "";
-    for (let i = 0; i < 12; i++) {
-      generated += chars.charAt(Math.floor(Math.random() * chars.length));
-    }
-    setValue("ssoPassword", generated, {
-      shouldValidate: true,
-      shouldDirty: true,
-    });
-  };
 
   const onSubmit = (values: ApproveMitraRegistrationFormValues) => {
     const contractDocument = values.contractFiles[0];
@@ -219,25 +204,11 @@ export const InternalMitraRegistrationApproveModalContent = (
               invalid={Boolean(errors.ssoPassword)}
               errorText={errors.ssoPassword?.message}
             >
-              <HStack gap={"xs"} w={"full"}>
-                <Box flex={1}>
-                  <PasswordInput
-                    {...register("ssoPassword")}
-                    placeholder={"Masukkan kata sandi SSO..."}
-                    w={"full"}
-                  />
-                </Box>
-
-                <Button
-                  type={"button"}
-                  variant={"outline"}
-                  h={"60px"}
-                  onClick={handleGeneratePassword}
-                >
-                  <AppIcon icon={KeyRoundIcon} />
-                  {"Acak"}
-                </Button>
-              </HStack>
+              <PasswordInput
+                {...register("ssoPassword")}
+                placeholder={"Masukkan kata sandi SSO..."}
+                w={"full"}
+              />
             </Field>
           </VStack>
         </Modal.Body>

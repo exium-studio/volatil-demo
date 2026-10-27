@@ -174,12 +174,14 @@ export const Input = forwardRef<HTMLInputElement, InputProps>((props, ref) => {
     const labelLeft = startElement
       ? `${(startElementWidth || 20) + 20}px`
       : "12px";
+    const labelRight = endElement ? "44px" : "12px";
 
     return (
       <Box position={"relative"} w={"full"}>
         <Box
           position={"absolute"}
           left={labelLeft}
+          right={labelRight}
           top={"7px"}
           zIndex={1}
           pointerEvents={"none"}

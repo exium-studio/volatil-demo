@@ -251,6 +251,7 @@ export const PasswordInput = forwardRef<HTMLInputElement, PasswordInputProps>(
             <Box
               position={"absolute"}
               left={labelLeft}
+              right={"44px"}
               top={"7px"}
               zIndex={1}
               pointerEvents={"none"}
@@ -309,6 +310,8 @@ const VisibilityTrigger = forwardRef<HTMLButtonElement, ButtonProps>(
         variant={"ghost"}
         aspectRatio={"square"}
         mr={-2}
+        position={"relative"}
+        zIndex={10}
         aria-label={"Toggle password visibility"}
         {...props}
       />
