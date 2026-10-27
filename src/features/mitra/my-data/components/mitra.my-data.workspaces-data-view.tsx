@@ -1,6 +1,9 @@
 // src/features/mitra/my-data/components/mitra.my-data.workspaces-data-view.tsx
 
-import { Button } from "@/design-system/components/button/ui/button";
+import {
+  Button,
+  IconButton,
+} from "@/design-system/components/button/ui/button";
 import type {
   FormattedListItem,
   FormattedTableHeader,
@@ -21,11 +24,15 @@ import type { FocusSelectOption } from "@/design-system/components/input/types/f
 import { SearchInput } from "@/design-system/components/input/ui/search-input";
 import { ActionHeaderScrollContainer } from "@/design-system/components/layout/ui/action-header-scroll-container";
 import { Box } from "@/design-system/components/layout/ui/box";
-import { Center } from "@/design-system/components/layout/ui/center";
+import {
+  AbsoluteCenter,
+  Center,
+} from "@/design-system/components/layout/ui/center";
 import { HStack, VStack } from "@/design-system/components/layout/ui/flex-box";
 import { Separator } from "@/design-system/components/layout/ui/separator";
 import { NavLink } from "@/design-system/components/navigation/ui/link";
 import { Popover } from "@/design-system/components/overlay/ui/popover";
+import { Tooltip } from "@/design-system/components/overlay/ui/tooltip";
 import { toast } from "@/design-system/components/toast/core/toast.manager";
 import { Badge } from "@/design-system/components/typography/ui/badge";
 import { ClampedP, P, TNum } from "@/design-system/components/typography/ui/p";
@@ -61,6 +68,7 @@ import {
   KeyRoundIcon,
   LayersIcon,
   ReceiptTextIcon,
+  RefreshCwIcon,
   SquarePen,
 } from "lucide-react";
 import { useMemo, useState } from "react";
@@ -521,11 +529,12 @@ export const MitraMyDataWorkspacesDataView = (_props: MitraMyDataViewProps) => {
 
   return (
     <VStack flex={1} overflowY={"auto"} w={"full"} h={"full"}>
-      <VStack p={"md"}>
+      <HStack align={"center"} gap={"xs"} p={"md"}>
         {isLoading && <Skeleton minW={"280px"} h={"40px"} rounded={"md"} />}
 
         {!isLoading && apiKey && (
           <HStack
+            flex={1}
             align={"center"}
             gap={"xs"}
             minW={"280px"}
@@ -549,7 +558,15 @@ export const MitraMyDataWorkspacesDataView = (_props: MitraMyDataViewProps) => {
             />
           </HStack>
         )}
-      </VStack>
+
+        <Tooltip content={"Ganti API Key"} aria-label={"Ganti API Key"}>
+          <IconButton aria-label={"Rotate API Key"} variant={"outline"}>
+            <AppIcon icon={RefreshCwIcon} />
+
+            <AbsoluteCenter></AbsoluteCenter>
+          </IconButton>
+        </Tooltip>
+      </HStack>
 
       <Separator borderColor={"bg.canvas"} />
 
