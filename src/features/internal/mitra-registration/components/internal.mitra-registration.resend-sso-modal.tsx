@@ -21,7 +21,7 @@ import type {
   InternalMitraRegistrationResendSsoTriggerProps,
 } from "@/features/internal/mitra-registration/types/mitra-registration.type";
 import { back } from "@/shared/utils/client/navigation";
-import { InfoIcon, KeyRoundIcon, SendIcon } from "lucide-react";
+import { InfoIcon, KeyRoundIcon, MailIcon } from "lucide-react";
 import { useState } from "react";
 
 export const InternalMitraRegistrationResendSsoTrigger = (
@@ -42,7 +42,7 @@ export const InternalMitraRegistrationResendSsoTrigger = (
       opened={isOpen}
       open={open}
       close={close}
-      size={"md"}
+      size={"sm"}
     >
       <Modal.Trigger>{children}</Modal.Trigger>
 
@@ -105,7 +105,7 @@ const InternalMitraRegistrationResendSsoForm = (props: {
 
   // States
   const [ssoUsername, setSsoUsername] = useState<string>(
-    registration.ssoUsername ?? registration.email ?? "",
+    registration.ssoUsername ?? "",
   );
   const [ssoPassword, setSsoPassword] = useState<string>(
     registration.ssoPassword ?? "",
@@ -126,13 +126,13 @@ const InternalMitraRegistrationResendSsoForm = (props: {
   };
 
   const handleSubmit = () => {
-    if (!ssoUsername.trim() || !ssoPassword.trim()) return;
+    if (!ssoUsername.trim()) return;
 
     resendMutation.mutate(
       {
         id: registration.id,
         ssoUsername: ssoUsername.trim(),
-        ssoPassword: ssoPassword.trim(),
+        ssoPassword: ssoPassword.trim() || undefined,
       },
       {
         onSuccess: () => {
@@ -156,8 +156,7 @@ const InternalMitraRegistrationResendSsoForm = (props: {
   };
 
   // Derived Values
-  const isSubmitDisabled =
-    !ssoUsername.trim() || !ssoPassword.trim() || resendMutation.isPending;
+  const isSubmitDisabled = !ssoUsername.trim() || resendMutation.isPending;
 
   return (
     <>
@@ -167,13 +166,13 @@ const InternalMitraRegistrationResendSsoForm = (props: {
             <AppIcon icon={InfoIcon} />
             <Alert.Description>
               {
-                "Kredensial SSO berikut akan dikirimkan langsung ke email mitra. Anda dapat mengubah kata sandi di bawah ini jika ingin mereset atau me-roll akun SSO mitra."
+                "Kredensial SSO berikut akan dikirimkan langsung ke email resmi mitra. Anda dapat memasukkan kata sandi baru untuk mereset/me-roll akun SSO mitra, atau biarkan kosong untuk mengirim ulang kata sandi saat ini."
               }
             </Alert.Description>
           </Alert.Root>
 
           {/* SSO Username / Email Input */}
-          <Field label={"Email / Username Akun SSO (Wajib)"}>
+          <Field label={"Email / Username Akun SSO"}>
             <Input
               value={ssoUsername}
               onChange={(e) => setSsoUsername(e.target.value)}
@@ -182,13 +181,18 @@ const InternalMitraRegistrationResendSsoForm = (props: {
           </Field>
 
           {/* SSO Password Input */}
-          <Field label={"Kata Sandi Akun SSO (Wajib)"}>
+          <Field
+            label={"Kata Sandi Akun SSO (Opsional)"}
+            helperText={
+              "Kosongkan jika ingin mengirim ulang kata sandi saat ini. Masukkan atau klik 'Acak' jika ingin mereset/me-roll kata sandi baru."
+            }
+          >
             <HStack gap={"xs"} w={"full"}>
               <Box flex={1}>
                 <PasswordInput
                   value={ssoPassword}
                   onChange={(e) => setSsoPassword(e.target.value)}
-                  placeholder={"Masukkan kata sandi SSO..."}
+                  placeholder={"Kosongkan untuk pakai sandi saat ini, atau buat yang baru..."}
                 />
               </Box>
 
@@ -216,7 +220,7 @@ const InternalMitraRegistrationResendSsoForm = (props: {
             onClick={handleSubmit}
             w={"full"}
           >
-            <AppIcon icon={SendIcon} />
+            <AppIcon icon={MailIcon} />
             {"Kirim Kredensial ke Email"}
           </Button>
 

@@ -291,7 +291,6 @@ export const InternalMitraRegistrationDataView = () => {
           key: "resend-sso-credential",
           label: "Kirim Kredensial SSO",
           icon: KeyRoundIcon,
-          colorPalette: "blue",
           hidden: (reg: InternalMitraRegistrationItem) =>
             reg.status !== "verified",
           modal: {
