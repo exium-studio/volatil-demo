@@ -1729,6 +1729,33 @@ type RenewWorkspaceResponse = {
 };
 ```
 
+### Rotasi API Key Mitra (Rotate API Key)
+
+- **Endpoint**: `POST /api/mitra/my-data/rotate-api-key`
+- **Akses**: `Mitra Only`
+- **Headers**:
+  - `Authorization: Bearer <token>`
+- **Payload**: `{}` (Kosong)
+
+#### Deskripsi Alur:
+1. Digunakan oleh mitra untuk mengganti (rotate/roll) API Key yang digunakan untuk mengakses endpoint proxy WMS/WFS dan integrasi GIS eksternal.
+2. Ketika API Key baru berhasil digenerate oleh backend, API Key lama secara otomatis dideaktivasi/ditarik.
+3. Setelah menerima respon sukses, frontend secara otomatis me-refetch dan menginvalidasi cache query `my-data`, `workspaces`, dan `workspace detail`.
+
+- **Response (200 OK)**:
+
+```typescript
+type RotateApiKeyResponse = {
+  success: true;
+  message: string;
+  data: {
+    apiKey: string;
+    generatedAt: string;
+  };
+  timestamp: string;
+};
+```
+
 ### Riwayat Transaksi Mitra
 
 - **Endpoint**: `GET /api/mitra/transaction-history`

@@ -194,6 +194,11 @@ export type RenewWorkspaceResponse = {
   policySnapshot?: RenewWorkspacePolicySnapshot;
 };
 
+export type RotateApiKeyResponse = {
+  apiKey: string;
+  generatedAt?: string;
+};
+
 export type MitraWorkspaceRenewalTriggerProps = {
   workspace: MitraWorkspaceItem;
   children?: React.ReactNode;

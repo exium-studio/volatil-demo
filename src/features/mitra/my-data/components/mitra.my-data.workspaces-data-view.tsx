@@ -24,10 +24,7 @@ import type { FocusSelectOption } from "@/design-system/components/input/types/f
 import { SearchInput } from "@/design-system/components/input/ui/search-input";
 import { ActionHeaderScrollContainer } from "@/design-system/components/layout/ui/action-header-scroll-container";
 import { Box } from "@/design-system/components/layout/ui/box";
-import {
-  AbsoluteCenter,
-  Center,
-} from "@/design-system/components/layout/ui/center";
+import { Center } from "@/design-system/components/layout/ui/center";
 import { HStack, VStack } from "@/design-system/components/layout/ui/flex-box";
 import { Separator } from "@/design-system/components/layout/ui/separator";
 import { NavLink } from "@/design-system/components/navigation/ui/link";
@@ -40,7 +37,10 @@ import { Url } from "@/design-system/components/typography/ui/url";
 import { useDebouncedValue } from "@/design-system/hooks/use-debounced-value";
 import { usePricingPolicy } from "@/features/mitra/data-request/hooks/use-pricing-policy";
 import { MitraWorkspaceRenewalTrigger } from "@/features/mitra/my-data/components/mitra.my-data.renewal-modal";
-import { useMitraWorkspacesQuery } from "@/features/mitra/my-data/hooks/use-mitra-my-data";
+import {
+  useMitraWorkspacesQuery,
+  useRotateMitraApiKey,
+} from "@/features/mitra/my-data/hooks/use-mitra-my-data";
 import type {
   MitraMyDataViewProps,
   MitraWorkspaceItem,
@@ -118,6 +118,13 @@ export const MitraMyDataWorkspacesDataView = (_props: MitraMyDataViewProps) => {
     search: debouncedSearch || undefined,
     activeStatus: activeStatus,
   });
+
+  // Mutations
+  const rotateApiKeyMutation = useRotateMitraApiKey();
+
+  const handleRotateApiKey = () => {
+    rotateApiKeyMutation.mutate();
+  };
 
   // Derived Values — Table headers & items
   const dataList = useMemo(() => {
@@ -560,10 +567,13 @@ export const MitraMyDataWorkspacesDataView = (_props: MitraMyDataViewProps) => {
         )}
 
         <Tooltip content={"Ganti API Key"} aria-label={"Ganti API Key"}>
-          <IconButton aria-label={"Rotate API Key"} variant={"outline"}>
+          <IconButton
+            aria-label={"Rotate API Key"}
+            variant={"outline"}
+            loading={rotateApiKeyMutation.isPending}
+            onClick={handleRotateApiKey}
+          >
             <AppIcon icon={RefreshCwIcon} />
-
-            <AbsoluteCenter></AbsoluteCenter>
           </IconButton>
         </Tooltip>
       </HStack>

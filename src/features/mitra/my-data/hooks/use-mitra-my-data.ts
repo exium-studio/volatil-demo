@@ -5,6 +5,7 @@ import {
   getMitraWorkspaces,
   getMyData,
   renewWorkspace,
+  rotateApiKey,
   updateMyData,
 } from "@/features/mitra/my-data/services/mitra.my-data.service";
 import type {
@@ -16,6 +17,7 @@ import type {
   MyDataResponse,
   RenewWorkspacePayload,
   RenewWorkspaceResponse,
+  RotateApiKeyResponse,
   UpdateMyDataItemPayload,
 } from "@/features/mitra/my-data/types/my-data.type";
 import { toast } from "@/design-system/components/toast/core/toast.manager";
@@ -171,6 +173,66 @@ export const useRenewMitraWorkspace = () => {
           error instanceof Error
             ? error.message
             : "Terjadi kesalahan saat memproses perpanjangan masa aktif",
+      });
+    },
+  });
+};
+
+export const useRotateMitraApiKey = () => {
+  const queryClient = useQueryClient();
+
+  return useMutation<RotateApiKeyResponse, Error, void>({
+    mutationFn: () => rotateApiKey(),
+    onSuccess: (data) => {
+      // Direct cache updates for workspaces list
+      queryClient.setQueriesData<MitraWorkspaceListResponse>(
+        { queryKey: queryKeys.mitra.workspaces.all },
+        (old) => {
+          if (!old) return old;
+          return {
+            ...old,
+            apiKey: data.apiKey,
+          };
+        },
+      );
+
+      // Direct cache updates for myData list
+      queryClient.setQueriesData<MyDataResponse>(
+        { queryKey: queryKeys.mitra.myData.all },
+        (old) => {
+          if (!old) return old;
+          return {
+            ...old,
+            apiKey: data.apiKey,
+          };
+        },
+      );
+
+      // Refetch / invalidate queries to ensure full synchronization
+      void queryClient.invalidateQueries({
+        queryKey: queryKeys.mitra.workspaces.all,
+      });
+      void queryClient.invalidateQueries({
+        queryKey: queryKeys.mitra.myData.all,
+      });
+      void queryClient.invalidateQueries({
+        queryKey: queryKeys.mitra.workspace.all,
+      });
+
+      toast.create({
+        variant: "success",
+        title: "API Key Diperbarui",
+        description: "API Key berhasil diganti dan data telah disinkronkan",
+      });
+    },
+    onError: (error) => {
+      toast.create({
+        variant: "error",
+        title: "Gagal Mengganti API Key",
+        description:
+          error instanceof Error
+            ? error.message
+            : "Terjadi kesalahan saat melakukan rotasi API Key",
       });
     },
   });

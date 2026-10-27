@@ -5,6 +5,7 @@ import {
   fetchMitraWorkspacesApi,
   fetchMyDataApi,
   renewWorkspaceApi,
+  rotateApiKeyApi,
   updateMyDataItemApi,
 } from "@/features/mitra/my-data/api/mitra.my-data.api";
 import type {
@@ -16,6 +17,7 @@ import type {
   MyDataResponse,
   RenewWorkspacePayload,
   RenewWorkspaceResponse,
+  RotateApiKeyResponse,
   UpdateMyDataItemPayload,
 } from "@/features/mitra/my-data/types/my-data.type";
 import {
@@ -308,6 +310,27 @@ export const renewWorkspace = async (
           extensionWindowDays: 7,
           currentExtensionIndex: 1,
         },
+      };
+    }
+    throw error;
+  }
+};
+
+export const rotateApiKey = async (
+  signal?: AbortSignal,
+): Promise<RotateApiKeyResponse> => {
+  try {
+    const response = await rotateApiKeyApi(signal);
+    if (response.data) {
+      return response.data;
+    }
+    throw new Error("Gagal melakukan rotasi API Key");
+  } catch (error) {
+    if (isDummyDataEnabled()) {
+      const generated = `vlt_${Math.random().toString(36).substring(2, 10)}${Math.random().toString(36).substring(2, 10)}`;
+      return {
+        apiKey: generated,
+        generatedAt: new Date().toISOString(),
       };
     }
     throw error;

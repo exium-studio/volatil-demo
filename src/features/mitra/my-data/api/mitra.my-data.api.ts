@@ -9,6 +9,7 @@ import type {
   MyDataResponse,
   RenewWorkspacePayload,
   RenewWorkspaceResponse,
+  RotateApiKeyResponse,
   UpdateMyDataItemPayload,
 } from "@/features/mitra/my-data/types/my-data.type";
 import { apiClient } from "@/shared/libs/api-client/api-client";
@@ -68,6 +69,16 @@ export const updateMyDataItemApi = async (
   return apiClient.patch<ApiResponse<MyDataItem>>(
     `/api/mitra/my-data/${id}`,
     payload,
+  );
+};
+
+export const rotateApiKeyApi = async (
+  signal?: AbortSignal,
+): Promise<ApiResponse<RotateApiKeyResponse>> => {
+  return apiClient.post<ApiResponse<RotateApiKeyResponse>>(
+    "/api/mitra/my-data/rotate-api-key",
+    {},
+    { signal },
   );
 };
 
