@@ -171,12 +171,12 @@ const InternalMitraRegistrationResendSsoForm = (props: {
             </Alert.Description>
           </Alert.Root>
 
-          {/* SSO Username / Email Input */}
-          <Field label={"Email / Username Akun SSO"}>
+          {/* SSO Username Input */}
+          <Field label={"Username Akun SSO"}>
             <Input
               value={ssoUsername}
               onChange={(e) => setSsoUsername(e.target.value)}
-              placeholder={"Masukkan email atau username SSO..."}
+              placeholder={"Masukkan username SSO..."}
             />
           </Field>
 
