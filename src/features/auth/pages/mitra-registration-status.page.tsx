@@ -254,9 +254,7 @@ export const MitraRegistrationStatusPage = () => {
             {/* Results Section */}
             {statusData && (
               <VStack align={"stretch"} gap={"xl"} mt={2}>
-                {/* <Separator borderColor={"border.subtle"} /> */}
-
-                {/* 1. Status Overview Header */}
+                {/* Status Overview Header */}
                 <VStack align={"stretch"} gap={3}>
                   <HStack
                     justify={"space-between"}
@@ -318,80 +316,102 @@ export const MitraRegistrationStatusPage = () => {
                   </HStack>
                 </VStack>
 
-                {/* 2. Contract Action (If Approved/Verified) */}
-                {isApproved && contractUrl && (
-                  <VStack
-                    justify={"space-between"}
-                    align={"center"}
-                    gap={"md"}
-                    p={"md"}
-                    rounded={theme.radii.container}
-                    bg={"blue.subtle"}
-                    color={"blue.fg"}
-                  >
-                    <VStack gap={"md"} align={"center"}>
-                      <AppIcon icon={FileCheckIcon} size={"lg"} />
+                <VStack gap={"md"}>
+                  {/* Credentials Sent & Contract Action (If Approved/Verified) */}
+                  {isApproved && (
+                    <Alert.Root
+                      status={"success"}
+                      colorPalette={"green"}
+                      variant={"subtle"}
+                    >
+                      <Alert.Indicator />
+                      <Alert.Content>
+                        <Alert.Title>
+                          {"Kredensial Akun Telah Dikirim"}
+                        </Alert.Title>
+                        <Alert.Description>
+                          {statusData.email
+                            ? `Informasi kredensial login (username & kata sandi akun SSO) telah dikirimkan ke alamat email terdaftar (${statusData.email}). Silakan periksa kotak masuk atau folder spam email Anda.`
+                            : "Informasi kredensial login (username & kata sandi akun SSO) telah dikirimkan ke alamat email terdaftar penanggung jawab. Silakan periksa kotak masuk atau folder spam email Anda."}
+                        </Alert.Description>
+                      </Alert.Content>
+                    </Alert.Root>
+                  )}
 
-                      <VStack align={"start"} gap={"xs"}>
-                        <P fontWeight={"semibold"}>
-                          {"Dokumen Perjanjian Kerjasama (PKS) Resmi"}
-                        </P>
+                  {isApproved && contractUrl && (
+                    <VStack
+                      justify={"space-between"}
+                      align={"center"}
+                      gap={"md"}
+                      p={"md"}
+                      rounded={theme.radii.container}
+                      bg={"blue.subtle"}
+                      color={"blue.fg"}
+                    >
+                      <VStack gap={"md"} align={"center"}>
+                        <AppIcon icon={FileCheckIcon} size={"lg"} />
 
-                        <P fontSize={"sm"} color={"blue.fg/50"}>
-                          {contractFileName}
-                          {contractFileSize ? ` • ${contractFileSize}` : ""}
-                        </P>
+                        <VStack align={"start"} gap={"xs"}>
+                          <P fontWeight={"semibold"}>
+                            {"Dokumen Perjanjian Kerjasama (PKS) Resmi"}
+                          </P>
+
+                          <P fontSize={"sm"} color={"blue.fg/50"}>
+                            {contractFileName}
+                            {contractFileSize ? ` • ${contractFileSize}` : ""}
+                          </P>
+                        </VStack>
                       </VStack>
+
+                      <HStack gap={2}>
+                        <ExternalLink
+                          href={contractUrl}
+                          variant={"plain"}
+                          download
+                        >
+                          <Button
+                            colorPalette={"blue"}
+                            size={"sm"}
+                            variant={"surface"}
+                          >
+                            <AppIcon icon={DownloadIcon} />
+                            {"Unduh Kontrak"}
+                          </Button>
+                        </ExternalLink>
+
+                        <Link to={"/"}>
+                          <Button
+                            colorPalette={"blue"}
+                            size={"sm"}
+                            variant={"surface"}
+                          >
+                            <AppIcon icon={LogInIcon} />
+                            {"Halaman Login"}
+                          </Button>
+                        </Link>
+                      </HStack>
                     </VStack>
+                  )}
 
-                    <HStack gap={2}>
-                      <ExternalLink
-                        href={contractUrl}
-                        variant={"plain"}
-                        download
-                      >
-                        <Button
-                          colorPalette={"blue"}
-                          size={"sm"}
-                          variant={"surface"}
-                        >
-                          <AppIcon icon={DownloadIcon} />
-                          {"Unduh Kontrak"}
-                        </Button>
-                      </ExternalLink>
+                  {/*  Rejection Reason Banner (If Rejected) */}
+                  {statusData.status === "rejected" && (
+                    <Alert.Root status={"error"} size={"sm"}>
+                      <Alert.Indicator />
+                      <Alert.Content>
+                        <Alert.Title>
+                          {"Catatan / Alasan Penolakan"}
+                        </Alert.Title>
+                        <Alert.Description>
+                          {statusData.rejectionReason ||
+                            statusData.statusDescription ||
+                            "Persyaratan berkas belum memenuhi kriteria yang ditetapkan."}
+                        </Alert.Description>
+                      </Alert.Content>
+                    </Alert.Root>
+                  )}
+                </VStack>
 
-                      <Link to={"/"}>
-                        <Button
-                          colorPalette={"blue"}
-                          size={"sm"}
-                          variant={"surface"}
-                        >
-                          <AppIcon icon={LogInIcon} />
-                          {"Halaman Login"}
-                        </Button>
-                      </Link>
-                    </HStack>
-                  </VStack>
-                )}
-
-                {/* 3. Rejection Reason Banner (If Rejected) */}
-                {statusData.status === "rejected" && (
-                  <Alert.Root status={"error"} size={"sm"}>
-                    <Alert.Indicator />
-                    <Alert.Content>
-                      <Alert.Title>{"Catatan / Alasan Penolakan"}</Alert.Title>
-                      <Alert.Description>
-                        {statusData.rejectionReason ||
-                          statusData.statusDescription ||
-                          "Persyaratan berkas belum memenuhi kriteria yang ditetapkan."}
-                      </Alert.Description>
-                    </Alert.Content>
-                  </Alert.Root>
-                )}
-
-                {/* <Separator borderColor={"border.subtle"} /> */}
-
-                {/* 4. Detail Data Pengajuan (Instansi & Penanggung Jawab) */}
+                {/* Detail Data Pengajuan (Instansi & Penanggung Jawab) */}
                 <SimpleGrid columns={[1, null, 2]} gap={6}>
                   {/* Instansi Info */}
                   <VStack align={"stretch"} gap={3}>
@@ -502,7 +522,7 @@ export const MitraRegistrationStatusPage = () => {
                   </VStack>
                 </SimpleGrid>
 
-                {/* 5. Uploaded Documents Checklist */}
+                {/* Uploaded Documents Checklist */}
                 {statusData.documents && (
                   <>
                     {/* <Separator borderColor={"border.subtle"} /> */}
