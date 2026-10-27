@@ -161,6 +161,7 @@ export const Input = forwardRef<HTMLInputElement, InputProps>((props, ref) => {
           ) : undefined
         }
         endElement={endElement}
+        endElementProps={{ zIndex: 2 }}
         w={"full"}
       >
         {inputCore}

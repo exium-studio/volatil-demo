@@ -233,6 +233,7 @@ export const PasswordInput = forwardRef<HTMLInputElement, PasswordInputProps>(
           ) : undefined
         }
         endElement={endElementNode}
+        endElementProps={{ zIndex: 2 }}
         w={"full"}
       >
         {inputCore}
