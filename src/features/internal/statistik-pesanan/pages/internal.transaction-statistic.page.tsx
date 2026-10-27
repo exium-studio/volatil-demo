@@ -13,7 +13,7 @@ export const InternalTransactionStatisticPage = () => {
   return (
     <Container.Root flex={1} minH={0} withContext={true}>
       <AppContentContainer overflowY={"auto"}>
-        <VStack flex={1} minH={0} gap={"md"} w={"full"}>
+        <VStack flex={1} gap={"md"} w={"full"}>
           {/* Section 1: Ringkasan Metrik Kartu Statistik Pesanan */}
           <InternalTransactionStatisticSummary />
 

@@ -522,7 +522,7 @@ export const InternalTransactionStatisticDataView = () => {
 
         <VStack flex={1} w={"full"} position={"relative"}>
           {isLoading ? (
-            <Skeleton flex={1} w={"full"} p={"md"} rounded={0} />
+            <Skeleton flex={1} w={"full"} minH={"300px"} p={"md"} rounded={0} />
           ) : isError ? (
             <Box
               flex={1}
