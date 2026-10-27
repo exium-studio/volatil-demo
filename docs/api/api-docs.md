@@ -1937,6 +1937,8 @@ type InternalMitraRegistrationDetailResponse = {
 - **Akses**: `Internal Only`
 - **Payload**: `multipart/form-data`
   - `contractDocument` _(file, required)_: Berkas kontrak kemitraan resmi bertandatangan (PDF)
+  - `ssoUsername` _(string, optional)_: Username atau alamat email akun SSO mitra (default fallback ke email pendaftaran)
+  - `ssoPassword` _(string, optional)_: Kata sandi awal untuk akses SSO mitra (akan dienkripsi di DB dan dikirim via email)
 - **Response (200 OK)**: Mengembalikan data registrasi yang telah berstatus `"verified"`.
 
 ### 4. Tolak Pendaftaran Mitra
@@ -1952,6 +1954,62 @@ type RejectMitraRegistrationPayload = {
 ```
 
 - **Response (200 OK)**: Mengembalikan data registrasi yang telah berstatus `"rejected"`.
+
+### 5. Kirim Ulang Email Persetujuan & Roll Kredensial SSO Mitra
+
+- **Method**: `POST`
+- **Endpoint**: `/api/internal/mitra-registrations/{id}/resend-approval-email`
+- **Akses**: `Internal Only`
+- **Headers**:
+  ```http
+  Authorization: Bearer <access_token>
+  Content-Type: application/json
+  ```
+- **Request Body (JSON - Opsional)**:
+  ```json
+  {
+    "ssoUsername": "mitra@instansi.go.id",
+    "ssoPassword": "NewGeneratedPassword123!"
+  }
+  ```
+- **TypeScript DTO**:
+  ```typescript
+  type ResendMitraSsoCredentialsPayload = {
+    ssoUsername?: string;
+    ssoPassword?: string;
+  };
+
+  type ResendMitraSsoCredentialsResponse = {
+    success: true;
+    message: string;
+    data: {
+      ssoUsername: string;
+    };
+  };
+  ```
+- **Response Sukses (200 OK)**:
+  ```json
+  {
+    "success": true,
+    "message": "Email persetujuan kemitraan dan kredensial SSO berhasil dikirim ulang ke mitra@instansi.go.id.",
+    "data": {
+      "ssoUsername": "mitra@instansi.go.id"
+    }
+  }
+  ```
+- **Response Error (500 Internal Server Error / SMTP Error)**:
+  ```json
+  {
+    "success": false,
+    "message": "Gagal mengirim email persetujuan via SMTP: <detail_error_smtp>",
+    "error": "<detail_error>"
+  }
+  ```
+- **Catatan Alur & Keamanan**:
+  - Hanya dapat dijalankan pada pendaftaran yang berstatus `"verified"` dan telah memiliki berkas kontrak.
+  - Demi keamanan, password **tidak pernah dikembalikan dalam response JSON**.
+  - Jika `ssoPassword` dikirimkan (karena admin me-roll/mereset kata sandi), backend akan mengupdate kata sandi terenkripsi (AES-256-GCM) di DB, mengupdate hash kata sandi akun di tabel `Users`, dan mengirimkannya ke email mitra.
+  - Jika request body kosong `{}` atau `ssoPassword` tidak dikirim, backend otomatis menggunakan kata sandi tersimpan yang didekripsi di memori untuk dikirim ulang via SMTP.
 
 ---
 
