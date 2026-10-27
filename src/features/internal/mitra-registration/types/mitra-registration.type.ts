@@ -85,6 +85,26 @@ export type ApproveMitraRegistrationPayload = {
   ssoPassword?: string;
 };
 
+import { z } from "zod";
+
+export const approveMitraRegistrationSchema = z.object({
+  contractFiles: z
+    .array(z.custom<File>())
+    .min(1, "Berkas kontrak resmi wajib diunggah"),
+  ssoUsername: z
+    .string()
+    .trim()
+    .min(1, "Username akun SSO wajib diisi"),
+  ssoPassword: z
+    .string()
+    .trim()
+    .min(1, "Kata sandi akun SSO wajib diisi"),
+});
+
+export type ApproveMitraRegistrationFormValues = z.infer<
+  typeof approveMitraRegistrationSchema
+>;
+
 export type RejectMitraRegistrationPayload = {
   id: string | number;
   rejectionReason: string;
