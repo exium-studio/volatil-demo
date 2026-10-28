@@ -2,29 +2,26 @@
 
 import { IgtLogo } from "@/design-system/components/branding/ui/igt-logo";
 import { Button } from "@/design-system/components/button/ui/button";
+import { OutlineContourPerspective } from "@/design-system/components/decorative/ui/outline-contour-perspective";
 import { Loader } from "@/design-system/components/feedback/ui/loader";
+import { StateRetry } from "@/design-system/components/feedback/ui/state.retry";
 import { AppIcon } from "@/design-system/components/icon/ui/app-icon";
+import {
+  AbsoluteCenter,
+  Center,
+} from "@/design-system/components/layout/ui/center";
 import { HStack, VStack } from "@/design-system/components/layout/ui/flex-box";
 import { PageContainer } from "@/design-system/components/layout/ui/page-container";
 import { Badge } from "@/design-system/components/typography/ui/badge";
 import { P, PSerif } from "@/design-system/components/typography/ui/p";
-import { useThemeStore } from "@/design-system/stores/theme-store";
 import { useSsoCallbackMutation } from "@/features/auth/hooks/use-sso-callback.mutation";
 import { useSsoSigninMutation } from "@/features/auth/hooks/use-sso-signin.mutation";
 import type { SsoCallbackSearch } from "@/features/auth/types/sso.type";
 import { Link, useSearch } from "@tanstack/react-router";
-import {
-  AlertTriangleIcon,
-  ArrowLeftIcon,
-  RefreshCwIcon,
-  ShieldCheckIcon,
-} from "lucide-react";
+import { ArrowLeftIcon, ShieldCheckIcon, ShieldUserIcon } from "lucide-react";
 import { useEffect, useRef } from "react";
 
 export const SsoCallbackPage = () => {
-  // Stores
-  const { theme } = useThemeStore();
-
   // Hooks
   const search = useSearch({ strict: false }) as SsoCallbackSearch;
   const ssoCallbackMutation = useSsoCallbackMutation();
@@ -67,21 +64,28 @@ export const SsoCallbackPage = () => {
   };
 
   return (
-    <PageContainer p={4}>
+    <PageContainer p={[4, 6]} pos={"relative"} overflow={"hidden"}>
+      <OutlineContourPerspective
+        pos={"absolute"}
+        left={0}
+        bottom={0}
+        w={"full"}
+        h={"450px"}
+        opacity={0.08}
+        pointerEvents={"none"}
+      />
+
       <VStack
         m={"auto"}
-        maxW={"540px"}
+        maxW={"500px"}
         w={"full"}
-        py={12}
-        px={[4, null, 8]}
-        borderWidth={"1px"}
-        borderColor={"border.subtle"}
-        rounded={theme.radii.container}
-        bg={"bg.subtle"}
-        shadow={"sm"}
+        py={[8, 10]}
+        px={[6, 8]}
         gap={6}
         align={"center"}
         textAlign={"center"}
+        pos={"relative"}
+        zIndex={1}
       >
         <HStack align={"center"} justify={"center"} gap={4}>
           <IgtLogo boxSize={10} />
@@ -97,77 +101,48 @@ export const SsoCallbackPage = () => {
           </VStack>
         </HStack>
 
-        <Badge size={"lg"} colorPalette={"purple"}>
-          <AppIcon icon={ShieldCheckIcon} size={"sm"} />
+        <Badge size={"lg"} colorPalette={"teal"} variant={"subtle"}>
+          <AppIcon icon={ShieldCheckIcon} />
 
           <P fontSize={"xs"} fontWeight={"semibold"} letterSpacing={"wider"}>
-            {"SSO KEYCLOAK INTERNAL"}
+            {"LAYANAN AUTENTIKASI SSO"}
           </P>
         </Badge>
 
-        {errorMessage ? (
-          <VStack gap={4} w={"full"} align={"center"}>
-            <HStack
-              p={3}
-              bg={"bg.error"}
-              borderColor={"border.error"}
-              borderWidth={"1px"}
-              rounded={theme.radii.component}
-              w={"full"}
-              gap={3}
-              align={"start"}
-              textAlign={"left"}
-            >
-              <AppIcon
-                icon={AlertTriangleIcon}
-                color={"fg.error"}
-                size={"md"}
-              />
-
-              <VStack gap={1} flex={1}>
-                <P fontWeight={"semibold"} color={"fg.error"}>
-                  {"Autentikasi SSO Gagal"}
-                </P>
-
-                <P fontSize={"sm"} color={"fg.error"}>
-                  {errorMessage}
-                </P>
-              </VStack>
-            </HStack>
-
-            <HStack gap={3} w={"full"} justify={"center"} mt={2}>
-              <Button
-                variant={"outline"}
-                onClick={handleRetry}
-                loading={
-                  ssoCallbackMutation.isPending || ssoSigninMutation.isPending
-                }
-              >
-                <AppIcon icon={RefreshCwIcon} />
-                {"Coba Lagi"}
+        {errorMessage && (
+          <StateRetry
+            title={"Autentikasi SSO Gagal"}
+            description={errorMessage}
+            onRetry={handleRetry}
+          >
+            <Link to={"/"}>
+              <Button variant={"ghost"} size={"sm"} mt={"xl"}>
+                <AppIcon icon={ArrowLeftIcon} />
+                {"Halaman Utama"}
               </Button>
+            </Link>
+          </StateRetry>
+        )}
 
-              <Link to={"/admin"}>
-                <Button primary={true}>
-                  <AppIcon icon={ArrowLeftIcon} />
-                  {"Kembali ke Login"}
-                </Button>
-              </Link>
-            </HStack>
-          </VStack>
-        ) : (
-          <VStack gap={4} py={4} align={"center"}>
-            <Loader size={"xl"} color={`${theme.colorPalette}.solid`} />
+        {!errorMessage && (
+          <VStack gap={5} py={4} align={"center"}>
+            <Center pos={"relative"}>
+              <Loader size={"xl"} />
 
-            <VStack gap={1} align={"center"}>
+              <AbsoluteCenter>
+                <AppIcon icon={ShieldUserIcon} size={"xl"} />
+              </AbsoluteCenter>
+            </Center>
+
+            <VStack gap={1.5} align={"center"}>
               <P fontSize={"lg"} fontWeight={"semibold"}>
                 {"Memverifikasi Sesi SSO..."}
               </P>
 
-              <P fontSize={"sm"} color={"fg.muted"}>
+              <P fontSize={"sm"} color={"fg.muted"} maxW={"360px"}>
                 {isProcessing
-                  ? "Menukar kode otorisasi dan memvalidasi profil kepegawaian Anda..."
-                  : "Menghubungkan ke server autentikasi internal ATR/BPN..."}
+                  ? "Menukar kode otorisasi dan memvalidasi kredensial profil Anda..."
+                  : "Menghubungkan ke server autentikasi SSO ATR/BPN..."}
               </P>
             </VStack>
           </VStack>
