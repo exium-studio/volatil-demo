@@ -20,6 +20,7 @@ export type VNavNodeProps<TNavKey extends string> = {
   expanded: boolean;
   onNavClick?: (key: TNavKey) => void;
   depth?: number;
+  isLastChild?: boolean;
 };
 
 export type VNavIconProps = AppIconProps & {

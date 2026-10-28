@@ -29,9 +29,17 @@ export const INTERNAL_APP_NAV_GROUPS_LIST: NavGroup<AdminAppNavKey>[] = [
       { key: "order_statistic" },
       { key: "mitra_registration" },
       { key: "user_management" },
-      { key: "data_management" },
-      { key: "master_geoserver" },
       { key: "help" },
+      {
+        key: "integrasi",
+        children: [
+          { key: "master_geoserver" },
+          { key: "data_management" },
+          { key: "sso_keycloak" },
+          { key: "smtp_email" },
+          { key: "simponi_pnbp" },
+        ],
+      },
     ],
   },
 ];

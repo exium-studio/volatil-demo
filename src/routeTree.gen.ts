@@ -45,6 +45,9 @@ import { Route as PrivateMitraHelpCenterTicketIdRouteImport } from './routes/_pr
 import { Route as PrivateMitraBillingBillingCodeRouteImport } from './routes/_private/mitra/billing.$billingCode'
 import { Route as PrivateInternalOrderReviewOrderIdRouteImport } from './routes/_private/internal/order-review.$orderId'
 import { Route as PrivateInternalMitraRegistrationRegistrationIdRouteImport } from './routes/_private/internal/mitra-registration.$registrationId'
+import { Route as PrivateInternalIntegrationsSsoRouteImport } from './routes/_private/internal/integrations.sso'
+import { Route as PrivateInternalIntegrationsSmtpRouteImport } from './routes/_private/internal/integrations.smtp'
+import { Route as PrivateInternalIntegrationsSimponiRouteImport } from './routes/_private/internal/integrations.simponi'
 import { Route as PrivateInternalHelpCenterTicketIdRouteImport } from './routes/_private/internal/help-center.$ticketId'
 import { Route as PrivateInternalDataManagementLayerIdRouteImport } from './routes/_private/internal/data-management.$layerId'
 import { Route as PrivateInternalOrderReviewOrderIdIndexRouteImport } from './routes/_private/internal/order-review.$orderId.index'
@@ -249,6 +252,24 @@ const PrivateInternalMitraRegistrationRegistrationIdRoute =
     path: '/$registrationId',
     getParentRoute: () => PrivateInternalMitraRegistrationRoute,
   } as any)
+const PrivateInternalIntegrationsSsoRoute =
+  PrivateInternalIntegrationsSsoRouteImport.update({
+    id: '/internal/integrations/sso',
+    path: '/internal/integrations/sso',
+    getParentRoute: () => PrivateRouteRoute,
+  } as any)
+const PrivateInternalIntegrationsSmtpRoute =
+  PrivateInternalIntegrationsSmtpRouteImport.update({
+    id: '/internal/integrations/smtp',
+    path: '/internal/integrations/smtp',
+    getParentRoute: () => PrivateRouteRoute,
+  } as any)
+const PrivateInternalIntegrationsSimponiRoute =
+  PrivateInternalIntegrationsSimponiRouteImport.update({
+    id: '/internal/integrations/simponi',
+    path: '/internal/integrations/simponi',
+    getParentRoute: () => PrivateRouteRoute,
+  } as any)
 const PrivateInternalHelpCenterTicketIdRoute =
   PrivateInternalHelpCenterTicketIdRouteImport.update({
     id: '/internal/help-center/$ticketId',
@@ -301,6 +322,9 @@ export interface FileRoutesByFullPath {
   '/auth/callback/keycloak': typeof AuthCallbackKeycloakRoute
   '/internal/data-management/$layerId': typeof PrivateInternalDataManagementLayerIdRoute
   '/internal/help-center/$ticketId': typeof PrivateInternalHelpCenterTicketIdRoute
+  '/internal/integrations/simponi': typeof PrivateInternalIntegrationsSimponiRoute
+  '/internal/integrations/smtp': typeof PrivateInternalIntegrationsSmtpRoute
+  '/internal/integrations/sso': typeof PrivateInternalIntegrationsSsoRoute
   '/internal/mitra-registration/$registrationId': typeof PrivateInternalMitraRegistrationRegistrationIdRoute
   '/internal/order-review/$orderId': typeof PrivateInternalOrderReviewOrderIdRouteWithChildren
   '/mitra/billing/$billingCode': typeof PrivateMitraBillingBillingCodeRoute
@@ -338,6 +362,9 @@ export interface FileRoutesByTo {
   '/auth/callback/keycloak': typeof AuthCallbackKeycloakRoute
   '/internal/data-management/$layerId': typeof PrivateInternalDataManagementLayerIdRoute
   '/internal/help-center/$ticketId': typeof PrivateInternalHelpCenterTicketIdRoute
+  '/internal/integrations/simponi': typeof PrivateInternalIntegrationsSimponiRoute
+  '/internal/integrations/smtp': typeof PrivateInternalIntegrationsSmtpRoute
+  '/internal/integrations/sso': typeof PrivateInternalIntegrationsSsoRoute
   '/internal/mitra-registration/$registrationId': typeof PrivateInternalMitraRegistrationRegistrationIdRoute
   '/mitra/billing/$billingCode': typeof PrivateMitraBillingBillingCodeRoute
   '/mitra/help-center/$ticketId': typeof PrivateMitraHelpCenterTicketIdRoute
@@ -380,6 +407,9 @@ export interface FileRoutesById {
   '/auth/callback/keycloak': typeof AuthCallbackKeycloakRoute
   '/_private/internal/data-management/$layerId': typeof PrivateInternalDataManagementLayerIdRoute
   '/_private/internal/help-center/$ticketId': typeof PrivateInternalHelpCenterTicketIdRoute
+  '/_private/internal/integrations/simponi': typeof PrivateInternalIntegrationsSimponiRoute
+  '/_private/internal/integrations/smtp': typeof PrivateInternalIntegrationsSmtpRoute
+  '/_private/internal/integrations/sso': typeof PrivateInternalIntegrationsSsoRoute
   '/_private/internal/mitra-registration/$registrationId': typeof PrivateInternalMitraRegistrationRegistrationIdRoute
   '/_private/internal/order-review/$orderId': typeof PrivateInternalOrderReviewOrderIdRouteWithChildren
   '/_private/mitra/billing/$billingCode': typeof PrivateMitraBillingBillingCodeRoute
@@ -423,6 +453,9 @@ export interface FileRouteTypes {
     | '/auth/callback/keycloak'
     | '/internal/data-management/$layerId'
     | '/internal/help-center/$ticketId'
+    | '/internal/integrations/simponi'
+    | '/internal/integrations/smtp'
+    | '/internal/integrations/sso'
     | '/internal/mitra-registration/$registrationId'
     | '/internal/order-review/$orderId'
     | '/mitra/billing/$billingCode'
@@ -460,6 +493,9 @@ export interface FileRouteTypes {
     | '/auth/callback/keycloak'
     | '/internal/data-management/$layerId'
     | '/internal/help-center/$ticketId'
+    | '/internal/integrations/simponi'
+    | '/internal/integrations/smtp'
+    | '/internal/integrations/sso'
     | '/internal/mitra-registration/$registrationId'
     | '/mitra/billing/$billingCode'
     | '/mitra/help-center/$ticketId'
@@ -501,6 +537,9 @@ export interface FileRouteTypes {
     | '/auth/callback/keycloak'
     | '/_private/internal/data-management/$layerId'
     | '/_private/internal/help-center/$ticketId'
+    | '/_private/internal/integrations/simponi'
+    | '/_private/internal/integrations/smtp'
+    | '/_private/internal/integrations/sso'
     | '/_private/internal/mitra-registration/$registrationId'
     | '/_private/internal/order-review/$orderId'
     | '/_private/mitra/billing/$billingCode'
@@ -781,6 +820,27 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof PrivateInternalMitraRegistrationRegistrationIdRouteImport
       parentRoute: typeof PrivateInternalMitraRegistrationRoute
     }
+    '/_private/internal/integrations/sso': {
+      id: '/_private/internal/integrations/sso'
+      path: '/internal/integrations/sso'
+      fullPath: '/internal/integrations/sso'
+      preLoaderRoute: typeof PrivateInternalIntegrationsSsoRouteImport
+      parentRoute: typeof PrivateRouteRoute
+    }
+    '/_private/internal/integrations/smtp': {
+      id: '/_private/internal/integrations/smtp'
+      path: '/internal/integrations/smtp'
+      fullPath: '/internal/integrations/smtp'
+      preLoaderRoute: typeof PrivateInternalIntegrationsSmtpRouteImport
+      parentRoute: typeof PrivateRouteRoute
+    }
+    '/_private/internal/integrations/simponi': {
+      id: '/_private/internal/integrations/simponi'
+      path: '/internal/integrations/simponi'
+      fullPath: '/internal/integrations/simponi'
+      preLoaderRoute: typeof PrivateInternalIntegrationsSimponiRouteImport
+      parentRoute: typeof PrivateRouteRoute
+    }
     '/_private/internal/help-center/$ticketId': {
       id: '/_private/internal/help-center/$ticketId'
       path: '/internal/help-center/$ticketId'
@@ -915,6 +975,9 @@ interface PrivateRouteRouteChildren {
   PrivateMitraTransactionHistoryRoute: typeof PrivateMitraTransactionHistoryRoute
   PrivateMitraWelcomeRoute: typeof PrivateMitraWelcomeRoute
   PrivateInternalHelpCenterTicketIdRoute: typeof PrivateInternalHelpCenterTicketIdRoute
+  PrivateInternalIntegrationsSimponiRoute: typeof PrivateInternalIntegrationsSimponiRoute
+  PrivateInternalIntegrationsSmtpRoute: typeof PrivateInternalIntegrationsSmtpRoute
+  PrivateInternalIntegrationsSsoRoute: typeof PrivateInternalIntegrationsSsoRoute
   PrivateMitraBillingBillingCodeRoute: typeof PrivateMitraBillingBillingCodeRoute
   PrivateMitraHelpCenterTicketIdRoute: typeof PrivateMitraHelpCenterTicketIdRoute
   PrivateInternalHelpCenterIndexRoute: typeof PrivateInternalHelpCenterIndexRoute
@@ -943,6 +1006,10 @@ const PrivateRouteRouteChildren: PrivateRouteRouteChildren = {
   PrivateMitraWelcomeRoute: PrivateMitraWelcomeRoute,
   PrivateInternalHelpCenterTicketIdRoute:
     PrivateInternalHelpCenterTicketIdRoute,
+  PrivateInternalIntegrationsSimponiRoute:
+    PrivateInternalIntegrationsSimponiRoute,
+  PrivateInternalIntegrationsSmtpRoute: PrivateInternalIntegrationsSmtpRoute,
+  PrivateInternalIntegrationsSsoRoute: PrivateInternalIntegrationsSsoRoute,
   PrivateMitraBillingBillingCodeRoute: PrivateMitraBillingBillingCodeRoute,
   PrivateMitraHelpCenterTicketIdRoute: PrivateMitraHelpCenterTicketIdRoute,
   PrivateInternalHelpCenterIndexRoute: PrivateInternalHelpCenterIndexRoute,

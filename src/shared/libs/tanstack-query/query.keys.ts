@@ -159,6 +159,11 @@ export const queryKeys = {
       quickView: () =>
         [...queryKeys.internal.mitraLayerSyncJobs.all, "quick-view"] as const,
     },
+    integrations: {
+      all: ["internal", "integrations"] as const,
+      detail: (type: "sso" | "smtp" | "simponi") =>
+        [...queryKeys.internal.integrations.all, type] as const,
+    },
   },
   map: {
     all: ["map"] as const,

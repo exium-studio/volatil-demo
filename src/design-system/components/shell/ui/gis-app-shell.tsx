@@ -49,7 +49,7 @@ import {
 } from "@/shared/constants/app.navs";
 import { t } from "@/shared/libs/i18n";
 import type { AdminAppNavKey, AppNavKey } from "@/shared/types/app-navs.type";
-import type { NavGroup, NavItem } from "@/shared/types/nav.type";
+import type { NavGroup, NavItem, NavNode } from "@/shared/types/nav.type";
 import { queryKeys } from "@/shared/libs/tanstack-query/query.keys";
 import { getUserSession } from "@/shared/utils/user/user-session.utils";
 import { Box } from "@chakra-ui/react";
@@ -630,17 +630,17 @@ const MobileBottomNav = () => {
   const navsMap = (role === "internal"
     ? INTERNAL_APP_NAVS_MAP
     : APP_NAVS_MAP) as unknown as Record<AdminAppNavKey | AppNavKey, NavItem>;
-  const mainGroups =
-    role === "internal" ? INTERNAL_APP_NAV_GROUPS_LIST : APP_NAV_GROUPS_LIST;
-  const otherGroups =
-    role === "internal"
-      ? INTERNAL_APP_OTHER_NAV_GROUPS_LIST
-      : APP_OTHER_NAV_GROUPS_LIST;
+  const mainGroups = (role === "internal"
+    ? INTERNAL_APP_NAV_GROUPS_LIST
+    : APP_NAV_GROUPS_LIST) as unknown as NavGroup<AdminAppNavKey | AppNavKey>[];
+  const otherGroups = (role === "internal"
+    ? INTERNAL_APP_OTHER_NAV_GROUPS_LIST
+    : APP_OTHER_NAV_GROUPS_LIST) as unknown as NavGroup<AdminAppNavKey | AppNavKey>[];
 
-  const allNavKeys = useMemo(() => {
-    const mainKeys = mainGroups.flatMap((g) => g.items.map((i) => i.key));
-    const otherKeys = otherGroups.flatMap((g) => g.items.map((i) => i.key));
-    return [...mainKeys, ...otherKeys];
+  const allNavNodes = useMemo<NavNode<AdminAppNavKey | AppNavKey>[]>(() => {
+    const mainNodes = mainGroups.flatMap((g) => g.items);
+    const otherNodes = otherGroups.flatMap((g) => g.items);
+    return [...mainNodes, ...otherNodes];
   }, [mainGroups, otherGroups]);
 
   const activeKey = getNavKeyFromPathname(navsMap, pathname);
@@ -661,7 +661,7 @@ const MobileBottomNav = () => {
       <Box flex={1} minW={0} overflow={"hidden"}>
         <HNavs<AdminAppNavKey | AppNavKey>
           navs={navsMap}
-          navKeys={allNavKeys}
+          items={allNavNodes}
           activeKey={activeKey}
           onNavClick={(key) => {
             const target = navsMap[key];
@@ -673,7 +673,6 @@ const MobileBottomNav = () => {
             }
           }}
           px={"xs"}
-          // pr={"2xs"}
         />
       </Box>
 

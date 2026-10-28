@@ -18,11 +18,15 @@
       "home": "Home",
       "user_management": "Manajemen Pengguna",
       "master_geoserver": "Master Geoserver",
-      "data_management": "Manajemen Master Layer IGT",
+      "data_management": "Master Layer IGT",
       "order_review": "Review Permintaan",
       "mitra_registration": "Pendaftaran Mitra",
       "order_statistic": "Statistik Pesanan",
       "jobs": "Antrean Job",
+      "integrasi": "Integrasi Sistem",
+      "sso_keycloak": "SSO Keycloak",
+      "smtp_email": "Email - SMTP",
+      "simponi_pnbp": "Billing SIMPONI",
       "help": "Tiket Laporan",
       "profile": "Profil"
     }

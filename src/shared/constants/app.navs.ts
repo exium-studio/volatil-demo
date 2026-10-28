@@ -3,14 +3,18 @@
 import type { NavItem } from "@/shared/types/nav.type";
 import {
   BellIcon,
+  CableIcon,
   CheckCircleIcon,
+  CreditCardIcon,
   DatabaseIcon,
   HandshakeIcon,
   HeadsetIcon,
   HistoryIcon,
   HouseIcon,
+  KeyRoundIcon,
   LayersIcon,
   ListChecksIcon,
+  MailIcon,
   ReceiptTextIcon,
   ServerIcon,
   ShoppingCartIcon,
@@ -92,6 +96,26 @@ export const INTERNAL_APP_NAVS_MAP = {
     icon: LayersIcon,
     titleKey: "app.admin_navs.data_management",
     pathname: "/internal/data-management",
+  },
+  integrasi: {
+    icon: CableIcon,
+    titleKey: "app.admin_navs.integrasi",
+    pathname: "/internal/integrations/sso",
+  },
+  sso_keycloak: {
+    icon: KeyRoundIcon,
+    titleKey: "app.admin_navs.sso_keycloak",
+    pathname: "/internal/integrations/sso",
+  },
+  smtp_email: {
+    icon: MailIcon,
+    titleKey: "app.admin_navs.smtp_email",
+    pathname: "/internal/integrations/smtp",
+  },
+  simponi_pnbp: {
+    icon: CreditCardIcon,
+    titleKey: "app.admin_navs.simponi_pnbp",
+    pathname: "/internal/integrations/simponi",
   },
   jobs: {
     icon: ListChecksIcon,

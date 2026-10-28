@@ -95,6 +95,7 @@ const VNavNode = <TNavKey extends string>(props: VNavNodeProps<TNavKey>) => {
     expanded,
     onNavClick,
     depth = 0,
+    isLastChild = false,
   } = props;
 
   // Stores
@@ -236,19 +237,36 @@ const VNavNode = <TNavKey extends string>(props: VNavNodeProps<TNavKey>) => {
     return (
       <Box pos={"relative"} w={"full"}>
         {isSubNav && (
-          <Box
-            pos={"absolute"}
-            left={"-15.5px"}
-            top={"1px"}
-            w={"14px"}
-            h={"20px"}
-            borderLeft={"1.5px solid"}
-            borderBottom={"1.5px solid"}
-            borderBottomLeftRadius={"8px"}
-            borderColor={"border"}
-            pointerEvents={"none"}
-            zIndex={0}
-          />
+          <>
+            {/* Upper vertical line and curve turning into this sub-nav button */}
+            <Box
+              pos={"absolute"}
+              left={"-15px"}
+              top={"0px"}
+              w={"14px"}
+              h={"20px"}
+              borderLeft={"1.5px solid"}
+              borderBottom={"1.5px solid"}
+              borderBottomLeftRadius={"8px"}
+              borderColor={"border"}
+              pointerEvents={"none"}
+              zIndex={0}
+            />
+
+            {/* Continuation line downwards to the next sub-nav, only if not the last child */}
+            {!isLastChild && (
+              <Box
+                pos={"absolute"}
+                left={"-15px"}
+                top={"20px"}
+                bottom={"-4px"}
+                w={"1.5px"}
+                bg={"border"}
+                pointerEvents={"none"}
+                zIndex={0}
+              />
+            )}
+          </>
         )}
 
         <Tooltip
@@ -368,8 +386,6 @@ const VNavNode = <TNavKey extends string>(props: VNavNodeProps<TNavKey>) => {
           pl={"14px"}
           py={1}
           ml={`calc(18px * ${depth + 1})`}
-          borderLeft={"1.5px solid"}
-          borderColor={"border"}
         >
           {/* Active continuous path from top with curve into active sub-nav */}
           {activeChildIndex !== -1 && (
@@ -401,7 +417,7 @@ const VNavNode = <TNavKey extends string>(props: VNavNodeProps<TNavKey>) => {
           )}
 
           <VStack gap={1} align={"stretch"}>
-            {node.children!.map((child) => (
+            {node.children!.map((child, index) => (
               <VNavNode
                 key={child.key}
                 node={child}
@@ -411,6 +427,7 @@ const VNavNode = <TNavKey extends string>(props: VNavNodeProps<TNavKey>) => {
                 expanded={expanded}
                 onNavClick={onNavClick}
                 depth={depth + 1}
+                isLastChild={index === node.children!.length - 1}
               />
             ))}
           </VStack>
