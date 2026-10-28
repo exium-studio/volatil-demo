@@ -10,9 +10,9 @@ import { DEFAULT_PAGE_SIZE_OPTIONS } from "@/design-system/components/data-displ
 import { DataViewTable } from "@/design-system/components/data-display/ui/data-view-table";
 import { ConfirmationTrigger } from "@/design-system/components/feedback/ui/confirmation-trigger";
 import { Skeleton } from "@/design-system/components/feedback/ui/skeleton";
-import { NoDataState } from "@/design-system/components/feedback/ui/state.no-data";
-import { NoResultState } from "@/design-system/components/feedback/ui/state.no-result";
-import { RetryState } from "@/design-system/components/feedback/ui/state.retry";
+import { StateNoData } from "@/design-system/components/feedback/ui/state.no-data";
+import { StateNoResult } from "@/design-system/components/feedback/ui/state.no-result";
+import { StateRetry } from "@/design-system/components/feedback/ui/state.retry";
 import { TopBarLoader } from "@/design-system/components/feedback/ui/top-bar-loader";
 import { SearchInput } from "@/design-system/components/input/ui/search-input";
 import { InfoTip } from "@/design-system/components/input/ui/toggle-tip";
@@ -26,6 +26,7 @@ import { Heading } from "@/design-system/components/typography/ui/heading";
 import { P } from "@/design-system/components/typography/ui/p";
 import { HeaderContainer } from "@/design-system/components/shell/ui/header-container";
 import {
+  useDeleteUser,
   useUpdateUserStatus,
   useUserManagementUsersQuery,
 } from "@/features/internal/user-management/hooks/use-user-management.query";
@@ -41,7 +42,7 @@ import {
   formatUtcDateTime,
   getPreferredUserTimezone,
 } from "@/shared/utils/formatter/date.formatter";
-import { CheckCircleIcon, ShieldAlertIcon } from "lucide-react";
+import { CheckCircleIcon, ShieldAlertIcon, Trash2Icon } from "lucide-react";
 import { startTransition, useMemo, useState } from "react";
 
 const STATUS_MAP: Record<UserStatus, { label: string; color: string }> = {
@@ -66,8 +67,29 @@ export const InternalUserManagementDataView = () => {
 
   const preferredTimezone = useMemo(() => getPreferredUserTimezone(), []);
 
+  const isSearching = Boolean(
+    params.search?.trim() ||
+    params.status ||
+    params.role,
+  );
+
+  const searchQuery = useMemo(() => {
+    const parts: string[] = [];
+    if (params.search?.trim()) {
+      parts.push(params.search.trim());
+    }
+    if (params.role) {
+      parts.push(params.role === "internal" ? "Internal" : "Mitra");
+    }
+    if (params.status) {
+      parts.push(STATUS_MAP[params.status]?.label ?? params.status);
+    }
+    return parts.length > 0 ? parts.join(", ") : "...";
+  }, [params.search, params.role, params.status]);
+
   // Mutations
   const updateStatusMutation = useUpdateUserStatus();
+  const deleteUserMutation = useDeleteUser();
 
   // Queries
   const { users, total, totalPages, isLoading, isFetching, isError, error, refetch } =
@@ -151,7 +173,8 @@ export const InternalUserManagementDataView = () => {
         icon: (user: UserManagementItem) =>
           user.status === "active" ? ShieldAlertIcon : CheckCircleIcon,
         colorPalette: (user: UserManagementItem) =>
-          user.status === "active" ? "red" : "green",
+          user.status === "active" ? "orange" : "green",
+        hidden: (user: UserManagementItem) => user.role !== "mitra",
         modal: {
           triggerComponent: (user: UserManagementItem) => (
             <ConfirmationTrigger
@@ -163,17 +186,40 @@ export const InternalUserManagementDataView = () => {
               }
               description={
                 user.status === "active"
-                  ? `Akun ${user.name} akan dinonaktifkan sehingga tidak dapat mengakses sistem.`
-                  : `Akun ${user.name} akan diaktifkan kembali sehingga dapat mengakses sistem.`
+                  ? `Akun mitra ${user.name} akan dinonaktifkan (suspend) sehingga tidak dapat mengakses sistem.`
+                  : `Akun mitra ${user.name} akan diaktifkan kembali sehingga dapat mengakses sistem.`
               }
               confirmLabel={
                 user.status === "active" ? "Nonaktifkan" : "Aktifkan"
               }
-              colorPalette={user.status === "active" ? "red" : "green"}
+              colorPalette={user.status === "active" ? "orange" : "green"}
               onConfirm={() => {
                 updateStatusMutation.mutate({
                   id: user.id,
                   status: user.status === "active" ? "inactive" : "active",
+                });
+              }}
+            />
+          ),
+        },
+      },
+      {
+        key: "delete-user",
+        label: "Hapus Pengguna",
+        icon: Trash2Icon,
+        colorPalette: "red",
+        hidden: (user: UserManagementItem) => user.role !== "mitra",
+        modal: {
+          triggerComponent: (user: UserManagementItem) => (
+            <ConfirmationTrigger
+              modalKey={`delete-user-${user.id}`}
+              title={"Hapus Akun Pengguna"}
+              description={`Apakah Anda yakin ingin menghapus akun mitra ${user.name}? Akun yang dihapus tidak akan ditampilkan lagi di daftar pengguna.`}
+              confirmLabel={"Hapus"}
+              colorPalette={"red"}
+              onConfirm={() => {
+                deleteUserMutation.mutate({
+                  id: user.id,
                 });
               }}
             />
@@ -188,7 +234,7 @@ export const InternalUserManagementDataView = () => {
       batchActions: [],
       itemActions,
     };
-  }, [users, preferredTimezone, updateStatusMutation]);
+  }, [users, preferredTimezone, updateStatusMutation, deleteUserMutation]);
 
   return (
     <Container.Root flex={1} withContext={true} position={"relative"}>
@@ -265,7 +311,7 @@ export const InternalUserManagementDataView = () => {
 
           {!isLoading && isError && (
             <Center flex={1} w={"full"} py={"xl"} bg={"bg.body"}>
-              <RetryState
+              <StateRetry
                 title={"Gagal Memuat Pengguna"}
                 description={
                   error?.message ||
@@ -282,15 +328,15 @@ export const InternalUserManagementDataView = () => {
             <>
               {isEmptyArray(users) && (
                 <Center flex={1} w={"full"} py={"xl"} bg={"bg.body"}>
-                  {params.search || params.status || params.role ? (
-                    <NoResultState
-                      query={params.search || params.status || params.role}
+                  {isSearching ? (
+                    <StateNoResult
+                      query={searchQuery}
                       description={
                         "Tidak ada pengguna yang sesuai dengan filter atau kata kunci pencarian Anda."
                       }
                     />
                   ) : (
-                    <NoDataState
+                    <StateNoData
                       title={"Belum Ada Pengguna"}
                       description={
                         "Belum ada akun pengguna terdaftar pada sistem."

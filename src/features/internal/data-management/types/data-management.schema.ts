@@ -9,9 +9,11 @@ export const masterIgtLayerFormSchema = z.object({
   isActive: z.boolean(),
   defaultVisible: z.boolean(),
   geoserverId: z.string().min(1, "Master GeoServer wajib dipilih"),
-  workspace: z.string().min(1, "Workspace GeoServer wajib dipilih"),
-  typeName: z.string().min(1, "Layer / Feature Type wajib dipilih"),
-  spatialBasis: z.enum(["bidang", "kawasan"]),
+  workspaceName: z.string().min(1, "Workspace GeoServer wajib dipilih"),
+  layerName: z.string().nullable().optional(),
+  typeName: z.string().min(1, "TypeName GeoServer wajib terisi"),
+  igtBasis: z.enum(["bidang", "kawasan"]),
   zIndex: z.number().min(1).max(100),
+  minZoom: z.number().min(0, "Min zoom minimal 0").max(22, "Max zoom maksimal 22"),
 });
 

@@ -5,7 +5,9 @@ import {
   fitBoundsSafe,
   flyToSafe,
 } from "@/design-system/components/map/utils/map-camera";
+import { normalizeGeometryCoordinates } from "@/design-system/components/map/utils/geometry";
 import { isEmptyArray } from "@/shared/utils/data/array";
+
 import type GeoJSON from "geojson";
 import type maplibregl from "maplibre-gl";
 
@@ -276,9 +278,13 @@ export const highlightFeatureOnMap = (
       : {
           type: "Feature",
           properties: (rawFeat.properties as GeoJSON.GeoJsonProperties) ?? {},
-          geometry: (rawGeom ??
-            (rawFeat.geometry as GeoJSON.Geometry)) as GeoJSON.Geometry,
+          geometry: (rawGeom ?? (rawFeat.geometry as GeoJSON.Geometry))
+            ? normalizeGeometryCoordinates(
+                (rawGeom ?? (rawFeat.geometry as GeoJSON.Geometry)) as GeoJSON.Geometry,
+              )
+            : (rawFeat.geometry as GeoJSON.Geometry),
         };
+
 
   // 1. Clear previous timer
   if (highlightTimer) {

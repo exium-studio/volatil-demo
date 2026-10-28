@@ -4,6 +4,7 @@ import type { FeedbackStateProps } from "@/design-system/components/feedback/typ
 import { AppIcon } from "@/design-system/components/icon/ui/app-icon";
 import { VStack } from "@/design-system/components/layout/ui/flex-box";
 import { P } from "@/design-system/components/typography/ui/p";
+
 const FeedbackState = (props: FeedbackStateProps) => {
   // Props
   const { icon, iconProps, title, description, children, ...restProps } = props;

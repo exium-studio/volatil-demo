@@ -9,6 +9,10 @@ export type CountdownProps = Omit<PProps, "children"> & {
   warningThresholdDays?: number;
   /** Number of hours remaining to trigger warning color (e.g. 1 for < 1 hour). Overrides warningThresholdDays when provided. */
   warningThresholdHours?: number;
+  /** Number of minutes remaining to trigger danger color (e.g. 15 for < 15 minutes). */
+  dangerThresholdMinutes?: number;
+  /** Color when below danger threshold. Defaults to 'fg.error'. */
+  dangerColor?: string;
   /** Color when finished/expired. Defaults to 'fg.error'. */
   finishColor?: string;
 };

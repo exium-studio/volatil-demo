@@ -1,6 +1,6 @@
 // src/routes/_private/mitra/welcome.tsx
 
-import { WelcomeState } from "@/design-system/components/feedback/ui/state.welcome";
+import { StateWelcome } from "@/design-system/components/feedback/ui/state.welcome";
 import { requireRoleGuard } from "@/features/auth/services/auth-guard.service";
 import { createFileRoute } from "@tanstack/react-router";
 
@@ -12,5 +12,5 @@ export const Route = createFileRoute("/_private/mitra/welcome")({
 });
 
 function RouteComponent() {
-  return <WelcomeState />;
+  return <StateWelcome />;
 }

@@ -25,3 +25,11 @@ export type InternalAuthState = {
   email: string;
 };
 
+export type SigninShellProps = {
+  portalType: "mitra" | "internal";
+  intro?: React.ReactNode;
+  children?: React.ReactNode;
+  showUserGuide?: boolean;
+  guideModalKey?: string;
+};
+

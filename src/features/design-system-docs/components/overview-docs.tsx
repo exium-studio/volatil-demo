@@ -104,8 +104,8 @@ export const OverviewDocs = ({
             <P fontWeight={"bold"}>Form Inputs</P>
           </HStack>
           <P fontSize={"xs"} color={"fg.muted"}>
-            Input, Textarea, Checkbox, Switch, dan NumberInput bersedia untuk
-            React Hook Form.
+            Input, DurationInput, Textarea, Checkbox, Switch, dan NumberInput
+            bersedia untuk React Hook Form.
           </P>
         </Box>
 

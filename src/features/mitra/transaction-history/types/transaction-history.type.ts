@@ -39,6 +39,10 @@ export type TransactionRecord = {
   orderStatus?: OrderStatus;
   selectionType: SelectionType;
   totalAmount: number;
+  coverageHa?: number;
+  kawasanCoverageHa?: number | null;
+  featuresCount?: number | null;
+  bidangCoverageCount?: number | null;
   createdAt: string;
   paidAt?: string;
   expiredAt?: string;
@@ -53,7 +57,7 @@ export type TransactionHistoryQueryParams = {
   page: number;
   pageSize: number;
   search?: string;
-  status?: TransactionStatus;
+  status?: OrderStatus;
 };
 
 export type TransactionHistoryResponse = {

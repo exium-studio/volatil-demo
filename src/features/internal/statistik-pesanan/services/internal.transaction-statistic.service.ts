@@ -10,6 +10,7 @@ import type {
   InternalTransactionListResponse,
   InternalTransactionQueryParams,
   InternalTransactionStatistics,
+  OrderStatus,
 } from "@/features/internal/statistik-pesanan/types/internal.transaction-statistic.type";
 import {
   DUMMY_INTERNAL_TRANSACTIONS,
@@ -28,7 +29,15 @@ export const getInternalTransactionStatistics = async (
     }
     return isDummyDataEnabled()
       ? DUMMY_INTERNAL_TRANSACTION_STATISTICS
-      : { activeOrders: 0, settledTransactions: 0, netWorth: 0 };
+      : {
+          revenueWmsBidang: 0,
+          revenueWmsKawasan: 0,
+          netWorth: 0,
+          wmsPotential: 0,
+          wmsProcessing: 0,
+          wmsActive: 0,
+          wmsExpired: 0,
+        };
   } catch (error) {
     if (isDummyDataEnabled()) {
       return DUMMY_INTERNAL_TRANSACTION_STATISTICS;
@@ -56,17 +65,23 @@ export const getPaginatedInternalTransactions = (
 ): InternalTransactionListResponse => {
   const search = params.search?.trim().toLowerCase();
   const filteredItems = items.filter((item) => {
+    const effectiveOrderStatus =
+      item.transactionStatus === "expired" &&
+      (!item.orderStatus || item.orderStatus === "pending_payment")
+        ? "expired"
+        : (item.orderStatus ?? (item.transactionStatus as unknown as OrderStatus));
+
+    const matchesOrdStatus =
+      !params.orderStatus || effectiveOrderStatus === params.orderStatus;
     const matchesTxStatus =
       !params.transactionStatus ||
       item.transactionStatus === params.transactionStatus;
-    const matchesOrdStatus =
-      !params.orderStatus || item.orderStatus === params.orderStatus;
     const matchesSelectionType =
       !params.selectionType || item.selectionType === params.selectionType;
     const matchesQuery = !search || matchesSearch(item, search);
     return (
-      matchesTxStatus &&
       matchesOrdStatus &&
+      matchesTxStatus &&
       matchesSelectionType &&
       matchesQuery
     );

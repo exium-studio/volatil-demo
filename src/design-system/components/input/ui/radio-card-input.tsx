@@ -58,14 +58,15 @@ const RadioCardInputItem = React.forwardRef<
       value={value}
       cursor={"pointer"}
       rounded={theme.radii.component}
-      _checked={
-        hideCheckedOutline
+      _checked={{
+        bg: "transparent",
+        ...(hideCheckedOutline
           ? {
               borderColor: "border",
               boxShadow: "none",
             }
-          : undefined
-      }
+          : {}),
+      }}
       {...restProps}
     >
       <ChakraRadioCard.ItemHiddenInput />

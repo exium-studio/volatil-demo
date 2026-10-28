@@ -3,6 +3,7 @@
 import { Button } from "@/design-system/components/button/ui/button";
 import { ClipboardButton } from "@/design-system/components/data-display/ui/clipboard-button";
 import { AppIcon } from "@/design-system/components/icon/ui/app-icon";
+import { ConfirmationTrigger } from "@/design-system/components/feedback/ui/confirmation-trigger";
 import { HStack, VStack } from "@/design-system/components/layout/ui/flex-box";
 import { usePopModal } from "@/design-system/components/overlay/hooks/use-pop-modal";
 import { Modal } from "@/design-system/components/overlay/ui/modal";
@@ -23,7 +24,7 @@ import {
   getPreferredUserTimezone,
 } from "@/shared/utils/formatter/date.formatter";
 import { formatCurrency } from "@/shared/utils/formatter/number.formatter";
-import { buildWmsProxyUrl } from "@/shared/utils/url/wms-proxy.utils";
+import { useNavigate } from "@tanstack/react-router";
 import { CheckCircleIcon, LoaderIcon, MapPlusIcon } from "lucide-react";
 import { useMemo } from "react";
 
@@ -59,6 +60,8 @@ const InternalOrderReviewDetailModalContent = (
   const preferredTimezone = useMemo(() => getPreferredUserTimezone(), []);
   const provisionOrderMutation = useProvisionOrder();
 
+  const navigate = useNavigate();
+
   const isPaid = order.status === "paid";
   const isProcessing = order.status === "processing";
   const isPending = order.status === "pending_review";
@@ -70,7 +73,7 @@ const InternalOrderReviewDetailModalContent = (
 
         <VStack gap={"2xs"}>
           <Modal.Title>{"Detail Permintaan Pesanan"}</Modal.Title>
-          <P fontSize={"xs"} textAlign={"center"} color={"fg.subtle"}>
+          <P fontSize={"xs"} textAlign={"center"} color={"fg.muted"}>
             {order.orderNumber || order.orderId}
           </P>
         </VStack>
@@ -135,14 +138,7 @@ const InternalOrderReviewDetailModalContent = (
             </P>
 
             {order.items.map((item) => {
-              const previewUrl =
-                item.previewWmsUrl ||
-                item.wmsUrl ||
-                (item.sourceLayerId
-                  ? buildWmsProxyUrl(
-                      `/api/proxy/wms?layerId=${item.sourceLayerId}`,
-                    )
-                  : "");
+              const previewUrl = item.previewWmsUrl || item.wmsUrl || "";
 
               return (
                 <VStack
@@ -158,7 +154,7 @@ const InternalOrderReviewDetailModalContent = (
                   <HStack justify={"space-between"} align={"center"}>
                     <HStack gap={"xs"}>
                       <IgtBasisBadge size={"xs"}>
-                        {item.spatialBasis}
+                        {item.igtBasis ?? item.spatialBasis ?? "kawasan"}
                       </IgtBasisBadge>
                       <P fontSize={"xs"} fontWeight={"medium"}>
                         {item.sourceLayerTitle}
@@ -174,7 +170,7 @@ const InternalOrderReviewDetailModalContent = (
                       {item.sourceLayerId}
                     </P>
                     <P fontSize={"2xs"} color={"fg.muted"}>
-                      {item.spatialBasis === "bidang"
+                      {(item.igtBasis ?? item.spatialBasis) === "bidang"
                         ? `${item.featuresCount} bidang`
                         : `${item.areaHa ?? 0} ha`}
                     </P>
@@ -222,11 +218,14 @@ const InternalOrderReviewDetailModalContent = (
           </Button>
 
           {isPaid && (
-            <Button
-              primary={true}
+            <ConfirmationTrigger
+              modalKey={`provision-wms-detail-modal-${order.orderId}`}
+              icon={MapPlusIcon}
               colorPalette={"blue"}
-              loading={provisionOrderMutation.isPending}
-              onClick={() => {
+              title={"Buat Layanan WMS"}
+              description={`Apakah Anda yakin ingin memulai pembuatan layanan WMS untuk pesanan "${order.orderNumber || order.orderId}" (Mitra: ${order.mitraName})? Proses ini akan menyiapkan workspace dan service layer di latar belakang.`}
+              confirmLabel={"Buat Layanan WMS"}
+              onConfirm={() => {
                 provisionOrderMutation.mutate(
                   { orderId: order.orderId },
                   {
@@ -237,9 +236,15 @@ const InternalOrderReviewDetailModalContent = (
                 );
               }}
             >
-              <AppIcon icon={MapPlusIcon} />
-              {"Create Service WMS"}
-            </Button>
+              <Button
+                primary={true}
+                colorPalette={"blue"}
+                loading={provisionOrderMutation.isPending}
+              >
+                <AppIcon icon={MapPlusIcon} />
+                {"Create Service WMS"}
+              </Button>
+            </ConfirmationTrigger>
           )}
 
           {isProcessing && (
@@ -253,7 +258,15 @@ const InternalOrderReviewDetailModalContent = (
             <InternalOrderReviewApproveTrigger
               order={order}
               modalKey={`approve-from-detail-${order.orderId}`}
-              onSuccessRedirect={close}
+              onSuccessRedirect={() => {
+                void navigate({
+                  to: "/internal/order-review",
+                  search: (old: Record<string, unknown>) => {
+                    const { activeModalKey: _, ...rest } = old;
+                    return rest;
+                  },
+                });
+              }}
             >
               <Button colorPalette={"green"}>
                 <AppIcon icon={CheckCircleIcon} />

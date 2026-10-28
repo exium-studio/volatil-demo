@@ -5,6 +5,7 @@ import type {
   InternalMitraRegistrationItem,
   InternalMitraRegistrationQueryParams,
   RejectMitraRegistrationPayload,
+  ResendMitraSsoCredentialsPayload,
 } from "@/features/internal/mitra-registration/types/mitra-registration.type";
 import { apiClient } from "@/shared/libs/api-client/api-client";
 import type {
@@ -49,6 +50,12 @@ export const approveMitraRegistrationApi = async (
     formData.append("workspaceInteropUrl", payload.workspaceInteropUrl);
     formData.append("workspaceUrl", payload.workspaceInteropUrl);
   }
+  if (payload.ssoUsername) {
+    formData.append("ssoUsername", payload.ssoUsername);
+  }
+  if (payload.ssoPassword) {
+    formData.append("ssoPassword", payload.ssoPassword);
+  }
 
   return apiClient.post<ApiResponse<InternalMitraRegistrationItem>>(
     `/api/internal/mitra-registrations/${payload.id}/approve`,
@@ -65,6 +72,20 @@ export const rejectMitraRegistrationApi = async (
     `/api/internal/mitra-registrations/${payload.id}/reject`,
     {
       rejectionReason: payload.rejectionReason,
+    },
+    { signal },
+  );
+};
+
+export const resendMitraSsoCredentialsApi = async (
+  payload: ResendMitraSsoCredentialsPayload,
+  signal?: AbortSignal,
+): Promise<ApiResponse<{ ssoUsername?: string; ssoPassword?: string }>> => {
+  return apiClient.post<ApiResponse<{ ssoUsername?: string; ssoPassword?: string }>>(
+    `/api/internal/mitra-registrations/${payload.id}/resend-approval-email`,
+    {
+      ssoUsername: payload.ssoUsername,
+      ssoPassword: payload.ssoPassword,
     },
     { signal },
   );

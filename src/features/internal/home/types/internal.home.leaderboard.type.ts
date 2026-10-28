@@ -19,7 +19,8 @@ export type TopIgtLayerItem = {
   rank: number;
   layerId: string;
   layerTitle: string;
-  spatialBasis: IgtBasisType;
+  igtBasis?: IgtBasisType;
+  spatialBasis?: IgtBasisType;
   totalAcquisitions: number;
   totalVolume: number;
   unit: "bidang" | "ha";

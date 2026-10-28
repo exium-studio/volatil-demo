@@ -4,6 +4,4 @@ import type { StackProps } from "@/design-system/components/layout/types/flex-bo
 
 export type GisAppShellProps = StackProps & {};
 
-export type GisContentProps = {
-  isLoginRoute: boolean;
-};
+export type GisContentProps = {};

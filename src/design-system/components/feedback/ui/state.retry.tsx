@@ -3,14 +3,14 @@
 "use client";
 
 import { Button } from "@/design-system/components/button/ui/button";
-import type { RetryStateProps } from "@/design-system/components/feedback/types/feedback-state.type";
+import type { StateRetryProps } from "@/design-system/components/feedback/types/feedback-state.type";
 import FeedbackState from "@/design-system/components/feedback/ui/feedback-state";
 import { VStack } from "@/design-system/components/layout/ui/flex-box";
 import { useThemeStore } from "@/design-system/stores/theme-store";
 import { t } from "@/shared/libs/i18n";
 import { AlertTriangleIcon } from "lucide-react";
 
-export const RetryState = (props: RetryStateProps) => {
+export const StateRetry = (props: StateRetryProps) => {
   // Props
   const {
     icon = AlertTriangleIcon,

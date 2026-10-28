@@ -5,7 +5,7 @@ import {
   ChartTooltipContent,
 } from "@/design-system/components/charts/ui/chart-tooltip";
 import { Skeleton } from "@/design-system/components/feedback/ui/skeleton";
-import { RetryState } from "@/design-system/components/feedback/ui/state.retry";
+import { StateRetry } from "@/design-system/components/feedback/ui/state.retry";
 import { SegmentGroupInput } from "@/design-system/components/input/ui/segment-group-input";
 import { InfoTip } from "@/design-system/components/input/ui/toggle-tip";
 import { Box } from "@/design-system/components/layout/ui/box";
@@ -52,22 +52,31 @@ const MitraHomeFinancialFlowContent = () => {
   const [period, setPeriod] = useState<HomePeriod>("all");
 
   // Queries / Data
-  const { financialFlow, isLoading, isError, error, refetch } =
+  const { financialFlow, isLoading, isFetching, isError, error, refetch } =
     useMitraFinancialFlowQuery(period);
+
+  // Derived Values
+  const showFetchingSkeleton = isFetching;
+  const showError = !isFetching && isError;
+  const showContent = !isFetching && !isError;
 
   if (isLoading) {
     return <Skeleton minH={"353px"} w={"full"} />;
   }
 
   return (
-    <Container.Body gap={8} pt={"md"}>
+    <Container.Body gap={"md"} pt={"md"}>
       <MitraHomeFinancialFlowHeader
         period={period}
         onPeriodChange={setPeriod}
       />
 
       <VStack mt={"auto"}>
-        {isError ? (
+        {showFetchingSkeleton && (
+          <Skeleton minH={"256px"} w={"full"} p={"md"} />
+        )}
+
+        {showError && (
           <Box
             display={"flex"}
             alignItems={"center"}
@@ -75,7 +84,7 @@ const MitraHomeFinancialFlowContent = () => {
             w={"full"}
             py={"xl"}
           >
-            <RetryState
+            <StateRetry
               title={"Gagal Memuat Statistik Alur Keuangan"}
               description={
                 error?.message ||
@@ -86,7 +95,9 @@ const MitraHomeFinancialFlowContent = () => {
               }}
             />
           </Box>
-        ) : (
+        )}
+
+        {showContent && (
           <MitraHomeFinancialFlowChartContent financialFlow={financialFlow} />
         )}
       </VStack>
@@ -109,9 +120,7 @@ const MitraHomeFinancialFlowHeader = (
       px={"md"}
     >
       <HStack gap={"xs"} align={"center"}>
-        <Heading>
-          {"Statistik Alur Keuangan"}
-        </Heading>
+        <Heading>{"Statistik Alur Keuangan"}</Heading>
 
         <InfoTip
           variant={"icon"}

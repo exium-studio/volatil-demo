@@ -11,5 +11,6 @@ export const masterGeoserverFormSchema = z.object({
   username: z.string().min(1, "Username wajib diisi"),
   password: z.string().optional(),
   description: z.string().optional(),
+  isActive: z.boolean(),
 });
 

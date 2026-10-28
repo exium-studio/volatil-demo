@@ -17,10 +17,12 @@ export const DataViewPagination = (props: DataViewPaginationProps) => {
   const canGoNext = totalPage ? page < totalPage : false;
 
   return (
-    <HStack align="center" gap={2}>
+    <HStack align={"center"} gap={2}>
       <IconButton
         variant={"ghost"}
         disabled={!canGoPrev}
+        aria-label={"Halaman Sebelumnya"}
+        title={"Halaman Sebelumnya"}
         onClick={() => setPage?.(page - 1)}
         {...restProps}
       >
@@ -35,6 +37,8 @@ export const DataViewPagination = (props: DataViewPaginationProps) => {
         variant={"ghost"}
         size={"xs"}
         disabled={!canGoNext}
+        aria-label={"Halaman Selanjutnya"}
+        title={"Halaman Selanjutnya"}
         onClick={() => setPage?.(page + 1)}
         {...restProps}
       >

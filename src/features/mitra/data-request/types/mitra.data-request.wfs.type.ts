@@ -24,6 +24,7 @@ export type FetchWfsCatalogParams = {
   pageSize: number;
   cqlFilter?: string;
   search?: string;
+  apiKey?: string | null;
   signal?: AbortSignal;
 };
 

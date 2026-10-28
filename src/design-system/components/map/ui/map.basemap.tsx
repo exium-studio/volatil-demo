@@ -14,6 +14,7 @@ import { useMapBaseMapStore } from "@/design-system/components/map/stores/map.ba
 import { useMapInstanceStore } from "@/design-system/components/map/stores/map.instance.store";
 import type { BaseMapProps } from "@/design-system/components/map/types/map.basemap.type";
 import { applyBasemapColorStyleOverride } from "@/design-system/components/map/utils/basemap-color-style-override";
+import { applyBasemapOpacity } from "@/design-system/components/map/utils/basemap-opacity";
 import { applyBasemapPlainDarkStyleOverride } from "@/design-system/components/map/utils/basemap-plain-dark-style-override";
 import { applyBasemapPlainLightStyleOverride } from "@/design-system/components/map/utils/basemap-plain-light-style-override";
 import { useColorMode } from "@/design-system/hooks/use-color-mode";
@@ -51,6 +52,7 @@ const STARRY_NIGHT_BG =
 export const BaseMap = ({ styleUrl, children }: BaseMapProps) => {
   // Refs
   const containerRef = useRef<HTMLDivElement>(null);
+  const basemapLayerIdsRef = useRef<Set<string>>(new Set());
   const appliedStyleRef = useRef<{
     style: string | maplibregl.StyleSpecification;
     key: string;
@@ -59,7 +61,7 @@ export const BaseMap = ({ styleUrl, children }: BaseMapProps) => {
 
   // Hooks
   const { colorMode } = useColorMode();
-  const { activeStyleKey } = useMapBaseMapStore();
+  const { activeStyleKey, opacity } = useMapBaseMapStore();
 
   // States
   const [map, setMap] = useState<maplibregl.Map | null>(null);
@@ -169,6 +171,19 @@ export const BaseMap = ({ styleUrl, children }: BaseMapProps) => {
         }
       }
 
+      // Step 3: Record basemap layer IDs strictly from current basemap style
+      const currentLayers = instance.getStyle()?.layers;
+      if (currentLayers) {
+        basemapLayerIdsRef.current = new Set(currentLayers.map((l) => l.id));
+      }
+
+      // Step 4: Apply basemap opacity strictly to basemap layers
+      applyBasemapOpacity(
+        instance,
+        useMapBaseMapStore.getState().opacity,
+        basemapLayerIdsRef.current,
+      );
+
       // Signal that basemap + globe + paint overrides + 3D buildings are settled.
       instance.fire(MAP_EVENTS_MAP.styleReady);
     };
@@ -277,6 +292,18 @@ export const BaseMap = ({ styleUrl, children }: BaseMapProps) => {
           }
         }
 
+        // Record basemap layer IDs strictly from current basemap style
+        const currentLayers = map.getStyle()?.layers;
+        if (currentLayers) {
+          basemapLayerIdsRef.current = new Set(currentLayers.map((l) => l.id));
+        }
+
+        applyBasemapOpacity(
+          map,
+          useMapBaseMapStore.getState().opacity,
+          basemapLayerIdsRef.current,
+        );
+
         map.fire(MAP_EVENTS_MAP.styleReady);
       };
 
@@ -287,6 +314,12 @@ export const BaseMap = ({ styleUrl, children }: BaseMapProps) => {
       }
     }
   }, [map, currentStyle, activeStyleKey, colorMode]);
+
+  // Change basemap opacity effect
+  useEffect(() => {
+    if (!map || !map.isStyleLoaded()) return;
+    applyBasemapOpacity(map, opacity, basemapLayerIdsRef.current);
+  }, [map, opacity]);
 
   return (
     <Box

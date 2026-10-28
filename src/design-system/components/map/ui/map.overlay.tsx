@@ -6,16 +6,23 @@ import { HStack } from "@/design-system/components/layout/ui/flex-box";
 import type { MapOverlayProps } from "@/design-system/components/map/types/map.type";
 import { MapAttribution } from "@/design-system/components/map/ui/map.basemap-attribution";
 import { MapControls } from "@/design-system/components/map/ui/map.controls";
-import { MapMasterIgtLayerSelect } from "@/design-system/components/map/ui/map.controls/map.master-igt-layer-select";
+import { MapMasterIgtLayerManagement } from "@/design-system/components/map/ui/map.controls/map.master-igt-layer-management";
+import { MapWorkspaceLayerManagement } from "@/design-system/components/map/ui/map.controls/map.workspace-layer-management";
 import { MapCoordinates } from "@/design-system/components/map/ui/map.coordinates";
 import { MapFeatureInfoPanel } from "@/design-system/components/map/ui/map.feature-info-panel";
 import { MapSearch } from "@/design-system/components/map/ui/map.search";
-import { MapSymbologyPanel } from "@/design-system/components/map/ui/map.symbology-panel";
+import { useIsSmallViewport } from "@/design-system/hooks/use-is-small-viewport";
 import { useThemeStore } from "@/design-system/stores/theme-store";
 
 export const MapOverlay = (props: MapOverlayProps) => {
   // Props
-  const { showMasterIgtLayerSelect = true } = props;
+  const {
+    showMasterIgtLayerSelect = true,
+    showWorkspaceLayerSelect = false,
+  } = props;
+
+  // Hooks
+  const isSmallViewport = useIsSmallViewport();
 
   return (
     <Box
@@ -24,25 +31,32 @@ export const MapOverlay = (props: MapOverlayProps) => {
       left={0}
       w={"full"}
       h={"full"}
+      minW={isSmallViewport ? 0 : "fit-content"}
       overflow={"hidden"}
       pointerEvents={"none"}
     >
-      {/* Top Left: Search */}
-      <Box position={"absolute"} top={4} left={4} pointerEvents={"none"}>
-        <MapSearch />
-      </Box>
-
-      {/* Top Right: Layer Select & Attribution */}
+      {/* Top Header Bar (Search on Left, Layer Select on Right) */}
       <HStack
         position={"absolute"}
         top={4}
-        right={4}
-        align={"center"}
-        gap={2}
+        left={0}
+        right={0}
+        px={4}
+        justify={"space-between"}
+        align={"start"}
+        gap={4}
+        minW={isSmallViewport ? 0 : "480px"}
         pointerEvents={"none"}
       >
-        {showMasterIgtLayerSelect && <MapMasterIgtLayerSelect />}
-        <MapAttribution />
+        <Box pointerEvents={"none"} flexShrink={0}>
+          <MapSearch />
+        </Box>
+
+        <HStack align={"center"} gap={2} pointerEvents={"none"} flexShrink={0}>
+          {showWorkspaceLayerSelect && <MapWorkspaceLayerManagement />}
+          {showMasterIgtLayerSelect && <MapMasterIgtLayerManagement />}
+          <MapAttribution />
+        </HStack>
       </HStack>
 
       {/* Floating: Feature Info Panel (Top-Right under actions) */}
@@ -56,17 +70,6 @@ export const MapOverlay = (props: MapOverlayProps) => {
         <MapFeatureInfoPanel />
       </Box>
 
-      {/* Floating: Symbology Panel (Bottom-Left above controls) */}
-      <Box
-        position={"absolute"}
-        bottom={"104px"}
-        left={4}
-        pointerEvents={"none"}
-        zIndex={10}
-      >
-        <MapSymbologyPanel />
-      </Box>
-
       {/* Center Coordinates Indicator */}
       <MapCoordinates />
 
@@ -76,6 +79,7 @@ export const MapOverlay = (props: MapOverlayProps) => {
         bottom={0}
         left={0}
         right={0}
+        minW={isSmallViewport ? 0 : "480px"}
         pointerEvents={"none"}
       >
         <MapControls px={"md"} pb={"md"} />
@@ -91,7 +95,8 @@ export const MapOverlayContainer = (props: StackProps) => {
   return (
     <HStack
       align={"center"}
-      bg={"bg.body"}
+      // bg={"bg.body"}
+      layerStyle={"glassTopRight"}
       rounded={theme.radii.component}
       shadow={"xs"}
       pointerEvents={"auto"}

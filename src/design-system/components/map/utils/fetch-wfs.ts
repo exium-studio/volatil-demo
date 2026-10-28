@@ -6,6 +6,11 @@ import type {
   RawGeoServerResponse,
   WfsVersion,
 } from "@/design-system/components/map/types/map.fetch-wfs.type";
+import { normalizeGeometryCoordinates } from "@/design-system/components/map/utils/geometry";
+import {
+  getApiBaseWmsProxyUrl,
+  normalizeApiUrl,
+} from "@/shared/utils/url/url.utils";
 
 export const buildWfsUrl = (
   {
@@ -13,26 +18,23 @@ export const buildWfsUrl = (
     wfsUrl,
     bbox,
     cqlFilter,
+    featureID,
+    resourceId,
     propertyName,
-    version = "2.0.0",
+    version = "1.0.0",
     srsName = "EPSG:4326",
     maxFeatures,
     startIndex,
     resultType = "results",
+    apiKey,
   }: Omit<FetchWfsParams, "signal">,
   includeStartIndex = true,
 ) => {
-  const apiBaseUrl = (import.meta.env.VITE_API_BASE_URL || "").replace(
-    /\/+$/,
-    "",
-  );
+  const apiBaseUrl = getApiBaseWmsProxyUrl();
   const defaultBaseUrl = `${apiBaseUrl}/api/proxy/wfs`;
 
   const rawUrl = wfsUrl || defaultBaseUrl;
-  const targetUrlStr =
-    rawUrl.startsWith("http://") || rawUrl.startsWith("https://")
-      ? rawUrl
-      : `${apiBaseUrl}${rawUrl.startsWith("/") ? "" : "/"}${rawUrl}`;
+  const targetUrlStr = normalizeApiUrl(rawUrl);
 
   const origin =
     typeof window !== "undefined"
@@ -43,6 +45,16 @@ export const buildWfsUrl = (
   if (!url.searchParams.has("layerId") && typeName) {
     url.searchParams.set("layerId", typeName);
   }
+
+  // Only apply apiKey for workspace proxy endpoints or workspace services (not master IGT /api/proxy/wfs)
+  const isWorkspaceEndpoint =
+    url.pathname.includes("/proxy/workspace/") ||
+    url.pathname.includes("/workspace/") ||
+    (wfsUrl && wfsUrl.includes("workspace="));
+
+  if (apiKey && isWorkspaceEndpoint && !url.searchParams.has("apiKey")) {
+    url.searchParams.set("apiKey", apiKey);
+  }
   url.searchParams.set("service", "WFS");
   url.searchParams.set("version", version);
   url.searchParams.set("request", "GetFeature");
@@ -52,10 +64,16 @@ export const buildWfsUrl = (
   if (version === "2.0.0") {
     url.searchParams.set("typeNames", typeName);
     if (maxFeatures != null) url.searchParams.set("count", String(maxFeatures));
+    if (resourceId || featureID) {
+      url.searchParams.set("resourceId", (resourceId || featureID)!);
+    }
   } else {
     url.searchParams.set("typeName", typeName);
     if (maxFeatures != null)
       url.searchParams.set("maxFeatures", String(maxFeatures));
+    if (featureID || resourceId) {
+      url.searchParams.set("featureID", (featureID || resourceId)!);
+    }
   }
 
   // NOTE: Some GeoServer builds throw NullPointerException when startIndex is present.
@@ -98,20 +116,160 @@ const normalizeTotalFeatures = (
   return raw.totalFeatures ?? raw.numberOfFeatures ?? raw.features?.length ?? 0;
 };
 
+// In-memory cache mapping typeName -> geometry property name (e.g. "the_geom", "geom", "shape")
+const geometryColumnCache = new Map<string, string>();
+
+/**
+ * Dynamically queries GeoServer DescribeFeatureType to discover the exact geometry column name for a layer.
+ * Caches the result in memory for subsequent queries.
+ */
+export const getLayerGeometryColumnName = async (
+  typeName: string,
+  wfsUrl?: string,
+  apiKey?: string | null,
+  signal?: AbortSignal,
+): Promise<string> => {
+  if (geometryColumnCache.has(typeName)) {
+    return geometryColumnCache.get(typeName)!;
+  }
+
+  try {
+    const apiBaseUrl = getApiBaseWmsProxyUrl();
+    const defaultBaseUrl = `${apiBaseUrl}/api/proxy/wfs`;
+    const targetUrlStr = normalizeApiUrl(wfsUrl || defaultBaseUrl);
+    const origin =
+      typeof window !== "undefined"
+        ? window.location.origin
+        : "http://localhost:5174";
+    const url = new URL(targetUrlStr, origin);
+
+    if (!url.searchParams.has("layerId") && typeName) {
+      url.searchParams.set("layerId", typeName);
+    }
+
+    const isWorkspaceEndpoint =
+      url.pathname.includes("/proxy/workspace/") ||
+      url.pathname.includes("/workspace/") ||
+      (wfsUrl && wfsUrl.includes("workspace="));
+
+    if (apiKey && isWorkspaceEndpoint && !url.searchParams.has("apiKey")) {
+      url.searchParams.set("apiKey", apiKey);
+    }
+    url.searchParams.set("service", "WFS");
+    url.searchParams.set("version", "1.0.0");
+    url.searchParams.set("request", "DescribeFeatureType");
+    url.searchParams.set("typeName", typeName);
+    url.searchParams.set("outputFormat", "application/json");
+
+    const headers: Record<string, string> = {};
+    if (apiKey && isWorkspaceEndpoint) {
+      headers["X-API-Key"] = apiKey;
+    }
+
+    const res = await fetch(url.toString(), { headers, signal });
+    if (res.ok) {
+      const data = await res.json();
+      const element = data?.featureTypes?.[0]?.properties?.find(
+        (p: { type?: string; localType?: string }) => {
+          const typeStr = (p.type || p.localType || "").toLowerCase();
+          return (
+            typeStr.startsWith("gml:") ||
+            typeStr.includes("geometry") ||
+            typeStr.includes("polygon") ||
+            typeStr.includes("point") ||
+            typeStr.includes("linestring") ||
+            typeStr.includes("multipolygon")
+          );
+        },
+      );
+      if (element?.name) {
+        geometryColumnCache.set(typeName, element.name);
+        return element.name;
+      }
+    }
+  } catch {
+    // Fallback gracefully to the_geom
+  }
+
+  return "the_geom";
+};
+
 // -------------------------------------------------------------------------------------
 
-/** Fetches features from a WFS endpoint as GeoJSON with automatic GeoServer NPE fallback. */
+/**
+ * Executes a WFS GetFeature request via POST (application/x-www-form-urlencoded).
+ * Used when the GET URL exceeds browser/server URL length limits (HTTP 414).
+ * GeoServer supports WFS POST natively per the OGC WFS specification.
+ */
+const fetchWfsPost = async (
+  params: FetchWfsParams,
+  includeStartIndex = true,
+): Promise<Response> => {
+  const url = buildWfsUrl(params, includeStartIndex);
+
+  const isWorkspaceEndpoint =
+    url.pathname.includes("/proxy/workspace/") ||
+    url.pathname.includes("/workspace/") ||
+    (params.wfsUrl && params.wfsUrl.includes("workspace="));
+
+  // Extract base endpoint
+  let baseUrl = `${url.origin}${url.pathname}`;
+  if (params.apiKey && isWorkspaceEndpoint) {
+    baseUrl += `?apiKey=${encodeURIComponent(params.apiKey)}`;
+  }
+  const body = url.searchParams.toString();
+
+  const headers: Record<string, string> = {
+    "Content-Type": "application/x-www-form-urlencoded",
+    ...(params.apiKey && isWorkspaceEndpoint
+      ? { "X-API-Key": params.apiKey }
+      : {}),
+    ...(params.headers ?? {}),
+  };
+
+  return fetch(baseUrl, {
+    method: "POST",
+    headers,
+    body,
+    signal: params.signal,
+  });
+};
+
+/** Fetches features from a WFS endpoint as GeoJSON with automatic GeoServer NPE and adaptive column fallback. */
 export const fetchWfs = async (
   params: FetchWfsParams,
 ): Promise<GeoServerFeatureCollection> => {
-  const { version = "2.0.0", signal, startIndex = 0, maxFeatures } = params;
+  const { version = "1.0.0", signal, startIndex = 0, maxFeatures } = params;
 
   let url = buildWfsUrl(params, true);
   let res: Response;
+
+  // Use POST when explicitly requested, when method is not GET, when cqlFilter is present, or when URL is too long
+  const usePost =
+    params.method === "POST" ||
+    params.method !== "GET" ||
+    Boolean(params.cqlFilter) ||
+    url.toString().length > 2000;
+
+  const isWorkspaceEndpoint =
+    url.pathname.includes("/proxy/workspace/") ||
+    url.pathname.includes("/workspace/") ||
+    (params.wfsUrl && params.wfsUrl.includes("workspace="));
+
+  const getHeaders: Record<string, string> = {
+    ...(params.apiKey && isWorkspaceEndpoint
+      ? { "X-API-Key": params.apiKey }
+      : {}),
+    ...(params.headers ?? {}),
+  };
+
   try {
-    res = await fetch(url.toString(), {
-      signal,
-    });
+    res = usePost
+      ? await fetchWfsPost(params, true)
+      : await fetch(url.toString(), {
+          headers: Object.keys(getHeaders).length > 0 ? getHeaders : undefined,
+          signal,
+        });
   } catch (err: unknown) {
     if (signal?.aborted || (err as { name?: string }).name === "AbortError") {
       throw err;
@@ -126,6 +284,18 @@ export const fetchWfs = async (
     throw err;
   }
 
+  // Retry as POST if server returned 414 URI Too Long
+  if (res.status === 414) {
+    try {
+      res = await fetchWfsPost(params, true);
+    } catch (err: unknown) {
+      if (signal?.aborted || (err as { name?: string }).name === "AbortError") {
+        throw err;
+      }
+      throw err;
+    }
+  }
+
   // If server throws 400 Bad Request due to GeoServer startIndex NullPointerException bug, retry without startIndex
   if (!res.ok && res.status === 400 && startIndex > 0) {
     console.warn(
@@ -133,9 +303,9 @@ export const fetchWfs = async (
     );
     url = buildWfsUrl({ ...params, maxFeatures: undefined }, false);
     try {
-      res = await fetch(url.toString(), {
-        signal,
-      });
+      res = usePost
+        ? await fetchWfsPost({ ...params, maxFeatures: undefined }, false)
+        : await fetch(url.toString(), { signal });
     } catch (err: unknown) {
       if (signal?.aborted || (err as { name?: string }).name === "AbortError") {
         throw err;
@@ -151,29 +321,40 @@ export const fetchWfs = async (
     }
   }
 
-  // If server throws 400 Bad Request due to GeoServer "Illegal property name" in CQL_FILTER
+  // If server throws 400 Bad Request due to GeoServer CQL_FILTER errors (e.g. geometry column name mismatch)
   if (!res.ok && res.status === 400 && params.cqlFilter) {
-    const errorText = await res.text().catch(() => "");
-    const matchIllegalProp = /Illegal property name:\s*([a-zA-Z0-9_]+)/i.exec(
-      errorText,
+    const discoveredGeomName = await getLayerGeometryColumnName(
+      params.typeName,
+      params.wfsUrl,
+      params.apiKey,
+      signal,
     );
 
-    if (matchIllegalProp && matchIllegalProp[1]) {
-      const illegalProp = matchIllegalProp[1];
-      console.warn(
-        `GeoServer layer "${params.typeName}" does not have property "${illegalProp}". Retrying with adapted filter.`,
-      );
+    let adaptedFilter = params.cqlFilter;
+    if (discoveredGeomName) {
+      adaptedFilter = adaptedFilter
+        .replace(/\bthe_geom\b/gi, discoveredGeomName)
+        .replace(/\bgeom\b/gi, discoveredGeomName);
+    }
 
-      // Remove clauses containing the illegal property
-      const clauses = params.cqlFilter.split(/\s+AND\s+/i);
-      const filteredClauses = clauses.filter(
-        (c) => !new RegExp(`\\b${illegalProp}\\b`, "i").test(c),
-      );
-      const adaptedFilter =
-        filteredClauses.length > 0 ? filteredClauses.join(" AND ") : undefined;
-
-      url = buildWfsUrl({ ...params, cqlFilter: adaptedFilter }, true);
-      res = await fetch(url.toString(), { signal });
+    if (adaptedFilter !== params.cqlFilter) {
+      const adaptedParams = { ...params, cqlFilter: adaptedFilter };
+      url = buildWfsUrl(adaptedParams, true);
+      res =
+        usePost || url.toString().length > 2000
+          ? await fetchWfsPost(adaptedParams, true)
+          : await fetch(url.toString(), { signal });
+    } else {
+      // Fallback swap if discovered name is the same as current
+      const fallbackFilter = /\bthe_geom\b/i.test(params.cqlFilter)
+        ? params.cqlFilter.replace(/\bthe_geom\b/gi, "geom")
+        : params.cqlFilter.replace(/\bgeom\b/gi, "the_geom");
+      const fallbackParams = { ...params, cqlFilter: fallbackFilter };
+      url = buildWfsUrl(fallbackParams, true);
+      res =
+        usePost || url.toString().length > 2000
+          ? await fetchWfsPost(fallbackParams, true)
+          : await fetch(url.toString(), { signal });
     }
   }
 
@@ -190,18 +371,60 @@ export const fetchWfs = async (
     );
   }
 
-  const text = await res.text();
-  const trimmedText = text.trim();
+  let text = await res.text();
+  let trimmedText = text.trim();
 
+  // If GeoServer returned XML ServiceException with 200 OK
   if (
+    trimmedText.startsWith("<ServiceExceptionReport") ||
+    trimmedText.startsWith("<ServiceException") ||
     trimmedText.startsWith("<ows:ExceptionReport") ||
-    trimmedText.includes("<ows:ExceptionText>")
+    trimmedText.includes("<ows:ExceptionText>") ||
+    trimmedText.includes("ServiceException")
   ) {
-    const matchText = /<ows:ExceptionText>(.*?)<\/ows:ExceptionText>/s.exec(
-      text,
-    );
-    const errorMsg = matchText?.[1]?.trim() ?? "WFS OGC Exception occurred";
-    throw new Error(`WFS OGC Error (${version}): ${errorMsg}`);
+    if (params.cqlFilter) {
+      const discoveredGeomName = await getLayerGeometryColumnName(
+        params.typeName,
+        params.wfsUrl,
+        params.apiKey,
+        signal,
+      );
+
+      let adaptedFilter = params.cqlFilter;
+      if (discoveredGeomName) {
+        adaptedFilter = adaptedFilter
+          .replace(/\bthe_geom\b/gi, discoveredGeomName)
+          .replace(/\bgeom\b/gi, discoveredGeomName);
+      } else {
+        adaptedFilter = /\bthe_geom\b/i.test(params.cqlFilter)
+          ? params.cqlFilter.replace(/\bthe_geom\b/gi, "geom")
+          : params.cqlFilter.replace(/\bgeom\b/gi, "the_geom");
+      }
+
+      const retryParams = { ...params, cqlFilter: adaptedFilter };
+      const retryUrl = buildWfsUrl(retryParams, true);
+      const retryRes =
+        usePost || retryUrl.toString().length > 2000
+          ? await fetchWfsPost(retryParams, true)
+          : await fetch(retryUrl.toString(), { signal });
+      if (retryRes.ok) {
+        text = await retryRes.text();
+        trimmedText = text.trim();
+      }
+    }
+
+    if (
+      trimmedText.startsWith("<ServiceExceptionReport") ||
+      trimmedText.startsWith("<ServiceException") ||
+      trimmedText.startsWith("<ows:ExceptionReport") ||
+      trimmedText.includes("<ows:ExceptionText>")
+    ) {
+      const matchText =
+        /<ows:ExceptionText>(.*?)<\/ows:ExceptionText>/s.exec(text) ||
+        /<ServiceException.*?>(.*?)<\/ServiceException>/s.exec(text);
+      const errorMsg = matchText?.[1]?.trim() ?? "WFS OGC Exception occurred";
+      throw new Error(`WFS OGC Error (${version}): ${errorMsg}`);
+    }
   }
 
   // When resultType=hits, some GeoServer versions return XML FeatureCollection instead of JSON
@@ -227,7 +450,15 @@ export const fetchWfs = async (
 
   const raw = JSON.parse(text) as RawGeoServerResponse;
   const total = normalizeTotalFeatures(raw, version);
-  let features = raw.features ?? [];
+  let features = (raw.features ?? []).map((feat) => {
+    if (feat.geometry) {
+      return {
+        ...feat,
+        geometry: normalizeGeometryCoordinates(feat.geometry),
+      };
+    }
+    return feat;
+  });
 
   // If we had to fallback to fetching without startIndex, slice features on client-side
   if (startIndex > 0 && features.length > startIndex && maxFeatures != null) {

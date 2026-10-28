@@ -36,6 +36,7 @@ export type FocusSelectInputProps = Omit<
   defaultValue?: string;
   onValueChange?: (value: string, option?: FocusSelectOption) => void;
   clearable?: boolean;
+  suffixLabel?: React.ReactNode;
   iconSize?: "xs" | "sm" | "md" | "lg" | "xl" | "2xl" | "3xl" | "4xl" | "5xl";
   isFetching?: boolean;
   isLoading?: boolean;

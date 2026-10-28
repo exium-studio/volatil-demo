@@ -19,6 +19,7 @@ const initialCatalogState = {
   cqlFilter: undefined,
   isCatalogAoiVisible: true,
   isCatalogCoverageVisible: true,
+  isCatalogBidangVisible: true,
 };
 
 const initialUploadAoiState = {
@@ -27,12 +28,14 @@ const initialUploadAoiState = {
   confirmedFeature: null,
   isUploadAoiVisible: true,
   isUploadCoverageVisible: true,
+  isUploadBidangVisible: true,
 };
 
 const initialDrawAoiState = {
   confirmedPolygon: null,
   isDrawAoiVisible: true,
   isDrawCoverageVisible: true,
+  isDrawBidangVisible: true,
 };
 
 const initialCalculationState = {
@@ -63,6 +66,8 @@ export const useMitraDataRequestStore = create<MitraDataRequestStore>()(
       set({ isCatalogAoiVisible }),
     setIsCatalogCoverageVisible: (isCatalogCoverageVisible) =>
       set({ isCatalogCoverageVisible }),
+    setIsCatalogBidangVisible: (isCatalogBidangVisible) =>
+      set({ isCatalogBidangVisible }),
     resetCatalog: () =>
       set((state) => {
         const updatedResults = { ...state.calculationResults };
@@ -106,6 +111,8 @@ export const useMitraDataRequestStore = create<MitraDataRequestStore>()(
     setIsUploadAoiVisible: (isUploadAoiVisible) => set({ isUploadAoiVisible }),
     setIsUploadCoverageVisible: (isUploadCoverageVisible) =>
       set({ isUploadCoverageVisible }),
+    setIsUploadBidangVisible: (isUploadBidangVisible) =>
+      set({ isUploadBidangVisible }),
     resetUploadAoi: () =>
       set((state) => {
         const updatedResults = { ...state.calculationResults };
@@ -116,6 +123,7 @@ export const useMitraDataRequestStore = create<MitraDataRequestStore>()(
           confirmedFeature: null,
           isUploadAoiVisible: true,
           isUploadCoverageVisible: true,
+          isUploadBidangVisible: true,
           calculationResults: updatedResults,
           lastCalculationKeys: updatedKeys,
           result:
@@ -143,6 +151,8 @@ export const useMitraDataRequestStore = create<MitraDataRequestStore>()(
     setIsDrawAoiVisible: (isDrawAoiVisible) => set({ isDrawAoiVisible }),
     setIsDrawCoverageVisible: (isDrawCoverageVisible) =>
       set({ isDrawCoverageVisible }),
+    setIsDrawBidangVisible: (isDrawBidangVisible) =>
+      set({ isDrawBidangVisible }),
     resetDrawAoi: () =>
       set((state) => {
         const updatedResults = { ...state.calculationResults };

@@ -10,6 +10,7 @@ export const Route = createFileRoute("/_private/mitra/my-data/$workspaceId")({
     search: Record<string, unknown>,
   ): MitraMyDataWorkspaceDetailSearch => ({
     layerId: typeof search.layerId === "string" ? search.layerId : undefined,
+    apiKey: typeof search.apiKey === "string" ? search.apiKey : undefined,
   }),
   beforeLoad: async () => {
     await requireRoleGuard("mitra");

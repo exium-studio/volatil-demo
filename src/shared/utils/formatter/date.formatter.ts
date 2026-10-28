@@ -103,6 +103,9 @@ export const formatRelativeTime = (
   const rtf = new Intl.RelativeTimeFormat(resolvedLocale, {
     numeric: "auto",
   });
+  const rtfAlways = new Intl.RelativeTimeFormat(resolvedLocale, {
+    numeric: "always",
+  });
 
   const absDiff = Math.abs(diffInSeconds);
 
@@ -122,7 +125,11 @@ export const formatRelativeTime = (
 
   const diffInDays = Math.round(diffInHours / 24);
   if (Math.abs(diffInDays) < 30) {
-    return rtf.format(diffInDays, "day");
+    // Keep 'kemarin' (-1), 'hari ini' (0), 'besok' (1); use numeric like '2 hari yang lalu' instead of 'kemarin dulu'
+    if (Math.abs(diffInDays) <= 1) {
+      return rtf.format(diffInDays, "day");
+    }
+    return rtfAlways.format(diffInDays, "day");
   }
 
   const diffInMonths = Math.round(diffInDays / 30);
@@ -150,7 +157,9 @@ export const formatAdaptiveDateTime = (
       ? (options?.timeZone ?? getPreferredUserTimezone())
       : getPreferredUserTimezone();
   const locale =
-    typeof options === "object" ? (options?.locale ?? getLocale()) : getLocale();
+    typeof options === "object"
+      ? (options?.locale ?? getLocale())
+      : getLocale();
 
   const diffInMs = Math.abs(Date.now() - date.getTime());
   const maxMs = thresholdDays * 24 * 60 * 60 * 1000;

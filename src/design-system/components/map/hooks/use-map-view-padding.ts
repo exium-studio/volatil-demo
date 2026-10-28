@@ -9,88 +9,140 @@ import { useEffect, useRef } from "react";
  * (sidebar + content panel), exactly like Google Maps mobile behavior.
  *
  * Uses ResizeObserver on the content panel for real-time tracking during splitter drag:
- * - Continuous drag: duration 0 — instant, pixel-perfect tracking.
- * - Discrete sidebar toggle: duration 250ms — smooth animated transition.
+ * - Continuous drag: duration 0 — instant, direct map.setPadding tracking.
+ * - Discrete sidebar toggle / double click reset: duration > 0 — smooth animated transition via map.easeTo.
  */
 export const useMapViewPadding = (
   map: maplibregl.Map | null,
   options: MapViewPaddingOptions,
 ) => {
+  // Props
+  const {
+    contentPanelRef,
+    referenceElementRef,
+    referenceElementId,
+    sidebarPx = 0,
+    isVertical = false,
+  } = options;
+
   // Refs
-  const prevSidebarPx = useRef<number>(options.sidebarPx);
+  const prevSidebarPx = useRef<number>(sidebarPx);
   const prevPanelPx = useRef<number>(0);
 
   // Apply padding imperatively — called both from ResizeObserver and sidebar change effect
   const applyPadding = (
-    sidebarPx: number,
+    currentSidebarPx: number,
     contentPanelPx: number,
-    isVertical: boolean,
+    vertical: boolean,
     duration: number,
   ) => {
     if (!map) return;
 
-    const padding: maplibregl.PaddingOptions = isVertical
+    const padding: maplibregl.PaddingOptions = vertical
       ? {
           // Mobile: sidebar-like header on top, content panel below
-          top: sidebarPx,
+          top: currentSidebarPx,
           bottom: contentPanelPx,
           left: 0,
           right: 0,
         }
       : {
           // Desktop: sidebar on left, content panel occupies left area
-          left: sidebarPx + contentPanelPx,
+          left: currentSidebarPx + contentPanelPx,
           top: 0,
           right: 0,
           bottom: 0,
         };
 
-    map.easeTo({ padding, duration });
+    if (duration === 0) {
+      map.setPadding(padding);
+    } else {
+      map.easeTo({ padding, duration, essential: true });
+    }
   };
 
   // ResizeObserver: fires on every splitter drag tick and initial mount
   useEffect(() => {
-    const el = options.contentPanelRef.current;
+    const el =
+      referenceElementRef?.current ??
+      (referenceElementId ? document.getElementById(referenceElementId) : null) ??
+      contentPanelRef?.current;
+
     if (!map || !el) return;
 
-    const observer = new ResizeObserver(() => {
-      const panelPx = options.isVertical ? el.clientHeight : el.clientWidth;
+    const observer = new ResizeObserver((entries) => {
+      const entry = entries[0];
+      const panelPx = entry
+        ? isVertical
+          ? entry.contentRect.height
+          : entry.contentRect.width
+        : isVertical
+          ? el.clientHeight
+          : el.clientWidth;
+
+      if (panelPx <= 0) return;
+
       const panelDelta = Math.abs(panelPx - prevPanelPx.current);
-      // Large delta (e.g. initial mount/transition) animates smoothly, small delta (drag) is instant
-      const duration = panelDelta > 100 ? 500 : 0;
-      applyPadding(options.sidebarPx, panelPx, options.isVertical, duration);
+      // First calculation is instant, large jump (reset layout) is animated, drag is instant
+      const duration = prevPanelPx.current === 0 ? 0 : panelDelta > 100 ? 300 : 0;
+      applyPadding(sidebarPx, panelPx, isVertical, duration);
       prevPanelPx.current = panelPx;
     });
 
     observer.observe(el);
+
+    const initialPx = isVertical ? el.clientHeight : el.clientWidth;
+    if (initialPx > 0) {
+      applyPadding(sidebarPx, initialPx, isVertical, 0);
+      prevPanelPx.current = initialPx;
+    }
+
     return () => {
       observer.disconnect();
     };
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [map, options.contentPanelRef, options.isVertical, options.sidebarPx]);
+  }, [
+    map,
+    referenceElementRef,
+    referenceElementId,
+    contentPanelRef,
+    isVertical,
+    sidebarPx,
+  ]);
 
   // Sidebar toggle effect: fires when sidebarPx changes discretely — animate smoothly
   useEffect(() => {
     if (!map) return;
 
-    const el = options.contentPanelRef.current;
+    const el =
+      referenceElementRef?.current ??
+      (referenceElementId ? document.getElementById(referenceElementId) : null) ??
+      contentPanelRef?.current;
+
     const panelPx = el
-      ? options.isVertical
+      ? isVertical
         ? el.clientHeight
         : el.clientWidth
       : prevPanelPx.current ||
         (typeof window !== "undefined"
-          ? options.isVertical
+          ? isVertical
             ? window.innerHeight * 0.5
-            : (window.innerWidth - options.sidebarPx) * 0.5
+            : (window.innerWidth - sidebarPx) * 0.5
           : 0);
 
-    const sidebarDelta = Math.abs(options.sidebarPx - prevSidebarPx.current);
+    const sidebarDelta = Math.abs(sidebarPx - prevSidebarPx.current);
     const isDiscreteToggle = sidebarDelta > 10;
     const duration = isDiscreteToggle ? 250 : 0;
 
-    applyPadding(options.sidebarPx, panelPx, options.isVertical, duration);
-    prevSidebarPx.current = options.sidebarPx;
+    applyPadding(sidebarPx, panelPx, isVertical, duration);
+    prevSidebarPx.current = sidebarPx;
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [map, options.sidebarPx, options.isVertical]);
+  }, [
+    map,
+    referenceElementRef,
+    referenceElementId,
+    contentPanelRef,
+    sidebarPx,
+    isVertical,
+  ]);
 };

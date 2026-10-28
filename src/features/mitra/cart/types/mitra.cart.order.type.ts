@@ -38,10 +38,13 @@ export type MitraCartOrderItemProps = {
   isDeleting?: boolean;
   isAoiVisible?: boolean;
   isCoverageVisible?: boolean;
+  isBidangVisible?: boolean;
   onToggleAoiVisible?: () => void;
   onToggleCoverageVisible?: () => void;
+  onToggleBidangVisible?: () => void;
   onFlyToAoi?: () => void;
   onFlyToCoverage?: () => void;
+  onFlyToBidang?: () => void;
 };
 
 export type MitraCartOrderListProps = {
@@ -49,10 +52,13 @@ export type MitraCartOrderListProps = {
   onSelectOrder: (orderId: string | null) => void;
   isAoiVisible?: boolean;
   isCoverageVisible?: boolean;
+  isBidangVisible?: boolean;
   onToggleAoiVisible?: () => void;
   onToggleCoverageVisible?: () => void;
+  onToggleBidangVisible?: () => void;
   onFlyToAoi?: () => void;
   onFlyToCoverage?: () => void;
+  onFlyToBidang?: () => void;
 };
 
 export type MitraCartOrderDetailProps = {
@@ -126,14 +132,16 @@ export type CartMapLayerOptions = {
     | GeoJSON.Polygon
     | GeoJSON.Feature<GeoJSON.Polygon | GeoJSON.MultiPolygon>
     | null;
-  coveragePolygon?:
+  kawasanCoveragePolygon?:
     | GeoJSON.MultiPolygon
     | GeoJSON.Polygon
     | GeoJSON.Feature<GeoJSON.Polygon | GeoJSON.MultiPolygon>
     | null;
+  bidangFeatures?: GeoJSON.FeatureCollection | null;
   selectionType?: string | null;
   isAoiVisible?: boolean;
   isCoverageVisible?: boolean;
+  isBidangVisible?: boolean;
   isActive?: boolean;
   exclusive?: boolean;
 };
@@ -145,11 +153,14 @@ export type CartOrderItemPayload = {
   wmsUrl?: string;
 };
 
+export type PurchasedIgtBasis = "bidang" | "kawasan" | "all";
+
 export type AddToCartOrderRequest = {
+  calculationToken?: string;
   selectionType: SelectionType;
+  purchasedIgtBasis: PurchasedIgtBasis;
   aoiPolygon?: GeoJSON.MultiPolygon | GeoJSON.Polygon;
-  coveragePolygon?: GeoJSON.MultiPolygon | GeoJSON.Polygon;
-  items: CartOrderItemPayload[];
+  kawasanCoveragePolygon?: GeoJSON.MultiPolygon | GeoJSON.Polygon;
   administrativeFilter?: {
     kodeProvinsi?: string;
     kodeKabupaten?: string;
@@ -172,7 +183,8 @@ export type CartOrderItem = {
   id: string;
   sourceLayerId: string;
   sourceLayerTitle: string;
-  spatialBasis: IgtBasisType;
+  igtBasis?: IgtBasisType;
+  spatialBasis?: IgtBasisType;
   featuresCount: number;
   areaHa?: number;
   unitPrice: number;
@@ -183,6 +195,11 @@ export type CartOrderItem = {
   previewWfsUrl?: string;
   externalWfsUrl?: string | null;
   externalWmsUrl?: string | null;
+  approvedWmsUrl?: string | null;
+  approvedWfsUrl?: string | null;
+  selectionType?: SelectionType;
+  cqlFilter?: string | null;
+  provisionStatus?: string;
   /** Bounding box layer IGT: [minLon, minLat, maxLon, maxLat] (EPSG:4326) */
   bbox?: [number, number, number, number];
 };
@@ -192,7 +209,7 @@ export type CartOrder = {
   status: CartOrderStatus;
   selectionType: SelectionType;
   aoiPolygon?: GeoJSON.MultiPolygon | GeoJSON.Polygon;
-  coveragePolygon?: GeoJSON.MultiPolygon | GeoJSON.Polygon;
+  kawasanCoveragePolygon?: GeoJSON.MultiPolygon | GeoJSON.Polygon;
   coverageHa?: number;
   featuresCount?: number;
   createdAt: string;
@@ -205,6 +222,8 @@ export type CartOrder = {
   subtotalBidang?: number;
   subtotalKawasan?: number;
   totalPrice: number;
+  purchasedBasis?: PurchasedIgtBasis;
+  purchasedIgtBasis?: PurchasedIgtBasis;
   items: CartOrderItem[];
   administrativeFilter?: {
     kodeProvinsi?: string;

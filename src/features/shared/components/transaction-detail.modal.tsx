@@ -36,12 +36,7 @@ import {
 } from "@/shared/utils/formatter/date.formatter";
 import { formatNumber } from "@/shared/utils/formatter/number.formatter";
 import { useNavigate } from "@tanstack/react-router";
-import {
-  CreditCardIcon,
-  EyeIcon,
-  Layers2Icon,
-  RotateCcwIcon,
-} from "lucide-react";
+import { CreditCardIcon, EyeIcon, Layers2Icon } from "lucide-react";
 import { useMemo } from "react";
 
 export const TransactionDetailTrigger = (
@@ -114,14 +109,13 @@ export const TransactionDetailModalContent = (
 
   const isPaid = transaction.transactionStatus === "paid";
   const isExpired = transaction.transactionStatus === "expired";
-  const isRefunded = transaction.transactionStatus === "refunded";
-  const isPayable = !isPaid && !isRefunded && !isExpired && showPayButton;
+  const isPayable = !isPaid && !isExpired && showPayButton;
   const targetExpiry = transaction.billingExpiredAt || transaction.expiredAt;
 
   const effectiveOrderStatus: OrderStatus | undefined =
     transaction.transactionStatus === "expired" &&
     (!transaction.orderStatus || transaction.orderStatus === "pending_payment")
-      ? "rejected"
+      ? "expired"
       : transaction.orderStatus;
 
   const timelineSteps = useMemo(() => {
@@ -148,34 +142,26 @@ export const TransactionDetailModalContent = (
           ? "Pembayaran Terverifikasi"
           : isExpired
             ? "Pembayaran Kedaluwarsa"
-            : isRefunded
-              ? "Pembayaran Dikembalikan"
-              : ORDER_STATUS_MAP.pending_payment.label,
+            : ORDER_STATUS_MAP.pending_payment.label,
         description: isPaid
           ? transaction.paidAt
             ? formatUtcDateTime(transaction.paidAt, preferredTimezone)
             : `Terbayar (${transaction.paymentMethod || "MPN"})`
           : isExpired
             ? "Batas waktu pembayaran habis"
-            : isRefunded
-              ? "Dana transaksi telah dikembalikan"
-              : transaction.billingCode
-                ? `Billing: ${transaction.billingCode}`
-                : "Menunggu pembayaran",
+            : transaction.billingCode
+              ? `Billing: ${transaction.billingCode}`
+              : "Menunggu pembayaran",
         icon: isPaid
           ? ORDER_STATUS_MAP.paid.icon
           : isExpired
             ? ORDER_STATUS_MAP.rejected.icon
-            : isRefunded
-              ? RotateCcwIcon
-              : ORDER_STATUS_MAP.pending_payment.icon,
+            : ORDER_STATUS_MAP.pending_payment.icon,
         colorPalette: isPaid
           ? ORDER_STATUS_MAP.ready.colorPalette
           : isExpired
             ? ORDER_STATUS_MAP.rejected.colorPalette
-            : isRefunded
-              ? "purple"
-              : ORDER_STATUS_MAP.pending_payment.colorPalette,
+            : ORDER_STATUS_MAP.pending_payment.colorPalette,
         isMuted: false,
       },
       {
@@ -187,9 +173,7 @@ export const TransactionDetailModalContent = (
             : isPendingReview
               ? ORDER_STATUS_MAP.pending_review.label
               : isRejected
-                ? isExpired
-                  ? "Dibatalkan otomatis (kedaluwarsa)"
-                  : "Pesanan ditolak oleh admin"
+                ? "Pesanan ditolak oleh admin"
                 : isPaid
                   ? "Menunggu validasi admin"
                   : "Diproses setelah pembayaran",
@@ -209,7 +193,7 @@ export const TransactionDetailModalContent = (
               : isRejected
                 ? ORDER_STATUS_MAP.rejected.colorPalette
                 : "gray",
-        isMuted: !isPaid && !isExpired && !isRefunded,
+        isMuted: !isPaid && !isExpired,
       },
       {
         id: "processing" as OrderStatus,
@@ -242,14 +226,7 @@ export const TransactionDetailModalContent = (
         isMuted: !isReady,
       },
     ];
-  }, [
-    effectiveOrderStatus,
-    isExpired,
-    isPaid,
-    isRefunded,
-    preferredTimezone,
-    transaction,
-  ]);
+  }, [effectiveOrderStatus, isExpired, isPaid, preferredTimezone, transaction]);
 
   const orderItemHeaders: FormattedTableHeader[] = useMemo(
     () => [
@@ -261,11 +238,57 @@ export const TransactionDetailModalContent = (
     [],
   );
 
+  const totalBidang = useMemo(() => {
+    if (
+      transaction.bidangCoverageCount !== undefined &&
+      transaction.bidangCoverageCount !== null
+    ) {
+      return transaction.bidangCoverageCount;
+    }
+    if (
+      transaction.featuresCount !== undefined &&
+      transaction.featuresCount !== null
+    ) {
+      return transaction.featuresCount;
+    }
+    if (!transaction.items) return 0;
+    return transaction.items
+      .filter((i) => (i.spatialBasis ?? i.igtBasis) === "bidang")
+      .reduce(
+        (sum, item) =>
+          sum + (item.featuresCount ?? item.snapshotFeaturesCount ?? 0),
+        0,
+      );
+  }, [transaction]);
+
+  const totalKawasanHa = useMemo(() => {
+    if (
+      transaction.kawasanCoverageHa !== undefined &&
+      transaction.kawasanCoverageHa !== null
+    ) {
+      return transaction.kawasanCoverageHa;
+    }
+    if (
+      transaction.coverageHa !== undefined &&
+      transaction.coverageHa !== null
+    ) {
+      return transaction.coverageHa;
+    }
+    if (!transaction.items) return 0;
+    return transaction.items
+      .filter((i) => (i.spatialBasis ?? i.igtBasis) === "kawasan")
+      .reduce(
+        (sum, item) => sum + (item.areaHa ?? item.snapshotAreaHa ?? 0),
+        0,
+      );
+  }, [transaction]);
+
   const orderItemsData = useMemo(() => {
     if (!transaction?.items) return [];
 
     return transaction.items.map((item: SharedTransactionOrderItem) => {
-      const isBidang = item.spatialBasis === "bidang";
+      const basis = item.igtBasis ?? item.spatialBasis ?? "kawasan";
+      const isBidang = basis === "bidang";
       const count = item.featuresCount ?? item.snapshotFeaturesCount ?? 0;
       const area = item.areaHa ?? item.snapshotAreaHa ?? 0;
       const qty = isBidang
@@ -282,8 +305,8 @@ export const TransactionDetailModalContent = (
             align: "start" as const,
           },
           {
-            value: item.spatialBasis,
-            td: <IgtBasisBadge>{item.spatialBasis}</IgtBasisBadge>,
+            value: basis,
+            td: <IgtBasisBadge>{basis}</IgtBasisBadge>,
             align: "start" as const,
           },
           {
@@ -330,8 +353,8 @@ export const TransactionDetailModalContent = (
         <VStack gap={"xs"}>
           <Modal.Title>{"Detail Transaksi & Pesanan"}</Modal.Title>
 
-          <P fontSize={"sm"} textAlign={"center"} color={"fg.subtle"}>
-            {transaction.transactionNumber}
+          <P fontSize={"sm"} textAlign={"center"} color={"fg.muted"}>
+            {transaction.orderNumber || transaction.orderId || "-"}
           </P>
         </VStack>
       </Modal.Header>
@@ -348,7 +371,7 @@ export const TransactionDetailModalContent = (
           )}
 
           {isMounted && (
-            <SimpleGrid columns={[1, 1, 2]} gap={"sm"}>
+            <SimpleGrid columns={[1, 1, 2]} gapX={"lg"} gapY={"md"}>
               {/* Kiri: Timeline Riwayat Alur Pesanan */}
               <VStack gap={"md"} h={"full"} py={"xs"}>
                 {/* <P fontWeight={"semibold"}>{"Riwayat Alur Pesanan"}</P> */}
@@ -471,7 +494,7 @@ export const TransactionDetailModalContent = (
                   </VStack>
                 )}
 
-                {targetExpiry && !isPaid && !isRefunded && (
+                {targetExpiry && !isPaid && (
                   <VStack align={"start"} gap={"2xs"}>
                     <P fontSize={"sm"} color={"fg.subtle"}>
                       {"Sisa Waktu Pembayaran"}
@@ -480,7 +503,6 @@ export const TransactionDetailModalContent = (
                       finishedAt={targetExpiry}
                       fontWeight={"medium"}
                       fontSize={"md"}
-                      color={isExpired ? "fg.subtle" : "orange.fg"}
                     />
                   </VStack>
                 )}
@@ -492,6 +514,41 @@ export const TransactionDetailModalContent = (
                   <SelectionTypeBadge>
                     {transaction.selectionType}
                   </SelectionTypeBadge>
+                </VStack>
+
+                <VStack align={"start"} gap={"2xs"}>
+                  <P fontSize={"sm"} color={"fg.subtle"}>
+                    {"Cakupan Bidang"}
+                  </P>
+                  <P fontSize={"md"} fontWeight={"medium"}>
+                    {totalBidang > 0 ? (
+                      <>
+                        <TNum>{formatNumber(totalBidang)}</TNum> {"bidang"}
+                      </>
+                    ) : (
+                      "-"
+                    )}
+                  </P>
+                </VStack>
+
+                <VStack align={"start"} gap={"2xs"}>
+                  <P fontSize={"sm"} color={"fg.subtle"}>
+                    {"Cakupan Kawasan"}
+                  </P>
+                  <P fontSize={"md"} fontWeight={"medium"}>
+                    {totalKawasanHa > 0 ? (
+                      <>
+                        <TNum>
+                          {formatNumber(totalKawasanHa, {
+                            maximumFractionDigits: 2,
+                          })}
+                        </TNum>{" "}
+                        {"ha"}
+                      </>
+                    ) : (
+                      "-"
+                    )}
+                  </P>
                 </VStack>
 
                 <VStack align={"start"} gap={"2xs"}>

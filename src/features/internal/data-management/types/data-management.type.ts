@@ -9,21 +9,38 @@ export type IgtBasisType = "bidang" | "kawasan";
 
 export type PublishStatusType = "all" | "published" | "draft";
 
+export type MasterIgtDataManagementSearch = {
+  basisIgt?: IgtBasisType;
+  isActive?: string | number | boolean;
+};
+
 export type PublishStatusTypeConfig = {
   value: PublishStatusType;
   label: string;
   colorPalette: "gray" | "green";
 };
 
+export type MasterIgtLayerServiceConfig = {
+  url: string;
+  baseUrl: string;
+};
+
+export type MasterIgtLayerAttributeConfig = {
+  attribute: string;
+  visible: boolean;
+  dataType?: string;
+};
+
 export type MasterIgtLayerItem = {
   id: string;
   title: string;
   description?: string;
-  spatialBasis: IgtBasisType;
+  igtBasis: IgtBasisType;
   bbox?: [number, number, number, number];
   isActive: boolean;
   defaultVisible?: boolean;
   zIndex?: number;
+  minZoom?: number;
   geoserverId: string;
   geoserver: {
     id: string;
@@ -31,15 +48,17 @@ export type MasterIgtLayerItem = {
     baseUrl: string;
   };
   workspaceName: string;
-  typeName: string; // format: workspace:layerName
-  wfsUrl: string;
-  wmsUrl: string;
+  layerName: string | null;
+  typeName: string; // Not null: either "workspace:layer" or "workspace"
+  wms: MasterIgtLayerServiceConfig;
+  wfs: MasterIgtLayerServiceConfig;
+  attributes?: MasterIgtLayerAttributeConfig[];
   createdAt: string;
   updatedAt: string;
 };
 
 export type MasterIgtLayersQueryParams = PaginatedParams & {
-  spatialBasis?: IgtBasisType;
+  igtBasis?: IgtBasisType;
   isActive?: boolean;
 };
 
@@ -49,15 +68,17 @@ export type MasterIgtLayersResponse = {
 };
 
 export type CreateMasterIgtLayerPayload = {
-  id?: string;
   geoserverId: string;
+  workspaceName: string;
+  layerName?: string | null;
   typeName: string;
   title: string;
   description?: string;
-  spatialBasis: IgtBasisType;
+  igtBasis: IgtBasisType;
   isActive: boolean;
   defaultVisible?: boolean;
   zIndex?: number;
+  minZoom?: number;
 };
 
 export type UpdateMasterIgtLayerPayload =
@@ -76,6 +97,7 @@ export type GeoServerWorkspaceLayerOption = {
   abstract?: string;
   srs?: string;
   geometryType?: "Polygon" | "MultiPolygon" | "Point" | "LineString";
+  igtBasis?: IgtBasisType;
   spatialBasis?: IgtBasisType;
   bbox?: [number, number, number, number];
 };
@@ -84,7 +106,6 @@ export type GeoServerWorkspaceLayersResponse = {
   layers: GeoServerWorkspaceLayerOption[];
 };
 
-import type { FocusSelectOption } from "@/design-system/components/input/types/focus-select.type";
 import { masterIgtLayerFormSchema } from "@/features/internal/data-management/types/data-management.schema";
 import type { ReactNode } from "react";
 import type { z } from "zod";
@@ -96,12 +117,20 @@ export type GeoserverCascadeSelectProps = {
   onGeoserverChange: (geoserverId: string) => void;
   selectedWorkspace: string;
   onWorkspaceChange: (workspace: string) => void;
-  selectedTypeName: string;
+  selectedLayerName?: string | null;
+  selectedTypeName?: string;
   onLayerChange: (
+    layerName: string | null,
     typeName: string,
     layerDetail?: GeoServerWorkspaceLayerOption,
   ) => void;
-  initialLayerOption?: FocusSelectOption;
+  errors?: {
+    geoserverId?: { message?: string };
+    workspaceName?: { message?: string };
+    workspace?: { message?: string };
+    layerName?: { message?: string };
+    typeName?: { message?: string };
+  };
 };
 
 export type InternalDataManagementCreateTriggerProps = {
@@ -124,5 +153,24 @@ export type InternalDataManagementEditModalContentProps = {
   modalKey: string;
   item: MasterIgtLayerItem;
   close: () => void;
+};
+
+export type MasterIgtLayerDetailSearch = {
+  tab?: "config" | "attribute";
+};
+
+export type InternalDataManagementConfigFormProps = {
+  item: MasterIgtLayerItem;
+  onSuccess?: () => void;
+};
+
+export type UpdateMasterIgtLayerAttributesPayload = {
+  id: string;
+  attributes: MasterIgtLayerAttributeConfig[];
+};
+
+export type InternalDataManagementAttributeListProps = {
+  item: MasterIgtLayerItem;
+  onSuccess?: () => void;
 };
 

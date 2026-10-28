@@ -16,6 +16,7 @@ import { P, TNum } from "@/design-system/components/typography/ui/p";
 import { useThemeStore } from "@/design-system/stores/theme-store";
 import { BillingRoute } from "@/shared/libs/tanstack-router/routes";
 import { useNavigate } from "@tanstack/react-router";
+import { useCallback, useEffect } from "react";
 
 import { useCheckOrderPaymentStatus } from "@/features/mitra/cart/hooks/use-mitra-cart";
 
@@ -42,26 +43,44 @@ const BillingPageBillingCode = () => {
   const checkPaymentMutation = useCheckOrderPaymentStatus();
 
   // Handlers
+  const renderPaymentSuccessAlert = useCallback(
+    (isRenew: boolean) => {
+      focusAlert("payment-success", () => (
+        <FocusAlertItem
+          variant={"celebrate"}
+          title={"Pembayaran Berhasil!"}
+          description={
+            isRenew
+              ? "Pembayaran perpanjangan layanan telah terverifikasi. Masa aktif workspace dan layer interop GeoServer telah berhasil diperpanjang (+1 Tahun) dan berstatus Aktif/Ready."
+              : "Pembayaran telah terverifikasi dengan status 'paid'. Pemotongan AOI dan pembuatan service layer WMS/WFS sedang diproses oleh sistem GeoServer internal."
+          }
+          onDone={() => {
+            if (isRenew) {
+              void navigate({
+                to: "/mitra/my-data",
+              });
+            } else {
+              void navigate({
+                to: "/mitra/transaction-history",
+              });
+            }
+          }}
+        />
+      ));
+    },
+    [navigate],
+  );
+
+  const targetOrderId = search?.orderId || billingCode;
+  const isRenewal =
+    targetOrderId.startsWith("ord-renew-") ||
+    targetOrderId.startsWith("renew-");
+
   const handleCheckStatus = () => {
-    // Check order payment status via GET /api/mitra/cart/orders/:orderId/status
-    const targetOrderId = search?.orderId || billingCode;
     checkPaymentMutation.mutate(targetOrderId, {
       onSuccess: (res) => {
         if (res.transactionStatus === "paid") {
-          focusAlert("payment-success", () => (
-            <FocusAlertItem
-              variant={"celebrate"}
-              title={"Pembayaran Berhasil!"}
-              description={
-                "Pembayaran telah terverifikasi dengan status 'paid'. Pemotongan AOI dan pembuatan service layer WMS/WFS sedang diproses oleh sistem GeoServer internal."
-              }
-              onDone={() => {
-                void navigate({
-                  to: "/mitra/transaction-history",
-                });
-              }}
-            />
-          ));
+          renderPaymentSuccessAlert(isRenewal);
         } else {
           focusAlert("payment-status-info", () => (
             <FocusAlertItem
@@ -77,15 +96,28 @@ const BillingPageBillingCode = () => {
     });
   };
 
+  // Auto trigger payment-success alert if query param contains activeModalKey=payment-success
+  useEffect(() => {
+    if (search?.activeModalKey === "payment-success") {
+      renderPaymentSuccessAlert(isRenewal);
+    }
+  }, [search?.activeModalKey, isRenewal, renderPaymentSuccessAlert]);
+
   return (
     <Container.Root>
       <Container.Body>
-        <HStack align={"center"} justify={"space-between"} gap={"md"} p={"md"}>
+        <HStack
+          wrap={"wrap"}
+          align={"center"}
+          justify={"space-between"}
+          gap={"md"}
+          p={"md"}
+        >
           <VStack gap={1}>
             <Heading>Kode Billing </Heading>
 
             <HStack align={"center"} gap={"sm"}>
-              <Heading color={`${theme.colorPalette}.fg`}>
+              <Heading fontSize={"xl"} color={`${theme.colorPalette}.fg`}>
                 <TNum>{billingCode}</TNum>
               </Heading>
 

@@ -26,7 +26,9 @@ export const AlertRoot = (props: AlertRootProps) => {
 
   const resolvedColorPalette =
     colorPalette ??
-    (typeof status === "string" ? STATUS_COLOR_PALETTE_MAP[status] : undefined) ??
+    (typeof status === "string"
+      ? STATUS_COLOR_PALETTE_MAP[status]
+      : undefined) ??
     "neutral";
 
   return (

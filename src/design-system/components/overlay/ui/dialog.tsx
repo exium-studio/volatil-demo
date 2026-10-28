@@ -6,6 +6,8 @@ import type { IconButtonProps } from "@/design-system/components/button/types/bu
 import { IconButton } from "@/design-system/components/button/ui/button";
 import { CloseButton } from "@/design-system/components/button/ui/close-button";
 import { AppIcon } from "@/design-system/components/icon/ui/app-icon";
+import type { VScrollContainerProps } from "@/design-system/components/layout/types/scroll-container.type";
+import { VScrollContainer } from "@/design-system/components/layout/ui/scroll-container";
 import {
   DIALOG_OFFSET_X_VAR,
   DIALOG_OFFSET_Y_VAR,
@@ -176,7 +178,9 @@ const DialogTrigger = (props: ChakraDialog.TriggerProps) => {
     if (clickOriginAnimation) {
       updateClickOrigin(modalKey, e.currentTarget);
     }
-    (onPointerDown as ((e: PointerEvent<HTMLElement>) => void) | undefined)?.(e);
+    (onPointerDown as ((e: PointerEvent<HTMLElement>) => void) | undefined)?.(
+      e,
+    );
   };
 
   const handleClick = (event: MouseEvent<HTMLElement>) => {
@@ -184,7 +188,9 @@ const DialogTrigger = (props: ChakraDialog.TriggerProps) => {
       updateClickOrigin(modalKey, event.currentTarget);
     }
     open?.();
-    (onClick as ((event: MouseEvent<HTMLElement>) => void) | undefined)?.(event);
+    (onClick as ((event: MouseEvent<HTMLElement>) => void) | undefined)?.(
+      event,
+    );
   };
 
   return (
@@ -407,6 +413,7 @@ const DialogHeader = (props: ChakraDialog.TitleProps) => {
     <ChakraDialog.Header
       justifyContent={"center"}
       pos={"relative"}
+      minH={"headerH"}
       py={4}
       px={"78px"}
       {...props}
@@ -414,9 +421,24 @@ const DialogHeader = (props: ChakraDialog.TitleProps) => {
   );
 };
 
-const DialogBody = (props: ChakraDialog.BodyProps) => {
+const DialogBody = (props: VScrollContainerProps) => {
+  // Props
+  const { children, ...restProps } = props;
+
   return (
-    <ChakraDialog.Body display={"flex"} flexDir={"column"} p={4} {...props} />
+    <ChakraDialog.Body
+      display={"flex"}
+      flexDir={"column"}
+      flex={1}
+      minH={0}
+      h={"full"}
+      overflow={"hidden"}
+      p={"0 !important"}
+    >
+      <VScrollContainer p={4} {...restProps}>
+        {children}
+      </VScrollContainer>
+    </ChakraDialog.Body>
   );
 };
 

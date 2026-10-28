@@ -8,7 +8,7 @@ import { HStack } from "@/design-system/components/layout/ui/flex-box";
 import { Separator } from "@/design-system/components/layout/ui/separator";
 import { NavLink } from "@/design-system/components/navigation/ui/link";
 import { HeaderContainer } from "@/design-system/components/shell/ui/header-container";
-import { Heading } from "@/design-system/components/typography/ui/heading";
+import { ClampedHeading } from "@/design-system/components/typography/ui/heading";
 import { InternalMitraLayerSyncJobTableView } from "@/features/internal/mitra-layer-sync-jobs/components/internal.mitra-layer-sync-job.table-view";
 import { ArrowRightIcon } from "lucide-react";
 
@@ -17,10 +17,10 @@ export const InternalHomeMitraLayerSyncJobsQuickView = () => {
     <Container.Root withContext={true} w={"full"} position={"relative"}>
       <Container.Body overflowY={"auto"}>
         {/* Header */}
-        <HeaderContainer justify={"space-between"} gap={"sm"} pr={"xs"}>
+        <HeaderContainer justify={"space-between"} pr={"xs"}>
           <HStack wrap={"wrap"} gap={"sm"} py={"sm"}>
             <HStack wrap={"wrap"} align={"center"} gap={"sm"}>
-              <Heading>{"Antrean Pembaruan Layer Mitra"}</Heading>
+              <ClampedHeading>{"Antrean Pembaruan Data Mitra"}</ClampedHeading>
 
               <InfoTip
                 variant={"icon"}
@@ -33,12 +33,7 @@ export const InternalHomeMitraLayerSyncJobsQuickView = () => {
             </HStack>
           </HStack>
 
-          <Button
-            asChild={true}
-            variant={"ghost"}
-            size={"sm"}
-            colorPalette={"gray"}
-          >
+          <Button asChild={true}>
             <NavLink to={"/internal/jobs"}>
               {"Lihat Semua Antrean"}
               <AppIcon icon={ArrowRightIcon} />

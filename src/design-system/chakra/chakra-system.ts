@@ -14,9 +14,9 @@ import {
 import { createSystem, defaultConfig, defineConfig } from "@chakra-ui/react";
 
 export const chakraConfig = defineConfig({
-  conditions: {
-    hover: "&:is(:hover, [data-hover]):not(:disabled, [data-disabled])",
-  },
+  // conditions: {
+  //   hover: "&:is(:hover, [data-hover]):not(:disabled, [data-disabled])",
+  // },
 
   globalCss: {
     "html, body": {
@@ -34,8 +34,8 @@ export const chakraConfig = defineConfig({
 
   theme: {
     breakpoints: {
-      sm: "320px",
-      md: "720px",
+      sm: "350px",
+      md: "750px",
       lg: "960px",
       xl: "1200px",
     },
@@ -135,14 +135,14 @@ export const chakraConfig = defineConfig({
         canvasLight: { value: "#f5f6f8" },
         canvasDark: { value: "#161717" },
 
+        canvasLightAlpha: { value: "rgba(245, 246, 248, 0.85)" },
+        canvasDarkAlpha: { value: "rgba(22, 23, 23, 0.85)" },
+
         bodyLight: { value: "#ffffff" },
         bodyDark: { value: "#1a1b1c" },
 
-        bodyLightAlpha: { value: "rgba(255, 255, 255, 0.5)" },
-        bodyDarkAlpha: { value: "rgba(25, 26, 26, 0.5)" },
-
-        frostedLight: { value: "rgba(250, 249, 255, 0.75)" },
-        frostedDark: { value: "rgba(40, 40, 40, 0.75)" },
+        bodyLightAlpha: { value: "rgba(255, 255, 255, 0.75)" },
+        bodyDarkAlpha: { value: "rgba(26, 27, 28, 0.75)" },
 
         an0: { value: "#6b72800f" },
         an1: { value: "#6b72801f" },
@@ -777,16 +777,22 @@ export const chakraConfig = defineConfig({
               _dark: "{colors.canvasDark}",
             },
           },
+          canvasAlpha: {
+            value: {
+              base: "{colors.canvasLightAlpha}",
+              _dark: "{colors.canvasDarkAlpha}",
+            },
+          },
+          canvasAlphaInverted: {
+            value: {
+              base: "{colors.canvasDarkAlpha}",
+              _dark: "{colors.canvasLightAlpha}",
+            },
+          },
           body: {
             value: {
               base: "{colors.bodyLight}",
               _dark: "{colors.bodyDark}",
-            },
-          },
-          bodyAlpha: {
-            value: {
-              base: "{colors.bodyLightAlpha}",
-              _dark: "{colors.bodyDarkAlpha}",
             },
           },
           inverted: {
@@ -795,16 +801,16 @@ export const chakraConfig = defineConfig({
               _dark: "{colors.bodyLight}",
             },
           },
-          frosted: {
+          bodyAlpha: {
             value: {
-              base: "{colors.frostedLight}",
-              _dark: "{colors.frostedDark}",
+              base: "{colors.bodyLightAlpha}",
+              _dark: "{colors.bodyDarkAlpha}",
             },
           },
-          frostedInverted: {
+          bodyAlphaInverted: {
             value: {
-              base: "{colors.frostedDark}",
-              _dark: "{colors.frostedLight}",
+              base: "{colors.bodyDarkAlpha}",
+              _dark: "{colors.bodyLightAlpha}",
             },
           },
           backdrop: {
@@ -1972,19 +1978,19 @@ export const chakraConfig = defineConfig({
           subtle: {
             value: {
               base: "{colors.blue.50} !important",
-              _dark: "{colors.blue.950} !important",
+              _dark: "{colors.blue.900} !important",
             },
           },
           muted: {
             value: {
               base: "{colors.blue.100} !important",
-              _dark: "{colors.blue.900} !important",
+              _dark: "{colors.blue.800} !important",
             },
           },
           emphasized: {
             value: {
               base: "{colors.blue.200} !important",
-              _dark: "{colors.blue.800} !important",
+              _dark: "{colors.blue.700} !important",
             },
           },
           solid: {
@@ -2484,7 +2490,7 @@ export const chakraConfig = defineConfig({
         none: { value: "0" },
         sm: { value: "4px" },
         md: { value: "10px" },
-        lg: { value: "20px" },
+        lg: { value: "5px" },
         xl: { value: "50px" },
         backdrop: { value: "10px" },
       },
@@ -2495,39 +2501,193 @@ export const chakraConfig = defineConfig({
     layerStyles: {
       glass: {
         value: {
-          bg: "bg.body/50",
-          backdropFilter: "blur(3px)",
-          WebkitBackdropFilter: "blur(3px)",
-          boxShadow:
-            "inset -1px 1px 1px 0 rgba(255, 255, 255, 0.45), inset 1px -1px 1px 0 rgba(255, 255, 255, 0.25)",
+          bg: "bg.bodyAlpha",
+          backdropFilter: "blur(5px)",
+          WebkitBackdropFilter: "blur(5px)",
+          border: "1px solid",
+          borderColor: {
+            _light: "rgba(255, 255, 255, 0.35)",
+            _dark: "rgba(255, 255, 255, 0.08)",
+          },
+          boxShadow: {
+            _light:
+              "inset 0 1px 1px 0 rgba(255, 255, 255, 0.45), inset 1px 0 1px 0 rgba(255, 255, 255, 0.35), inset -1px -1px 1px 0 rgba(0, 0, 0, 0.02), inset 0 0 6px 0 rgba(255, 255, 255, 0.12), 0 4px 16px 0 rgba(0, 0, 0, 0.05)",
+            _dark:
+              "inset 0 1px 1px 0 rgba(255, 255, 255, 0.12), inset 1px 0 1px 0 rgba(255, 255, 255, 0.08), inset -1px -1px 1px 0 rgba(0, 0, 0, 0.15), inset 0 0 6px 0 rgba(255, 255, 255, 0.02), 0 4px 16px 0 rgba(0, 0, 0, 0.2)",
+          },
         },
       },
+      glassTop: {
+        value: {
+          bg: "bg.bodyAlpha",
+          backdropFilter: "blur(5px)",
+          WebkitBackdropFilter: "blur(5px)",
+          border: "1px solid",
+          borderColor: {
+            _light: "rgba(255, 255, 255, 0.35)",
+            _dark: "rgba(255, 255, 255, 0.08)",
+          },
+          boxShadow: {
+            _light:
+              "inset 0 1px 1px 0 rgba(255, 255, 255, 0.5), inset 0 -1px 1px 0 rgba(0, 0, 0, 0.02), inset 0 0 6px 0 rgba(255, 255, 255, 0.1), 0 4px 16px 0 rgba(0, 0, 0, 0.05)",
+            _dark:
+              "inset 0 1px 1px 0 rgba(255, 255, 255, 0.14), inset 0 -1px 1px 0 rgba(0, 0, 0, 0.15), inset 0 0 6px 0 rgba(255, 255, 255, 0.02), 0 4px 16px 0 rgba(0, 0, 0, 0.2)",
+          },
+        },
+      },
+      glassBottom: {
+        value: {
+          bg: "bg.bodyAlpha",
+          backdropFilter: "blur(5px)",
+          WebkitBackdropFilter: "blur(5px)",
+          border: "1px solid",
+          borderColor: {
+            _light: "rgba(255, 255, 255, 0.35)",
+            _dark: "rgba(255, 255, 255, 0.08)",
+          },
+          boxShadow: {
+            _light:
+              "inset 0 -1px 1px 0 rgba(255, 255, 255, 0.45), inset -1px 0 1px 0 rgba(255, 255, 255, 0.35), inset 1px 1px 1px 0 rgba(0, 0, 0, 0.02), inset 0 0 6px 0 rgba(255, 255, 255, 0.12), 0 4px 16px 0 rgba(0, 0, 0, 0.05)",
+            _dark:
+              "inset 0 -1px 1px 0 rgba(255, 255, 255, 0.12), inset -1px 0 1px 0 rgba(255, 255, 255, 0.08), inset 1px 1px 1px 0 rgba(0, 0, 0, 0.15), inset 0 0 6px 0 rgba(255, 255, 255, 0.02), 0 4px 16px 0 rgba(0, 0, 0, 0.2)",
+          },
+        },
+      },
+      glassTopRight: {
+        value: {
+          bg: "bg.bodyAlpha",
+          backdropFilter: "blur(5px)",
+          WebkitBackdropFilter: "blur(5px)",
+          border: "1px solid",
+          borderColor: {
+            _light: "rgba(255, 255, 255, 0.35)",
+            _dark: "rgba(255, 255, 255, 0.08)",
+          },
+          boxShadow: {
+            _light:
+              "inset 0 1px 1px 0 rgba(255, 255, 255, 0.45), inset -1px 0 1px 0 rgba(255, 255, 255, 0.35), inset 1px -1px 1px 0 rgba(0, 0, 0, 0.02), inset 0 0 6px 0 rgba(255, 255, 255, 0.12), 0 4px 16px 0 rgba(0, 0, 0, 0.05)",
+            _dark:
+              "inset 0 1px 1px 0 rgba(255, 255, 255, 0.12), inset -1px 0 1px 0 rgba(255, 255, 255, 0.08), inset 1px -1px 1px 0 rgba(0, 0, 0, 0.15), inset 0 0 6px 0 rgba(255, 255, 255, 0.02), 0 4px 16px 0 rgba(0, 0, 0, 0.2)",
+          },
+        },
+      },
+      glassBottomLeft: {
+        value: {
+          bg: "bg.bodyAlpha",
+          backdropFilter: "blur(5px)",
+          WebkitBackdropFilter: "blur(5px)",
+          border: "1px solid",
+          borderColor: {
+            _light: "rgba(255, 255, 255, 0.35)",
+            _dark: "rgba(255, 255, 255, 0.08)",
+          },
+          boxShadow: {
+            _light:
+              "inset 0 -1px 1px 0 rgba(255, 255, 255, 0.45), inset 1px 0 1px 0 rgba(255, 255, 255, 0.35), inset -1px 1px 1px 0 rgba(0, 0, 0, 0.02), inset 0 0 6px 0 rgba(255, 255, 255, 0.12), 0 4px 16px 0 rgba(0, 0, 0, 0.05)",
+            _dark:
+              "inset 0 -1px 1px 0 rgba(255, 255, 255, 0.12), inset 1px 0 1px 0 rgba(255, 255, 255, 0.08), inset -1px 1px 1px 0 rgba(0, 0, 0, 0.15), inset 0 0 6px 0 rgba(255, 255, 255, 0.02), 0 4px 16px 0 rgba(0, 0, 0, 0.2)",
+          },
+        },
+      },
+      glassTopLeft: {
+        value: {
+          bg: "bg.bodyAlpha",
+          backdropFilter: "blur(5px)",
+          WebkitBackdropFilter: "blur(5px)",
+          border: "1px solid",
+          borderColor: {
+            _light: "rgba(255, 255, 255, 0.35)",
+            _dark: "rgba(255, 255, 255, 0.08)",
+          },
+          boxShadow: {
+            _light:
+              "inset 0 1px 1px 0 rgba(255, 255, 255, 0.45), inset 1px 0 1px 0 rgba(255, 255, 255, 0.35), inset -1px -1px 1px 0 rgba(0, 0, 0, 0.02), inset 0 0 6px 0 rgba(255, 255, 255, 0.12), 0 4px 16px 0 rgba(0, 0, 0, 0.05)",
+            _dark:
+              "inset 0 1px 1px 0 rgba(255, 255, 255, 0.12), inset 1px 0 1px 0 rgba(255, 255, 255, 0.08), inset -1px -1px 1px 0 rgba(0, 0, 0, 0.15), inset 0 0 6px 0 rgba(255, 255, 255, 0.02), 0 4px 16px 0 rgba(0, 0, 0, 0.2)",
+          },
+        },
+      },
+      glassBottomRight: {
+        value: {
+          bg: "bg.bodyAlpha",
+          backdropFilter: "blur(5px)",
+          WebkitBackdropFilter: "blur(5px)",
+          border: "1px solid",
+          borderColor: {
+            _light: "rgba(255, 255, 255, 0.35)",
+            _dark: "rgba(255, 255, 255, 0.08)",
+          },
+          boxShadow: {
+            _light:
+              "inset 0 -1px 1px 0 rgba(255, 255, 255, 0.45), inset -1px 0 1px 0 rgba(255, 255, 255, 0.35), inset 1px 1px 1px 0 rgba(0, 0, 0, 0.02), inset 0 0 6px 0 rgba(255, 255, 255, 0.12), 0 4px 16px 0 rgba(0, 0, 0, 0.05)",
+            _dark:
+              "inset 0 -1px 1px 0 rgba(255, 255, 255, 0.12), inset -1px 0 1px 0 rgba(255, 255, 255, 0.08), inset 1px 1px 1px 0 rgba(0, 0, 0, 0.15), inset 0 0 6px 0 rgba(255, 255, 255, 0.02), 0 4px 16px 0 rgba(0, 0, 0, 0.2)",
+          },
+        },
+      },
+      glassTopBottom: {
+        value: {
+          bg: "bg.bodyAlpha",
+          backdropFilter: "blur(5px)",
+          WebkitBackdropFilter: "blur(5px)",
+          border: "1px solid",
+          borderColor: {
+            _light: "rgba(255, 255, 255, 0.35)",
+            _dark: "rgba(255, 255, 255, 0.08)",
+          },
+          boxShadow: {
+            _light:
+              "inset 0 1px 1px 0 rgba(255, 255, 255, 0.45), inset 0 -1px 1px 0 rgba(255, 255, 255, 0.35), inset 0 0 6px 0 rgba(255, 255, 255, 0.12), 0 4px 16px 0 rgba(0, 0, 0, 0.05)",
+            _dark:
+              "inset 0 1px 1px 0 rgba(255, 255, 255, 0.12), inset 0 -1px 1px 0 rgba(255, 255, 255, 0.08), inset 0 0 6px 0 rgba(255, 255, 255, 0.02), 0 4px 16px 0 rgba(0, 0, 0, 0.2)",
+          },
+        },
+      },
+      glassAll: {
+        value: {
+          bg: "bg.bodyAlpha",
+          backdropFilter: "blur(5px)",
+          WebkitBackdropFilter: "blur(5px)",
+          border: "1px solid",
+          borderColor: {
+            _light: "rgba(255, 255, 255, 0.35)",
+            _dark: "rgba(255, 255, 255, 0.08)",
+          },
+          boxShadow: {
+            _light:
+              "inset 0 1px 1px 0 rgba(255, 255, 255, 0.4), inset 0 -1px 1px 0 rgba(255, 255, 255, 0.3), inset 1px 0 1px 0 rgba(255, 255, 255, 0.35), inset -1px 0 1px 0 rgba(255, 255, 255, 0.25), inset 0 0 6px 0 rgba(255, 255, 255, 0.12), 0 4px 16px 0 rgba(0, 0, 0, 0.05)",
+            _dark:
+              "inset 0 1px 1px 0 rgba(255, 255, 255, 0.1), inset 0 -1px 1px 0 rgba(255, 255, 255, 0.08), inset 1px 0 1px 0 rgba(255, 255, 255, 0.08), inset -1px 0 1px 0 rgba(255, 255, 255, 0.06), inset 0 0 6px 0 rgba(255, 255, 255, 0.02), 0 4px 16px 0 rgba(0, 0, 0, 0.2)",
+          },
+        },
+      },
+
       frosted: {
         value: {
-          bg: "bg.frosted",
-          backdropFilter: "blur(10px)",
-          WebkitBackdropFilter: "blur(10px)",
+          bg: "bg.bodyAlpha",
+          backdropFilter: "blur(5px)",
+          WebkitBackdropFilter: "blur(5px)",
         },
       },
       frostedInverted: {
         value: {
           bg: "bg.frostedInverted",
-          backdropFilter: "blur(10px)",
-          WebkitBackdropFilter: "blur(10px)",
+          backdropFilter: "blur(5px)",
+          WebkitBackdropFilter: "blur(5px)",
         },
       },
       frostedLight: {
         value: {
           bg: "{colors.frostedLight}",
-          backdropFilter: "blur(10px)",
-          WebkitBackdropFilter: "blur(10px)",
+          backdropFilter: "blur(5px)",
+          WebkitBackdropFilter: "blur(5px)",
         },
       },
       frostedDark: {
         value: {
           bg: "{colors.frostedDark}",
-          backdropFilter: "blur(10px)",
-          WebkitBackdropFilter: "blur(10px)",
+          backdropFilter: "blur(5px)",
+          WebkitBackdropFilter: "blur(5px)",
         },
       },
     },

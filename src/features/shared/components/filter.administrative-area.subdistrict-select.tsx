@@ -38,7 +38,9 @@ export const FilterAdministrativeAreaSubdistrictSelect = (
   const {
     data: kelurahanOptionsData,
     isLoading,
+    isFetching,
     isError,
+    error,
     refetch,
   } = useFilterOptionsKelurahan({
     provinsiId: provinceId,
@@ -83,8 +85,13 @@ export const FilterAdministrativeAreaSubdistrictSelect = (
             : undefined,
         )
       }
-      isFetching={isLoading}
+      isFetching={isLoading || isFetching}
       isError={isError}
+      errorTitle={"Gagal Memuat Daftar Kelurahan / Desa"}
+      errorMessage={
+        error?.message ||
+        "Data batas wilayah kelurahan/desa belum tersedia di GeoServer."
+      }
       onRetry={() => void refetch()}
       disabled={disabled}
     />

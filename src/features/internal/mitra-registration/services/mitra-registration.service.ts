@@ -5,6 +5,7 @@ import {
   fetchMitraRegistrationDetailApi,
   fetchMitraRegistrationsApi,
   rejectMitraRegistrationApi,
+  resendMitraSsoCredentialsApi,
 } from "@/features/internal/mitra-registration/api/mitra-registration.api";
 import type {
   ApproveMitraRegistrationPayload,
@@ -12,6 +13,7 @@ import type {
   InternalMitraRegistrationListResponse,
   InternalMitraRegistrationQueryParams,
   RejectMitraRegistrationPayload,
+  ResendMitraSsoCredentialsPayload,
 } from "@/features/internal/mitra-registration/types/mitra-registration.type";
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -125,6 +127,8 @@ const normalizeMitraRegistrationItem = (raw: any): InternalMitraRegistrationItem
     rejectionReason: raw.rejectionReason ?? raw.rejection_reason ?? null,
     verifiedAt: raw.verifiedAt ?? raw.verified_at ?? null,
     verifiedBy: raw.verifiedBy ?? raw.verified_by ?? null,
+    ssoUsername: raw.ssoUsername ?? raw.sso_username ?? null,
+    ssoPassword: raw.ssoPassword ?? raw.sso_password ?? null,
     createdAt: raw.createdAt ?? raw.created_at ?? new Date().toISOString(),
     updatedAt: raw.updatedAt ?? raw.updated_at ?? undefined,
 
@@ -236,4 +240,11 @@ export const rejectInternalMitraRegistration = async (
     throw new Error(response?.message || "Gagal menolak pendaftaran mitra.");
   }
   return normalizeMitraRegistrationItem(raw);
+};
+
+export const resendInternalMitraSsoCredentials = async (
+  payload: ResendMitraSsoCredentialsPayload,
+  signal?: AbortSignal,
+) => {
+  return resendMitraSsoCredentialsApi(payload, signal);
 };

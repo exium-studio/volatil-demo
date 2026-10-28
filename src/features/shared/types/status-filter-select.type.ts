@@ -1,15 +1,13 @@
 // src/features/shared/types/status-filter-select.type.ts
 
-import type { FocusSelectOption } from "@/design-system/components/input/types/focus-select.type";
+import type {
+  FocusSelectInputProps,
+  FocusSelectOption,
+} from "@/design-system/components/input/types/focus-select.type";
 
-export type StatusFilterSelectProps = {
-  value?: string;
-  defaultValue?: string;
-  onValueChange?: (value: string) => void;
+export type StatusFilterSelectProps = Omit<
+  FocusSelectInputProps,
+  "options"
+> & {
   options?: FocusSelectOption[];
-  placeholder?: string;
-  modalKey?: string;
-  w?: string | number;
-  disabled?: boolean;
-  clearable?: boolean;
 };

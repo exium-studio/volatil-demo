@@ -12,10 +12,15 @@ export const useMapBaseMapStore = create<MapBaseMapState>()(
       is3D: false,
       setIs3D: (is3D) => set({ is3D }),
       toggle3D: () => set((state) => ({ is3D: !state.is3D })),
+      opacity: 1.0,
+      setOpacity: (opacity) => set({ opacity }),
     }),
     {
       name: "map-base-layer-config",
-      partialize: (state) => ({ activeStyleKey: state.activeStyleKey }),
+      partialize: (state) => ({
+        activeStyleKey: state.activeStyleKey,
+        opacity: state.opacity,
+      }),
     },
   ),
 );

@@ -47,5 +47,7 @@ export type SelectProps = Omit<
   onRetry?: () => void;
   errorTitle?: string;
   errorMessage?: string;
+  title?: string;
+  modalKey?: string;
 };
 

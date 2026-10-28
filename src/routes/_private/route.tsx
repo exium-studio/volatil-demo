@@ -1,7 +1,8 @@
 // src/routes/_private/route.tsx
 
+import { GisAppShell } from "@/design-system/components/shell/ui/gis-app-shell";
 import { ensureAuthenticatedUser } from "@/features/auth/services/auth-guard.service";
-import { createFileRoute, Outlet } from "@tanstack/react-router";
+import { createFileRoute } from "@tanstack/react-router";
 
 export const Route = createFileRoute("/_private")({
   beforeLoad: async () => {
@@ -11,5 +12,5 @@ export const Route = createFileRoute("/_private")({
 });
 
 function RouteComponent() {
-  return <Outlet />;
+  return <GisAppShell />;
 }

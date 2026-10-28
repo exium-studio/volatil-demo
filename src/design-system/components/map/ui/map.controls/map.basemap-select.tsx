@@ -1,11 +1,13 @@
 // src/design-system/components/map/ui/map.controls/map.basemap-select.tsx
 
 import { AppIcon } from "@/design-system/components/icon/ui/app-icon";
+import { Slider } from "@/design-system/components/input/ui/slider";
 import { InfoTip } from "@/design-system/components/input/ui/toggle-tip";
 import { Circle } from "@/design-system/components/layout/ui/box";
 import { Center } from "@/design-system/components/layout/ui/center";
 import { HStack, VStack } from "@/design-system/components/layout/ui/flex-box";
 import { Grid } from "@/design-system/components/layout/ui/grid";
+import { Separator } from "@/design-system/components/layout/ui/separator";
 import {
   MAP_BASEMAP_MAP,
   MAP_BASEMAP_OPTIONS_LIST,
@@ -16,6 +18,7 @@ import { MapOverlayContainer } from "@/design-system/components/map/ui/map.overl
 import { Image } from "@/design-system/components/media/ui/image";
 import { Popover } from "@/design-system/components/overlay/ui/popover";
 import { Tooltip } from "@/design-system/components/overlay/ui/tooltip";
+import { HeaderContainer } from "@/design-system/components/shell/ui/header-container";
 import { P } from "@/design-system/components/typography/ui/p";
 import { useColorMode } from "@/design-system/hooks/use-color-mode";
 import { useThemeStore } from "@/design-system/stores/theme-store";
@@ -23,7 +26,8 @@ import { MoonIcon, SunIcon } from "lucide-react";
 
 export const MapBasemapSelect = () => {
   // Stores
-  const { activeStyleKey, setActiveStyleKey } = useMapBaseMapStore();
+  const { activeStyleKey, setActiveStyleKey, opacity, setOpacity } =
+    useMapBaseMapStore();
   const { theme } = useThemeStore();
 
   // Hooks
@@ -94,14 +98,17 @@ export const MapBasemapSelect = () => {
       </Popover.Trigger>
 
       <Popover.Content>
-        <Popover.Header p={3} borderBottom={"1px solid"} borderColor={"border"}>
+        <HeaderContainer>
           <P fontWeight={"medium"}>{"Peta Dasar"}</P>
-        </Popover.Header>
+        </HeaderContainer>
+
+        <Separator borderColor={"bg.canvas"} />
 
         <Popover.Body
           className={"noScrollbar"}
           w={["full", null, "400px"]}
-          p={2}
+          px={"xs"}
+          py={"md"}
           overflowY={"auto"}
         >
           <Grid
@@ -183,6 +190,29 @@ export const MapBasemapSelect = () => {
               );
             })}
           </Grid>
+
+          <Separator borderColor={"bg.canvas"} my={"sm"} />
+
+          <VStack gap={"xs"} align={"stretch"} px={"xs"} pb={"2xs"}>
+            <HStack justify={"space-between"} gap={"md"} w={"full"}>
+              <P fontSize={"sm"} fontWeight={"medium"}>
+                {"Opasitas Peta Dasar"}
+              </P>
+
+              <P fontSize={"sm"} fontWeight={"semibold"} color={"fg.muted"}>
+                {`${Math.round(opacity * 100)}%`}
+              </P>
+            </HStack>
+
+            <Slider
+              value={[Math.round(opacity * 100)]}
+              min={0}
+              max={100}
+              step={1}
+              showValue={false}
+              onValueChange={(details) => setOpacity(details.value[0] / 100)}
+            />
+          </VStack>
         </Popover.Body>
       </Popover.Content>
     </Popover.Root>

@@ -5,12 +5,15 @@ import type {
   GeoServerWorkspaceLayerOption,
   GeoServerWorkspaceLayersResponse,
   GeoServerWorkspacesResponse,
+  MasterIgtLayerItem,
   MasterIgtLayersQueryParams,
   MasterIgtLayersResponse,
+  UpdateMasterIgtLayerAttributesPayload,
   UpdateMasterIgtLayerPayload,
 } from "@/features/internal/data-management/types/data-management.type";
 import {
   DUMMY_GEOSERVER_WORKSPACES,
+  DUMMY_MASTER_IGT_LAYERS,
   DUMMY_MASTER_IGT_LAYERS_RESPONSE,
   getGeoServerWorkspaceLayersFallback,
 } from "@/shared/constants/dummy-data/dummy-master-igt-layers";
@@ -30,7 +33,7 @@ export const fetchMasterIgtLayersApi = async (
         page: params?.page,
         pageSize: params?.pageSize,
         search: params?.search,
-        spatialBasis: params?.spatialBasis,
+        igtBasis: params?.igtBasis,
         isActive: params?.isActive,
       },
       signal,
@@ -64,6 +67,39 @@ export const fetchMasterIgtLayersApi = async (
     if (isDummyDataEnabled()) {
       console.warn("fetchMasterIgtLayersApi fallback to dummy data:", error);
       return DUMMY_MASTER_IGT_LAYERS_RESPONSE;
+    }
+    throw error;
+  }
+};
+
+export const fetchMasterIgtLayerByIdApi = async (
+  id: string,
+  signal?: AbortSignal,
+): Promise<MasterIgtLayerItem | null> => {
+  try {
+    const response = await apiClient.get<
+      ApiResponse<MasterIgtLayerItem> | MasterIgtLayerItem
+    >(`/api/internal/igt-layers/${id}`, { signal });
+
+    const resultData =
+      response && "data" in response && response.data
+        ? response.data
+        : (response as MasterIgtLayerItem);
+
+    if (resultData && typeof resultData === "object" && "id" in resultData) {
+      return resultData;
+    }
+
+    if (isDummyDataEnabled()) {
+      const found = DUMMY_MASTER_IGT_LAYERS.find((item) => item.id === id);
+      return found ?? null;
+    }
+
+    return null;
+  } catch (error) {
+    if (isDummyDataEnabled()) {
+      const found = DUMMY_MASTER_IGT_LAYERS.find((item) => item.id === id);
+      return found ?? null;
     }
     throw error;
   }
@@ -173,6 +209,33 @@ export const updateMasterIgtLayerApi = async (
     payload,
     { signal },
   );
+};
+
+export const updateMasterIgtLayerAttributesApi = async (
+  payload: UpdateMasterIgtLayerAttributesPayload,
+  signal?: AbortSignal,
+): Promise<ApiResponse<void>> => {
+  try {
+    return await apiClient.put<ApiResponse<void>>(
+      `/api/internal/igt-layers/${payload.id}/attributes`,
+      { attributes: payload.attributes },
+      { signal },
+    );
+  } catch (error) {
+    if (isDummyDataEnabled()) {
+      const found = DUMMY_MASTER_IGT_LAYERS.find((l) => l.id === payload.id);
+      if (found) {
+        found.attributes = payload.attributes;
+      }
+      return {
+        success: true,
+        message: "Whitelist atribut layer berhasil diperbarui (mode demo/dummy)",
+        data: undefined,
+        timestamp: new Date().toISOString(),
+      };
+    }
+    throw error;
+  }
 };
 
 export const createMasterIgtLayerApi = async (

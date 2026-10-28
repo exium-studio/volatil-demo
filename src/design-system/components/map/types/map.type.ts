@@ -28,9 +28,13 @@ export type MapLayerConfig =
 
 export type BaseLayerConfig = {
   id: string;
+  /** GeoServer qualified layer typeName (e.g. 'workspace:layer_name' or 'workspace') */
+  typeName?: string;
   /** Human-readable title of the layer */
   title?: string;
-  /** Spatial basis of this IGT layer ("bidang" or "kawasan"). */
+  /** IGT Basis of this layer ("bidang" or "kawasan"). */
+  igtBasis?: "bidang" | "kawasan";
+  /** Spatial basis alias for backward compatibility */
   spatialBasis?: "bidang" | "kawasan";
   /** Bounding box of the layer [minLon, minLat, maxLon, maxLat]. */
   bbox?: [number, number, number, number];
@@ -40,6 +44,8 @@ export type BaseLayerConfig = {
   opacity?: number;
   /** Layer stacking order index (lower = bottom, higher = top). */
   zIndex?: number;
+  /** Minimum zoom level to display the layer (default: 12) */
+  minZoom?: number;
   paint?: Record<string, unknown>;
   layout?: Record<string, unknown>;
 };
@@ -83,17 +89,21 @@ export type WmsRasterLayerConfig = BaseLayerConfig & {
 
 /** WFS-specific query configuration for an IGT layer */
 export type IgtLayerWfsConfig = {
+  url?: string;
+  baseUrl?: string;
   wfsTypeName: string;
-  wfsUrl?: string;
-  type?: "wfs-fill" | "wfs-line" | "wfs-circle" | "wfs-symbol";
-  version?: string;
-  srsName?: string;
+  wfsUrl: string;
+  type: "wfs-fill" | "wfs-line" | "wfs-circle" | "wfs-symbol";
+  version: string;
+  srsName: string;
 };
 
 /** WMS-specific tile rendering configuration for an IGT layer */
 export type IgtLayerWmsConfig = {
+  url?: string;
+  baseUrl?: string;
   layers: string;
-  wmsUrl?: string;
+  wmsUrl: string;
   tileSize?: number;
   format?: string;
   transparent?: boolean;
@@ -105,21 +115,43 @@ export type IgtLayerWmsConfig = {
 /** Centralized IGT Layer Item containing metadata, WFS query config, and WMS render config */
 export type IgtLayerItem = {
   id: string;
-  title?: string;
+  workspaceName?: string;
+  layerName?: string | null;
+  typeName?: string;
+  title: string;
+  igtBasis: "bidang" | "kawasan";
   spatialBasis: "bidang" | "kawasan";
-  bbox?: [number, number, number, number];
-  visible?: boolean;
-  defaultVisible?: boolean;
-  zIndex?: number;
+  bbox: [number, number, number, number];
+  visible: boolean;
+  defaultVisible: boolean;
+  zIndex: number;
+  minZoom?: number;
   wfs: IgtLayerWfsConfig;
   wms: IgtLayerWmsConfig;
 };
 
 import type { PaginationMeta } from "@/shared/types/common-response.type";
 
+export type MapLibreInternalMap = maplibregl.Map & {
+  style?: unknown;
+  _removed?: boolean;
+};
+
+export type MapLibreRasterSource = maplibregl.RasterTileSource & {
+  tiles?: string[];
+};
+
+export const isMapActive = (
+  map: maplibregl.Map | null,
+): map is MapLibreInternalMap => {
+  if (!map) return false;
+  const internal = map as unknown as { style?: unknown; _removed?: boolean };
+  return Boolean(internal.style && !internal._removed);
+};
+
 export type IgtLayersResponse = {
   items: IgtLayerItem[];
-  pagination?: PaginationMeta;
+  pagination: PaginationMeta;
 };
 
 /** Helper converter to build WmsRasterLayerConfig for map rendering from an IgtLayerItem */
@@ -127,24 +159,33 @@ export const getWmsRasterConfigFromIgtLayer = (
   igtLayer: IgtLayerItem,
   visible = true,
   opacity = 0.5,
-): WmsRasterLayerConfig => ({
-  id: igtLayer.id,
-  title: igtLayer.title,
-  type: "wms-raster",
-  spatialBasis: igtLayer.spatialBasis,
-  bbox: igtLayer.bbox,
-  visible,
-  opacity,
-  zIndex: igtLayer.zIndex,
-  wmsUrl: igtLayer.wms?.wmsUrl ?? "",
-  layers: igtLayer.wms?.layers ?? "",
-  wfsUrl: igtLayer.wfs?.wfsUrl,
-  wfsTypeName: igtLayer.wfs?.wfsTypeName,
-  tileSize: igtLayer.wms?.tileSize,
-  format: igtLayer.wms?.format,
-  transparent: igtLayer.wms?.transparent,
-  styles: igtLayer.wms?.styles,
-});
+): WmsRasterLayerConfig => {
+  const wmsUrl = igtLayer.wms?.wmsUrl ?? "";
+  const layers = igtLayer.wms?.layers || igtLayer.typeName || "";
+  const wfsUrl = igtLayer.wfs?.wfsUrl;
+  const wfsTypeName = igtLayer.wfs?.wfsTypeName || igtLayer.typeName || "";
+
+  return {
+    id: igtLayer.id,
+    typeName: igtLayer.typeName || layers || wfsTypeName,
+    title: igtLayer.title,
+    type: "wms-raster",
+    spatialBasis: igtLayer.spatialBasis,
+    bbox: igtLayer.bbox,
+    visible,
+    opacity,
+    zIndex: igtLayer.zIndex,
+    minZoom: igtLayer.minZoom ?? 12,
+    wmsUrl,
+    layers,
+    wfsUrl,
+    wfsTypeName,
+    tileSize: igtLayer.wms?.tileSize,
+    format: igtLayer.wms?.format,
+    transparent: igtLayer.wms?.transparent,
+    styles: igtLayer.wms?.styles,
+  };
+};
 
 export type UseGeolocationResult = {
   isActive: boolean;
@@ -154,9 +195,11 @@ export type UseGeolocationResult = {
 };
 
 export type MapViewPaddingOptions = {
-  contentPanelRef: import("react").RefObject<HTMLDivElement | null>;
-  sidebarPx: number;
-  isVertical: boolean;
+  contentPanelRef?: import("react").RefObject<HTMLElement | null>;
+  referenceElementRef?: import("react").RefObject<HTMLElement | null>;
+  referenceElementId?: string;
+  sidebarPx?: number;
+  isVertical?: boolean;
 };
 
 export type MapDrawStore = {
@@ -199,10 +242,14 @@ export type MapLayerState = {
     layerId: string,
     config: Partial<WmsRasterLayerConfig> | null,
   ) => void;
+  layerOrder: string[];
+  setLayerOrder: (order: string[]) => void;
+  reorderLayer: (sourceIndex: number, targetIndex: number) => void;
   resetLayers: () => void;
 };
 
 export type MapOverlayProps = {
   showMasterIgtLayerSelect?: boolean;
   showMyDataLayerSelect?: boolean;
+  showWorkspaceLayerSelect?: boolean;
 };

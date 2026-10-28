@@ -1,3 +1,6 @@
+// src/routes/_public/admin.tsx
+
+import { InternalSigninPage } from "@/features/auth/pages/internal.signin.page";
 import type { AdminSigninSearch } from "@/features/auth/types/signin.type";
 import { createFileRoute } from "@tanstack/react-router";
 
@@ -12,6 +15,6 @@ export const Route = createFileRoute("/_public/admin")({
 });
 
 function RouteComponent() {
-  return null;
+  return <InternalSigninPage />;
 }
 

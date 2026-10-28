@@ -10,7 +10,7 @@ export const UserSessionCard = (props: UserSessionCardProps) => {
 
   return (
     <VStack align={"center"} gap={"md"} w={"full"} {...restProps}>
-      <UserIdCard user={user} maxW={"200px"} withSignoutButton={false} />
+      <UserIdCard user={user} maxW={"180px"} withSignoutButton={false} />
 
       {children}
     </VStack>

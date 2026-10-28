@@ -20,16 +20,31 @@ export type MitraLayerSyncJobStatusConfig = {
 
 export type MitraLayerSyncJobItem = {
   id: string;
-  layerId: string;
-  layerTitle: string;
-  workspaceName: string;
-  typeName: string;
+  orderId?: string;
+  orderNumber?: string;
+  mitraId?: string;
+  mitraName?: string;
+  milestoneIndex?: number;
+  targetAt?: string;
+  layerId?: string;
+  layerTitle?: string;
+  workspaceName?: string;
+  typeName?: string;
   status: MitraLayerSyncJobStatus;
   progress: number; // 0 - 100
   totalMitraLayers: number;
   processedMitraLayers: number;
-  triggeredByUserId: string;
-  triggeredByUserName: string;
+  jobItems?: Array<{
+    orderItemId: number;
+    sourceLayerId: string;
+    layerTitle: string;
+    syncStatus: "queued" | "syncing" | "synced" | "failed";
+    errorMessage?: string;
+    startedAt?: string;
+    completedAt?: string;
+  }>;
+  triggeredByUserId?: string;
+  triggeredByUserName?: string;
   errorMessage?: string;
   createdAt: string;
   startedAt?: string;

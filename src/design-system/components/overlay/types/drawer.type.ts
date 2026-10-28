@@ -30,10 +30,11 @@ export type DrawerContextValue = {
   open?: () => void;
   close?: () => void;
   fullscreen: boolean;
-  setFullscreen: import("react").Dispatch<import("react").SetStateAction<boolean>>;
+  setFullscreen: import("react").Dispatch<
+    import("react").SetStateAction<boolean>
+  >;
   swipeToDismiss: boolean;
   placement: ChakraDrawer.RootProps["placement"];
   size: ChakraDrawer.RootProps["size"];
   closeOnInteractOutside?: boolean;
 };
-

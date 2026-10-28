@@ -109,10 +109,19 @@ export const MitraMyDataWorkspaceModalContent = (
 
       <Modal.Body gap={"md"} p={0}>
         {/* Workspace Credentials Summary */}
-        <Box px={6} py={3} borderBottomWidth={"1px"} borderColor={"border.subtle"}>
+        <Box
+          px={6}
+          py={3}
+          borderBottomWidth={"1px"}
+          borderColor={"border.subtle"}
+        >
           <SimpleGrid columns={[1, null, 2]} gap={4}>
             <VStack align={"start"} gap={1}>
-              <P fontSize={"2xs"} color={"fg.subtle"} textTransform={"uppercase"}>
+              <P
+                fontSize={"2xs"}
+                color={"fg.subtle"}
+                textTransform={"uppercase"}
+              >
                 {"Nama Workspace"}
               </P>
               <HStack align={"center"} gap={2}>
@@ -126,7 +135,11 @@ export const MitraMyDataWorkspaceModalContent = (
 
             {apiKey && (
               <VStack align={"start"} gap={1}>
-                <P fontSize={"2xs"} color={"fg.subtle"} textTransform={"uppercase"}>
+                <P
+                  fontSize={"2xs"}
+                  color={"fg.subtle"}
+                  textTransform={"uppercase"}
+                >
                   {"API Key Pengguna"}
                 </P>
                 <HStack align={"center"} gap={2}>
@@ -139,7 +152,12 @@ export const MitraMyDataWorkspaceModalContent = (
         </Box>
 
         {/* Tabbed Guides & Endpoints */}
-        <Tabs.Root defaultValue={"qgis"} flex={1} display={"flex"} flexDir={"column"}>
+        <Tabs.Root
+          defaultValue={"qgis"}
+          flex={1}
+          display={"flex"}
+          flexDir={"column"}
+        >
           <Tabs.List px={6} borderColor={"border.subtle"}>
             <Tabs.Trigger value={"qgis"}>
               <AppIcon icon={CompassIcon} size={"xs"} />
@@ -234,7 +252,9 @@ export const MitraMyDataWorkspaceModalContent = (
                       <P as={"span"} fontWeight={"semibold"}>
                         {"Connect"}
                       </P>
-                      {" → Seluruh layer IGT aktif Anda otomatis tampil dan siap ditambahkan ke peta."}
+                      {
+                        " → Seluruh layer IGT aktif Anda otomatis tampil dan siap ditambahkan ke peta."
+                      }
                     </P>
                   </HStack>
                 </VStack>
@@ -243,7 +263,12 @@ export const MitraMyDataWorkspaceModalContent = (
               <Separator borderColor={"border.subtle"} />
 
               {/* Auto sync info */}
-              <HStack align={"center"} gap={2} fontSize={"xs"} color={"fg.muted"}>
+              <HStack
+                align={"center"}
+                gap={2}
+                fontSize={"xs"}
+                color={"fg.muted"}
+              >
                 <AppIcon icon={SparklesIcon} size={"xs"} />
                 <P>
                   {
@@ -307,7 +332,9 @@ export const MitraMyDataWorkspaceModalContent = (
                   <HStack align={"start"} gap={2}>
                     <Badge size={"xs"}>{"3"}</Badge>
                     <P>
-                      {"Tempelkan URL WMS di atas pada kolom Server URL, lalu klik "}
+                      {
+                        "Tempelkan URL WMS di atas pada kolom Server URL, lalu klik "
+                      }
                       <P as={"span"} fontWeight={"semibold"}>
                         {"OK"}
                       </P>
@@ -318,7 +345,9 @@ export const MitraMyDataWorkspaceModalContent = (
                   <HStack align={"start"} gap={2}>
                     <Badge size={"xs"}>{"4"}</Badge>
                     <P>
-                      {"Buka folder server baru di panel Catalog untuk menampilkan seluruh layer IGT."}
+                      {
+                        "Buka folder server baru di panel Catalog untuk menampilkan seluruh layer IGT."
+                      }
                     </P>
                   </HStack>
                 </VStack>
@@ -336,7 +365,11 @@ export const MitraMyDataWorkspaceModalContent = (
                 </P>
 
                 <VStack align={"start"} gap={1}>
-                  <P fontSize={"2xs"} color={"fg.subtle"} textTransform={"uppercase"}>
+                  <P
+                    fontSize={"2xs"}
+                    color={"fg.subtle"}
+                    textTransform={"uppercase"}
+                  >
                     {"Workspace WMS (Raster / Peta Visual)"}
                   </P>
                   <Url
@@ -347,7 +380,11 @@ export const MitraMyDataWorkspaceModalContent = (
                 </VStack>
 
                 <VStack align={"start"} gap={1}>
-                  <P fontSize={"2xs"} color={"fg.subtle"} textTransform={"uppercase"}>
+                  <P
+                    fontSize={"2xs"}
+                    color={"fg.subtle"}
+                    textTransform={"uppercase"}
+                  >
                     {"Workspace WFS (Vektor Fitur & Geometri)"}
                   </P>
                   <Url
@@ -368,7 +405,11 @@ export const MitraMyDataWorkspaceModalContent = (
 
                 <SimpleGrid columns={[1, null, 2]} gap={2}>
                   <VStack align={"start"} gap={1}>
-                    <P fontSize={"2xs"} color={"fg.subtle"} textTransform={"uppercase"}>
+                    <P
+                      fontSize={"2xs"}
+                      color={"fg.subtle"}
+                      textTransform={"uppercase"}
+                    >
                       {"Base WMS"}
                     </P>
                     <Url
@@ -379,7 +420,11 @@ export const MitraMyDataWorkspaceModalContent = (
                   </VStack>
 
                   <VStack align={"start"} gap={1}>
-                    <P fontSize={"2xs"} color={"fg.subtle"} textTransform={"uppercase"}>
+                    <P
+                      fontSize={"2xs"}
+                      color={"fg.subtle"}
+                      textTransform={"uppercase"}
+                    >
                       {"Base WFS"}
                     </P>
                     <Url

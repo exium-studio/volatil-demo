@@ -54,7 +54,7 @@ export async function fetchAdminBoundaryPolygon(
   }
 
   if (level === "kelurahan" && kelurahan && kelurahan.trim() !== "") {
-    clauses.push(`WADMKD ILIKE '${escapeCql(kelurahan)}'`);
+    clauses.push(`${config.attributeKey} ILIKE '${escapeCql(kelurahan)}'`);
   }
 
   // Fallback if no hierarchical clauses were added
@@ -64,7 +64,7 @@ export async function fetchAdminBoundaryPolygon(
 
   const cqlFilter = clauses.join(" AND ");
 
-  const result = await fetchWfs({
+  let result = await fetchWfs({
     typeName: config.typeName,
     wfsUrl: config.wfsUrl,
     version: "2.0.0",
@@ -73,7 +73,21 @@ export async function fetchAdminBoundaryPolygon(
     signal,
   });
 
-  const features = result.features ?? [];
+  let features = result.features ?? [];
+
+  // Fallback: If strict parent hierarchy returned no features, query by target level attribute alone
+  if (features.length === 0 && clauses.length > 1) {
+    const fallbackFilter = `${config.attributeKey} ILIKE '${escapeCql(name)}'`;
+    result = await fetchWfs({
+      typeName: config.typeName,
+      wfsUrl: config.wfsUrl,
+      version: "2.0.0",
+      srsName: "EPSG:4326",
+      cqlFilter: fallbackFilter,
+      signal,
+    });
+    features = result.features ?? [];
+  }
   if (features.length === 0) {
     return null;
   }

@@ -12,6 +12,7 @@ export type LayerAttributeTarget =
       id: string;
       title?: string | null;
       label?: string | null;
+      igtBasis?: "bidang" | "kawasan";
       spatialBasis?: "bidang" | "kawasan";
       wfsTypeName?: string;
       wmsLayers?: string;
@@ -20,19 +21,25 @@ export type LayerAttributeTarget =
       externalWfsUrl?: string | null;
       externalWmsUrl?: string | null;
       bbox?: [number, number, number, number] | null;
+      apiKey?: string | null;
       wfs?: {
-        wfsTypeName: string;
+        wfsTypeName?: string;
         wfsUrl?: string;
-      };
+        url?: string;
+        baseUrl?: string;
+      } | null;
       wms?: {
-        layers: string;
+        layers?: string;
         wmsUrl?: string;
-      };
+        url?: string;
+        baseUrl?: string;
+      } | null;
     };
 
 export type LayerAttributeTableViewProps = {
   layer?: LayerAttributeTarget | null;
   cqlFilter?: string;
+  apiKey?: string | null;
   showActions?: boolean;
   canBatchSelect?: boolean;
   batchActions?: DataViewBatchActionsGenerator[];

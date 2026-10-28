@@ -74,6 +74,23 @@ export const useMapLayerStore = create<MapLayerState>((set) => ({
       }
       return { customLayerConfigs: next };
     }),
+  layerOrder: [],
+  setLayerOrder: (layerOrder) => set({ layerOrder }),
+  reorderLayer: (sourceIndex, targetIndex) =>
+    set((state) => {
+      const next = [...state.layerOrder];
+      if (
+        sourceIndex < 0 ||
+        sourceIndex >= next.length ||
+        targetIndex < 0 ||
+        targetIndex >= next.length
+      ) {
+        return state;
+      }
+      const [moved] = next.splice(sourceIndex, 1);
+      next.splice(targetIndex, 0, moved);
+      return { layerOrder: next };
+    }),
   resetLayers: () =>
     set({
       globalOpacity: 1.0,
@@ -81,5 +98,6 @@ export const useMapLayerStore = create<MapLayerState>((set) => ({
       layerOpacities: {},
       enabledSymbologyLayerIds: {},
       customLayerConfigs: {},
+      layerOrder: [],
     }),
 }));

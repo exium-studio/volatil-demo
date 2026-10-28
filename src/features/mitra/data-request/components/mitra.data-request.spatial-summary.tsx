@@ -1,20 +1,24 @@
 // src/features/mitra/data-request/components/mitra.data-request.spatial-summary.tsx
 
+import { IconButton } from "@/design-system/components/button/ui/button";
 import { Alert } from "@/design-system/components/feedback/ui/alert";
 import { Loader } from "@/design-system/components/feedback/ui/loader";
 import { Progress } from "@/design-system/components/feedback/ui/progress";
 import { Skeleton } from "@/design-system/components/feedback/ui/skeleton";
+import { StateRetry } from "@/design-system/components/feedback/ui/state.retry";
 import { AppIcon } from "@/design-system/components/icon/ui/app-icon";
 import { Switch } from "@/design-system/components/input/ui/switch";
 import { HStack, VStack } from "@/design-system/components/layout/ui/flex-box";
 import { Separator } from "@/design-system/components/layout/ui/separator";
+import { Tooltip } from "@/design-system/components/overlay/ui/tooltip";
+import { List } from "@/design-system/components/typography/ui/list";
 import { P, TNum } from "@/design-system/components/typography/ui/p";
 import { FormatNumber } from "@/design-system/components/utilities/ui/fornat-number";
 import { usePricingPolicy } from "@/features/mitra/data-request/hooks/use-pricing-policy";
 import { useMitraDataRequestCalculationStore } from "@/features/mitra/data-request/stores/mitra.data-request-calculation.store";
 import type { MitraDataRequestSpatialSummaryProps } from "@/features/mitra/data-request/types/mitra.data-request.spatial-summary.type";
 import { formatNumber } from "@/shared/utils/formatter/number.formatter";
-import { ShieldAlertIcon } from "lucide-react";
+import { FocusIcon } from "lucide-react";
 import { memo } from "react";
 
 export const MitraDataRequestSpatialSummary = memo(
@@ -27,15 +31,21 @@ export const MitraDataRequestSpatialSummary = memo(
       subtotalKawasanPrice = 0,
       pricePerBidang: propPricePerBidang,
       pricePerKawasanHa: propPricePerKawasanHa,
+      minBidangCount: propMinBidangCount,
+      minKawasanHa: propMinKawasanHa,
+      calculatedPolicy,
       estimatedTotalPrice = 0,
-      isPurchaseLimitValid = true,
-      purchaseLimitMessage,
       isCalculating: propIsCalculating,
       progressMessage: propProgressMessage,
       progressPercentage: propProgressPercentage,
-      hasCoveragePolygon = false,
-      isCoverageVisible = true,
-      onToggleCoverageVisible,
+      hasKawasanCoveragePolygon = false,
+      isKawasanCoverageVisible = true,
+      isBidangVisible = true,
+      isFetchingBidang = false,
+      onToggleKawasanCoverageVisible,
+      onToggleBidangVisible,
+      onFlyToKawasanCoverage,
+      onFlyToBidang,
     } = props;
 
     // Stores
@@ -60,9 +70,29 @@ export const MitraDataRequestSpatialSummary = memo(
       propProgressPercentage ?? storeProgressPercentage;
 
     const effectivePricePerBidang =
-      propPricePerBidang ?? pricingPolicy.pricePerBidang;
+      propPricePerBidang ??
+      calculatedPolicy?.pricePerBidang ??
+      pricingPolicy.pricePerBidang;
     const effectivePricePerKawasanHa =
-      propPricePerKawasanHa ?? pricingPolicy.pricePerKawasanHa;
+      propPricePerKawasanHa ??
+      calculatedPolicy?.pricePerKawasanHa ??
+      pricingPolicy.pricePerKawasanHa;
+
+    const effectiveMinBidangCount =
+      propMinBidangCount ??
+      calculatedPolicy?.minimumBidangCount ??
+      pricingPolicy.minBidangCount;
+    const effectiveMinKawasanHa =
+      propMinKawasanHa ??
+      calculatedPolicy?.minimumKawasanHa ??
+      pricingPolicy.minKawasanHa;
+
+    // Show inline StateRetry if policy query failed and no policy is available from SSE calculation
+    const isPolicyError =
+      pricingPolicy.isError &&
+      !calculatedPolicy &&
+      !propMinBidangCount &&
+      !propPricePerBidang;
 
     if (effectiveIsCalculating) {
       return (
@@ -140,68 +170,101 @@ export const MitraDataRequestSpatialSummary = memo(
       );
     }
 
-    // Validation logic against purchase policies with OR logic
-    const isBidangBelowMin =
-      totalBidangCount > 0 &&
-      pricingPolicy.minBidangCount > 0 &&
-      totalBidangCount < pricingPolicy.minBidangCount;
+    if (isPolicyError) {
+      return (
+        <StateRetry
+          title={"Gagal memuat kebijakan tarif"}
+          description={
+            pricingPolicy.error?.message ||
+            "Terjadi kesalahan saat memuat batas minimum dan tarif layanan."
+          }
+          onRetry={pricingPolicy.refetch}
+        />
+      );
+    }
 
-    const isKawasanBelowMin =
-      totalKawasanAreaHa > 0 &&
-      pricingPolicy.minKawasanHa > 0 &&
-      totalKawasanAreaHa < pricingPolicy.minKawasanHa;
+    // Validation: valid jika count/area >= minimum policy limit
+    const isBidangValid = totalBidangCount >= effectiveMinBidangCount;
+    const isKawasanValid = totalKawasanAreaHa >= effectiveMinKawasanHa;
 
-    const hasValidBidang =
-      totalBidangCount >= pricingPolicy.minBidangCount && totalBidangCount > 0;
-    const hasValidKawasan =
-      totalKawasanAreaHa >= pricingPolicy.minKawasanHa &&
-      totalKawasanAreaHa > 0;
+    const isOrValidForCheckout = isBidangValid || isKawasanValid;
 
-    const hasAnyLimitViolation =
-      isBidangBelowMin || isKawasanBelowMin || isPurchaseLimitValid === false;
-
-    // Logika OR: Jika salah satu valid (misal kawasan valid tapi bidang tidak), maka tetap valid untuk checkout
-    const isOrValidForCheckout = hasValidBidang || hasValidKawasan;
-
-    // Jika OR valid (bisa checkout untuk yang valid), gunakan warna orange (warning)
-    // Jika KEDUA-DUANYA tidak valid (tidak bisa checkout sama sekali), gunakan warna red (error)
-    const isOrangeWarning =
-      isOrValidForCheckout && (isBidangBelowMin || isKawasanBelowMin);
-
-    const displayAlertMessage = (() => {
-      if (purchaseLimitMessage) return purchaseLimitMessage;
-      if (isBidangBelowMin && isKawasanBelowMin) {
-        return `Minimum pembelian belum terpenuhi (Bidang: min ${formatNumber(pricingPolicy.minBidangCount)} bidang, Kawasan: min ${formatNumber(pricingPolicy.minKawasanHa)} ha).`;
-      }
-      if (isBidangBelowMin) {
-        return `Minimum pembelian untuk bidang tanah adalah ${formatNumber(pricingPolicy.minBidangCount)} bidang (saat ini: ${formatNumber(totalBidangCount)} bidang).`;
-      }
-      if (isKawasanBelowMin) {
-        return `Minimum pembelian untuk kawasan adalah ${formatNumber(pricingPolicy.minKawasanHa)} ha (saat ini: ${formatNumber(totalKawasanAreaHa, { maximumFractionDigits: 2 })} ha).`;
-      }
-      return "Total permohonan melebihi batas pembelian (purchase limit) akun Anda.";
-    })();
+    const calculatedSubtotalBidang = subtotalBidangPrice;
+    const calculatedSubtotalKawasan = subtotalKawasanPrice;
+    const calculatedTotalPrice = estimatedTotalPrice;
 
     return (
       <VStack gap={"md"}>
-        {/* Coverage Layer Switch (Only rendered if coverage polygon exists) */}
-        {hasCoveragePolygon && onToggleCoverageVisible && (
-          <HStack justify={"space-between"} align={"center"}>
+        {/* Toggle Selected Layer Bidang */}
+        {totalBidangCount > 0 && onToggleBidangVisible && (
+          <HStack align={"center"} justify={"space-between"} gap={"md"}>
+            <HStack align={"center"} gap={"xs"}>
+              <P>{"Tampilkan Cakupan Bidang"}</P>
+
+              {isFetchingBidang && <Loader size={"xs"} />}
+            </HStack>
+
+            <HStack align={"center"} gap={"xs"}>
+              <Switch
+                checked={isBidangVisible}
+                disabled={isFetchingBidang}
+                onCheckedChange={onToggleBidangVisible}
+                tooltip={
+                  isBidangVisible
+                    ? "Sembunyikan Cakupan Bidang"
+                    : "Tampilkan Cakupan Bidang"
+                }
+              />
+
+              {onFlyToBidang && (
+                <Tooltip content={"Zoom ke Cakupan Bidang"}>
+                  <IconButton
+                    variant={"outline"}
+                    onClick={onFlyToBidang}
+                    aria-label={"Zoom ke Cakupan Bidang"}
+                  >
+                    <AppIcon icon={FocusIcon} />
+                  </IconButton>
+                </Tooltip>
+              )}
+            </HStack>
+          </HStack>
+        )}
+
+        {/* Toggle Selected Layer Cakupan Kawasan  */}
+        {hasKawasanCoveragePolygon && onToggleKawasanCoverageVisible && (
+          <HStack align={"center"} justify={"space-between"} gap={"md"}>
             <HStack gap={"xs"} align={"center"}>
               <P>{"Tampilkan Cakupan Kawasan"}</P>
             </HStack>
 
-            <Switch
-              checked={isCoverageVisible}
-              onCheckedChange={onToggleCoverageVisible}
-              tooltip={
-                isCoverageVisible
-                  ? "Sembunyikan Cakupan Kawasan"
-                  : "Tampilkan Cakupan Kawasan"
-              }
-            />
+            <HStack gap={"xs"} align={"center"}>
+              <Switch
+                checked={isKawasanCoverageVisible}
+                onCheckedChange={onToggleKawasanCoverageVisible}
+                tooltip={
+                  isKawasanCoverageVisible
+                    ? "Sembunyikan Cakupan Kawasan"
+                    : "Tampilkan Cakupan Kawasan"
+                }
+              />
+
+              {onFlyToKawasanCoverage && (
+                <Tooltip content={"Zoom ke Cakupan Kawasan"}>
+                  <IconButton
+                    variant={"outline"}
+                    onClick={onFlyToKawasanCoverage}
+                    aria-label={"Zoom ke Cakupan Kawasan"}
+                  >
+                    <AppIcon icon={FocusIcon} />
+                  </IconButton>
+                </Tooltip>
+              )}
+            </HStack>
           </HStack>
         )}
+
+        <Separator variant={"dashed"} />
 
         {/* Pricing Subtotal & Details */}
         <VStack gap={"sm"} align={"stretch"} fontSize={"sm"}>
@@ -213,31 +276,31 @@ export const MitraDataRequestSpatialSummary = memo(
               </P>
 
               <P>
-                {totalBidangCount > 0 ? (
-                  <>
-                    <TNum>{formatNumber(totalBidangCount)}</TNum>
-                    {" bidang × "}
-                    <FormatNumber
-                      value={effectivePricePerBidang}
-                      style={"currency"}
-                      currency={"IDR"}
-                      maximumFractionDigits={0}
-                    />
-                  </>
-                ) : (
-                  "0 bidang"
-                )}
+                <TNum>{formatNumber(totalBidangCount)}</TNum>
+                {" bidang × "}
+                <FormatNumber
+                  value={effectivePricePerBidang}
+                  style={"currency"}
+                  currency={"IDR"}
+                  maximumFractionDigits={0}
+                />
               </P>
             </VStack>
 
-            <P fontWeight={"semibold"}>
-              <FormatNumber
-                value={subtotalBidangPrice}
-                style={"currency"}
-                currency={"IDR"}
-                maximumFractionDigits={0}
-              />
-            </P>
+            {isBidangValid ? (
+              <P fontWeight={"semibold"}>
+                <FormatNumber
+                  value={calculatedSubtotalBidang}
+                  style={"currency"}
+                  currency={"IDR"}
+                  maximumFractionDigits={0}
+                />
+              </P>
+            ) : (
+              <P color={"fg.error"} fontWeight={"medium"}>
+                {"Tidak valid"}
+              </P>
+            )}
           </HStack>
 
           {/* Subtotal Kawasan */}
@@ -248,64 +311,96 @@ export const MitraDataRequestSpatialSummary = memo(
               </P>
 
               <P>
-                {totalKawasanAreaHa > 0 ? (
-                  <>
-                    <TNum>
-                      {formatNumber(totalKawasanAreaHa, {
-                        maximumFractionDigits: 2,
-                      })}
-                    </TNum>
-                    {" ha × "}
-                    <FormatNumber
-                      value={effectivePricePerKawasanHa}
-                      style={"currency"}
-                      currency={"IDR"}
-                      maximumFractionDigits={0}
-                    />
-                  </>
-                ) : (
-                  "0 ha"
-                )}
+                <TNum>
+                  {formatNumber(totalKawasanAreaHa, {
+                    maximumFractionDigits: 2,
+                  })}
+                </TNum>
+                {" ha × "}
+                <FormatNumber
+                  value={effectivePricePerKawasanHa}
+                  style={"currency"}
+                  currency={"IDR"}
+                  maximumFractionDigits={0}
+                />
               </P>
             </VStack>
 
-            <P fontWeight={"semibold"}>
-              <FormatNumber
-                value={subtotalKawasanPrice}
-                style={"currency"}
-                currency={"IDR"}
-                maximumFractionDigits={0}
-              />
-            </P>
+            {isKawasanValid ? (
+              <P fontWeight={"semibold"}>
+                <FormatNumber
+                  value={calculatedSubtotalKawasan}
+                  style={"currency"}
+                  currency={"IDR"}
+                  maximumFractionDigits={0}
+                />
+              </P>
+            ) : (
+              <P color={"fg.error"} fontWeight={"medium"}>
+                {"Tidak valid"}
+              </P>
+            )}
           </HStack>
 
-          <Separator variant={"dashed"} borderColor={"border.subtle"} />
+          <Separator variant={"dashed"} />
 
           {/* Total Estimasi */}
           <HStack justify={"space-between"} align={"center"}>
             <P fontWeight={"medium"}>{"Total Estimasi"}</P>
 
-            <P fontSize={"lg"} fontWeight={"bold"} color={"blue.fg"}>
-              <FormatNumber
-                value={estimatedTotalPrice}
-                style={"currency"}
-                currency={"IDR"}
-                maximumFractionDigits={0}
-              />
-            </P>
+            {isOrValidForCheckout && calculatedTotalPrice > 0 ? (
+              <P fontSize={"lg"} fontWeight={"bold"} color={"blue.fg"}>
+                <FormatNumber
+                  value={calculatedTotalPrice}
+                  style={"currency"}
+                  currency={"IDR"}
+                  maximumFractionDigits={0}
+                />
+              </P>
+            ) : (
+              <P fontWeight={"medium"} color={"fg.error"}>
+                {"Tidak valid"}
+              </P>
+            )}
           </HStack>
         </VStack>
 
         {/* Limit Warning Notice */}
-        {hasAnyLimitViolation && (
+        {(!isBidangValid || !isKawasanValid) && (
           <Alert.Root
-            status={isOrangeWarning ? "warning" : "error"}
-            colorPalette={isOrangeWarning ? "orange" : "red"}
+            status={"error"}
+            colorPalette={"red"}
             variant={"subtle"}
             mt={1}
           >
-            <AppIcon icon={ShieldAlertIcon} />
-            <Alert.Description>{displayAlertMessage}</Alert.Description>
+            <Alert.Indicator />
+
+            <Alert.Content>
+              <Alert.Title>Peringatan batas minimum pesanan</Alert.Title>
+
+              <Alert.Description>
+                <List.Root
+                  variant={"plain"}
+                  fontSize={"xs"}
+                  align={"start"}
+                  gap={"2xs"}
+                >
+                  {!isBidangValid && (
+                    <List.Item>
+                      <List.Indicator color={"fg.error"}>{"•"}</List.Indicator>
+                      {`Minimum pembelian bidang: ${formatNumber(effectiveMinBidangCount)} bidang (saat ini: ${formatNumber(totalBidangCount)} bidang)`}
+                    </List.Item>
+                  )}
+
+                  {!isKawasanValid && (
+                    <List.Item>
+                      <List.Indicator color={"fg.error"}>{"•"}</List.Indicator>
+                      {`Minimum pembelian kawasan: ${formatNumber(effectiveMinKawasanHa)} ha (saat ini: ${formatNumber(totalKawasanAreaHa, { maximumFractionDigits: 2 })} ha)`}
+                    </List.Item>
+                  )}
+                </List.Root>
+              </Alert.Description>
+            </Alert.Content>
           </Alert.Root>
         )}
       </VStack>

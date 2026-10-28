@@ -1,5 +1,10 @@
 // src/features/mitra/data-request/types/mitra.data-request.spatial-summary.type.ts
 
+import type {
+  CalculateSpatialPolicy,
+  CalculateSpatialValidation,
+} from "@/features/mitra/data-request/types/mitra.data-request.calculation.type";
+
 export type MitraDataRequestSpatialSummaryProps = {
   totalBidangCount?: number;
   totalKawasanCount?: number;
@@ -8,6 +13,10 @@ export type MitraDataRequestSpatialSummaryProps = {
   subtotalKawasanPrice?: number;
   pricePerBidang?: number;
   pricePerKawasanHa?: number;
+  minBidangCount?: number;
+  minKawasanHa?: number;
+  calculatedPolicy?: CalculateSpatialPolicy;
+  validation?: CalculateSpatialValidation;
   estimatedTotalPrice?: number;
   isPurchaseLimitValid?: boolean;
   purchaseLimitMessage?: string;
@@ -15,13 +24,20 @@ export type MitraDataRequestSpatialSummaryProps = {
   progressMessage?: string;
   progressPercentage?: number;
   hasAoiPolygon?: boolean;
-  hasCoveragePolygon?: boolean;
+  hasKawasanCoveragePolygon?: boolean;
+  hasBidangLayer?: boolean;
+  hasKawasanLayer?: boolean;
   aoiColorPalette?: string;
   isAoiVisible?: boolean;
-  isCoverageVisible?: boolean;
+  isKawasanCoverageVisible?: boolean;
+  isBidangVisible?: boolean;
+  isFetchingBidang?: boolean;
   selectionType?: string;
   onToggleAoiVisible?: () => void;
-  onToggleCoverageVisible?: () => void;
+  onToggleKawasanCoverageVisible?: () => void;
+  onToggleBidangVisible?: () => void;
   onFlyToAoi?: () => void;
-  onFlyToCoverage?: () => void;
+  onFlyToKawasanCoverage?: () => void;
+  onFlyToBidang?: () => void;
 };
+

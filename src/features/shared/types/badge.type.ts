@@ -8,7 +8,6 @@ import type {
 } from "@/features/mitra/cart/types/mitra.cart.order.type";
 import type {
   MitraRegistrationStatus,
-  MyDataStatus,
   OrderStatus,
   TransactionStatus,
 } from "@/shared/types/status.type";
@@ -37,11 +36,6 @@ export type OrderStatusBadgeProps = Omit<BadgeProps, "children"> & {
 
 export type TransactionStatusBadgeProps = Omit<BadgeProps, "children"> & {
   children?: TransactionStatus | (string & {});
-  showIcon?: boolean;
-};
-
-export type MyDataStatusBadgeProps = Omit<BadgeProps, "children"> & {
-  children?: MyDataStatus | (string & {});
   showIcon?: boolean;
 };
 

@@ -21,6 +21,7 @@ export type BackendAdminUserItem = {
   organizationName: string | null;
   joinedAt: string;
   updatedAt?: string;
+  deletedAt?: string | null;
   totalPurchases?: number;
   totalPlotsPurchased?: number;
   totalAreaPurchasedHa?: number;
@@ -44,6 +45,8 @@ export type AdminUsersApiResponse = ApiResponse<BackendAdminUserItem[]> & {
 };
 
 export type AdminUserDetailApiResponse = ApiResponse<BackendAdminUserItem>;
+
+export type DeleteAdminUserApiResponse = ApiResponse<{ id: number; message?: string }>;
 
 export type AdminUsersStatisticsApiResponse =
   ApiResponse<BackendAdminUsersStatistics>;

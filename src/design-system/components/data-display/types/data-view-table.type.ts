@@ -104,7 +104,7 @@ export type FormattedTableHeader = {
   th: ReactNode;
   sortable?: boolean;
   align?: "start" | "center" | "end";
-  headerCellProps?: StackProps;
+  cellProps?: StackProps;
 };
 
 export type FormattedTableColumn = {
@@ -114,12 +114,10 @@ export type FormattedTableColumn = {
   align?: "start" | "center" | "end";
   dataType?: DataViewTableColumnDataType;
   dim?: boolean;
-  bodyCellProps?: StackProps;
+  cellProps?: StackProps;
 };
 
-export type DataViewTableContextValue<
-  T = Record<string, unknown>,
-> = {
+export type DataViewTableContextValue<T = Record<string, unknown>> = {
   headers: FormattedTableHeader[];
   items: FormattedListItem<T>[];
   page?: number;
@@ -144,6 +142,8 @@ export type DataViewTableContextValue<
   selectAllItems: (isChecked: boolean) => void;
   clearSelectedItems: () => void;
   canBatchSelect: boolean;
+  activeItemMenuId?: string | null;
+  setActiveItemMenuId?: (id: string | null) => void;
   renderTdCell?: (
     column: FormattedTableColumn,
     item: FormattedListItem<T>,
@@ -156,4 +156,3 @@ export type UseDataListSortOptions = {
   initialColumnIndex?: number;
   initialDirection?: "asc" | "desc";
 };
-

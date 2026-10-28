@@ -1,19 +1,18 @@
 // src/design-system/components/input/ui/focus-select.tsx
 
 import { Button } from "@/design-system/components/button/ui/button";
+import { Loader } from "@/design-system/components/feedback/ui/loader";
 import { Skeleton } from "@/design-system/components/feedback/ui/skeleton";
-import { NoResultState } from "@/design-system/components/feedback/ui/state.no-result";
-import { RetryState } from "@/design-system/components/feedback/ui/state.retry";
+import { StateNoResult } from "@/design-system/components/feedback/ui/state.no-result";
+import { StateRetry } from "@/design-system/components/feedback/ui/state.retry";
 import type { AppIconProps } from "@/design-system/components/icon/types/app-icon.type";
 import { AppIcon } from "@/design-system/components/icon/ui/app-icon";
-import {
-  FieldContext,
-  useFieldContextValue,
-} from "@/design-system/components/input/context/field.context";
+import { useFieldContextValue } from "@/design-system/components/input/context/field.context";
 import type {
   FocusSelectInputProps,
   FocusSelectOption,
 } from "@/design-system/components/input/types/focus-select.type";
+import { Field } from "@/design-system/components/input/ui/field";
 import { SearchInput } from "@/design-system/components/input/ui/search-input";
 import { Box } from "@/design-system/components/layout/ui/box";
 import { HStack, VStack } from "@/design-system/components/layout/ui/flex-box";
@@ -54,6 +53,7 @@ export function FocusSelectInput(props: FocusSelectInputProps) {
     size = "md",
     variant = "outline",
     w = "full",
+    suffixLabel,
     trigger,
     children,
     renderOption,
@@ -113,11 +113,11 @@ export function FocusSelectInput(props: FocusSelectInputProps) {
   const selectedOption = useMemo(() => {
     const found = options.find((opt) => opt.value === currentValue);
     if (found) return found;
-    if (currentValue) {
+    if (currentValue && !isFetchingLoading) {
       return { label: currentValue, value: currentValue };
     }
     return undefined;
-  }, [options, currentValue]);
+  }, [options, currentValue, isFetchingLoading]);
 
   // Handlers
   const handleOptionSelect = (
@@ -209,7 +209,7 @@ export function FocusSelectInput(props: FocusSelectInputProps) {
         w={w}
         px={3}
         pr={clearable && currentValue && !disabled ? "60px" : "36px"}
-        disabled={disabled}
+        disabled={disabled || isFetchingLoading}
         fontWeight={"normal"}
         data-has-value={currentValue ? "true" : "false"}
         {...(isFloatingField && {
@@ -256,22 +256,35 @@ export function FocusSelectInput(props: FocusSelectInputProps) {
         )}
 
         <HStack gap={"sm"} flex={1} minW={0} justify={"start"}>
-          {renderStartElement(
-            selectedOption?.startElement,
-            selectedOption?.icon,
-            iconSize,
-          )}
+          {isFetchingLoading && !currentValue ? (
+            <Skeleton
+              h={"16px"}
+              w={"120px"}
+              bg={"bg.subtle"}
+              display={"inline-block"}
+            />
+          ) : (
+            <>
+              {renderStartElement(
+                selectedOption?.startElement,
+                selectedOption?.icon,
+                iconSize,
+              )}
 
-          <P
-            color={selectedOption ? "fg.default" : "fg.subtle"}
-            truncate
-            data-placeholder={!selectedOption ? "true" : undefined}
-            opacity={
-              isFloatingField && floatingLabel && !selectedOption ? 0 : 1
-            }
-          >
-            {selectedOption?.label ?? placeholder}
-          </P>
+              <P
+                color={selectedOption ? "fg.default" : "fg.subtle"}
+                truncate
+                data-placeholder={!selectedOption ? "true" : undefined}
+                opacity={
+                  isFloatingField && floatingLabel && !selectedOption ? 0 : 1
+                }
+              >
+                {selectedOption?.label ?? placeholder}
+              </P>
+
+              {suffixLabel && <P>{suffixLabel}</P>}
+            </>
+          )}
         </HStack>
 
         <HStack
@@ -284,7 +297,9 @@ export function FocusSelectInput(props: FocusSelectInputProps) {
           justify={"center"}
           pointerEvents={"auto"}
         >
-          {clearable && currentValue && !disabled ? (
+          {isFetchingLoading ? (
+            <Loader size={"sm"} />
+          ) : clearable && currentValue && !disabled ? (
             <AppIcon
               icon={XIcon}
               size={iconSize}
@@ -313,7 +328,7 @@ export function FocusSelectInput(props: FocusSelectInputProps) {
   };
 
   const triggerContent = (
-    <Modal.Trigger asChild disabled={disabled}>
+    <Modal.Trigger asChild disabled={disabled || isFetchingLoading}>
       {renderTrigger()}
     </Modal.Trigger>
   );
@@ -339,18 +354,18 @@ export function FocusSelectInput(props: FocusSelectInputProps) {
     >
       {triggerContent}
 
-      <FieldContext.Provider value={null}>
-        <Modal.Content>
-          <Modal.Header>
-            <Modal.Title fontWeight={"semibold"}>{resolvedTitle}</Modal.Title>
+      <Modal.Content>
+        <Modal.Header>
+          <Modal.Title fontWeight={"semibold"}>{resolvedTitle}</Modal.Title>
 
-            <Modal.CloseButton />
-          </Modal.Header>
+          <Modal.CloseButton />
+        </Modal.Header>
 
-          <Modal.Body p={0}>
-            {/* Always render SearchInput when not fetching */}
-            {!isFetchingLoading && !isError && (
-              <VStack w={"full"} px={"md"} pt={"2px"} mb={"sm"}>
+        <Modal.Body p={0}>
+          {/* Always render SearchInput when not fetching */}
+          {!isFetchingLoading && !isError && (
+            <VStack w={"full"} px={"md"} pt={"2px"} mb={"sm"}>
+              <Field variant={"default"} invalid={false}>
                 <SearchInput
                   ref={searchInputRef}
                   placeholder={t["action.search"]()}
@@ -358,151 +373,140 @@ export function FocusSelectInput(props: FocusSelectInputProps) {
                   w={"full"}
                   autoFocus={true}
                 />
-              </VStack>
-            )}
-
-            {customOption && !isFetchingLoading && !isError && (
-              <VStack w={"full"} px={"md"} mb={"sm"}>
-                <Button
-                  variant={
-                    isCustomValueSelected && currentValue === searchQuery.trim()
-                      ? "subtle"
-                      : "outline"
-                  }
-                  w={"full"}
-                  py={"sm"}
-                  px={3}
-                  justifyContent={"space-between"}
-                  alignItems={"center"}
-                  onClick={() => {
-                    if (searchQuery.trim()) {
-                      handleOptionSelect(searchQuery.trim(), {
-                        label: searchQuery.trim(),
-                        value: searchQuery.trim(),
-                        description: "Opsi kustom",
-                      });
-                    }
-                  }}
-                  disabled={!searchQuery.trim()}
-                >
-                  <HStack gap={"sm"} align={"center"} flex={1} minW={0}>
-                    <AppIcon icon={PlusIcon} size={"sm"} />
-                    <ClampedP>
-                      {searchQuery.trim()
-                        ? searchQuery.trim()
-                        : "Ketik di atas untuk input kustom..."}
-                    </ClampedP>
-                  </HStack>
-                  <Badge>Opsi Kustom</Badge>
-                </Button>
-              </VStack>
-            )}
-
-            {/* Clean options list container */}
-            <VScrollContainer w={"full"} maxH={"300px"} px={"md"} pb={"md"}>
-              {isFetchingLoading ? (
-                <VStack gap={"xs"} w={"full"} h={"240px"}>
-                  {Array.from({ length: SKELETON_LIST_COUNT }).map(
-                    (_, index) => (
-                      <Skeleton
-                        key={`skeleton-${index + 1}`}
-                        w={"full"}
-                        flex={1}
-                      />
-                    ),
-                  )}
-                </VStack>
-              ) : isError ? (
-                <RetryState
-                  onRetry={onRetry}
-                  title={errorTitle}
-                  description={errorMessage}
-                />
-              ) : isEmptyArray(filteredOptions) ? (
-                <NoResultState query={searchQuery || "..."} />
-              ) : (
-                <VStack gap={1} w={"full"}>
-                  {filteredOptions.map((opt) => {
-                    const isSelected = opt.value === currentValue;
-
-                    return (
-                      <Button
-                        key={opt.value}
-                        variant={isSelected ? "subtle" : "ghost"}
-                        w={"full"}
-                        minH={"40px"}
-                        h={"max"}
-                        px={3}
-                        py={"xs"}
-                        alignItems={"center"}
-                        justifyContent={"start"}
-                        onClick={() => handleOptionSelect(opt.value, opt)}
-                      >
-                        {renderOption ? (
-                          renderOption(opt)
-                        ) : (
-                          <HStack
-                            gap={"sm"}
-                            align={"center"}
-                            flex={1}
-                            minW={0}
-                            justify={"start"}
-                          >
-                            {renderStartElement(
-                              opt.startElement,
-                              opt.icon,
-                              "sm",
-                            )}
-                            <VStack align={"start"}>
-                              <ClampedP
-                                fontWeight={isSelected ? "semibold" : "normal"}
-                                textAlign={"start"}
-                              >
-                                {opt.label}
-                              </ClampedP>
-
-                              {opt.description && (
-                                <ClampedP
-                                  fontSize={"xs"}
-                                  textAlign={"start"}
-                                  color={"fg.subtle"}
-                                >
-                                  {opt.description}
-                                </ClampedP>
-                              )}
-                            </VStack>
-                          </HStack>
-                        )}
-
-                        {isSelected && (
-                          <AppIcon
-                            icon={CheckIcon}
-                            color={`${theme.colorPalette}.fg`}
-                            mr={"-2px"}
-                          />
-                        )}
-                      </Button>
-                    );
-                  })}
-                </VStack>
-              )}
-            </VScrollContainer>
-          </Modal.Body>
-
-          {clearable && (
-            <Modal.Footer>
-              <Button
-                variant={"ghost"}
-                w={"full"}
-                disabled={!currentValue}
-                onClick={handleResetSelection}
-              >
-                {t["action.reset"]()}
-              </Button>
-            </Modal.Footer>
+              </Field>
+            </VStack>
           )}
-        </Modal.Content>
-      </FieldContext.Provider>
+
+          {customOption && !isFetchingLoading && !isError && (
+            <VStack w={"full"} px={"md"} mb={"sm"}>
+              <Button
+                variant={
+                  isCustomValueSelected && currentValue === searchQuery.trim()
+                    ? "subtle"
+                    : "outline"
+                }
+                w={"full"}
+                py={"sm"}
+                px={3}
+                justifyContent={"space-between"}
+                alignItems={"center"}
+                onClick={() => {
+                  if (searchQuery.trim()) {
+                    handleOptionSelect(searchQuery.trim(), {
+                      label: searchQuery.trim(),
+                      value: searchQuery.trim(),
+                      description: "Opsi kustom",
+                    });
+                  }
+                }}
+                disabled={!searchQuery.trim()}
+              >
+                <HStack gap={"sm"} align={"center"} flex={1} minW={0}>
+                  <AppIcon icon={PlusIcon} size={"sm"} />
+                  <ClampedP>
+                    {searchQuery.trim()
+                      ? searchQuery.trim()
+                      : "Ketik di atas untuk input kustom..."}
+                  </ClampedP>
+                </HStack>
+                <Badge>Opsi Kustom</Badge>
+              </Button>
+            </VStack>
+          )}
+
+          {/* Clean options list container */}
+          <VScrollContainer w={"full"} maxH={"300px"} px={"md"} pb={"md"}>
+            {isFetchingLoading ? (
+              <VStack gap={"xs"} w={"full"} h={"240px"}>
+                {Array.from({ length: SKELETON_LIST_COUNT }).map((_, index) => (
+                  <Skeleton key={`skeleton-${index + 1}`} w={"full"} flex={1} />
+                ))}
+              </VStack>
+            ) : isError ? (
+              <StateRetry
+                onRetry={onRetry}
+                title={errorTitle}
+                description={errorMessage}
+              />
+            ) : isEmptyArray(filteredOptions) ? (
+              <StateNoResult query={searchQuery || "..."} />
+            ) : (
+              <VStack gap={1} w={"full"}>
+                {filteredOptions.map((opt) => {
+                  const isSelected = opt.value === currentValue;
+
+                  return (
+                    <Button
+                      key={opt.value}
+                      variant={isSelected ? "subtle" : "ghost"}
+                      w={"full"}
+                      minH={"40px"}
+                      h={"max"}
+                      px={3}
+                      py={"xs"}
+                      alignItems={"center"}
+                      justifyContent={"start"}
+                      onClick={() => handleOptionSelect(opt.value, opt)}
+                    >
+                      {renderOption ? (
+                        renderOption(opt)
+                      ) : (
+                        <HStack
+                          gap={"sm"}
+                          align={"center"}
+                          flex={1}
+                          justify={"start"}
+                        >
+                          {renderStartElement(opt.startElement, opt.icon, "sm")}
+                          <VStack align={"start"}>
+                            <ClampedP
+                              fontWeight={isSelected ? "semibold" : "normal"}
+                              textAlign={"start"}
+                            >
+                              {opt.label}
+                            </ClampedP>
+
+                            {opt.description && (
+                              <ClampedP
+                                fontSize={"xs"}
+                                textAlign={"start"}
+                                color={"fg.subtle"}
+                              >
+                                {opt.description}
+                              </ClampedP>
+                            )}
+                          </VStack>
+                        </HStack>
+                      )}
+
+                      {isSelected && (
+                        <AppIcon
+                          icon={CheckIcon}
+                          color={`${theme.colorPalette}.fg`}
+                          mr={"-2px"}
+                        />
+                      )}
+                    </Button>
+                  );
+                })}
+              </VStack>
+            )}
+          </VScrollContainer>
+        </Modal.Body>
+
+        {clearable && (
+          <Modal.Footer>
+            <Button
+              variant={"ghost"}
+              w={"full"}
+              disabled={!currentValue}
+              onClick={handleResetSelection}
+            >
+              {t["action.reset"]()}
+            </Button>
+          </Modal.Footer>
+        )}
+      </Modal.Content>
     </Modal.Root>
   );
 }

@@ -13,6 +13,7 @@ export const Url = memo((props: UrlProps) => {
     label = "Salin URL",
     isExternalLink = true,
     maxW = "280px",
+    lineClamp = 1,
     ...restProps
   } = props;
 
@@ -30,7 +31,8 @@ export const Url = memo((props: UrlProps) => {
         fontFamily={"mono"}
         color={"fg.muted"}
         flex={1}
-        minW={0}
+        lineClamp={lineClamp}
+        wordBreak={"break-all"}
         _hover={
           isExternalLink
             ? {

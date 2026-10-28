@@ -1,7 +1,11 @@
+// src/features/mitra/my-data/hooks/use-mitra-my-data.ts
+
 import {
   getMitraWorkspaceDetail,
   getMitraWorkspaces,
   getMyData,
+  renewWorkspace,
+  rotateApiKey,
   updateMyData,
 } from "@/features/mitra/my-data/services/mitra.my-data.service";
 import type {
@@ -11,6 +15,9 @@ import type {
   MyDataItem,
   MyDataQueryParams,
   MyDataResponse,
+  RenewWorkspacePayload,
+  RenewWorkspaceResponse,
+  RotateApiKeyResponse,
   UpdateMyDataItemPayload,
 } from "@/features/mitra/my-data/types/my-data.type";
 import { toast } from "@/design-system/components/toast/core/toast.manager";
@@ -30,6 +37,8 @@ export const useMitraWorkspacesQuery = (
   return {
     ...query,
     workspaces: query.data?.items ?? [],
+    apiKey: query.data?.apiKey ?? null,
+    workspaceUrl: query.data?.workspaceUrl ?? null,
     pagination:
       query.data?.pagination ??
       createPaginationMeta(params?.page ?? 1, params?.pageSize ?? 10, 0),
@@ -127,6 +136,103 @@ export const useUpdateMyData = () => {
           error instanceof Error
             ? error.message
             : "Terjadi kesalahan saat memperbarui label data layer",
+      });
+    },
+  });
+};
+
+export const useRenewMitraWorkspace = () => {
+  const queryClient = useQueryClient();
+
+  return useMutation<
+    RenewWorkspaceResponse,
+    Error,
+    { workspaceId: string; payload?: RenewWorkspacePayload }
+  >({
+    mutationFn: ({ workspaceId, payload }) =>
+      renewWorkspace(workspaceId, payload),
+    onSuccess: (_data, variables) => {
+      void queryClient.invalidateQueries({
+        queryKey: queryKeys.mitra.myData.all,
+      });
+      void queryClient.invalidateQueries({
+        queryKey: queryKeys.mitra.workspace.all,
+      });
+      void queryClient.invalidateQueries({
+        queryKey: queryKeys.mitra.workspace.detail(variables.workspaceId),
+      });
+      void queryClient.invalidateQueries({
+        queryKey: queryKeys.mitra.workspaces.all,
+      });
+    },
+    onError: (error) => {
+      toast.create({
+        variant: "error",
+        title: "Gagal Memperpanjang",
+        description:
+          error instanceof Error
+            ? error.message
+            : "Terjadi kesalahan saat memproses perpanjangan masa aktif",
+      });
+    },
+  });
+};
+
+export const useRotateMitraApiKey = () => {
+  const queryClient = useQueryClient();
+
+  return useMutation<RotateApiKeyResponse, Error, void>({
+    mutationFn: () => rotateApiKey(),
+    onSuccess: (data) => {
+      // Direct cache updates for workspaces list
+      queryClient.setQueriesData<MitraWorkspaceListResponse>(
+        { queryKey: queryKeys.mitra.workspaces.all },
+        (old) => {
+          if (!old) return old;
+          return {
+            ...old,
+            apiKey: data.apiKey,
+          };
+        },
+      );
+
+      // Direct cache updates for myData list
+      queryClient.setQueriesData<MyDataResponse>(
+        { queryKey: queryKeys.mitra.myData.all },
+        (old) => {
+          if (!old) return old;
+          return {
+            ...old,
+            apiKey: data.apiKey,
+          };
+        },
+      );
+
+      // Refetch / invalidate queries to ensure full synchronization
+      void queryClient.invalidateQueries({
+        queryKey: queryKeys.mitra.workspaces.all,
+      });
+      void queryClient.invalidateQueries({
+        queryKey: queryKeys.mitra.myData.all,
+      });
+      void queryClient.invalidateQueries({
+        queryKey: queryKeys.mitra.workspace.all,
+      });
+
+      toast.create({
+        variant: "success",
+        title: "API Key Diperbarui",
+        description: "API Key berhasil diganti dan data telah disinkronkan",
+      });
+    },
+    onError: (error) => {
+      toast.create({
+        variant: "error",
+        title: "Gagal Mengganti API Key",
+        description:
+          error instanceof Error
+            ? error.message
+            : "Terjadi kesalahan saat melakukan rotasi API Key",
       });
     },
   });

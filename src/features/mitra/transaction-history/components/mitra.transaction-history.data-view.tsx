@@ -10,9 +10,9 @@ import { DataViewFooter } from "@/design-system/components/data-display/ui/data-
 import { DEFAULT_PAGE_SIZE_OPTIONS } from "@/design-system/components/data-display/ui/data-view-page-size";
 import { DataViewTable } from "@/design-system/components/data-display/ui/data-view-table";
 import { Skeleton } from "@/design-system/components/feedback/ui/skeleton";
-import { NoDataState } from "@/design-system/components/feedback/ui/state.no-data";
-import { NoResultState } from "@/design-system/components/feedback/ui/state.no-result";
-import { RetryState } from "@/design-system/components/feedback/ui/state.retry";
+import { StateNoData } from "@/design-system/components/feedback/ui/state.no-data";
+import { StateNoResult } from "@/design-system/components/feedback/ui/state.no-result";
+import { StateRetry } from "@/design-system/components/feedback/ui/state.retry";
 import { TopBarLoader } from "@/design-system/components/feedback/ui/top-bar-loader";
 import { AppIcon } from "@/design-system/components/icon/ui/app-icon";
 import { SearchInput } from "@/design-system/components/input/ui/search-input";
@@ -20,7 +20,6 @@ import { ActionHeaderScrollContainer } from "@/design-system/components/layout/u
 import { Box } from "@/design-system/components/layout/ui/box";
 import { HStack, VStack } from "@/design-system/components/layout/ui/flex-box";
 import { Separator } from "@/design-system/components/layout/ui/separator";
-import { Tooltip } from "@/design-system/components/overlay/ui/tooltip";
 import { P, TNum } from "@/design-system/components/typography/ui/p";
 import { FormatNumber } from "@/design-system/components/utilities/ui/fornat-number";
 import { useDebouncedValue } from "@/design-system/hooks/use-debounced-value";
@@ -30,21 +29,23 @@ import type {
   TransactionRecord,
 } from "@/features/mitra/transaction-history/types/transaction-history.type";
 import { OrderStatusBadge } from "@/features/shared/components/order-status.badge";
+import { OrderedIgtLayers } from "@/features/shared/components/ordered-igt-layers";
 import { PaymentMethodBadge } from "@/features/shared/components/payment-method.badge";
 import { SelectionTypeBadge } from "@/features/shared/components/selection-type.badge";
 import { StatusFilterSelect } from "@/features/shared/components/status-filter.select";
 import { TransactionDetailTrigger } from "@/features/shared/components/transaction-detail.modal";
 import { TteBadge } from "@/features/shared/components/tte.badge";
-import { TRANSACTION_STATUS_OPTIONS } from "@/features/shared/constants/volatil.ssot-map";
-import type {
-  OrderStatus,
-  TransactionStatus,
-} from "@/shared/types/status.type";
+import {
+  ORDER_STATUS_FILTER_OPTIONS,
+  ORDER_STATUS_MAP,
+} from "@/features/shared/constants/volatil.ssot-map";
+import type { OrderStatus } from "@/shared/types/status.type";
 import { isEmptyArray } from "@/shared/utils/data/array";
 import {
   formatUtcDateTime,
   getPreferredUserTimezone,
 } from "@/shared/utils/formatter/date.formatter";
+import { formatNumber } from "@/shared/utils/formatter/number.formatter";
 import { useNavigate } from "@tanstack/react-router";
 import {
   CreditCardIcon,
@@ -79,6 +80,19 @@ export const TransactionHistoryDataView = () => {
   const debouncedSearch = useDebouncedValue(params.search ?? "", 300);
   const preferredTimezone = useMemo(() => getPreferredUserTimezone(), []);
 
+  const isSearching = Boolean(debouncedSearch.trim() || params.status);
+  const searchQuery = useMemo(() => {
+    const parts: string[] = [];
+    if (debouncedSearch.trim()) {
+      parts.push(debouncedSearch.trim());
+    }
+    if (params.status) {
+      const statusConfig = ORDER_STATUS_MAP[params.status];
+      parts.push(statusConfig?.label ?? params.status);
+    }
+    return parts.length > 0 ? parts.join(", ") : "...";
+  }, [debouncedSearch, params.status]);
+
   // Queries
   const { transactionHistory, isLoading, isFetching, isError, error, refetch } =
     useTransactionHistoryQuery({
@@ -91,17 +105,18 @@ export const TransactionHistoryDataView = () => {
   // Derived Values - DataList headers & items
   const dataList = useMemo(() => {
     const headers: FormattedTableHeader[] = [
-      { th: "No. Transaksi", sortable: true, align: "start" },
       { th: "No. Pesanan", sortable: true, align: "start" },
       { th: "Status Pesanan", sortable: true, align: "start" },
+      { th: "Tanggal Pemesanan", sortable: true, align: "start" },
       { th: "Kode Billing", sortable: false, align: "start" },
-      { th: "Waktu Transaksi", sortable: true, align: "start" },
       { th: "Sisa Waktu Pembayaran", sortable: true, align: "start" },
       { th: "Metode Pembayaran", sortable: false, align: "start" },
       { th: "TTE & Faktur", sortable: false, align: "start" },
       { th: "IGT Dibeli", sortable: false, align: "start" },
       { th: "Jumlah Layer", sortable: false, align: "start" },
       { th: "Metode Pengajuan", sortable: false, align: "start" },
+      { th: "Cakupan Bidang", sortable: true, align: "start" },
+      { th: "Cakupan Kawasan", sortable: true, align: "start" },
       { th: "Total Nominal", sortable: true, align: "end" },
     ];
 
@@ -115,21 +130,30 @@ export const TransactionHistoryDataView = () => {
         const effectiveOrderStatus: OrderStatus | undefined =
           item.transactionStatus === "expired" &&
           (!item.orderStatus || item.orderStatus === "pending_payment")
-            ? "rejected"
+            ? "expired"
             : item.orderStatus;
+
+        const effectiveBidangCount =
+          item.bidangCoverageCount ??
+          item.featuresCount ??
+          item.items
+            .filter((i) => (i.spatialBasis as string) === "bidang")
+            .reduce((sum, it) => sum + (it.featuresCount ?? 0), 0);
+
+        const effectiveKawasanHa =
+          item.kawasanCoverageHa ??
+          item.coverageHa ??
+          item.items
+            .filter((i) => (i.spatialBasis as string) === "kawasan")
+            .reduce((sum, it) => sum + (it.areaHa ?? 0), 0);
 
         return {
           id: item.id,
           data: item,
           columns: [
             {
-              value: item.transactionNumber,
-              td: <P>{item.transactionNumber}</P>,
-              align: "start" as const,
-            },
-            {
               value: item.orderNumber,
-              td: <P color={"fg.muted"}>{item.orderNumber}</P>,
+              td: <P>{item.orderNumber}</P>,
               align: "start" as const,
             },
             {
@@ -144,15 +168,6 @@ export const TransactionHistoryDataView = () => {
               align: "start" as const,
             },
             {
-              value: item.billingCode,
-              td: (
-                <P>
-                  <TNum>{item.billingCode}</TNum>
-                </P>
-              ),
-              align: "start" as const,
-            },
-            {
               value: item.createdAt,
               td: (
                 <P whiteSpace={"nowrap"}>
@@ -162,14 +177,22 @@ export const TransactionHistoryDataView = () => {
               align: "start" as const,
             },
             {
+              value: item.billingCode,
+              td: (
+                <P>
+                  <TNum>{item.billingCode}</TNum>
+                </P>
+              ),
+              align: "start" as const,
+            },
+            {
               value: targetExpiry ?? "",
               td:
-                item.transactionStatus !== "paid" &&
-                item.transactionStatus !== "refunded" &&
-                targetExpiry ? (
+                effectiveOrderStatus === "pending_payment" && targetExpiry ? (
                   <Countdown
                     finishedAt={targetExpiry}
                     warningThresholdHours={1}
+                    dangerThresholdMinutes={15}
                     finishColor={"fg.subtle"}
                   />
                 ) : (
@@ -196,11 +219,12 @@ export const TransactionHistoryDataView = () => {
             {
               value: itemNames,
               td: (
-                <Tooltip content={itemNames || "-"}>
-                  <P lineClamp={2} w={"220px"} title={itemNames}>
-                    {itemNames || "-"}
-                  </P>
-                </Tooltip>
+                <OrderedIgtLayers
+                  items={item.items}
+                  orderNumber={item.orderNumber}
+                  coverageHa={effectiveKawasanHa ?? undefined}
+                  bidangCoverageCount={effectiveBidangCount ?? undefined}
+                />
               ),
               align: "start" as const,
             },
@@ -215,6 +239,42 @@ export const TransactionHistoryDataView = () => {
                 <SelectionTypeBadge size={"xs"}>
                   {item.selectionType}
                 </SelectionTypeBadge>
+              ),
+              align: "start" as const,
+            },
+            {
+              value: effectiveBidangCount,
+              td: (
+                <P whiteSpace={"nowrap"}>
+                  {effectiveBidangCount > 0 ? (
+                    <>
+                      <TNum>{formatNumber(effectiveBidangCount)}</TNum>{" "}
+                      {"bidang"}
+                    </>
+                  ) : (
+                    "-"
+                  )}
+                </P>
+              ),
+              align: "start" as const,
+            },
+            {
+              value: effectiveKawasanHa,
+              td: (
+                <P whiteSpace={"nowrap"}>
+                  {effectiveKawasanHa > 0 ? (
+                    <>
+                      <TNum>
+                        {formatNumber(effectiveKawasanHa, {
+                          maximumFractionDigits: 2,
+                        })}
+                      </TNum>{" "}
+                      {"ha"}
+                    </>
+                  ) : (
+                    "-"
+                  )}
+                </P>
               ),
               align: "start" as const,
             },
@@ -241,8 +301,10 @@ export const TransactionHistoryDataView = () => {
         key: "pay-billing",
         label: "Bayar",
         icon: CreditCardIcon,
+        colorPalette: "blue",
         hidden: (transaction: TransactionRecord) =>
-          transaction.transactionStatus !== "pending",
+          transaction.orderStatus !== "pending_payment" ||
+          transaction.transactionStatus === "expired",
         onClick: (transaction: TransactionRecord) => {
           if (transaction.billingCode) {
             void navigate({
@@ -253,6 +315,7 @@ export const TransactionHistoryDataView = () => {
           }
         },
       },
+
       {
         key: "view-invoice",
         label: "Lihat Faktur",
@@ -263,6 +326,7 @@ export const TransactionHistoryDataView = () => {
         rel: "noopener noreferrer",
         hidden: (transaction: TransactionRecord) => !transaction.invoiceUrl,
       },
+
       {
         key: "view-tte-invoice",
         label: "Lihat Faktur TTE",
@@ -273,6 +337,7 @@ export const TransactionHistoryDataView = () => {
         rel: "noopener noreferrer",
         hidden: (transaction: TransactionRecord) => !transaction.tteInvoiceUrl,
       },
+
       {
         key: "view-detail",
         label: "Detail",
@@ -306,7 +371,7 @@ export const TransactionHistoryDataView = () => {
           onValueChange={(val) => {
             setParams((prev) => ({ ...prev, search: val, page: 1 }));
           }}
-          placeholder={"Cari no. transaksi / order / billing..."}
+          placeholder={"Cari no. pesanan / billing..."}
           maxW={"300px"}
         />
 
@@ -314,18 +379,18 @@ export const TransactionHistoryDataView = () => {
           <StatusFilterSelect
             modalKey={"transaction-history-status-filter"}
             placeholder={"Status"}
-            options={TRANSACTION_STATUS_OPTIONS}
+            options={ORDER_STATUS_FILTER_OPTIONS}
             value={params.status ?? ""}
             onValueChange={(value) => {
               startTransition(() => {
                 setParams((prev) => ({
                   ...prev,
-                  status: (value as TransactionStatus) || undefined,
+                  status: (value as OrderStatus) || undefined,
                   page: 1,
                 }));
               });
             }}
-            w={"200px"}
+            minW={"150px"}
           />
         </HStack>
       </ActionHeaderScrollContainer>
@@ -342,7 +407,7 @@ export const TransactionHistoryDataView = () => {
         w={"full"}
       >
         {isLoading ? (
-          <Skeleton p={"md"} rounded={0} />
+          <Skeleton minH={"300px"} p={"md"} rounded={0} />
         ) : isError ? (
           <Box
             flex={1}
@@ -353,7 +418,7 @@ export const TransactionHistoryDataView = () => {
             py={"xl"}
             bg={"bg.body"}
           >
-            <RetryState
+            <StateRetry
               title={"Gagal Memuat Riwayat Transaksi"}
               description={
                 error?.message ||
@@ -374,14 +439,15 @@ export const TransactionHistoryDataView = () => {
             py={"xl"}
             bg={"bg.body"}
           >
-            {debouncedSearch || params.status ? (
-              <NoResultState
+            {isSearching ? (
+              <StateNoResult
+                query={searchQuery}
                 description={
                   "Tidak ada transaksi yang sesuai dengan kata kunci atau filter yang Anda pilih."
                 }
               />
             ) : (
-              <NoDataState
+              <StateNoData
                 icon={HistoryIcon}
                 title={"Belum Ada Riwayat Transaksi"}
                 description={
@@ -398,7 +464,7 @@ export const TransactionHistoryDataView = () => {
                   <AppIcon icon={SquarePen} />
                   {"Permintaan Data"}
                 </Button>
-              </NoDataState>
+              </StateNoData>
             )}
           </Box>
         ) : (

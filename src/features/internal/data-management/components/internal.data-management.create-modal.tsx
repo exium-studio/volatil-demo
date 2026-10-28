@@ -12,6 +12,7 @@ import { Textarea } from "@/design-system/components/input/ui/textarea";
 import { HStack, VStack } from "@/design-system/components/layout/ui/flex-box";
 import { usePopModal } from "@/design-system/components/overlay/hooks/use-pop-modal";
 import { Modal } from "@/design-system/components/overlay/ui/modal";
+import { useMountTimeout } from "@/design-system/hooks/use-mount-timeout";
 import { P } from "@/design-system/components/typography/ui/p";
 import { GeoserverCascadeSelect } from "@/features/internal/data-management/components/geoserver-cascade-select";
 import { useCreateMasterIgtLayer } from "@/features/internal/data-management/hooks/use-data-management";
@@ -25,6 +26,7 @@ import type {
 } from "@/features/internal/data-management/types/data-management.type";
 import { useMasterGeoserverQuery } from "@/features/internal/master-geoserver/hooks/use-master-geoserver";
 import { IGT_BASIS_OPTIONS } from "@/features/shared/constants/volatil.ssot-map";
+import { toast } from "@/design-system/components/toast";
 import { t } from "@/shared/libs/i18n";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useMemo } from "react";
@@ -40,6 +42,12 @@ export const InternalDataManagementCreateTrigger = (
     modalKey: customModalKey,
   });
 
+  const isMounted = useMountTimeout({
+    isOpen,
+    mountDelay: 0,
+    unmountDelay: 250,
+  });
+
   return (
     <Modal.Root
       modalKey={modalKey}
@@ -50,10 +58,12 @@ export const InternalDataManagementCreateTrigger = (
     >
       <Modal.Trigger>{children}</Modal.Trigger>
 
-      <InternalDataManagementCreateModalContent
-        modalKey={modalKey}
-        close={close}
-      />
+      {isMounted && (
+        <InternalDataManagementCreateModalContent
+          modalKey={modalKey}
+          close={close}
+        />
+      )}
     </Modal.Root>
   );
 };
@@ -73,18 +83,20 @@ const InternalDataManagementCreateModalContent = (
     control,
     handleSubmit,
     setValue,
-    formState: { isValid },
+    reset,
+    formState: { errors },
   } = useForm<MasterIgtLayerFormValues>({
     resolver: zodResolver(masterIgtLayerFormSchema),
     mode: "onChange",
     defaultValues: {
-      id: "",
       title: "",
       description: "",
-      spatialBasis: "kawasan",
+      igtBasis: "kawasan",
       zIndex: 1,
+      minZoom: 12,
       geoserverId: "",
-      workspace: "",
+      workspaceName: "",
+      layerName: null,
       typeName: "",
       isActive: true,
       defaultVisible: false,
@@ -93,12 +105,9 @@ const InternalDataManagementCreateModalContent = (
 
   // Watch Form Values
   const geoserverId = useWatch({ control, name: "geoserverId" });
-  const workspace = useWatch({ control, name: "workspace" });
+  const workspaceName = useWatch({ control, name: "workspaceName" });
+  const layerName = useWatch({ control, name: "layerName" });
   const typeName = useWatch({ control, name: "typeName" });
-  const title = useWatch({ control, name: "title" });
-  const description = useWatch({ control, name: "description" });
-  const idValue = useWatch({ control, name: "id" });
-
   // Derived Values
   const selectedGeoserver = useMemo(
     () => geoserverList.find((g) => g.id === geoserverId),
@@ -106,53 +115,46 @@ const InternalDataManagementCreateModalContent = (
   );
 
   const handleLayerChange = (
+    selectedLayerName: string | null,
     selectedTypeName: string,
-    layerDetail?: GeoServerWorkspaceLayerOption,
+    _layerDetail?: GeoServerWorkspaceLayerOption,
   ) => {
+    setValue("layerName", selectedLayerName, { shouldValidate: true });
     setValue("typeName", selectedTypeName, { shouldValidate: true });
-    if (layerDetail) {
-      if (!title) {
-        setValue("title", layerDetail.title || layerDetail.name, {
-          shouldValidate: true,
-        });
-      }
-      if (!description && layerDetail.abstract) {
-        setValue("description", layerDetail.abstract, {
-          shouldValidate: true,
-        });
-      }
-      if (layerDetail.spatialBasis) {
-        setValue("spatialBasis", layerDetail.spatialBasis, {
-          shouldValidate: true,
-        });
-      }
-      if (!idValue) {
-        setValue("id", layerDetail.typeName, {
-          shouldValidate: true,
-        });
-      }
-    }
+  };
+
+  const onInvalid = () => {
+    toast.error("Formulir Belum Lengkap", {
+      description:
+        "Mohon periksa dan lengkapi semua isian wajib (Nama layer, Master GeoServer, dan Workspace).",
+    });
   };
 
   const onSubmit = (data: MasterIgtLayerFormValues) => {
-    if (!selectedGeoserver) return;
-
-    const layerId = data.id?.trim() || data.typeName.trim();
+    if (!selectedGeoserver) {
+      toast.error("GeoServer Belum Dipilih", {
+        description: "Silakan pilih master GeoServer terlebih dahulu.",
+      });
+      return;
+    }
 
     createMutation.mutate(
       {
-        id: layerId,
         title: data.title.trim(),
         description: data.description?.trim(),
-        spatialBasis: data.spatialBasis,
+        igtBasis: data.igtBasis,
         zIndex: data.zIndex,
+        minZoom: data.minZoom,
         isActive: data.isActive,
         defaultVisible: data.defaultVisible,
         geoserverId: selectedGeoserver.id,
+        workspaceName: data.workspaceName.trim(),
+        layerName: data.layerName ? data.layerName.trim() : null,
         typeName: data.typeName.trim(),
       },
       {
         onSuccess: () => {
+          reset();
           close();
         },
       },
@@ -320,16 +322,20 @@ const InternalDataManagementCreateModalContent = (
               selectedGeoserverId={geoserverId}
               onGeoserverChange={(val) => {
                 setValue("geoserverId", val, { shouldValidate: true });
-                setValue("workspace", "", { shouldValidate: true });
+                setValue("workspaceName", "", { shouldValidate: true });
+                setValue("layerName", null, { shouldValidate: true });
                 setValue("typeName", "", { shouldValidate: true });
               }}
-              selectedWorkspace={workspace}
+              selectedWorkspace={workspaceName}
               onWorkspaceChange={(val) => {
-                setValue("workspace", val, { shouldValidate: true });
-                setValue("typeName", "", { shouldValidate: true });
+                setValue("workspaceName", val, { shouldValidate: true });
+                setValue("layerName", null, { shouldValidate: true });
+                setValue("typeName", val, { shouldValidate: true });
               }}
+              selectedLayerName={layerName}
               selectedTypeName={typeName}
               onLayerChange={handleLayerChange}
+              errors={errors}
             />
           </Fieldset>
 
@@ -339,7 +345,7 @@ const InternalDataManagementCreateModalContent = (
               {/* Select Basis IGT via RadioCardInput */}
               <Controller
                 control={control}
-                name={"spatialBasis"}
+                name={"igtBasis"}
                 render={({ field }) => (
                   <Field label={"Basis IGT"}>
                     <RadioCardInput.Root
@@ -391,7 +397,7 @@ const InternalDataManagementCreateModalContent = (
                   <Field
                     label={"Urutan Tumpukan Layer (Z-Index)"}
                     helperText={
-                      "Angka lebih kecil = di bawah, angka lebih besar = di atas"
+                       "Angka lebih kecil = di bawah, angka lebih besar = di atas"
                     }
                   >
                     <NumberInput
@@ -401,6 +407,29 @@ const InternalDataManagementCreateModalContent = (
                       value={String(field.value ?? 1)}
                       onValueChange={({ value }) => field.onChange(value || 1)}
                       placeholder={"1"}
+                    />
+                  </Field>
+                )}
+              />
+
+              {/* Input Minimum Zoom Level */}
+              <Controller
+                control={control}
+                name={"minZoom"}
+                render={({ field }) => (
+                  <Field
+                    label={"Minimum Zoom Level"}
+                    helperText={
+                      "Layer hanya akan tampil di peta jika zoom level >= nilai ini."
+                    }
+                  >
+                    <NumberInput
+                      w={"full"}
+                      min={0}
+                      max={22}
+                      value={String(field.value ?? 12)}
+                      onValueChange={({ value }) => field.onChange(value ?? 12)}
+                      placeholder={"12"}
                     />
                   </Field>
                 )}
@@ -415,13 +444,15 @@ const InternalDataManagementCreateModalContent = (
           <Button
             primary
             loading={createMutation.isPending}
-            disabled={!isValid || createMutation.isPending}
-            onClick={handleSubmit(onSubmit)}
+            disabled={createMutation.isPending}
+            onClick={handleSubmit(onSubmit, onInvalid)}
           >
             {"Tambah Layer"}
           </Button>
 
-          <Button onClick={close}>{t["action.cancel"]()}</Button>
+          <Button type={"button"} onClick={close}>
+            {t["action.cancel"]()}
+          </Button>
         </VStack>
       </Modal.Footer>
     </Modal.Content>

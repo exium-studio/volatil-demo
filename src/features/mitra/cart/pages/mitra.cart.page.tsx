@@ -4,8 +4,8 @@ import { Button } from "@/design-system/components/button/ui/button";
 import { Alert } from "@/design-system/components/feedback/ui/alert";
 import { ConfirmationTrigger } from "@/design-system/components/feedback/ui/confirmation-trigger";
 import { Skeleton } from "@/design-system/components/feedback/ui/skeleton";
-import { NoDataState } from "@/design-system/components/feedback/ui/state.no-data";
-import { RetryState } from "@/design-system/components/feedback/ui/state.retry";
+import { StateNoData } from "@/design-system/components/feedback/ui/state.no-data";
+import { StateRetry } from "@/design-system/components/feedback/ui/state.retry";
 import { AppIcon } from "@/design-system/components/icon/ui/app-icon";
 import { Center } from "@/design-system/components/layout/ui/center";
 import {
@@ -17,8 +17,8 @@ import { AppContentContainer } from "@/design-system/components/layout/ui/page-c
 import { Separator } from "@/design-system/components/layout/ui/separator";
 import { useMapInstanceStore } from "@/design-system/components/map/stores/map.instance.store";
 import { HeaderContainer } from "@/design-system/components/shell/ui/header-container";
-import { Badge } from "@/design-system/components/typography/ui/badge";
 import { Heading } from "@/design-system/components/typography/ui/heading";
+import { useSearchParam } from "@/design-system/hooks/use-search-param";
 import { MitraCartOrderItem } from "@/features/mitra/cart/components/mitra.cart.order-item";
 import { MitraCartOrderSummary } from "@/features/mitra/cart/components/mitra.cart.order-summary";
 import {
@@ -37,8 +37,15 @@ import type {
   MitraCartOrderDetailProps,
   MitraCartOrderListProps,
 } from "@/features/mitra/cart/types/mitra.cart.order.type";
+import { getIgtLayers } from "@/features/mitra/data-request/api/mitra.data-request-igt-layers.api";
+import { useBidangAoiFeatures } from "@/features/mitra/data-request/hooks/use-bidang-aoi-features";
+import { normalizePolygonFeature } from "@/features/mitra/data-request/utils/clip-and-union-kawasan";
+import { highlightFeatureOnMap } from "@/features/mitra/data-request/utils/highlight-feature-on-map";
+import { queryKeys } from "@/shared/libs/tanstack-query/query.keys";
+import { useQuery } from "@tanstack/react-query";
+import * as turf from "@turf/turf";
 import { InfoIcon, ShoppingCartIcon, Trash2Icon } from "lucide-react";
-import { useCallback, useEffect, useState } from "react";
+import { useCallback, useEffect, useMemo, useState } from "react";
 
 export const MitraCartPage = () => {
   return (
@@ -52,6 +59,10 @@ const MitraCartContent = () => {
   // Contexts
   const { isSmContainer } = useContainerContext();
 
+  // Search Params
+  const { queryValue: orderIdParam, setQueryValue: setOrderIdParam } =
+    useSearchParam("orderId");
+
   // Stores
   const map = useMapInstanceStore((state) => state.map);
 
@@ -61,15 +72,15 @@ const MitraCartContent = () => {
   // Queries (for derived index between orders and selected order)
   const { orders } = useCartOrdersQuery();
 
-  // States — initial load has NO selected order
-  const [selectedOrderId, setSelectedOrderId] = useState<string | null>(null);
+  // States
   const [isAoiVisible, setIsAoiVisible] = useState<boolean>(true);
   const [isCoverageVisible, setIsCoverageVisible] = useState<boolean>(true);
+  const [isBidangVisible, setIsBidangVisible] = useState<boolean>(true);
 
   // Derived Values — Validate selectedOrderId against current orders list
   const effectiveSelectedOrderId =
-    selectedOrderId && orders.some((o) => o.orderId === selectedOrderId)
-      ? selectedOrderId
+    orderIdParam && orders.some((o) => o.orderId === orderIdParam)
+      ? orderIdParam
       : null;
 
   // Queries — detail of selected order
@@ -82,16 +93,113 @@ const MitraCartContent = () => {
     refetch: refetchDetail,
   } = useCartOrderDetailQuery(effectiveSelectedOrderId || undefined);
 
+  // Queries — master IGT layers for fallback WFS resolution
+  const { data: masterLayersData } = useQuery({
+    queryKey: queryKeys.map.layers(),
+    queryFn: ({ signal }) => getIgtLayers(signal),
+    staleTime: 1000 * 60 * 5,
+  });
+
   // Derived Values
   const isOrderSelected = Boolean(effectiveSelectedOrderId && selectedOrder);
+
+  const isKawasanOnly = useMemo(() => {
+    if (!selectedOrder) return false;
+    const basis =
+      selectedOrder.purchasedBasis ?? selectedOrder.purchasedIgtBasis;
+    if (basis === "kawasan") return true;
+    if (basis === "bidang" || basis === "all") return false;
+
+    // Fallback: detect from items if purchasedBasis is not explicitly present
+    const items = selectedOrder.items ?? [];
+    if (items.length === 0) return false;
+    const hasKawasan = items.some(
+      (it) => (it.spatialBasis ?? it.igtBasis) === "kawasan",
+    );
+    const hasBidang = items.some(
+      (it) => (it.spatialBasis ?? it.igtBasis) === "bidang",
+    );
+    return hasKawasan && !hasBidang;
+  }, [selectedOrder]);
+
+  const selectedOrderItems = selectedOrder?.items;
+  const bidangTargetLayers = useMemo(() => {
+    if (!selectedOrderItems || isKawasanOnly) return [];
+
+    const masterItems = masterLayersData?.items ?? [];
+    const masterMap = new Map<string, (typeof masterItems)[0]>();
+    for (const l of masterItems) {
+      if (l.id) masterMap.set(l.id.toLowerCase(), l);
+      if (l.typeName) masterMap.set(l.typeName.toLowerCase(), l);
+      if (l.wfs?.wfsTypeName) masterMap.set(l.wfs.wfsTypeName.toLowerCase(), l);
+      if (l.title) masterMap.set(l.title.toLowerCase(), l);
+      if (l.layerName) masterMap.set(l.layerName.toLowerCase(), l);
+    }
+
+    return selectedOrderItems
+      .filter((it) => (it.spatialBasis ?? it.igtBasis) === "bidang")
+      .map((it) => {
+        const keyId = (it.sourceLayerId || it.id || "").toLowerCase();
+        const keyTitle = (it.sourceLayerTitle || "").toLowerCase();
+        const matchedMaster =
+          masterMap.get(keyId) ||
+          masterMap.get(keyTitle) ||
+          masterItems.find(
+            (l) =>
+              (l.igtBasis ?? l.spatialBasis) === "bidang" &&
+              (l.id?.toLowerCase().includes(keyId) ||
+                l.title?.toLowerCase().includes(keyTitle) ||
+                keyTitle.includes(l.title?.toLowerCase() || "")),
+          );
+
+        const typeName =
+          matchedMaster?.typeName ||
+          matchedMaster?.wfs?.wfsTypeName ||
+          it.sourceLayerId ||
+          it.id;
+
+        const wfsUrl =
+          matchedMaster?.wfs?.url ||
+          matchedMaster?.wfs?.wfsUrl ||
+          matchedMaster?.wfs?.baseUrl ||
+          it.wfsUrl ||
+          it.previewWfsUrl ||
+          "";
+
+        return {
+          id: it.id || it.sourceLayerId,
+          typeName,
+          wfsUrl,
+          title: it.sourceLayerTitle || matchedMaster?.title,
+        };
+      })
+      .filter((it) => Boolean(it.typeName));
+  }, [selectedOrderItems, isKawasanOnly, masterLayersData?.items]);
+
+  const bidangQueryResult = useBidangAoiFeatures({
+    aoiPolygon:
+      isOrderSelected && !isKawasanOnly ? selectedOrder?.aoiPolygon : null,
+    bidangLayers: bidangTargetLayers,
+    enabled:
+      isOrderSelected &&
+      !isKawasanOnly &&
+      isBidangVisible &&
+      Boolean(selectedOrder?.aoiPolygon) &&
+      bidangTargetLayers.length > 0,
+  });
 
   // Map layer synchronization hook for Cart AOI & Coverage Polygon
   useCartAoiCoverageMap(map, {
     aoiPolygon: isOrderSelected ? selectedOrder?.aoiPolygon : null,
-    coveragePolygon: isOrderSelected ? selectedOrder?.coveragePolygon : null,
+    kawasanCoveragePolygon: isOrderSelected
+      ? selectedOrder?.kawasanCoveragePolygon
+      : null,
+    bidangFeatures:
+      isOrderSelected && !isKawasanOnly ? bidangQueryResult.features : null,
     selectionType: selectedOrder?.selectionType,
     isAoiVisible,
     isCoverageVisible,
+    isBidangVisible: isBidangVisible && !isKawasanOnly,
     isActive: isOrderSelected,
     exclusive: true,
   });
@@ -108,7 +216,7 @@ const MitraCartContent = () => {
   useEffect(() => {
     if (isOrderSelected && selectedOrder) {
       const targetGeom =
-        selectedOrder.aoiPolygon ?? selectedOrder.coveragePolygon;
+        selectedOrder.aoiPolygon ?? selectedOrder.kawasanCoveragePolygon;
       if (targetGeom && map) {
         flyToCartGeometry(map, targetGeom);
       }
@@ -116,15 +224,15 @@ const MitraCartContent = () => {
   }, [isOrderSelected, selectedOrder, map]);
 
   // Handlers
-  const handleSelectOrder = useCallback((orderId: string | null) => {
-    setSelectedOrderId((prev) => {
-      if (prev !== orderId) {
-        setIsAoiVisible(true);
-        setIsCoverageVisible(true);
-      }
-      return orderId;
-    });
-  }, []);
+  const handleSelectOrder = useCallback(
+    (orderId: string | null) => {
+      setOrderIdParam(orderId ?? undefined, { replace: true });
+      setIsAoiVisible(true);
+      setIsCoverageVisible(true);
+      setIsBidangVisible(true);
+    },
+    [setOrderIdParam],
+  );
 
   const handleToggleAoi = useCallback(() => {
     setIsAoiVisible((prev) => !prev);
@@ -134,6 +242,10 @@ const MitraCartContent = () => {
     setIsCoverageVisible((prev) => !prev);
   }, []);
 
+  const handleToggleBidang = useCallback(() => {
+    setIsBidangVisible((prev) => !prev);
+  }, []);
+
   const handleFlyToAoi = useCallback(() => {
     if (selectedOrder?.aoiPolygon && map) {
       flyToCartGeometry(map, selectedOrder.aoiPolygon);
@@ -141,10 +253,98 @@ const MitraCartContent = () => {
   }, [selectedOrder, map]);
 
   const handleFlyToCoverage = useCallback(() => {
-    if (selectedOrder?.coveragePolygon && map) {
-      flyToCartGeometry(map, selectedOrder.coveragePolygon);
+    if (selectedOrder?.kawasanCoveragePolygon && map) {
+      flyToCartGeometry(map, selectedOrder.kawasanCoveragePolygon);
     }
   }, [selectedOrder, map]);
+
+  const handleFlyToBidang = useCallback(() => {
+    if (!map) return;
+
+    let targetBbox: [number, number, number, number] | null = null;
+
+    // 1. Prioritize combined bounding box from all bidang items in the order
+    const bidangItems = (selectedOrder?.items ?? []).filter(
+      (it) => (it.spatialBasis ?? it.igtBasis) === "bidang",
+    );
+    const validBboxes = bidangItems
+      .map((it) => it.bbox)
+      .filter((b): b is [number, number, number, number] => Boolean(b));
+
+    if (validBboxes.length > 0) {
+      targetBbox = [
+        Math.min(...validBboxes.map((b) => b[0])),
+        Math.min(...validBboxes.map((b) => b[1])),
+        Math.max(...validBboxes.map((b) => b[2])),
+        Math.max(...validBboxes.map((b) => b[3])),
+      ];
+    } else {
+      // 2. If item bbox is absent, use bbox from matching master layer items
+      const masterItems = masterLayersData?.items ?? [];
+      const masterBboxes = bidangItems
+        .map((it) => {
+          const keyId = (it.sourceLayerId || it.id || "").toLowerCase();
+          const keyTitle = (it.sourceLayerTitle || "").toLowerCase();
+          const matched = masterItems.find(
+            (m) =>
+              m.id?.toLowerCase() === keyId ||
+              m.typeName?.toLowerCase() === keyId ||
+              m.title?.toLowerCase() === keyTitle,
+          );
+          return matched?.bbox;
+        })
+        .filter((b): b is [number, number, number, number] => Boolean(b));
+
+      if (masterBboxes.length > 0) {
+        targetBbox = [
+          Math.min(...masterBboxes.map((b) => b[0])),
+          Math.min(...masterBboxes.map((b) => b[1])),
+          Math.max(...masterBboxes.map((b) => b[2])),
+          Math.max(...masterBboxes.map((b) => b[3])),
+        ];
+      } else if (selectedOrder?.aoiPolygon) {
+        // 3. Fallback: zoom to AOI polygon bbox if available
+        const aoiFeature = normalizePolygonFeature(selectedOrder.aoiPolygon);
+        if (aoiFeature) {
+          targetBbox = turf.bbox(aoiFeature) as [
+            number,
+            number,
+            number,
+            number,
+          ];
+        }
+      }
+    }
+
+    if (!targetBbox) return;
+
+    const [minLng, minLat, maxLng, maxLat] = targetBbox;
+    const bboxPolygonFeature: GeoJSON.Feature<GeoJSON.Polygon> = {
+      type: "Feature",
+      properties: {
+        id: `bidang-bbox-${selectedOrder?.orderId ?? "active"}`,
+        title: "Cakupan Bidang",
+      },
+      geometry: {
+        type: "Polygon",
+        coordinates: [
+          [
+            [minLng, minLat],
+            [maxLng, minLat],
+            [maxLng, maxLat],
+            [minLng, maxLat],
+            [minLng, minLat],
+          ],
+        ],
+      },
+    };
+
+    highlightFeatureOnMap(map, bboxPolygonFeature, {
+      zoom: 16,
+      fitCamera: true,
+      timeoutMs: 2000,
+    });
+  }, [map, selectedOrder, masterLayersData?.items]);
 
   // Derived Values
   const selectedOrderIndex = orders.findIndex(
@@ -175,10 +375,13 @@ const MitraCartContent = () => {
           onSelectOrder={handleSelectOrder}
           isAoiVisible={isAoiVisible}
           isCoverageVisible={isCoverageVisible}
+          isBidangVisible={isBidangVisible}
           onToggleAoiVisible={handleToggleAoi}
           onToggleCoverageVisible={handleToggleCoverage}
+          onToggleBidangVisible={handleToggleBidang}
           onFlyToAoi={handleFlyToAoi}
           onFlyToCoverage={handleFlyToCoverage}
+          onFlyToBidang={handleFlyToBidang}
         />
 
         <MitraCartOrderDetail
@@ -205,10 +408,13 @@ export const MitraCartOrderList = (props: MitraCartOrderListProps) => {
     onSelectOrder,
     isAoiVisible,
     isCoverageVisible,
+    isBidangVisible,
     onToggleAoiVisible,
     onToggleCoverageVisible,
+    onToggleBidangVisible,
     onFlyToAoi,
     onFlyToCoverage,
+    onFlyToBidang,
   } = props;
 
   // Contexts
@@ -302,7 +508,7 @@ export const MitraCartOrderList = (props: MitraCartOrderListProps) => {
 
         {!isOrdersLoading && isOrdersError && (
           <Center flex={1} w={"full"} h={"full"} py={"xl"}>
-            <RetryState
+            <StateRetry
               title={"Gagal Memuat Keranjang Pesanan"}
               description={
                 ordersError?.message ||
@@ -319,7 +525,7 @@ export const MitraCartOrderList = (props: MitraCartOrderListProps) => {
           <>
             {!hasOrders && (
               <Center flex={1} w={"full"} h={"full"} py={"xl"}>
-                <NoDataState
+                <StateNoData
                   icon={ShoppingCartIcon}
                   title={"Keranjang Kosong"}
                   description={
@@ -335,6 +541,7 @@ export const MitraCartOrderList = (props: MitraCartOrderListProps) => {
                 {!selectedOrderId && (
                   <Alert.Root status={"info"} mb={1}>
                     <AppIcon icon={InfoIcon} />
+
                     <Alert.Description>
                       {
                         "Silakan pilih salah satu pesanan untuk melihat rincian layer atau melanjutkan ke pembayaran."
@@ -360,10 +567,13 @@ export const MitraCartOrderList = (props: MitraCartOrderListProps) => {
                       }
                       isAoiVisible={isAoiVisible}
                       isCoverageVisible={isCoverageVisible}
+                      isBidangVisible={isBidangVisible}
                       onToggleAoiVisible={onToggleAoiVisible}
                       onToggleCoverageVisible={onToggleCoverageVisible}
+                      onToggleBidangVisible={onToggleBidangVisible}
                       onFlyToAoi={onFlyToAoi}
                       onFlyToCoverage={onFlyToCoverage}
+                      onFlyToBidang={onFlyToBidang}
                     />
                   );
                 })}
@@ -415,10 +625,6 @@ export const MitraCartOrderDetail = (props: MitraCartOrderDetailProps) => {
         <HStack align={"center"} justify={"space-between"} w={"full"}>
           <HStack align={"center"} gap={"sm"}>
             <Heading>{"Rincian Pesanan"}</Heading>
-
-            {displayOrderNumber !== null && (
-              <Badge>{`Pesanan #${displayOrderNumber}`}</Badge>
-            )}
           </HStack>
         </HStack>
       </HeaderContainer>

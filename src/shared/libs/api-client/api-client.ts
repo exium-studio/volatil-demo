@@ -1,6 +1,5 @@
 // src/shared/libs/api-client/api-client.ts
 
-import { router } from "@/app/router";
 import { toast } from "@/design-system/components/toast";
 import { ApiError } from "@/shared/libs/api-client/api-error";
 import { t } from "@/shared/libs/i18n";
@@ -17,7 +16,13 @@ export const apiClient = {
     endpoint: string,
     options: RequestOptions = {},
   ): Promise<T> => {
-    const { body, params, headers: customHeaders, ...restOptions } = options;
+    const {
+      body,
+      params,
+      headers: customHeaders,
+      method: rawMethod = "GET",
+      ...restOptions
+    } = options;
 
     const baseUrl = import.meta.env.VITE_API_BASE_URL || "";
     let url =
@@ -55,62 +60,105 @@ export const apiClient = {
       }
     }
 
+    // Tunnel PUT / PATCH / DELETE via POST with X-HTTP-Method-Override header for strict firewalls/WAFs
+    let method = rawMethod.toUpperCase();
+    if (["PUT", "PATCH", "DELETE"].includes(method)) {
+      headers["X-HTTP-Method-Override"] = method;
+      method = "POST";
+    }
+
     try {
       const response = await fetch(url, {
         ...restOptions,
+        method,
         headers,
         body: serializedBody,
       });
 
       if (!response.ok) {
         let errorMessage = `HTTP Error ${response.status}: ${response.statusText}`;
+        let errorCode: string | undefined = undefined;
         let errorData: Record<string, string[]> | undefined = undefined;
 
         try {
           const jsonError = await response.json();
           if (jsonError.message) errorMessage = jsonError.message;
+          if (jsonError.code) errorCode = String(jsonError.code);
           if (jsonError.errors) errorData = jsonError.errors;
         } catch {
           // Fallback if response is not JSON
         }
 
-        if (response.status === 401 || response.status === 403) {
+        const isAuthLoginEndpoint =
+          endpoint.includes("/api/auth/login") ||
+          endpoint.includes("/api/auth/sso/internal/callback") ||
+          endpoint.includes("/api/auth/login/totp-verify");
+
+        let isToastFired = false;
+
+        // 1. KASUS AUTH_EXPIRED (status 400 with code AUTH_EXPIRED or 401/403 on protected routes)
+        const isAuthExpired =
+          errorCode === "AUTH_EXPIRED" ||
+          (!isAuthLoginEndpoint && (response.status === 401 || response.status === 403));
+
+        if (isAuthExpired) {
           if (typeof window !== "undefined") {
-            localStorage.removeItem("auth_token");
-            localStorage.removeItem("user");
-            sessionStorage.removeItem("user");
-            sessionStorage.removeItem("keycloakIdToken");
+            const currentPath =
+              window.location.pathname.replace(/\/$/, "") || "/";
+            const isSigninRoute =
+              currentPath === "/" || currentPath === "/admin";
 
-            const isPublicPage =
-              window.location.pathname === "/" ||
-              window.location.pathname === "/admin";
+            if (!isSigninRoute && !isAuthLoginEndpoint) {
+              localStorage.removeItem("auth_token");
+              localStorage.removeItem("user");
+              sessionStorage.removeItem("user");
+              sessionStorage.removeItem("keycloakIdToken");
 
-            const toastTitle =
-              response.status === 401
-                ? t["error.unauthorized"]()
-                : t["error.forbidden"]();
+              const toastTitle =
+                response.status === 403
+                  ? t["error.forbidden"]()
+                  : t["error.unauthorized"]();
 
-            toast.error(toastTitle, {
-              id: "auth-session-expired-toast",
-              group: t["common.system"](),
-              description:
-                errorMessage ||
-                (response.status === 401
-                  ? t["error.unauthorized"]()
-                  : t["error.forbidden"]()),
-            });
+              toast.error(toastTitle, {
+                id: "auth-session-expired-toast",
+                group: t["common.system"](),
+                description:
+                  errorMessage ||
+                  (response.status === 403
+                    ? t["error.forbidden"]()
+                    : t["error.unauthorized"]()),
+              });
+              isToastFired = true;
 
-            const isInternal =
-              window.location.pathname.startsWith("/internal") ||
-              window.location.pathname.startsWith("/admin");
+              const isInternal =
+                window.location.pathname.startsWith("/internal") ||
+                window.location.pathname.startsWith("/admin");
 
-            if (!isPublicPage) {
-              void router.navigate({ to: isInternal ? "/admin" : "/" });
+              window.location.replace(isInternal ? "/admin" : "/");
             }
+          }
+        } else if (
+          // 2. KASUS FATAL SERVER ERROR (code SOMETHING_WRONG or HTTP 500)
+          errorCode === "SOMETHING_WRONG" ||
+          response.status === 500
+        ) {
+          if (!options.suppressToast && typeof window !== "undefined") {
+            toast.error(errorMessage || "Terjadi kendala pada sistem. Silakan coba beberapa saat lagi.", {
+              id: options.toastId ?? "server-fatal-error-toast",
+            });
+            isToastFired = true;
           }
         }
 
-        throw new ApiError(errorMessage, response.status, errorData);
+        // 3. SEMUA ERROR LAINNYA (Validation 400/422, Business Logic, 404):
+        // PASS-THROUGH TANPA TOAST GLOBAL (Biarkan UI / useMutation yang handle toast contextual)
+        throw new ApiError(
+          errorMessage,
+          response.status,
+          errorCode,
+          errorData,
+          isToastFired,
+        );
       }
 
       // Handle 204 No Content
@@ -136,9 +184,23 @@ export const apiClient = {
         window.dispatchEvent(new CustomEvent("app:network-offline"));
       }
 
+      const networkMsg =
+        err instanceof Error ? err.message : "Terjadi kesalahan jaringan";
+
+      let isNetworkToastFired = false;
+      if (!options.suppressToast && typeof window !== "undefined") {
+        toast.error(networkMsg, {
+          id: options.toastId ?? "network-error-toast",
+        });
+        isNetworkToastFired = true;
+      }
+
       throw new ApiError(
-        err instanceof Error ? err.message : "Terjadi kesalahan jaringan",
+        networkMsg,
         0,
+        undefined,
+        undefined,
+        isNetworkToastFired,
       );
     }
   },

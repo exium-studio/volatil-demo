@@ -1,3 +1,5 @@
+// src/features/mitra/data-request/components/mitra.data-request.catalog.tabs-content.tsx
+
 import { IconButton } from "@/design-system/components/button/ui/button";
 import { Tabs } from "@/design-system/components/disclosure/ui/tabs";
 import { AppIcon } from "@/design-system/components/icon/ui/app-icon";
@@ -15,6 +17,7 @@ import {
 } from "@/features/mitra/cart/hooks/use-cart-aoi-coverage-map";
 import { MitraDataRequestIgtLayerDataView } from "@/features/mitra/data-request/components/mitra.data-request.igt-layer.data-view";
 import { useAdminBoundaryAoi } from "@/features/mitra/data-request/hooks/use-admin-boundary-aoi";
+import { useBidangAoiFeatures } from "@/features/mitra/data-request/hooks/use-bidang-aoi-features";
 import { useSelectedIgtLayer } from "@/features/mitra/data-request/hooks/use-selected-igt-layer";
 import { useMitraDataRequestStore } from "@/features/mitra/data-request/stores/mitra.data-request.store";
 import type { MitraDataRequestCatalogTabsContentProps } from "@/features/mitra/data-request/types/mitra.data-request.catalog.type";
@@ -58,9 +61,7 @@ export const MitraDataRequestCatalogTabsContent = (
   const setAdminBoundaryPolygon = useMitraDataRequestStore(
     (state) => state.setAdminBoundaryPolygon,
   );
-  const resetCatalog = useMitraDataRequestStore(
-    (state) => state.resetCatalog,
-  );
+  const resetCatalog = useMitraDataRequestStore((state) => state.resetCatalog);
 
   // Hooks
   const { layerId, selectedIgtLayer, selectLayer } = useSelectedIgtLayer();
@@ -85,14 +86,24 @@ export const MitraDataRequestCatalogTabsContent = (
   const isCoverageVisible = useMitraDataRequestStore(
     (state) => state.isCatalogCoverageVisible,
   );
+  const isBidangVisible = useMitraDataRequestStore(
+    (state) => state.isCatalogBidangVisible,
+  );
 
-  // Keep AOI and Coverage layers mounted across both layer cards and attribute table view
+  const bidangQueryResult = useBidangAoiFeatures({
+    aoiPolygon: adminBoundaryQuery.aoiPolygon,
+    enabled: Boolean(isActive && hasFilter && isBidangVisible),
+  });
+
+  // Keep AOI, Coverage, and Bidang layers mounted across both layer cards and attribute table view
   useCartAoiCoverageMap(map, {
     aoiPolygon: adminBoundaryQuery.aoiPolygon,
-    coveragePolygon: calculationResult?.coveragePolygon,
+    kawasanCoveragePolygon: calculationResult?.kawasanCoveragePolygon,
+    bidangFeatures: bidangQueryResult.features,
     selectionType: "catalog",
     isAoiVisible,
     isCoverageVisible,
+    isBidangVisible,
     isActive: isActive && hasFilter,
   });
   const filterLabel = useMemo(() => {
@@ -112,8 +123,15 @@ export const MitraDataRequestCatalogTabsContent = (
   const handleApplyInitialFilter = (
     filters: FilterAdministrativeAreaValues,
   ) => {
-    useMitraDataRequestStore.getState().resetCalculation();
-    setAppliedAdministrativeFilters(filters);
+    const currentApplied =
+      useMitraDataRequestStore.getState().appliedAdministrativeFilters;
+    const isSame =
+      JSON.stringify(filters ?? {}) === JSON.stringify(currentApplied ?? {});
+
+    if (!isSame) {
+      useMitraDataRequestStore.getState().resetCalculation();
+      setAppliedAdministrativeFilters(filters);
+    }
     setDraftFilters(filters);
   };
 
@@ -160,7 +178,7 @@ export const MitraDataRequestCatalogTabsContent = (
         <VStack
           flex={1}
           gap={0}
-          overflowY={"auto"}
+          overflow={"hidden"}
           bg={"bg.canvas"}
           position={"relative"}
           w={"full"}
@@ -173,6 +191,7 @@ export const MitraDataRequestCatalogTabsContent = (
             p={"md"}
             bg={"bg.body"}
             w={"full"}
+            flexShrink={0}
           >
             <HStack
               wrap={"wrap"}
@@ -182,17 +201,12 @@ export const MitraDataRequestCatalogTabsContent = (
               w={"full"}
             >
               <VStack align={"start"} gap={0}>
-                <P fontWeight={"semibold"} fontSize={"md"}>
-                  {"AOI Wilayah Administrasi"}
-                </P>
-                {filterLabel && (
-                  <P fontSize={"xs"} color={"fg.muted"}>
-                    {filterLabel}
-                  </P>
-                )}
+                <P fontWeight={"semibold"}>{"AOI Wilayah Administrasi"}</P>
+
+                {filterLabel && <P color={"fg.muted"}>{filterLabel}</P>}
               </VStack>
 
-              <HStack align={"center"} gap={"sm"}>
+              <HStack align={"center"} gap={"xs"}>
                 {adminBoundaryQuery.aoiPolygon && map && (
                   <>
                     <Tooltip
@@ -257,7 +271,7 @@ export const MitraDataRequestCatalogTabsContent = (
             </HStack>
           </VStack>
 
-          <Separator borderColor={"bg.canvas"} />
+          <Separator borderColor={"bg.canvas"} flexShrink={0} />
 
           <MitraDataRequestIgtLayerDataView
             selectionType={"catalog"}
@@ -278,4 +292,3 @@ export const MitraDataRequestCatalogTabsContent = (
     </Tabs.Content>
   );
 };
-

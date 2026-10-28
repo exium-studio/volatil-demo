@@ -5,21 +5,22 @@ import type { DataViewItemActionsGenerator } from "@/design-system/components/da
 import { DataViewFooter } from "@/design-system/components/data-display/ui/data-view-footer";
 import { DEFAULT_PAGE_SIZE_OPTIONS } from "@/design-system/components/data-display/ui/data-view-page-size";
 import { DataViewTable } from "@/design-system/components/data-display/ui/data-view-table";
+import { ConfirmationTrigger } from "@/design-system/components/feedback/ui/confirmation-trigger";
 import { Skeleton } from "@/design-system/components/feedback/ui/skeleton";
-import { NoDataState } from "@/design-system/components/feedback/ui/state.no-data";
-import { NoResultState } from "@/design-system/components/feedback/ui/state.no-result";
-import { RetryState } from "@/design-system/components/feedback/ui/state.retry";
+import { StateNoData } from "@/design-system/components/feedback/ui/state.no-data";
+import { StateNoResult } from "@/design-system/components/feedback/ui/state.no-result";
+import { StateRetry } from "@/design-system/components/feedback/ui/state.retry";
 import { TopBarLoader } from "@/design-system/components/feedback/ui/top-bar-loader";
 import { SearchInput } from "@/design-system/components/input/ui/search-input";
 import { InfoTip } from "@/design-system/components/input/ui/toggle-tip";
+import { ActionHeaderScrollContainer } from "@/design-system/components/layout/ui/action-header-scroll-container";
 import { Center } from "@/design-system/components/layout/ui/center";
 import { Container } from "@/design-system/components/layout/ui/container";
-import { ActionHeaderScrollContainer } from "@/design-system/components/layout/ui/action-header-scroll-container";
 import { HStack, VStack } from "@/design-system/components/layout/ui/flex-box";
 import { Separator } from "@/design-system/components/layout/ui/separator";
 import { HeaderContainer } from "@/design-system/components/shell/ui/header-container";
 import { Heading } from "@/design-system/components/typography/ui/heading";
-import { P } from "@/design-system/components/typography/ui/p";
+import { P, TNum } from "@/design-system/components/typography/ui/p";
 import { InternalOrderReviewApproveTrigger } from "@/features/internal/order-review/components/internal.order-review.approve-modal";
 import {
   useInternalOrdersQuery,
@@ -34,14 +35,17 @@ import type {
 import type { CartOrderStatus } from "@/features/mitra/cart/types/mitra.cart.order.type";
 import { OrderStatusBadge } from "@/features/shared/components/order-status.badge";
 import { SelectionTypeBadge } from "@/features/shared/components/selection-type.badge";
-import { TteBadge } from "@/features/shared/components/tte.badge";
 import { StatusFilterSelect } from "@/features/shared/components/status-filter.select";
+import { TteBadge } from "@/features/shared/components/tte.badge";
 import { isEmptyArray } from "@/shared/utils/data/array";
 import {
   formatUtcDateTime,
   getPreferredUserTimezone,
 } from "@/shared/utils/formatter/date.formatter";
-import { formatCurrency } from "@/shared/utils/formatter/number.formatter";
+import {
+  formatCurrency,
+  formatNumber,
+} from "@/shared/utils/formatter/number.formatter";
 import { useNavigate } from "@tanstack/react-router";
 import {
   CheckCircleIcon,
@@ -49,14 +53,15 @@ import {
   LayersIcon,
   MapPlusIcon,
   ReceiptTextIcon,
+  RefreshCwIcon,
 } from "lucide-react";
 import { useMemo, useState, useTransition } from "react";
 
 const ORDER_STATUS_OPTIONS = [
-  { value: "all", label: "Semua Status (Paid, Proses & Review)" },
-  { value: "paid", label: "Terbayar (Perlu Create WMS)" },
+  { value: "all", label: "Semua Status" },
+  { value: "paid", label: "Terbayar" },
   { value: "processing", label: "Menyiapkan Layanan WMS" },
-  { value: "pending_review", label: "Menunggu Review (WMS Siap)" },
+  { value: "pending_review", label: "Menunggu Review" },
 ];
 
 export const InternalOrderReviewDataView = () => {
@@ -76,6 +81,19 @@ export const InternalOrderReviewDataView = () => {
 
   // Derived Values
   const preferredTimezone = useMemo(() => getPreferredUserTimezone(), []);
+
+  const isSearching = Boolean(params.search?.trim() || params.status !== "all");
+  const searchQuery = useMemo(() => {
+    const parts: string[] = [];
+    if (params.search?.trim()) {
+      parts.push(params.search.trim());
+    }
+    if (params.status && params.status !== "all") {
+      const opt = ORDER_STATUS_OPTIONS.find((o) => o.value === params.status);
+      parts.push(opt?.label ?? params.status);
+    }
+    return parts.length > 0 ? parts.join(", ") : "...";
+  }, [params.search, params.status]);
 
   // Queries
   const {
@@ -110,7 +128,9 @@ export const InternalOrderReviewDataView = () => {
       { th: "No. Pesanan", sortable: true, align: "start" },
       { th: "Nama Mitra Pemohon", sortable: true, align: "start" },
       { th: "Metode Pengajuan", sortable: false, align: "start" },
-      { th: "Daftar Layer IGT", sortable: false, align: "start" },
+      { th: "Jumlah Layer", sortable: false, align: "start" },
+      { th: "Cakupan Bidang", sortable: true },
+      { th: "Cakupan Kawasan", sortable: true },
       { th: "Status Pesanan", sortable: true, align: "start" },
       { th: "TTE & Faktur", sortable: false, align: "start" },
       { th: "Total Biaya", sortable: true, align: "end" },
@@ -118,14 +138,6 @@ export const InternalOrderReviewDataView = () => {
     ];
 
     const items = orders.map((order) => {
-      const totalBidang = order.items
-        .filter((i) => i.spatialBasis === "bidang")
-        .reduce((sum, item) => sum + item.featuresCount, 0);
-
-      const totalKawasanHa = order.items
-        .filter((i) => i.spatialBasis === "kawasan")
-        .reduce((sum, item) => sum + (item.areaHa ?? 0), 0);
-
       const displayOrderNumber = order.orderNumber || order.orderId;
 
       return {
@@ -158,20 +170,41 @@ export const InternalOrderReviewDataView = () => {
           },
           {
             value: order.items.length,
+            td: <P textAlign={"center"}>{`${order.items.length} Layer`}</P>,
+          },
+          {
+            value: order.bidangCoverageCount,
             td: (
-              <VStack align={"start"} gap={0}>
-                <P fontSize={"sm"}>
-                  {order.items.map((i) => i.sourceLayerTitle).join(", ")}
-                </P>
-                <P fontSize={"xs"} color={"fg.muted"}>
-                  {`${order.items.length} layer • `}
-                  {totalBidang > 0 && `${totalBidang} bidang`}
-                  {totalBidang > 0 && totalKawasanHa > 0 && " • "}
-                  {totalKawasanHa > 0 && `${totalKawasanHa} ha`}
-                </P>
-              </VStack>
+              <P>
+                {order.bidangCoverageCount ? (
+                  <>
+                    <TNum>{formatNumber(order.bidangCoverageCount)}</TNum>{" "}
+                    {"Bidang"}
+                  </>
+                ) : (
+                  "-"
+                )}
+              </P>
             ),
-            align: "start" as const,
+          },
+          {
+            value: order.kawasanCoverageHa,
+            td: (
+              <P>
+                {order.kawasanCoverageHa ? (
+                  <>
+                    <TNum>
+                      {formatNumber(order.kawasanCoverageHa, {
+                        maximumFractionDigits: 2,
+                      })}
+                    </TNum>{" "}
+                    {"ha"}
+                  </>
+                ) : (
+                  "-"
+                )}
+              </P>
+            ),
           },
           {
             value: order.status,
@@ -216,9 +249,45 @@ export const InternalOrderReviewDataView = () => {
         key: "provision-wms",
         label: "Create Service WMS",
         icon: MapPlusIcon,
+        colorPalette: "blue",
         hidden: (order: InternalOrderItem) => order.status !== "paid",
-        onClick: (order: InternalOrderItem) => {
-          provisionOrderMutation.mutate({ orderId: order.orderId });
+        modal: {
+          triggerComponent: (order: InternalOrderItem) => (
+            <ConfirmationTrigger
+              modalKey={`provision-wms-${order.orderId}`}
+              icon={MapPlusIcon}
+              colorPalette={"blue"}
+              title={"Buat Layanan WMS"}
+              description={`Apakah Anda yakin ingin memulai pembuatan layanan WMS untuk pesanan "${order.orderNumber || order.orderId}" (Mitra: ${order.mitraName})? Proses ini akan menyiapkan workspace dan service layer di latar belakang.`}
+              confirmLabel={"Buat Layanan WMS"}
+              onConfirm={() => {
+                provisionOrderMutation.mutate({ orderId: order.orderId });
+              }}
+            />
+          ),
+        },
+      },
+      {
+        key: "re-provision-wms",
+        label: "Buat Ulang WMS",
+        icon: RefreshCwIcon,
+        colorPalette: "orange",
+        hidden: (order: InternalOrderItem) =>
+          order.status !== "processing" && order.status !== "wms_failed",
+        modal: {
+          triggerComponent: (order: InternalOrderItem) => (
+            <ConfirmationTrigger
+              modalKey={`re-provision-wms-${order.orderId}`}
+              icon={RefreshCwIcon}
+              colorPalette={"orange"}
+              title={"Buat Ulang Layanan WMS"}
+              description={`Apakah Anda yakin ingin membuat ulang layanan WMS untuk pesanan "${order.orderNumber || order.orderId}" (Mitra: ${order.mitraName})? Gunakan aksi ini jika proses pembuatan layanan WMS sebelumnya mengalami kendala atau terhenti.`}
+              confirmLabel={"Buat Ulang Layanan WMS"}
+              onConfirm={() => {
+                provisionOrderMutation.mutate({ orderId: order.orderId });
+              }}
+            />
+          ),
         },
       },
       {
@@ -278,7 +347,7 @@ export const InternalOrderReviewDataView = () => {
 
   return (
     <Container.Root flex={1} minH={0} withContext={true}>
-      <Container.Body flex={1} minH={0} overflowY={"auto"}>
+      <Container.Body flex={1} minH={0} overflow={"clip"}>
         {/* Header Container */}
         <HeaderContainer>
           <HStack gap={"xs"} align={"center"}>
@@ -322,7 +391,7 @@ export const InternalOrderReviewDataView = () => {
                   }));
                 });
               }}
-              w={"240px"}
+              minW={"150px"}
             />
           </HStack>
         </ActionHeaderScrollContainer>
@@ -330,12 +399,18 @@ export const InternalOrderReviewDataView = () => {
         <Separator borderColor={"bg.canvas"} />
 
         {/* Table / Content */}
-        <VStack flex={1} bg={"bg.canvas"} w={"full"} position={"relative"}>
+        <VStack
+          flex={1}
+          minH={0}
+          bg={"bg.canvas"}
+          w={"full"}
+          position={"relative"}
+        >
           {isLoading ? (
             <Skeleton p={"md"} rounded={0} />
           ) : isError ? (
             <Center flex={1} w={"full"} py={"xl"} bg={"bg.body"}>
-              <RetryState
+              <StateRetry
                 title={"Gagal Memuat Antrean Review"}
                 description={
                   error?.message ||
@@ -348,14 +423,15 @@ export const InternalOrderReviewDataView = () => {
             </Center>
           ) : isEmptyArray(orders) ? (
             <Center flex={1} w={"full"} py={"xl"} bg={"bg.body"}>
-              {params.search || params.status !== "all" ? (
-                <NoResultState
+              {isSearching ? (
+                <StateNoResult
+                  query={searchQuery}
                   description={
                     "Tidak ada pesanan permintaan yang sesuai dengan filter atau kata kunci pencarian Anda."
                   }
                 />
               ) : (
-                <NoDataState
+                <StateNoData
                   icon={CheckCircleIcon}
                   title={"Tidak Ada Antrean Review"}
                   description={
@@ -365,7 +441,13 @@ export const InternalOrderReviewDataView = () => {
               )}
             </Center>
           ) : (
-            <VStack flex={1} position={"relative"} w={"full"}>
+            <VStack
+              flex={1}
+              minH={0}
+              overflow={"hidden"}
+              position={"relative"}
+              w={"full"}
+            >
               <TopBarLoader isFetching={isFetching} />
 
               <DataViewTable.Root<InternalOrderItem>
@@ -373,6 +455,7 @@ export const InternalOrderReviewDataView = () => {
                 items={dataList.items}
                 itemActions={dataList.itemActions}
                 withNumbering={true}
+                virtualized={false}
                 page={params.page}
                 pageSize={params.pageSize}
                 rounded={0}
@@ -382,9 +465,10 @@ export const InternalOrderReviewDataView = () => {
                 <DataViewTable.Body />
               </DataViewTable.Root>
 
-              <Separator borderColor={"bg.canvas"} />
+              <Separator borderColor={"bg.canvas"} flexShrink={0} />
 
               <DataViewFooter
+                flexShrink={0}
                 page={params.page ?? 1}
                 pageSize={params.pageSize ?? 1}
                 setPage={(nextPage: number) =>

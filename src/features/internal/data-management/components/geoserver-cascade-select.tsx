@@ -20,9 +20,10 @@ export const GeoserverCascadeSelect = (props: GeoserverCascadeSelectProps) => {
     onGeoserverChange,
     selectedWorkspace,
     onWorkspaceChange,
+    selectedLayerName,
     selectedTypeName,
     onLayerChange,
-    initialLayerOption,
+    errors,
   } = props;
 
   // Hooks (Queries)
@@ -31,22 +32,19 @@ export const GeoserverCascadeSelect = (props: GeoserverCascadeSelectProps) => {
     isLoading: isLoadingGeoserver,
     isError: isErrorGeoserver,
     refetch: refetchGeoserver,
-  } =
-    useMasterGeoserverQuery();
+  } = useMasterGeoserverQuery();
   const {
     workspaces,
     isLoading: isLoadingWorkspaces,
     isError: isErrorWorkspaces,
     refetch: refetchWorkspaces,
-  } =
-    useGeoServerWorkspacesQuery(selectedGeoserverId);
+  } = useGeoServerWorkspacesQuery(selectedGeoserverId);
   const {
     layers: workspaceLayers,
     isLoading: isLoadingLayers,
     isError: isErrorLayers,
     refetch: refetchLayers,
-  } =
-    useGeoServerWorkspaceLayersQuery(selectedGeoserverId, selectedWorkspace);
+  } = useGeoServerWorkspaceLayersQuery(selectedGeoserverId, selectedWorkspace);
 
   // Derived Values
   const geoserverOptions: FocusSelectOption[] = useMemo(
@@ -68,31 +66,55 @@ export const GeoserverCascadeSelect = (props: GeoserverCascadeSelectProps) => {
     [workspaces],
   );
 
-  const layerOptions: FocusSelectOption[] = useMemo(() => {
-    const list: FocusSelectOption[] = workspaceLayers.map((lyr) => ({
-      label: lyr.title || lyr.name,
-      value: lyr.typeName,
-    }));
+  const layerOptions: FocusSelectOption[] = useMemo(
+    () =>
+      workspaceLayers.map((lyr) => {
+        const basis = lyr.igtBasis ?? lyr.spatialBasis;
+        return {
+          label: lyr.title || lyr.name,
+          value: lyr.name,
+          description: lyr.abstract || (basis ? `Basis: ${basis}` : undefined),
+        };
+      }),
+    [workspaceLayers],
+  );
 
-    if (
-      initialLayerOption &&
-      !list.some((opt) => opt.value === initialLayerOption.value)
-    ) {
-      return [initialLayerOption, ...list];
+  const handleLayerSelect = (layerName: string) => {
+    if (!layerName) {
+      // Level Workspace (all layers in workspace)
+      onLayerChange(null, selectedWorkspace, undefined);
+      return;
     }
-
-    return list;
-  }, [workspaceLayers, initialLayerOption]);
-
-  const handleLayerSelect = (typeName: string) => {
-    const foundLayer = workspaceLayers.find((l) => l.typeName === typeName);
-    onLayerChange(typeName, foundLayer);
+    const foundLayer = workspaceLayers.find(
+      (l) => l.name === layerName || l.typeName === layerName,
+    );
+    const constructedTypeName = selectedWorkspace
+      ? `${selectedWorkspace}:${layerName}`
+      : layerName;
+    onLayerChange(layerName, constructedTypeName, foundLayer);
   };
 
+  // Determine active layer selection for FocusSelectInput
+  const effectiveLayerSelectValue = useMemo(() => {
+    if (selectedLayerName) return selectedLayerName;
+    if (
+      selectedTypeName &&
+      selectedWorkspace &&
+      selectedTypeName.startsWith(`${selectedWorkspace}:`)
+    ) {
+      return selectedTypeName.replace(`${selectedWorkspace}:`, "");
+    }
+    return "";
+  }, [selectedLayerName, selectedTypeName, selectedWorkspace]);
+
   return (
-    <VStack align={"stretch"} gap={"md"} w={"full"}>
+    <VStack gap={"md"} w={"full"}>
       {/* 1. Select Master GeoServer */}
-      <Field label={"Master GeoServer"}>
+      <Field
+        label={"Master GeoServer"}
+        invalid={Boolean(errors?.geoserverId)}
+        errorText={errors?.geoserverId?.message}
+      >
         <FocusSelectInput
           modalKey={`${parentModalKey}.geoserver`}
           title={"Master GeoServer"}
@@ -102,7 +124,7 @@ export const GeoserverCascadeSelect = (props: GeoserverCascadeSelectProps) => {
           onValueChange={(val) => {
             onGeoserverChange(val);
             onWorkspaceChange("");
-            onLayerChange("", undefined);
+            onLayerChange(null, "", undefined);
           }}
           isFetching={isLoadingGeoserver}
           isError={isErrorGeoserver}
@@ -111,7 +133,11 @@ export const GeoserverCascadeSelect = (props: GeoserverCascadeSelectProps) => {
       </Field>
 
       {/* 2. Select Workspace */}
-      <Field label={"Workspace GeoServer"}>
+      <Field
+        label={"Workspace GeoServer"}
+        invalid={Boolean(errors?.workspaceName || errors?.workspace)}
+        errorText={errors?.workspaceName?.message || errors?.workspace?.message}
+      >
         <FocusSelectInput
           modalKey={`${parentModalKey}.workspace`}
           title={"Workspace GeoServer"}
@@ -124,7 +150,7 @@ export const GeoserverCascadeSelect = (props: GeoserverCascadeSelectProps) => {
           value={selectedWorkspace}
           onValueChange={(val) => {
             onWorkspaceChange(val);
-            onLayerChange("", undefined);
+            onLayerChange(null, val, undefined);
           }}
           disabled={!selectedGeoserverId}
           isFetching={isLoadingWorkspaces}
@@ -134,17 +160,22 @@ export const GeoserverCascadeSelect = (props: GeoserverCascadeSelectProps) => {
       </Field>
 
       {/* 3. Select Layer */}
-      <Field label={"Layer"}>
+      <Field
+        label={"Layer"}
+        optional
+        invalid={Boolean(errors?.layerName)}
+        errorText={errors?.layerName?.message}
+      >
         <FocusSelectInput
           modalKey={`${parentModalKey}.layer`}
           title={"Layer"}
           placeholder={
             selectedWorkspace
-              ? "Pilih layer..."
+              ? "Pilih layer (opsional — kosongkan jika level workspace)..."
               : "Pilih workspace terlebih dahulu"
           }
           options={layerOptions}
-          value={selectedTypeName}
+          value={effectiveLayerSelectValue}
           onValueChange={handleLayerSelect}
           disabled={!selectedWorkspace}
           isFetching={isLoadingLayers}

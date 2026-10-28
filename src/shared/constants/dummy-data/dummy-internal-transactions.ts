@@ -6,9 +6,13 @@ import type {
 } from "@/features/internal/statistik-pesanan/types/internal.transaction-statistic.type";
 
 export const DUMMY_INTERNAL_TRANSACTION_STATISTICS: InternalTransactionStatistics = {
-  activeOrders: 14,
-  settledTransactions: 86,
-  netWorth: 1845000000,
+  revenueWmsBidang: 18075000,
+  revenueWmsKawasan: 103200000,
+  netWorth: 121275000,
+  wmsPotential: 14,
+  wmsProcessing: 2,
+  wmsActive: 45,
+  wmsExpired: 5,
 };
 
 export const DUMMY_INTERNAL_TRANSACTIONS: InternalTransactionItem[] = [
@@ -23,6 +27,10 @@ export const DUMMY_INTERNAL_TRANSACTIONS: InternalTransactionItem[] = [
     orderStatus: "ready",
     selectionType: "draw_aoi",
     totalAmount: 235000000,
+    coverageHa: 1166.67,
+    kawasanCoverageHa: 1166.67,
+    bidangCoverageCount: 1200,
+    featuresCount: 1200,
     mitra: {
       id: "mitra-001",
       name: "PT Agraria Sentosa",
@@ -72,6 +80,10 @@ export const DUMMY_INTERNAL_TRANSACTIONS: InternalTransactionItem[] = [
     orderStatus: "processing",
     selectionType: "catalog",
     totalAmount: 75000000,
+    coverageHa: 0,
+    kawasanCoverageHa: 0,
+    bidangCoverageCount: 1500,
+    featuresCount: 1500,
     mitra: {
       id: "mitra-002",
       name: "Bappeda Kabupaten Badung",
@@ -110,6 +122,10 @@ export const DUMMY_INTERNAL_TRANSACTIONS: InternalTransactionItem[] = [
     orderStatus: "pending_review",
     selectionType: "upload_aoi",
     totalAmount: 225000000,
+    coverageHa: 1500,
+    kawasanCoverageHa: 1500,
+    bidangCoverageCount: 0,
+    featuresCount: 0,
     mitra: {
       id: "mitra-003",
       name: "CV Geomatika Nusantara",
@@ -149,6 +165,10 @@ export const DUMMY_INTERNAL_TRANSACTIONS: InternalTransactionItem[] = [
     orderStatus: "pending_payment",
     selectionType: "upload_aoi",
     totalAmount: 180000000,
+    coverageHa: 1200,
+    kawasanCoverageHa: 1200,
+    bidangCoverageCount: 0,
+    featuresCount: 0,
     mitra: {
       id: "mitra-004",
       name: "Universitas Udayana",
@@ -180,10 +200,14 @@ export const DUMMY_INTERNAL_TRANSACTIONS: InternalTransactionItem[] = [
     orderNumber: "ORD-2026-0818-005",
     billingCode: "8202608180005",
     paymentMethod: "VA_BRI",
-    transactionStatus: "refunded",
+    transactionStatus: "failed",
     orderStatus: "rejected",
     selectionType: "catalog",
     totalAmount: 55000000,
+    coverageHa: 0,
+    kawasanCoverageHa: 0,
+    bidangCoverageCount: 1100,
+    featuresCount: 1100,
     mitra: {
       id: "mitra-005",
       name: "PT Nusantara Citra Mandiri",

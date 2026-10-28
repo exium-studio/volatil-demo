@@ -5,16 +5,16 @@ import { DataViewFooter } from "@/design-system/components/data-display/ui/data-
 import { DEFAULT_PAGE_SIZE_OPTIONS } from "@/design-system/components/data-display/ui/data-view-page-size";
 import { DataViewTable } from "@/design-system/components/data-display/ui/data-view-table";
 import { Skeleton } from "@/design-system/components/feedback/ui/skeleton";
-import { NoDataState } from "@/design-system/components/feedback/ui/state.no-data";
-import { NoResultState } from "@/design-system/components/feedback/ui/state.no-result";
-import { RetryState } from "@/design-system/components/feedback/ui/state.retry";
+import { StateNoData } from "@/design-system/components/feedback/ui/state.no-data";
+import { StateNoResult } from "@/design-system/components/feedback/ui/state.no-result";
+import { StateRetry } from "@/design-system/components/feedback/ui/state.retry";
 import { TopBarLoader } from "@/design-system/components/feedback/ui/top-bar-loader";
 import { SearchInput } from "@/design-system/components/input/ui/search-input";
 import { ActionHeaderScrollContainer } from "@/design-system/components/layout/ui/action-header-scroll-container";
 import { Center } from "@/design-system/components/layout/ui/center";
 import { HStack, VStack } from "@/design-system/components/layout/ui/flex-box";
 import { Separator } from "@/design-system/components/layout/ui/separator";
-import { ClampedP, P } from "@/design-system/components/typography/ui/p";
+import { ClampedP, P, TNum } from "@/design-system/components/typography/ui/p";
 import {
   MITRA_LAYER_SYNC_JOB_STATUS_MAP,
   MITRA_LAYER_SYNC_JOB_STATUS_OPTIONS,
@@ -93,12 +93,29 @@ export const InternalMitraLayerSyncJobTableView = (
   const total = pagination?.totalItems ?? rawItems.length;
   const totalPages = pagination?.totalPages ?? 1;
 
+  const isSearching = Boolean(params.search?.trim() || params.status !== "all");
+  const searchQuery = useMemo(() => {
+    const parts: string[] = [];
+    if (params.search?.trim()) {
+      parts.push(params.search.trim());
+    }
+    if (params.status && params.status !== "all") {
+      const statusConfig =
+        MITRA_LAYER_SYNC_JOB_STATUS_MAP[
+          params.status as MitraLayerSyncJobStatus
+        ];
+      parts.push(statusConfig?.label ?? params.status);
+    }
+    return parts.length > 0 ? parts.join(", ") : "...";
+  }, [params.search, params.status]);
+
   const dataList = useMemo(() => {
     const headers: FormattedTableHeader[] = [
       { th: "ID Job", sortable: showPagination },
-      { th: "Layer Target", sortable: showPagination },
+      { th: "Order & Mitra", sortable: showPagination },
+      { th: "Pembaruan", sortable: showPagination },
       { th: "Status", sortable: showPagination, align: "start" },
-      { th: "Progres Sinkronisasi", sortable: showPagination },
+      { th: "Progres Layer", sortable: showPagination },
       { th: "Dijalankan Oleh", sortable: showPagination },
       { th: "Waktu Dijadwalkan", sortable: showPagination },
       { th: "Waktu Selesai", sortable: showPagination },
@@ -121,13 +138,35 @@ export const InternalMitraLayerSyncJobTableView = (
             align: "start" as const,
           },
           {
-            value: job.layerTitle,
+            value: job.orderNumber || job.layerTitle || job.id,
             td: (
-              <VStack align={"start"} gap={"2xs"} minW={"200px"}>
-                <ClampedP>{job.layerTitle}</ClampedP>
+              <VStack align={"start"} gap={"2xs"} minW={"180px"}>
+                <ClampedP fontWeight={"medium"}>
+                  {job.orderNumber || job.orderId || "-"}
+                </ClampedP>
                 <P fontSize={"xs"} color={"fg.subtle"}>
-                  {job.typeName}
+                  {job.mitraName || "Mitra"}
                 </P>
+              </VStack>
+            ),
+            align: "start" as const,
+          },
+          {
+            value: job.milestoneIndex ?? 0,
+            td: (
+              <VStack align={"start"} gap={"2xs"} minW={"120px"}>
+                <P fontSize={"sm"} fontWeight={"medium"}>
+                  {job.milestoneIndex ? (
+                    <TNum>{job.milestoneIndex}</TNum>
+                  ) : (
+                    "-"
+                  )}
+                </P>
+                {job.layerTitle && (
+                  <ClampedP fontSize={"2xs"} color={"fg.subtle"}>
+                    {job.layerTitle}
+                  </ClampedP>
+                )}
               </VStack>
             ),
             align: "start" as const,
@@ -266,7 +305,7 @@ export const InternalMitraLayerSyncJobTableView = (
 
         {!isLoading && isError && (
           <Center flex={1} w={"full"} py={"xl"} bg={"bg.body"}>
-            <RetryState
+            <StateRetry
               title={"Gagal Memuat Riwayat Sinkronisasi"}
               description={
                 error?.message ||
@@ -283,15 +322,15 @@ export const InternalMitraLayerSyncJobTableView = (
           <>
             {isEmptyArray(rawItems) && (
               <Center flex={1} w={"full"} py={"xl"} bg={"bg.body"}>
-                {params.search || params.status !== "all" ? (
-                  <NoResultState
-                    query={params.search || params.status}
+                {isSearching ? (
+                  <StateNoResult
+                    query={searchQuery}
                     description={
                       "Tidak ada tugas sinkronisasi yang sesuai dengan filter atau kata kunci pencarian Anda."
                     }
                   />
                 ) : (
-                  <NoDataState
+                  <StateNoData
                     title={"Belum Ada Tugas Sinkronisasi"}
                     description={
                       "Belum ada riwayat tugas sinkronisasi layer IGT ke geoserver mitra."

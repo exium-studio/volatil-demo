@@ -2,8 +2,8 @@
 
 import { ClipboardButton } from "@/design-system/components/data-display/ui/clipboard-button";
 import { Skeleton } from "@/design-system/components/feedback/ui/skeleton";
-import { NoDataState } from "@/design-system/components/feedback/ui/state.no-data";
-import { RetryState } from "@/design-system/components/feedback/ui/state.retry";
+import { StateNoData } from "@/design-system/components/feedback/ui/state.no-data";
+import { StateRetry } from "@/design-system/components/feedback/ui/state.retry";
 import { InfoTip } from "@/design-system/components/input/ui/toggle-tip";
 import { Box } from "@/design-system/components/layout/ui/box";
 import { Center } from "@/design-system/components/layout/ui/center";
@@ -44,7 +44,7 @@ export const MitraMyDataWorkspaceTabsContent = (
   if (isError) {
     return (
       <Center flex={1} w={"full"} h={"full"} py={"xl"} bg={"bg.body"}>
-        <RetryState
+        <StateRetry
           title={"Gagal Memuat Workspace"}
           description={
             error?.message ||
@@ -63,7 +63,7 @@ export const MitraMyDataWorkspaceTabsContent = (
   if (!workspaceUrl) {
     return (
       <Center flex={1} w={"full"} h={"full"} py={"xl"} bg={"bg.body"}>
-        <NoDataState
+        <StateNoData
           title={"Workspace Belum Aktif"}
           description={
             "Workspace GeoServer otomatis dibuat setelah Anda memiliki layer data spasial IGT yang aktif."

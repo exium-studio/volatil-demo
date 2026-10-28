@@ -137,13 +137,14 @@ export const Textarea = React.forwardRef<HTMLTextAreaElement, TextareaProps>(
           setHasValueState(Boolean(e.currentTarget.value));
           props.onInput?.(e);
         }}
+        pb={"md"}
         {...(startElement && {
           ps: `${(startElementWidth || 20) + 20}px`,
         })}
         {...(isFloatingVariant && {
           h: "60px",
           pt: floatingLabel ? "28px" : "8px",
-          pb: "4px",
+          pb: "md",
           _placeholder: {
             color: "transparent",
           },

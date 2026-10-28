@@ -66,6 +66,16 @@ export type InternalOrderReviewTteModalContentProps = {
   close: () => void;
 };
 
+export type UpdatePeriodItem = {
+  unit: string;
+  jobId?: string | null;
+  offset: number;
+  targetAt: string;
+  completed: boolean;
+  milestone: number;
+  executedAt?: string | null;
+};
+
 export type InternalOrderItem = {
   orderId: string;
   orderNumber?: string;
@@ -80,6 +90,14 @@ export type InternalOrderItem = {
   readyAt?: string;
   expiredAt?: string;
   totalPrice: number;
+  totalAmount?: number;
+  transactionStatus?: string;
+  paidAt?: string;
+  expiresAt?: string;
+  coverageHa?: number;
+  kawasanCoverageHa?: number | null;
+  featuresCount?: number | null;
+  bidangCoverageCount?: number | null;
   items: CartOrderItem[];
   aoiPolygon?: GeoJSON.MultiPolygon | GeoJSON.Polygon | null;
   invoiceUrl?: string | null;
@@ -88,6 +106,7 @@ export type InternalOrderItem = {
   internalWorkspaceUrl?: string | null;
   workspaceInteropUrl?: string | null;
   workspaceName?: string | null;
+  updatePeriods?: UpdatePeriodItem[];
 };
 
 export type InternalOrderListQueryParams = PaginatedParams & {
@@ -121,6 +140,7 @@ export type ProvisionStreamItem = {
   totalItems: number;
   sourceLayerId: string;
   sourceLayerTitle: string;
+  igtBasis?: string;
   spatialBasis?: string;
   status: ProvisionStreamItemStatus;
   proxyWmsUrl?: string;
@@ -154,7 +174,11 @@ export const approveOrderSchema = z.object({
   workspaceInteropUrl: z
     .string()
     .min(1, "URL Workspace dari INTEROP wajib diisi")
-    .url("Format URL tidak valid"),
+    .url("Format URL tidak valid")
+    .refine(
+      (val) => /^https?:\/\//i.test(val),
+      "URL harus diawali dengan http:// atau https://",
+    ),
 });
 
 export type ApproveOrderFormValues = z.infer<typeof approveOrderSchema>;
@@ -167,6 +191,14 @@ export type ApproveOrderPayload = {
 export type RejectOrderPayload = {
   orderId: string;
   reason: string;
+};
+
+export type OrderSummaryProps = {
+  order: InternalOrderItem;
+  isAoiVisible: boolean;
+  hasAoi: boolean;
+  onToggleAoi: (checked: boolean) => void;
+  onFlyToAoi: () => void;
 };
 
 export type OrderLayerDataViewProps = {

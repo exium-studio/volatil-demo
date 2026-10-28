@@ -4,8 +4,8 @@ import { BackButton } from "@/design-system/components/button/ui/back-button";
 import { IconButton } from "@/design-system/components/button/ui/button";
 import { DEFAULT_PAGE_SIZE_OPTIONS } from "@/design-system/components/data-display/ui/data-view-page-size";
 import { Skeleton } from "@/design-system/components/feedback/ui/skeleton";
-import { NoResultState } from "@/design-system/components/feedback/ui/state.no-result";
-import { RetryState } from "@/design-system/components/feedback/ui/state.retry";
+import { StateNoResult } from "@/design-system/components/feedback/ui/state.no-result";
+import { StateRetry } from "@/design-system/components/feedback/ui/state.retry";
 import { AppIcon } from "@/design-system/components/icon/ui/app-icon";
 import { HStack, VStack } from "@/design-system/components/layout/ui/flex-box";
 import { Separator } from "@/design-system/components/layout/ui/separator";
@@ -27,6 +27,7 @@ export const LayerAttributeTableView = memo(
     const {
       layer,
       cqlFilter,
+      apiKey: propsApiKey,
       showActions = true,
       canBatchSelect = false,
       batchActions,
@@ -48,21 +49,54 @@ export const LayerAttributeTableView = memo(
     // Derived Values — Resolve target layer, layer titles and WFS target params
     const targetLayer = layer ?? selectedIgtLayer;
 
+    const effectiveApiKey = useMemo(() => {
+      if (propsApiKey) return propsApiKey;
+      if (targetLayer && "apiKey" in targetLayer && targetLayer.apiKey) {
+        return targetLayer.apiKey;
+      }
+      return null;
+    }, [propsApiKey, targetLayer]);
+
     const effectiveTypeName = useMemo(() => {
       if (!targetLayer) return "";
-      if ("wfs" in targetLayer && targetLayer.wfs?.wfsTypeName)
-        return targetLayer.wfs.wfsTypeName;
+      if ("typeName" in targetLayer && targetLayer.typeName)
+        return targetLayer.typeName;
+      if ("wfs" in targetLayer && targetLayer.wfs) {
+        const wfs = targetLayer.wfs as Record<string, unknown>;
+        if (typeof wfs.typeName === "string" && wfs.typeName) {
+          return wfs.typeName;
+        }
+        if (typeof wfs.wfsTypeName === "string" && wfs.wfsTypeName) {
+          return wfs.wfsTypeName;
+        }
+      }
+      if ("wms" in targetLayer && targetLayer.wms) {
+        const wms = targetLayer.wms as Record<string, unknown>;
+        if (typeof wms.layers === "string" && wms.layers) {
+          return wms.layers;
+        }
+      }
       if ("wfsTypeName" in targetLayer && targetLayer.wfsTypeName)
         return targetLayer.wfsTypeName;
       if ("wmsLayers" in targetLayer && targetLayer.wmsLayers)
         return targetLayer.wmsLayers;
-      return targetLayer.id;
+      return "";
     }, [targetLayer]);
 
     const effectiveWfsUrl = useMemo(() => {
       if (!targetLayer) return "";
-      if ("wfs" in targetLayer && targetLayer.wfs?.wfsUrl)
-        return targetLayer.wfs.wfsUrl;
+      if ("wfs" in targetLayer && targetLayer.wfs) {
+        const wfs = targetLayer.wfs as Record<string, unknown>;
+        if (typeof wfs.url === "string" && wfs.url) {
+          return wfs.url;
+        }
+        if (typeof wfs.wfsUrl === "string" && wfs.wfsUrl) {
+          return wfs.wfsUrl;
+        }
+        if (typeof wfs.baseUrl === "string" && wfs.baseUrl) {
+          return wfs.baseUrl;
+        }
+      }
       if ("externalWfsUrl" in targetLayer && targetLayer.externalWfsUrl)
         return targetLayer.externalWfsUrl;
       if ("wfsUrl" in targetLayer && targetLayer.wfsUrl)
@@ -79,7 +113,7 @@ export const LayerAttributeTableView = memo(
       );
     }, [targetLayer, effectiveTypeName]);
 
-    const spatialBasis = targetLayer?.spatialBasis;
+    const igtBasis = targetLayer?.igtBasis ?? targetLayer?.spatialBasis;
 
     // Queries — server-side WFS pagination
     const {
@@ -96,6 +130,7 @@ export const LayerAttributeTableView = memo(
       cqlFilter,
       typeName: effectiveTypeName,
       wfsUrl: effectiveWfsUrl,
+      apiKey: effectiveApiKey,
       enabled: Boolean(targetLayer && effectiveTypeName && effectiveWfsUrl),
     });
 
@@ -114,7 +149,8 @@ export const LayerAttributeTableView = memo(
           id: targetLayer.id,
           title: targetLayer.title,
           bbox: targetLayer.bbox ?? null,
-          spatialBasis: targetLayer.spatialBasis,
+          igtBasis,
+          spatialBasis: igtBasis,
           wfs: {
             wfsTypeName: effectiveTypeName,
             wfsUrl: effectiveWfsUrl,
@@ -144,25 +180,17 @@ export const LayerAttributeTableView = memo(
           justify={"space-between"}
           align={"center"}
           w={"full"}
-          p={"md"}
+          p={"xs"}
           bg={"bg.body"}
         >
           <HStack gap={"sm"} align={"center"} minW={0}>
             <BackButton onClick={handleBackClick} />
 
-            <VStack align={"start"} gap={0} minW={0}>
+            <VStack align={"start"} gap={"2xs"} minW={0}>
               <HStack gap={"xs"} align={"center"}>
-                <P fontWeight={"semibold"} fontSize={"md"}>
-                  {`Detail Atribut: ${layerTitle}`}
-                </P>
-                {spatialBasis && <IgtBasisBadge>{spatialBasis}</IgtBasisBadge>}
+                <P fontWeight={"semibold"}>{`Detail Atribut: ${layerTitle}`}</P>
+                {igtBasis && <IgtBasisBadge>{igtBasis}</IgtBasisBadge>}
               </HStack>
-
-              {effectiveTypeName && (
-                <P fontSize={"xs"} color={"fg.subtle"}>
-                  {effectiveTypeName}
-                </P>
-              )}
             </VStack>
           </HStack>
 
@@ -199,7 +227,7 @@ export const LayerAttributeTableView = memo(
             p={"md"}
             bg={"bg.body"}
           >
-            <RetryState
+            <StateRetry
               title={"Gagal Memuat Data Spasial"}
               description={
                 error?.message ||
@@ -221,7 +249,7 @@ export const LayerAttributeTableView = memo(
             bg={"bg.body"}
             minH={0}
           >
-            <NoResultState />
+            <StateNoResult />
           </VStack>
         )}
 

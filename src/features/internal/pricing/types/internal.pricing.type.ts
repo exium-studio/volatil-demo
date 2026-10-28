@@ -8,21 +8,27 @@ export type PricingTierType = "standard" | "premium" | "enterprise";
 
 export type PricingItem = {
   id: string;
+  price: number;
+  pnbpCode: string;
+  minimumPurchase: number;
+  igtBasis: IgtBasisType;
+  unit: "bidang" | "ha" | string;
   layerId?: string;
   layerTitle?: string;
   kodePnbp?: string;
-  spatialBasis: IgtBasisType;
-  unitPrice: number;
-  unitLabel: string;
+  spatialBasis?: IgtBasisType;
+  unitPrice?: number;
+  unitLabel?: string;
   minPurchase?: number;
   minUnit?: string;
-  effectiveDate: string;
+  effectiveDate?: string;
   description?: string;
-  createdAt: string;
-  updatedAt: string;
+  createdAt?: string;
+  updatedAt?: string;
 };
 
 export type PricingQueryParams = PaginatedParams & {
+  igtBasis?: IgtBasisType;
   spatialBasis?: IgtBasisType;
 };
 
@@ -33,16 +39,16 @@ export type PricingListResponse = {
 
 export type UpdatePricingPayload = {
   id: string;
-  unitPrice: number;
-  kodePnbp?: string;
-  minPurchase?: number;
-  description?: string;
+  price?: number;
+  pnbpCode?: string;
+  minimumPurchase?: number;
 };
 
 export type CreatePricingPayload = {
   layerId?: string;
   layerTitle?: string;
-  spatialBasis: IgtBasisType;
+  igtBasis: IgtBasisType;
+  spatialBasis?: IgtBasisType;
   unitPrice: number;
   unitLabel: string;
   effectiveDate: string;

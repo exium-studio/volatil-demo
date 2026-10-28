@@ -14,6 +14,7 @@ Located in `@/design-system/components/error-boundary/ui/`.
 A standardized 404 Not Found screen with custom illustrations, navigation actions, and theme-aware styling.
 
 ### Usage Example:
+
 ```tsx
 import { NotFoundPage } from "@/design-system/components/error-boundary/ui/not-found.page";
 

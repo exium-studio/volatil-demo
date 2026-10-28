@@ -5,6 +5,10 @@ import type { ReactNode } from "react";
 
 export type CartStoredIds = string[];
 
+export type MitraCartSearch = {
+  orderId?: string;
+};
+
 export type CartSummary = {
   totalBidang: number;
   totalBidangPrice: number;

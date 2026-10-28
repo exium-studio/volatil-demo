@@ -30,21 +30,28 @@ export const getCountdownParts = (
   return {
     days: Math.floor(totalSeconds / DAY_IN_SECONDS),
     hours: Math.floor((totalSeconds % DAY_IN_SECONDS) / HOUR_IN_SECONDS),
-    minutes: Math.floor(
-      (totalSeconds % HOUR_IN_SECONDS) / MINUTE_IN_SECONDS,
-    ),
+    minutes: Math.floor((totalSeconds % HOUR_IN_SECONDS) / MINUTE_IN_SECONDS),
     seconds: totalSeconds % MINUTE_IN_SECONDS,
     isFinished: false,
   };
 };
 
-const DEFAULT_COUNTDOWN_FORMAT = "{DD}:{HH}:{mm}:{ss}";
-
 export const formatCountdownParts = (
   parts: CountdownParts,
-  format = DEFAULT_COUNTDOWN_FORMAT,
+  format?: string,
 ): string => {
-  if (parts.isFinished) return "Kedaluwarsa";
+  if (parts.isFinished) return "-";
+
+  if (!format) {
+    const pad = (n: number) => String(n).padStart(2, "0");
+    if (parts.days > 0) {
+      return `${parts.days} hari ${pad(parts.hours)} jam ${pad(parts.minutes)} mnt`;
+    }
+    if (parts.hours > 0) {
+      return `${pad(parts.hours)} jam ${pad(parts.minutes)} mnt ${pad(parts.seconds)} dtk`;
+    }
+    return `${pad(parts.minutes)} mnt ${pad(parts.seconds)} dtk`;
+  }
 
   const replacements: Record<string, string> = {
     "{days}": String(parts.days),

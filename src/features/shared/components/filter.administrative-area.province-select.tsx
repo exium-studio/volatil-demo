@@ -34,7 +34,9 @@ export const FilterAdministrativeAreaProvinceSelect = (
   const {
     data: provinsiOptionsData,
     isLoading,
+    isFetching,
     isError,
+    error,
     refetch,
   } = useFilterOptionsProvinsi();
   const selectOptions: FocusSelectOption[] = (
@@ -73,8 +75,13 @@ export const FilterAdministrativeAreaProvinceSelect = (
             : undefined,
         )
       }
-      isFetching={isLoading}
+      isFetching={isLoading || isFetching}
       isError={isError}
+      errorTitle={"Gagal Memuat Daftar Provinsi"}
+      errorMessage={
+        error?.message ||
+        "Data batas wilayah provinsi belum tersedia di GeoServer."
+      }
       onRetry={() => void refetch()}
       disabled={disabled}
     />

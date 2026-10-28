@@ -198,7 +198,7 @@ export const MitraSignin = (props: StackProps) => {
       )}
 
       <VStack gap={2} align={"center"} w={"full"}>
-        <HStack wrap={"wrap"} justify={"center"} gapX={"xs"}>
+        <HStack wrap={"wrap"} align={"center"} justify={"center"} gapX={"xs"}>
           <P fontSize={"sm"} color={"fg.muted"}>
             {"Belum bermitra dengan ATR/BPN? "}
           </P>
@@ -214,7 +214,7 @@ export const MitraSignin = (props: StackProps) => {
           </Link>
         </HStack>
 
-        <HStack wrap={"wrap"} justify={"center"} gapX={"xs"}>
+        <HStack wrap={"wrap"} align={"center"} justify={"center"} gapX={"xs"}>
           <P fontSize={"sm"} color={"fg.muted"}>
             {"Sudah mendaftar? "}
           </P>

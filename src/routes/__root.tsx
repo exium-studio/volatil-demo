@@ -18,9 +18,8 @@ import "@fontsource-variable/plus-jakarta-sans";
 import "@fontsource-variable/wix-madefor-text";
 import "@fontsource/sorts-mill-goudy";
 import "@fontsource/ubuntu";
-import { GisAppShell } from "@/design-system/components/shell/ui/gis-app-shell";
 import { QueryClientProvider } from "@tanstack/react-query";
-import { HeadContent, createRootRoute } from "@tanstack/react-router";
+import { HeadContent, Outlet, createRootRoute } from "@tanstack/react-router";
 
 export const Route = createRootRoute({
   validateSearch: globalSearchParamsSchema,
@@ -43,7 +42,7 @@ function RootComponent() {
             <ChakraLocaleProvider>
               <>
                 <HeadContent />
-                <GisAppShell />
+                <Outlet />
               </>
 
               <>

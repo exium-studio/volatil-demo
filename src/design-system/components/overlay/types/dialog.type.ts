@@ -28,7 +28,9 @@ export type DialogContextValue = {
   open?: () => void;
   close?: () => void;
   fullscreen: boolean;
-  setFullscreen: import("react").Dispatch<import("react").SetStateAction<boolean>>;
+  setFullscreen: import("react").Dispatch<
+    import("react").SetStateAction<boolean>
+  >;
   clickOriginAnimation: boolean;
   size: ChakraDialog.RootProps["size"];
   closeOnInteractOutside?: boolean;
@@ -62,4 +64,3 @@ export type DialogAnimationStore = {
 
   clear: (modalKey: string) => void;
 };
-

@@ -6,7 +6,7 @@ import {
 } from "@/design-system/components/button/ui/button";
 import FeedbackState from "@/design-system/components/feedback/ui/feedback-state";
 import { Loader } from "@/design-system/components/feedback/ui/loader";
-import { NoResultState } from "@/design-system/components/feedback/ui/state.no-result";
+import { StateNoResult } from "@/design-system/components/feedback/ui/state.no-result";
 import { AppIcon } from "@/design-system/components/icon/ui/app-icon";
 import { SearchInput } from "@/design-system/components/input/ui/search-input";
 import { HStack, VStack } from "@/design-system/components/layout/ui/flex-box";
@@ -218,8 +218,8 @@ export const MapSearch = () => {
     <VStack
       ref={containerRef}
       gap={2}
-      w={"300px"}
-      pointerEvents={"auto"}
+      w={isOpened ? "300px" : "36px"}
+      pointerEvents={"none"}
       position={"relative"}
     >
       {/* Search Input Container */}
@@ -231,9 +231,9 @@ export const MapSearch = () => {
         <MapOverlayContainer
           overflow={"clip"}
           w={isOpened ? "full" : "36px"}
-          bg={"bg.body"}
           transition={"width 200ms ease"}
           cursor={isOpened ? "text" : "pointer"}
+          pointerEvents={"auto"}
           onClick={handleOpenSearch}
         >
           <SearchInput
@@ -245,6 +245,7 @@ export const MapSearch = () => {
             w={"full"}
             minW={"0"}
             border={"none"}
+            layerStyle={"frosted"}
             outline={"none"}
             bg={"transparent"}
             onFocus={handleFocus}
@@ -267,16 +268,18 @@ export const MapSearch = () => {
           top={"100%"}
           left={0}
           right={0}
+          w={"300px"}
           bg={"bg.body"}
           rounded={theme.radii.component}
           shadow={"xs"}
           maxH={"360px"}
           overflowY={"auto"}
+          pointerEvents={"auto"}
           zIndex={2000}
         >
           {/* Recent Searches List */}
           {showRecent && (
-            <VStack align={"stretch"}>
+            <VStack>
               {isEmptyArray(recentSearches) ? (
                 <Box p={4}>
                   <FeedbackState
@@ -336,7 +339,7 @@ export const MapSearch = () => {
 
           {/* Search Results List */}
           {showResults && (
-            <VStack align={"stretch"} gap={0} py={1}>
+            <VStack gap={0} py={1}>
               {showLoader && (
                 <HStack align={"center"} justify={"center"} py={4} gap={4}>
                   <Loader />
@@ -353,7 +356,7 @@ export const MapSearch = () => {
 
               {!showLoader && !isError && isEmptyArray(results) && (
                 <Box px={3} py={3}>
-                  <NoResultState query={debouncedQuery} />
+                  <StateNoResult query={debouncedQuery} />
                 </Box>
               )}
 

@@ -4,6 +4,7 @@ import { Button } from "@/design-system/components/button/ui/button";
 import type { ConfirmationTriggerProps } from "@/design-system/components/feedback/types/confirmation-trigger.type";
 import { AppIcon } from "@/design-system/components/icon/ui/app-icon";
 import { Circle } from "@/design-system/components/layout/ui/box";
+import { AbsoluteCenter } from "@/design-system/components/layout/ui/center";
 import { VStack } from "@/design-system/components/layout/ui/flex-box";
 import { usePopModal } from "@/design-system/components/overlay/hooks/use-pop-modal";
 import { Modal } from "@/design-system/components/overlay/ui/modal";
@@ -69,26 +70,33 @@ export const ConfirmationTrigger = (props: ConfirmationTriggerProps) => {
         <Modal.Trigger>{children}</Modal.Trigger>
 
         <Modal.Content>
-          <Modal.Header>
-            <Modal.CloseButton />
-          </Modal.Header>
+          <Modal.CloseButton zIndex={2} />
 
-          <Modal.Body pt={0} pb={"lg"}>
-            <VStack align={"center"} gap={"md"} textAlign={"center"}>
+          <Modal.Body pt={"xl"} pb={"lg"}>
+            <VStack align={"center"} gap={"md"}>
               <Circle
-                size={"48px"}
-                bg={`${resolvedColorPalette}.subtle`}
+                pos={"relative"}
+                size={"76px"}
+                bg={`${resolvedColorPalette}.muted/40`}
                 color={`${resolvedColorPalette}.fg`}
                 mb={"md"}
               >
+                <AbsoluteCenter>
+                  <Circle size={"52px"} bg={`${resolvedColorPalette}.muted`} />
+                </AbsoluteCenter>
+
                 {icon ? (
                   isValidElement(icon) ? (
                     icon
                   ) : (
-                    <AppIcon icon={icon as ComponentType} size={"md"} />
+                    <AppIcon
+                      icon={icon as ComponentType}
+                      size={"lg"}
+                      zIndex={2}
+                    />
                   )
                 ) : (
-                  <AppIcon icon={AlertTriangleIcon} size={"md"} />
+                  <AppIcon icon={AlertTriangleIcon} size={"lg"} zIndex={2} />
                 )}
               </Circle>
 

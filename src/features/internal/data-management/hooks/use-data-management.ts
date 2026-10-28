@@ -5,19 +5,24 @@ import {
   deleteMasterIgtLayer,
   getGeoServerWorkspaceLayers,
   getGeoServerWorkspaces,
+  getMasterIgtLayerById,
   getMasterIgtLayers,
   updateMasterIgtLayer,
+  updateMasterIgtLayerAttributes,
 } from "@/features/internal/data-management/services/data-management.service";
 import type {
   CreateMasterIgtLayerPayload,
   MasterIgtLayersQueryParams,
+  UpdateMasterIgtLayerAttributesPayload,
   UpdateMasterIgtLayerPayload,
 } from "@/features/internal/data-management/types/data-management.type";
 import { queryKeys } from "@/shared/libs/tanstack-query/query.keys";
 import { mutationToastHandlers } from "@/shared/libs/toast/toast.handler";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 
-export const useMasterIgtLayersQuery = (params?: MasterIgtLayersQueryParams) => {
+export const useMasterIgtLayersQuery = (
+  params?: MasterIgtLayersQueryParams,
+) => {
   const query = useQuery({
     queryKey: queryKeys.internal.dataManagement.layers(
       params as Record<string, unknown>,
@@ -29,6 +34,22 @@ export const useMasterIgtLayersQuery = (params?: MasterIgtLayersQueryParams) => 
     ...query,
     items: query.data?.items ?? [],
     pagination: query.data?.pagination,
+  };
+};
+
+export const useMasterIgtLayerDetailQuery = (layerId?: string) => {
+  const query = useQuery({
+    queryKey: queryKeys.internal.dataManagement.layers({ id: layerId }),
+    queryFn: async ({ signal }) => {
+      if (!layerId) return null;
+      return getMasterIgtLayerById(layerId, signal);
+    },
+    enabled: Boolean(layerId),
+  });
+
+  return {
+    ...query,
+    layer: query.data ?? null,
   };
 };
 
@@ -56,7 +77,11 @@ export const useGeoServerWorkspaceLayersQuery = (
       workspaceName || "",
     ),
     queryFn: ({ signal }) =>
-      getGeoServerWorkspaceLayers(geoserverId || "", workspaceName || "", signal),
+      getGeoServerWorkspaceLayers(
+        geoserverId || "",
+        workspaceName || "",
+        signal,
+      ),
     enabled: Boolean(geoserverId && workspaceName),
     staleTime: 60 * 1000,
   });
@@ -70,7 +95,7 @@ export const useGeoServerWorkspaceLayersQuery = (
 export const useUpdateMasterIgtLayer = () => {
   const queryClient = useQueryClient();
   const toastHandlers = mutationToastHandlers("update-master-igt-layer", {
-    group: "Manajemen Data IGT",
+    group: "Manajemen Master Layer IGT",
     loadingMessage: {
       title: "Menyimpan perubahan layer...",
     },
@@ -99,10 +124,42 @@ export const useUpdateMasterIgtLayer = () => {
   });
 };
 
+export const useUpdateMasterIgtLayerAttributes = () => {
+  const queryClient = useQueryClient();
+  const toastHandlers = mutationToastHandlers("update-master-igt-layer-attributes", {
+    group: "Manajemen Master Layer IGT",
+    loadingMessage: {
+      title: "Menyimpan whitelist atribut layer...",
+    },
+    successMessage: {
+      title: "Whitelist atribut layer berhasil diperbarui",
+    },
+    errorMessage: {
+      title: "Gagal memperbarui whitelist atribut layer",
+    },
+  });
+
+  return useMutation({
+    mutationFn: (payload: UpdateMasterIgtLayerAttributesPayload) =>
+      updateMasterIgtLayerAttributes(payload),
+    onMutate: toastHandlers.onLoading,
+    onSuccess: () => {
+      toastHandlers.onSuccess();
+      void queryClient.invalidateQueries({
+        queryKey: queryKeys.internal.dataManagement.all,
+      });
+      void queryClient.invalidateQueries({
+        queryKey: queryKeys.map.all,
+      });
+    },
+    onError: toastHandlers.onError,
+  });
+};
+
 export const useCreateMasterIgtLayer = () => {
   const queryClient = useQueryClient();
   const toastHandlers = mutationToastHandlers("create-master-igt-layer", {
-    group: "Manajemen Data IGT",
+    group: "Manajemen Master Layer IGT",
     loadingMessage: {
       title: "Mendaftarkan layer IGT baru...",
     },
@@ -134,7 +191,7 @@ export const useCreateMasterIgtLayer = () => {
 export const useDeleteMasterIgtLayer = () => {
   const queryClient = useQueryClient();
   const toastHandlers = mutationToastHandlers("delete-master-igt-layer", {
-    group: "Manajemen Data IGT",
+    group: "Manajemen Master Layer IGT",
     loadingMessage: {
       title: "Menghapus layer IGT...",
     },

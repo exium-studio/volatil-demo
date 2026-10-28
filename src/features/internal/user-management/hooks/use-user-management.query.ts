@@ -1,12 +1,14 @@
 // src/features/internal/user-management/hooks/use-user-management.query.ts
 
 import {
+  deleteAdminUser,
   getAdminUserDetail,
   getAdminUsersList,
   getAdminUsersStatistics,
   updateAdminUserStatus,
 } from "@/features/internal/user-management/services/user-management.service";
 import type {
+  DeleteUserPayload,
   UpdateUserStatusPayload,
   UserManagementQueryParams,
   UserManagementStatsResponse,
@@ -85,6 +87,34 @@ export const useUpdateUserStatus = () => {
   return useMutation({
     mutationFn: (payload: UpdateUserStatusPayload) =>
       updateAdminUserStatus(payload),
+    onMutate: toastHandlers.onLoading,
+    onSuccess: () => {
+      toastHandlers.onSuccess();
+      void queryClient.invalidateQueries({
+        queryKey: queryKeys.internal.userManagement.all,
+      });
+    },
+    onError: toastHandlers.onError,
+  });
+};
+
+export const useDeleteUser = () => {
+  const queryClient = useQueryClient();
+  const toastHandlers = mutationToastHandlers("delete-user", {
+    group: "Manajemen Pengguna",
+    loadingMessage: {
+      title: "Menghapus akun mitra...",
+    },
+    successMessage: {
+      title: "Akun mitra berhasil dihapus",
+    },
+    errorMessage: {
+      title: "Gagal menghapus akun mitra",
+    },
+  });
+
+  return useMutation({
+    mutationFn: (payload: DeleteUserPayload) => deleteAdminUser(payload),
     onMutate: toastHandlers.onLoading,
     onSuccess: () => {
       toastHandlers.onSuccess();

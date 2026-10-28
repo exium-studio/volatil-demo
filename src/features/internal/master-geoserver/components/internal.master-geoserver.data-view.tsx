@@ -9,41 +9,55 @@ import { DEFAULT_PAGE_SIZE_OPTIONS } from "@/design-system/components/data-displ
 import { DataViewTable } from "@/design-system/components/data-display/ui/data-view-table";
 import { ConfirmationTrigger } from "@/design-system/components/feedback/ui/confirmation-trigger";
 import { Skeleton } from "@/design-system/components/feedback/ui/skeleton";
-import { NoDataState } from "@/design-system/components/feedback/ui/state.no-data";
-import { NoResultState } from "@/design-system/components/feedback/ui/state.no-result";
-import { RetryState } from "@/design-system/components/feedback/ui/state.retry";
+import { StateNoData } from "@/design-system/components/feedback/ui/state.no-data";
+import { StateNoResult } from "@/design-system/components/feedback/ui/state.no-result";
+import { StateRetry } from "@/design-system/components/feedback/ui/state.retry";
 import { TopBarLoader } from "@/design-system/components/feedback/ui/top-bar-loader";
 import { AppIcon } from "@/design-system/components/icon/ui/app-icon";
 import { SearchInput } from "@/design-system/components/input/ui/search-input";
 import { InfoTip } from "@/design-system/components/input/ui/toggle-tip";
+import { ActionHeaderScrollContainer } from "@/design-system/components/layout/ui/action-header-scroll-container";
 import { Center } from "@/design-system/components/layout/ui/center";
 import { Container } from "@/design-system/components/layout/ui/container";
-import { ActionHeaderScrollContainer } from "@/design-system/components/layout/ui/action-header-scroll-container";
 import { HStack, VStack } from "@/design-system/components/layout/ui/flex-box";
 import { Separator } from "@/design-system/components/layout/ui/separator";
 import { ExternalLink } from "@/design-system/components/navigation/ui/link";
 import { HeaderContainer } from "@/design-system/components/shell/ui/header-container";
-import { Heading } from "@/design-system/components/typography/ui/heading";
+import { toast } from "@/design-system/components/toast";
+import { Badge } from "@/design-system/components/typography/ui/badge";
+import { ClampedHeading } from "@/design-system/components/typography/ui/heading";
 import { ClampedP, P } from "@/design-system/components/typography/ui/p";
 import { InternalMasterGeoserverCreateTrigger } from "@/features/internal/master-geoserver/components/internal.master-geoserver.create-modal";
 import { InternalMasterGeoserverEditTrigger } from "@/features/internal/master-geoserver/components/internal.master-geoserver.edit-modal";
 import {
   useDeleteMasterGeoserver,
   useMasterGeoserverQuery,
+  useTestMasterGeoserverConnection,
 } from "@/features/internal/master-geoserver/hooks/use-master-geoserver";
 import type {
   MasterGeoserverItem,
   MasterGeoserverQueryParams,
 } from "@/features/internal/master-geoserver/types/master-geoserver.type";
+import { queryKeys } from "@/shared/libs/tanstack-query/query.keys";
 import { isEmptyArray } from "@/shared/utils/data/array";
 import {
   formatUtcDateTime,
   getPreferredUserTimezone,
 } from "@/shared/utils/formatter/date.formatter";
-import { PencilIcon, PlusIcon, ServerOffIcon, Trash2Icon } from "lucide-react";
-import { useMemo, useState, useTransition } from "react";
+import { useQueryClient } from "@tanstack/react-query";
+import {
+  ActivityIcon,
+  PencilIcon,
+  PlusIcon,
+  ServerOffIcon,
+  Trash2Icon,
+} from "lucide-react";
+import { useCallback, useMemo, useState, useTransition } from "react";
 
 export const InternalMasterGeoserverDataView = () => {
+  // Hooks
+  const queryClient = useQueryClient();
+
   // Transitions
   const [_isPending, startTransition] = useTransition();
 
@@ -53,6 +67,7 @@ export const InternalMasterGeoserverDataView = () => {
     pageSize: DEFAULT_PAGE_SIZE_OPTIONS[0],
     search: "",
   });
+  const [testingServerId, setTestingServerId] = useState<string | null>(null);
 
   // Queries
   const {
@@ -71,6 +86,78 @@ export const InternalMasterGeoserverDataView = () => {
 
   // Mutations
   const deleteMutation = useDeleteMasterGeoserver();
+  const testMutation = useTestMasterGeoserverConnection();
+
+  // Handlers
+  const handleTestConnection = useCallback(
+    (server: MasterGeoserverItem) => {
+      setTestingServerId(server.id);
+      const toastId = `test-connection-${server.id}`;
+      toast.loading(`Menguji koneksi ke "${server.name}"...`, {
+        id: toastId,
+        group: "Master GeoServer",
+      });
+
+      testMutation.mutate(
+        {
+          id: server.id,
+          baseUrl: server.baseUrl,
+          username: server.username,
+        },
+        {
+          onSuccess: (data) => {
+            if (data.success) {
+              const extraInfo = [
+                data.version,
+                data.latencyMs ? `${data.latencyMs}ms` : undefined,
+                data.workspacesCount !== undefined
+                  ? `${data.workspacesCount} workspace`
+                  : undefined,
+              ]
+                .filter(Boolean)
+                .join(" • ");
+
+              toast.success(
+                data.message ||
+                  `Koneksi ke "${server.name}" berhasil terverifikasi!`,
+                {
+                  id: toastId,
+                  group: "Master GeoServer",
+                  description: extraInfo || undefined,
+                },
+              );
+              void queryClient.invalidateQueries({
+                queryKey: queryKeys.internal.masterGeoserver.all,
+              });
+            } else {
+              toast.error(
+                data.message || `Koneksi ke "${server.name}" gagal terhubung.`,
+                {
+                  id: toastId,
+                  group: "Master GeoServer",
+                },
+              );
+            }
+          },
+          onError: (err) => {
+            toast.error(
+              err instanceof Error
+                ? err.message
+                : `Gagal menguji koneksi ke "${server.name}".`,
+              {
+                id: toastId,
+                group: "Master GeoServer",
+              },
+            );
+          },
+          onSettled: () => {
+            setTestingServerId(null);
+          },
+        },
+      );
+    },
+    [testMutation, queryClient],
+  );
 
   // Derived Values
   const preferredTimezone = useMemo(() => getPreferredUserTimezone(), []);
@@ -85,6 +172,7 @@ export const InternalMasterGeoserverDataView = () => {
       { th: "Nama Server", sortable: true },
       { th: "Base URL Geoserver", sortable: true },
       { th: "Username", sortable: true },
+      { th: "Status", sortable: true, align: "center" },
       { th: "Deskripsi" },
       { th: "Terakhir Diperbarui", sortable: true },
     ];
@@ -100,9 +188,9 @@ export const InternalMasterGeoserverDataView = () => {
               <VStack align={"start"} gap={0} w={"200px"}>
                 <ClampedP>{item.name}</ClampedP>
 
-                <P fontSize={"xs"} color={"fg.subtle"}>
-                  {item.id}
-                </P>
+                <ClampedP fontSize={"sm"} color={"fg.subtle"}>
+                  {`ID: ${item.id}`}
+                </ClampedP>
               </VStack>
             ),
             align: "start" as const,
@@ -143,6 +231,19 @@ export const InternalMasterGeoserverDataView = () => {
             align: "start" as const,
           },
           {
+            value: item.isActive !== false ? "Aktif" : "Nonaktif",
+            td: (
+              <Badge
+                size={"xs"}
+                colorPalette={item.isActive !== false ? "green" : "gray"}
+                variant={"subtle"}
+              >
+                {item.isActive !== false ? "Aktif" : "Nonaktif"}
+              </Badge>
+            ),
+            align: "center" as const,
+          },
+          {
             value: item.description ?? "-",
             td: (
               <ClampedP fontSize={"sm"} color={"fg.subtle"} w={"200px"}>
@@ -165,6 +266,18 @@ export const InternalMasterGeoserverDataView = () => {
     });
 
     const itemActions: DataViewItemActionsGenerator<MasterGeoserverItem>[] = [
+      {
+        key: "test-connection-geoserver",
+        label: (server: MasterGeoserverItem) =>
+          testingServerId === server.id ? "Menguji..." : "Uji Koneksi",
+        icon: ActivityIcon,
+        loading: (server: MasterGeoserverItem) => testingServerId === server.id,
+        disabled: (server: MasterGeoserverItem) =>
+          testingServerId === server.id,
+        onClick: (server: MasterGeoserverItem) => {
+          handleTestConnection(server);
+        },
+      },
       {
         key: "edit-geoserver",
         label: "Ubah Server",
@@ -206,7 +319,13 @@ export const InternalMasterGeoserverDataView = () => {
       batchActions: [],
       itemActions,
     };
-  }, [rawItems, preferredTimezone, deleteMutation]);
+  }, [
+    rawItems,
+    preferredTimezone,
+    deleteMutation,
+    handleTestConnection,
+    testingServerId,
+  ]);
 
   return (
     <Container.Root withContext={true} flex={1}>
@@ -214,7 +333,7 @@ export const InternalMasterGeoserverDataView = () => {
         <HeaderContainer pr={"xs"}>
           <HStack justify={"space-between"} align={"center"} w={"full"}>
             <HStack gap={"xs"} align={"center"}>
-              <Heading>{"Master GeoServer"}</Heading>
+              <ClampedHeading>{"Manajemen Master GeoServer"}</ClampedHeading>
 
               <InfoTip
                 variant={"icon"}
@@ -260,7 +379,7 @@ export const InternalMasterGeoserverDataView = () => {
 
           {!isLoading && isError && (
             <Center flex={1} w={"full"} p={"xl"} bg={"bg.body"}>
-              <RetryState
+              <StateRetry
                 title={"Gagal Memuat GeoServer"}
                 description={
                   error?.message ||
@@ -278,9 +397,9 @@ export const InternalMasterGeoserverDataView = () => {
               {isEmptyArray(rawItems) && (
                 <Center flex={1} w={"full"} p={"xl"} bg={"bg.body"}>
                   {isSearching ? (
-                    <NoResultState query={searchQuery} />
+                    <StateNoResult query={searchQuery} />
                   ) : (
-                    <NoDataState
+                    <StateNoData
                       icon={ServerOffIcon}
                       title={"GeoServer Kosong"}
                       description={

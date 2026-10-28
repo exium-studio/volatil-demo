@@ -4,7 +4,8 @@ import { StatGrid } from "@/design-system/components/data-display/ui/stat-grid";
 import type { ProgressRootProps } from "@/design-system/components/feedback/types/progress.type";
 import { Progress } from "@/design-system/components/feedback/ui/progress";
 import { Skeleton } from "@/design-system/components/feedback/ui/skeleton";
-import { RetryState } from "@/design-system/components/feedback/ui/state.retry";
+import { StateNoData } from "@/design-system/components/feedback/ui/state.no-data";
+import { StateRetry } from "@/design-system/components/feedback/ui/state.retry";
 import { SegmentGroupInput } from "@/design-system/components/input/ui/segment-group-input";
 import { InfoTip } from "@/design-system/components/input/ui/toggle-tip";
 import { Box } from "@/design-system/components/layout/ui/box";
@@ -25,7 +26,10 @@ import type {
   MitraHomeDataSummaryLegendProps,
   MitraHomeDataSummaryProps,
   MitraHomeDataSummaryStatusConfig,
+  MitraHomeSummaryStatus,
 } from "@/features/mitra/home/types/mitra.home.data-summary.type";
+import { DatabaseIcon } from "lucide-react";
+import { useNavigate } from "@tanstack/react-router";
 import { useState } from "react";
 
 const PERIOD_OPTIONS = [
@@ -52,8 +56,24 @@ const MitraHomeDataSummaryContent = () => {
   const { isSmContainer } = useContainerContext();
 
   // Queries
-  const { dataSummary, isLoading, isError, error, refetch } =
+  const { dataSummary, isLoading, isFetching, isError, error, refetch } =
     useMitraDataSummaryQuery(period);
+
+  // Derived Values
+  const totalField =
+    (dataSummary?.field?.active ?? 0) +
+    (dataSummary?.field?.almostExpired ?? 0) +
+    (dataSummary?.field?.expired ?? 0);
+  const totalArea =
+    (dataSummary?.area?.active ?? 0) +
+    (dataSummary?.area?.almostExpired ?? 0) +
+    (dataSummary?.area?.expired ?? 0);
+  const isEmpty = !dataSummary || (totalField === 0 && totalArea === 0);
+
+  const showFetchingSkeleton = isFetching;
+  const showError = !isFetching && isError;
+  const showEmpty = !isFetching && !isError && isEmpty;
+  const showContent = !isFetching && !isError && !isEmpty;
 
   if (isLoading) {
     return <Skeleton minH={isSmContainer ? "386px" : "233px"} w={"full"} />;
@@ -65,7 +85,15 @@ const MitraHomeDataSummaryContent = () => {
 
       <Separator borderColor={"bg.canvas"} />
 
-      {isError ? (
+      {showFetchingSkeleton && (
+        <Skeleton
+          minH={isSmContainer ? "259px" : "122px"}
+          w={"full"}
+          p={"md"}
+        />
+      )}
+
+      {showError && (
         <Box
           display={"flex"}
           alignItems={"center"}
@@ -73,7 +101,7 @@ const MitraHomeDataSummaryContent = () => {
           w={"full"}
           py={"xl"}
         >
-          <RetryState
+          <StateRetry
             title={"Gagal Memuat Ringkasan Data"}
             description={
               error?.message ||
@@ -84,7 +112,27 @@ const MitraHomeDataSummaryContent = () => {
             }}
           />
         </Box>
-      ) : (
+      )}
+
+      {showEmpty && (
+        <Box
+          display={"flex"}
+          alignItems={"center"}
+          justifyContent={"center"}
+          w={"full"}
+          py={"xl"}
+        >
+          <StateNoData
+            icon={DatabaseIcon}
+            title={"Belum Ada Data IGT"}
+            description={
+              "Belum ada data IGT aktif atau kedaluwarsa pada periode ini."
+            }
+          />
+        </Box>
+      )}
+
+      {showContent && (
         <MitraHomeDataSummaryCharts
           dataSummary={dataSummary}
           isSmContainer={isSmContainer}
@@ -140,7 +188,7 @@ const FIELD_STATUSES: MitraHomeDataSummaryStatusConfig[] = [
   },
   {
     key: "almostExpired",
-    label: "Hampir kadaluwarsa",
+    label: "Hampir Kedaluwarsa",
     bg: "an4",
     legendColor: "an4",
     striped: false,
@@ -164,7 +212,7 @@ const AREA_STATUSES: MitraHomeDataSummaryStatusConfig[] = [
   },
   {
     key: "almostExpired",
-    label: "Hampir kadaluwarsa",
+    label: "Hampir Kedaluwarsa",
     bg: "an4",
     legendColor: "an4",
     striped: false,
@@ -178,9 +226,27 @@ const AREA_STATUSES: MitraHomeDataSummaryStatusConfig[] = [
   },
 ];
 
+const STATUS_PARAM_MAP: Record<MitraHomeSummaryStatus, "active" | "almost_expired" | "expired"> = {
+  active: "active",
+  almostExpired: "almost_expired",
+  expired: "expired",
+};
+
 const MitraHomeDataSummaryCharts = (props: MitraHomeDataSummaryChartsProps) => {
+  // Navigation
+  const navigate = useNavigate();
+
   // Props
   const { dataSummary, isSmContainer } = props;
+
+  // Handlers
+  const handleNavigateStatus = (statusKey: MitraHomeSummaryStatus) => {
+    const activeStatus = STATUS_PARAM_MAP[statusKey];
+    void navigate({
+      to: "/mitra/my-data",
+      search: { activeStatus },
+    });
+  };
 
   return (
     <SimpleGrid columns={isSmContainer ? 1 : 2} gap={"md"} px={"md"}>
@@ -199,6 +265,9 @@ const MitraHomeDataSummaryCharts = (props: MitraHomeDataSummaryChartsProps) => {
                 colorPalette={config.colorPalette}
                 bg={config.bg}
                 flex={value}
+                cursor={"pointer"}
+                _hover={{ opacity: 0.8 }}
+                onClick={() => handleNavigateStatus(config.key)}
               />
             );
           })}
@@ -213,6 +282,9 @@ const MitraHomeDataSummaryCharts = (props: MitraHomeDataSummaryChartsProps) => {
                 legendColor={config.legendColor}
                 label={config.label}
                 value={value}
+                cursor={"pointer"}
+                _hover={{ opacity: 0.8 }}
+                onClick={() => handleNavigateStatus(config.key)}
               />
             );
           })}
@@ -233,6 +305,9 @@ const MitraHomeDataSummaryCharts = (props: MitraHomeDataSummaryChartsProps) => {
                 colorPalette={config.colorPalette}
                 bg={config.bg}
                 flex={value}
+                cursor={"pointer"}
+                _hover={{ opacity: 0.8 }}
+                onClick={() => handleNavigateStatus(config.key)}
               />
             );
           })}
@@ -247,6 +322,9 @@ const MitraHomeDataSummaryCharts = (props: MitraHomeDataSummaryChartsProps) => {
                 legendColor={config.legendColor}
                 label={config.label}
                 value={value}
+                cursor={"pointer"}
+                _hover={{ opacity: 0.8 }}
+                onClick={() => handleNavigateStatus(config.key)}
               />
             );
           })}
@@ -277,7 +355,7 @@ const MitraHomeDataSummaryLegend = (props: MitraHomeDataSummaryLegendProps) => {
       <Box>
         <P color={"fg.muted"}>{label}</P>
 
-        <StatGrid.Value>{value}</StatGrid.Value>
+        <StatGrid.Value value={value}>{value}</StatGrid.Value>
       </Box>
     </HStack>
   );

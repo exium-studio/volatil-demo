@@ -4,28 +4,28 @@ import {
   MAP_CONFIG,
   MAP_EVENTS_MAP,
 } from "@/design-system/components/map/constants/map.config";
-import type {
-  MapLayerConfig,
-  WmsRasterLayerConfig,
+import {
+  isMapActive,
+  type MapLayerConfig,
+  type MapLibreRasterSource,
+  type WmsRasterLayerConfig,
 } from "@/design-system/components/map/types/map.type";
-import { buildWmsProxyUrl } from "@/shared/utils/url/wms-proxy.utils";
 
+import { toast } from "@/design-system/components/toast";
+import { normalizeApiUrl } from "@/shared/utils/url/url.utils";
 import type maplibregl from "maplibre-gl";
 import { useCallback, useEffect, useRef } from "react";
 
 /** Builds a WMS GetMap raster tile URL template if tileUrl is not provided directly. */
 const resolveWmsTileUrl = (layer: WmsRasterLayerConfig): string => {
-  if (layer.tileUrl) return layer.tileUrl;
+  if (layer.tileUrl) return normalizeApiUrl(layer.tileUrl);
+  if (!layer.wmsUrl) return "";
 
-  const rawBase = layer.wmsUrl
-    ? buildWmsProxyUrl(layer.wmsUrl)
-    : buildWmsProxyUrl("/api/proxy/wms");
-
-  const [baseUrl, existingSearch] = rawBase.split("?");
-  const layerName = layer.layers ?? layer.id ?? "";
+  const fullWmsUrl = normalizeApiUrl(layer.wmsUrl);
+  const [baseUrl, existingSearch] = fullWmsUrl.split("?");
+  const layerName = layer.layers || layer.wfsTypeName || "";
 
   const queryParams: Record<string, string> = {
-    layerId: layer.id || layerName,
     service: "WMS",
     version: layer.version ?? "1.1.1",
     request: "GetMap",
@@ -114,7 +114,7 @@ export const useMapLayers = (
 
   const safeAddSource = useCallback(
     (id: string, sourceSpec: maplibregl.SourceSpecification) => {
-      if (!map || map.getSource(id)) return;
+      if (!isMapActive(map) || map.getSource(id)) return;
       try {
         map.addSource(id, sourceSpec);
       } catch (err) {
@@ -126,7 +126,7 @@ export const useMapLayers = (
 
   const safeAddLayer = useCallback(
     (spec: maplibregl.LayerSpecification, beforeId?: string) => {
-      if (!map || map.getLayer(spec.id)) return;
+      if (!isMapActive(map) || map.getLayer(spec.id)) return;
       const targetBeforeId =
         beforeId && map.getLayer(beforeId) ? beforeId : undefined;
       try {
@@ -148,7 +148,7 @@ export const useMapLayers = (
 
   const addLayer = useCallback(
     async (layer: MapLayerConfig) => {
-      if (!map) return;
+      if (!isMapActive(map)) return;
       const beforeId = getCustomLayerBeforeId(map);
       const visibility = resolveVisibility(layer);
       const opacity = resolveOpacity(layer);
@@ -156,6 +156,12 @@ export const useMapLayers = (
       switch (layer.type) {
         case "wms-raster": {
           const tileUrl = resolveWmsTileUrl(layer);
+          if (!tileUrl) {
+            console.warn(
+              `Layer "${layer.id}" has no valid WMS URL, skipping raster source creation`,
+            );
+            break;
+          }
           safeAddSource(layer.id, {
             type: "raster",
             tiles: [tileUrl],
@@ -166,6 +172,7 @@ export const useMapLayers = (
               id: layer.id,
               type: "raster",
               source: layer.id,
+              minzoom: layer.minZoom ?? 12,
               layout: { visibility },
               paint: { "raster-opacity": opacity, ...(layer.paint ?? {}) },
             },
@@ -182,9 +189,11 @@ export const useMapLayers = (
         }
 
         case "raster-tile": {
+          if (!layer.tileUrl) break;
+          const normalizedTileUrl = normalizeApiUrl(layer.tileUrl);
           safeAddSource(layer.id, {
             type: "raster",
-            tiles: [layer.tileUrl],
+            tiles: [normalizedTileUrl],
             tileSize: layer.tileSize ?? MAP_CONFIG.raster.tileSize,
           });
           safeAddLayer(
@@ -192,6 +201,7 @@ export const useMapLayers = (
               id: layer.id,
               type: "raster",
               source: layer.id,
+              minzoom: layer.minZoom ?? 12,
               layout: { visibility },
               paint: { "raster-opacity": opacity, ...(layer.paint ?? {}) },
             },
@@ -201,13 +211,19 @@ export const useMapLayers = (
         }
 
         case "vector-tile": {
-          safeAddSource(layer.id, { type: "vector", tiles: [layer.tileUrl] });
+          if (!layer.tileUrl) break;
+          const normalizedTileUrl = normalizeApiUrl(layer.tileUrl);
+          safeAddSource(layer.id, {
+            type: "vector",
+            tiles: [normalizedTileUrl],
+          });
           safeAddLayer(
             {
               id: layer.id,
               type: "fill",
               source: layer.id,
               "source-layer": layer.sourceLayer,
+              minzoom: layer.minZoom ?? 12,
               paint: { "fill-opacity": opacity, ...(layer.paint ?? {}) },
               layout: { ...layer.layout, visibility },
             } as maplibregl.LayerSpecification,
@@ -222,9 +238,7 @@ export const useMapLayers = (
 
   const removeLayers = useCallback(
     (configs: MapLayerConfig[]) => {
-      if (!map) return;
-      // eslint-disable-next-line @typescript-eslint/no-explicit-any
-      if (!(map as any).style) return;
+      if (!isMapActive(map)) return;
 
       configs.forEach((layer) => {
         if (map.getLayer(layer.id)) map.removeLayer(layer.id);
@@ -236,9 +250,7 @@ export const useMapLayers = (
   );
 
   const setupLayers = useCallback(async () => {
-    if (!map) return;
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    if (!(map as any).style) return;
+    if (!isMapActive(map)) return;
 
     const configs = layersRef.current;
     for (const layer of configs) {
@@ -251,10 +263,11 @@ export const useMapLayers = (
         console.error(`Failed to add layer "${layer.id}"`, error);
       }
     }
+    if (!isMapActive(map)) return;
     map.fire(MAP_EVENTS_MAP.layersReady);
   }, [map, addLayer]);
 
-  // Setup on map-style-ready
+  // Setup on map-style-ready and map error listener
   useEffect(() => {
     if (!map) return;
 
@@ -263,19 +276,38 @@ export const useMapLayers = (
       void setupLayers();
     };
 
+    const handleError = (e: { error?: Error }) => {
+      const errMessage = e?.error?.message ?? "";
+      // Only fire toast when a tile fails due to invalid image format/geoserver XML exception
+      if (
+        (errMessage.includes("Could not load image") &&
+          !errMessage.includes("abort")) ||
+        (errMessage.includes("not, or is no longer, usable") &&
+          errMessage.includes("Could not load image"))
+      ) {
+        toast.error("Gagal Memuat Layer Peta", {
+          id: "map-layer-tile-load-error",
+          description:
+            "Format tile atau layer geoserver tidak valid atau tidak ditemukan.",
+          duplicateStrategy: "ignore",
+        });
+      }
+    };
+
     map.on(MAP_EVENTS_MAP.styleReady as string, handleStyleReady);
+    map.on("error", handleError);
     void setupLayers();
 
     return () => {
+      if (!isMapActive(map)) return;
       map.off(MAP_EVENTS_MAP.styleReady as string, handleStyleReady);
+      map.off("error", handleError);
     };
   }, [map, setupLayers, removeLayers]);
 
   // Respond to dynamic changes in layers array, visibility, and opacity
   useEffect(() => {
-    if (!map) return;
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    if (!(map as any).style) return;
+    if (!isMapActive(map)) return;
 
     const currentLayerIds = new Set(layers.map((l) => l.id));
 
@@ -289,6 +321,7 @@ export const useMapLayers = (
     });
 
     layers.forEach(async (layer) => {
+      if (!isMapActive(map)) return;
       registeredLayerIdsRef.current.add(layer.id);
 
       if (!map.getSource(layer.id) || !map.getLayer(layer.id)) {
@@ -298,25 +331,29 @@ export const useMapLayers = (
 
       if (layer.type === "wms-raster") {
         const newTileUrl = resolveWmsTileUrl(layer);
-        const source = map.getSource(
-          layer.id,
-        ) as maplibregl.RasterTileSource | undefined;
+        if (newTileUrl) {
+          const source = map.getSource(layer.id) as
+            | MapLibreRasterSource
+            | undefined;
 
-        if (source && typeof source.setTiles === "function") {
-          // eslint-disable-next-line @typescript-eslint/no-explicit-any
-          const currentTiles = (source as any).tiles;
-          if (!currentTiles || currentTiles[0] !== newTileUrl) {
-            source.setTiles([newTileUrl]);
+          if (source && typeof source.setTiles === "function") {
+            const currentTiles = source.tiles;
+            if (!currentTiles || currentTiles[0] !== newTileUrl) {
+              source.setTiles([newTileUrl]);
+            }
           }
         }
       }
 
       if (map.getLayer(layer.id)) {
+        const targetMinZoom = layer.minZoom ?? 12;
+        const currentLayer = map.getLayer(layer.id);
+        if (currentLayer && currentLayer.minzoom !== targetMinZoom) {
+          map.setLayerZoomRange(layer.id, targetMinZoom, currentLayer.maxzoom ?? 24);
+        }
+
         const targetVisibility = resolveVisibility(layer);
-        const currentVisibility = map.getLayoutProperty(
-          layer.id,
-          "visibility",
-        );
+        const currentVisibility = map.getLayoutProperty(layer.id, "visibility");
         if (currentVisibility !== targetVisibility) {
           map.setLayoutProperty(layer.id, "visibility", targetVisibility);
         }
@@ -335,5 +372,30 @@ export const useMapLayers = (
         }
       }
     });
+
+    // Enforce layer z-index order in MapLibre stack:
+    // layers array is ordered bottom-to-top (layers[0] is bottom, layers[last] is top).
+    // Move each layer above the previous one, always respecting beforeId limit.
+    const customBeforeId = getCustomLayerBeforeId(map);
+    for (let i = 0; i < layers.length; i++) {
+      const currentId = layers[i].id;
+      if (!map.getLayer(currentId)) continue;
+
+      // The layer to place before is either the next layer in stack, or customBeforeId
+      let beforeTarget = customBeforeId;
+      for (let j = i + 1; j < layers.length; j++) {
+        const nextId = layers[j].id;
+        if (map.getLayer(nextId)) {
+          beforeTarget = nextId;
+          break;
+        }
+      }
+
+      try {
+        map.moveLayer(currentId, beforeTarget);
+      } catch {
+        // Ignore if already in order
+      }
+    }
   }, [map, layers, cqlFilter, addLayer]);
 };

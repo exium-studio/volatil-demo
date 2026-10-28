@@ -17,6 +17,8 @@ export const Tooltip = forwardRef<HTMLDivElement, TooltipProps>(
       portalRef,
       w,
       width,
+      minW,
+      minWidth,
       openDelay = 300,
       ...restProps
     } = props;
@@ -62,6 +64,7 @@ export const Tooltip = forwardRef<HTMLDivElement, TooltipProps>(
         <ChakraTooltip.Trigger
           asChild
           w={w ?? width}
+          minW={minW ?? minWidth}
           {...triggerProps}
         >
           {children}

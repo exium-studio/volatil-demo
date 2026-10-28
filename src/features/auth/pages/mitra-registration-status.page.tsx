@@ -5,6 +5,7 @@ import { Button } from "@/design-system/components/button/ui/button";
 import { ClipboardButton } from "@/design-system/components/data-display/ui/clipboard-button";
 import { Alert } from "@/design-system/components/feedback/ui/alert";
 import { Skeleton } from "@/design-system/components/feedback/ui/skeleton";
+import { StateRetry } from "@/design-system/components/feedback/ui/state.retry";
 import { AppIcon } from "@/design-system/components/icon/ui/app-icon";
 import { Field } from "@/design-system/components/input/ui/field";
 import { Input } from "@/design-system/components/input/ui/input";
@@ -27,6 +28,7 @@ import type {
   MitraRegistrationStatus,
 } from "@/features/auth/types/mitra-registration.type";
 import { MitraRegistrationStatusBadge } from "@/features/shared/components/mitra-registration-status.badge";
+import { ApiError } from "@/shared/libs/api-client/api-error";
 import { formatByte } from "@/shared/utils/formatter/byte.formatter";
 import {
   formatUtcDateTime,
@@ -89,16 +91,38 @@ export const MitraRegistrationStatusPage = () => {
   const {
     data: statusData,
     isLoading,
+    isFetching,
     isError,
     error,
+    refetch,
   } = useRegistrationStatusQuery(queryRegNumber, Boolean(queryRegNumber));
 
   // Handlers
   const handleSearch = (e: React.FormEvent) => {
     e.preventDefault();
-    if (!searchInput.trim()) return;
-    setQueryRegNumber(searchInput.trim().toUpperCase());
+    const trimmed = searchInput.trim().toUpperCase();
+    if (!trimmed) return;
+    if (trimmed === queryRegNumber) {
+      void refetch();
+    } else {
+      setQueryRegNumber(trimmed);
+    }
   };
+
+  // Derived Error State
+  const isNotFoundError =
+    (error instanceof ApiError && error.statusCode === 404) ||
+    (error?.message &&
+      (error.message.toLowerCase().includes("tidak ditemukan") ||
+        error.message.toLowerCase().includes("not found")));
+
+  const errorTitle = isNotFoundError
+    ? "Nomor Registrasi Tidak Ditemukan"
+    : "Gagal Menghubungi Server";
+
+  const errorDescription = isNotFoundError
+    ? `Nomor registrasi "${queryRegNumber}" tidak ditemukan dalam sistem. Mohon periksa kembali nomor registrasi yang Anda masukkan.`
+    : "Terjadi kendala saat memeriksa status pendaftaran ke server. Silakan periksa koneksi internet Anda atau coba beberapa saat lagi.";
 
   // Derived Contract Document Info
   const isApproved =
@@ -181,7 +205,7 @@ export const MitraRegistrationStatusPage = () => {
                   <Button
                     primary={true}
                     type={"submit"}
-                    loading={isLoading}
+                    loading={isLoading || isFetching}
                     disabled={!searchInput.trim()}
                   >
                     <AppIcon icon={SearchIcon} />
@@ -200,342 +224,369 @@ export const MitraRegistrationStatusPage = () => {
               </VStack>
             )}
 
-            {/* Error State */}
-            {isError && (
-              <Alert.Root status={"error"} size={"sm"}>
-                <Alert.Indicator />
-                <Alert.Content>
-                  <Alert.Title>
-                    {"Nomor Registrasi Tidak Ditemukan"}
-                  </Alert.Title>
-                  <Alert.Description>
-                    {error?.message ||
-                      "Mohon pastikan nomor registrasi yang Anda masukkan sudah benar."}
-                  </Alert.Description>
-                </Alert.Content>
-              </Alert.Root>
+            {!isLoading && (
+              <>
+                {isError && (
+                  <StateRetry
+                    title={errorTitle}
+                    description={errorDescription}
+                    onRetry={() => void refetch()}
+                  />
+                )}
+
+                {statusData && (
+                  <VStack align={"stretch"} gap={"xl"} mt={2}>
+                    {/* Status Overview Header */}
+                    <VStack align={"stretch"} gap={3}>
+                      <HStack
+                        justify={"space-between"}
+                        align={"start"}
+                        wrap={"wrap"}
+                        gap={2}
+                      >
+                        <VStack align={"start"} gap={1}>
+                          <P fontSize={"xs"} color={"fg.subtle"}>
+                            {"NOMOR REGISTRASI PENDAFTARAN"}
+                          </P>
+
+                          <HStack align={"center"} gap={2}>
+                            <Heading size={"xl"} letterSpacing={"wider"}>
+                              {statusData.registrationNumber}
+                            </Heading>
+                            <ClipboardButton
+                              value={statusData.registrationNumber}
+                              size={"xs"}
+                            />
+                          </HStack>
+                        </VStack>
+
+                        <MitraRegistrationStatusBadge
+                          size={"md"}
+                          showIcon={true}
+                        >
+                          {statusData.status}
+                        </MitraRegistrationStatusBadge>
+                      </HStack>
+
+                      <P fontSize={"sm"} color={"fg.muted"}>
+                        {statusData.statusDescription ||
+                          STATUS_DESCRIPTIONS[statusData.status] ||
+                          "-"}
+                      </P>
+
+                      {/* Timestamps Bar */}
+                      <HStack
+                        gap={4}
+                        wrap={"wrap"}
+                        color={"fg.subtle"}
+                        fontSize={"xs"}
+                      >
+                        {statusData.createdAt && (
+                          <HStack gap={1} align={"center"}>
+                            <AppIcon icon={CalendarIcon} size={"xs"} />
+                            <P>
+                              {`Diajukan: ${formatUtcDateTime(statusData.createdAt, preferredTimezone)}`}
+                            </P>
+                          </HStack>
+                        )}
+
+                        {statusData.verifiedAt && (
+                          <HStack gap={1} align={"center"}>
+                            <AppIcon icon={CheckCircle2Icon} size={"xs"} />
+                            <P>
+                              {`Diverifikasi: ${formatUtcDateTime(statusData.verifiedAt, preferredTimezone)}`}
+                            </P>
+                          </HStack>
+                        )}
+                      </HStack>
+                    </VStack>
+
+                    <VStack gap={"md"}>
+                      {/* Credentials Sent & Contract Action (If Approved/Verified) */}
+                      {isApproved && (
+                        <Alert.Root
+                          status={"success"}
+                          colorPalette={"green"}
+                          variant={"subtle"}
+                        >
+                          <Alert.Indicator />
+                          <Alert.Content>
+                            <Alert.Title>
+                              {"Kredensial Akun Telah Dikirim"}
+                            </Alert.Title>
+                            <Alert.Description>
+                              {statusData.email
+                                ? `Informasi kredensial login (username & kata sandi akun SSO) telah dikirimkan ke alamat email terdaftar (${statusData.email}). Silakan periksa kotak masuk atau folder spam email Anda.`
+                                : "Informasi kredensial login (username & kata sandi akun SSO) telah dikirimkan ke alamat email terdaftar penanggung jawab. Silakan periksa kotak masuk atau folder spam email Anda."}
+                            </Alert.Description>
+                          </Alert.Content>
+                        </Alert.Root>
+                      )}
+
+                      {isApproved && contractUrl && (
+                        <VStack
+                          justify={"space-between"}
+                          align={"center"}
+                          gap={"md"}
+                          p={"md"}
+                          rounded={theme.radii.container}
+                          bg={"blue.subtle"}
+                          color={"blue.fg"}
+                        >
+                          <VStack gap={"md"} align={"center"}>
+                            <AppIcon icon={FileCheckIcon} size={"lg"} />
+
+                            <VStack align={"start"} gap={"xs"}>
+                              <P fontWeight={"semibold"}>
+                                {"Dokumen Perjanjian Kerjasama (PKS) Resmi"}
+                              </P>
+
+                              <P fontSize={"sm"} color={"blue.fg/50"}>
+                                {contractFileName}
+                                {contractFileSize
+                                  ? ` • ${contractFileSize}`
+                                  : ""}
+                              </P>
+                            </VStack>
+                          </VStack>
+
+                          <HStack gap={2}>
+                            <ExternalLink
+                              href={contractUrl}
+                              variant={"plain"}
+                              download
+                            >
+                              <Button
+                                colorPalette={"blue"}
+                                size={"sm"}
+                                variant={"surface"}
+                              >
+                                <AppIcon icon={DownloadIcon} />
+                                {"Unduh Kontrak"}
+                              </Button>
+                            </ExternalLink>
+
+                            <Link to={"/"}>
+                              <Button
+                                colorPalette={"blue"}
+                                size={"sm"}
+                                variant={"surface"}
+                              >
+                                <AppIcon icon={LogInIcon} />
+                                {"Halaman Login"}
+                              </Button>
+                            </Link>
+                          </HStack>
+                        </VStack>
+                      )}
+
+                      {/*  Rejection Reason Banner (If Rejected) */}
+                      {statusData.status === "rejected" && (
+                        <Alert.Root status={"error"} size={"sm"}>
+                          <Alert.Indicator />
+                          <Alert.Content>
+                            <Alert.Title>
+                              {"Catatan / Alasan Penolakan"}
+                            </Alert.Title>
+                            <Alert.Description>
+                              {statusData.rejectionReason ||
+                                statusData.statusDescription ||
+                                "Persyaratan berkas belum memenuhi kriteria yang ditetapkan."}
+                            </Alert.Description>
+                          </Alert.Content>
+                        </Alert.Root>
+                      )}
+                    </VStack>
+
+                    {/* Detail Data Pengajuan (Instansi & Penanggung Jawab) */}
+                    <SimpleGrid columns={[1, null, 2]} gap={6}>
+                      {/* Instansi Info */}
+                      <VStack align={"stretch"} gap={3}>
+                        <HStack gap={2} color={"fg.muted"}>
+                          <AppIcon icon={Building2Icon} />
+                          <Heading size={"sm"}>{"Informasi Instansi"}</Heading>
+                        </HStack>
+
+                        <VStack align={"start"} gap={1}>
+                          <P fontSize={"xs"} color={"fg.subtle"}>
+                            {"Nama Instansi / Perusahaan"}
+                          </P>
+                          <P fontWeight={"medium"}>
+                            {statusData.organizationName ??
+                              statusData.namaInstansi ??
+                              "-"}
+                          </P>
+                        </VStack>
+
+                        <VStack align={"start"} gap={1}>
+                          <P fontSize={"xs"} color={"fg.subtle"}>
+                            {"NIB"}
+                          </P>
+                          <P fontWeight={"medium"}>{statusData.nib || "-"}</P>
+                        </VStack>
+
+                        <VStack align={"start"} gap={1}>
+                          <P fontSize={"xs"} color={"fg.subtle"}>
+                            {"NPWP"}
+                          </P>
+                          <P fontWeight={"medium"}>{statusData.npwp || "-"}</P>
+                        </VStack>
+
+                        <VStack align={"start"} gap={1}>
+                          <P fontSize={"xs"} color={"fg.subtle"}>
+                            {"Alamat Kantor"}
+                          </P>
+                          <P fontSize={"sm"} color={"fg.muted"}>
+                            {statusData.officeAddress ??
+                              statusData.alamatKantor ??
+                              "-"}
+                          </P>
+                        </VStack>
+
+                        {statusData.website && (
+                          <VStack align={"start"} gap={1}>
+                            <P fontSize={"xs"} color={"fg.subtle"}>
+                              {"Situs Web"}
+                            </P>
+                            <ExternalLink href={statusData.website}>
+                              <HStack gap={1} align={"center"}>
+                                <AppIcon icon={GlobeIcon} size={"xs"} />
+                                <P fontSize={"sm"}>{statusData.website}</P>
+                              </HStack>
+                            </ExternalLink>
+                          </VStack>
+                        )}
+                      </VStack>
+
+                      {/* Penanggung Jawab (PIC) Info */}
+                      <VStack align={"stretch"} gap={3}>
+                        <HStack gap={2} color={"fg.muted"}>
+                          <AppIcon icon={UserCheckIcon} />
+                          <Heading size={"sm"}>
+                            {"Penanggung Jawab (PIC)"}
+                          </Heading>
+                        </HStack>
+
+                        <VStack align={"start"} gap={1}>
+                          <P fontSize={"xs"} color={"fg.subtle"}>
+                            {"Nama Penanggung Jawab"}
+                          </P>
+                          <P fontWeight={"medium"}>
+                            {statusData.picName ??
+                              statusData.namaPenanggungJawab ??
+                              "-"}
+                          </P>
+                        </VStack>
+
+                        <VStack align={"start"} gap={1}>
+                          <P fontSize={"xs"} color={"fg.subtle"}>
+                            {"Jabatan"}
+                          </P>
+                          <P fontWeight={"medium"}>
+                            {statusData.position ?? statusData.jabatan ?? "-"}
+                          </P>
+                        </VStack>
+
+                        <VStack align={"start"} gap={1}>
+                          <P fontSize={"xs"} color={"fg.subtle"}>
+                            {"Email Resmi SSO"}
+                          </P>
+                          <HStack gap={1} align={"center"}>
+                            <AppIcon icon={MailIcon} size={"xs"} />
+                            <P fontSize={"sm"}>{statusData.email || "-"}</P>
+                          </HStack>
+                        </VStack>
+
+                        <VStack align={"start"} gap={1}>
+                          <P fontSize={"xs"} color={"fg.subtle"}>
+                            {"Nomor Telepon / Kontak"}
+                          </P>
+                          <HStack gap={1} align={"center"}>
+                            <AppIcon icon={PhoneIcon} size={"xs"} />
+                            <P fontSize={"sm"}>
+                              {statusData.phoneNumber ??
+                                statusData.nomorHp ??
+                                "-"}
+                            </P>
+                          </HStack>
+                        </VStack>
+                      </VStack>
+                    </SimpleGrid>
+
+                    {/* Uploaded Documents Checklist */}
+                    {statusData.documents && (
+                      <>
+                        {/* <Separator borderColor={"border.subtle"} /> */}
+
+                        <VStack align={"stretch"} gap={3}>
+                          <HStack gap={2} color={"fg.muted"}>
+                            <AppIcon icon={FileTextIcon} />
+                            <Heading size={"sm"}>
+                              {"Berkas Persyaratan yang Diunggah"}
+                            </Heading>
+                          </HStack>
+
+                          <SimpleGrid columns={[1, null, 2]} gap={3}>
+                            {DOCUMENT_ITEMS.map((docItem) => {
+                              const docFile =
+                                statusData.documents?.[docItem.key];
+                              const hasDoc = Boolean(docFile?.url);
+
+                              return (
+                                <HStack
+                                  key={docItem.key}
+                                  align={"center"}
+                                  justify={"space-between"}
+                                  gap={2}
+                                  rounded={theme.radii.container}
+                                  border={"1px solid"}
+                                  borderColor={"border.subtle"}
+                                >
+                                  <VStack
+                                    flex={1}
+                                    align={"start"}
+                                    gap={"xs"}
+                                    p={"md"}
+                                  >
+                                    <P>{docItem.label}</P>
+
+                                    {docFile?.size ? (
+                                      <P fontSize={"xs"} color={"fg.subtle"}>
+                                        {formatByte(docFile.size, {
+                                          decimals: 1,
+                                        })}
+                                      </P>
+                                    ) : null}
+                                  </VStack>
+
+                                  <Box px={"md"} py={"xs"} mt={"auto"}>
+                                    {hasDoc && docFile?.url ? (
+                                      <ExternalLink
+                                        href={docFile.url}
+                                        download={true}
+                                      >
+                                        <AppIcon icon={ExternalLinkIcon} />
+                                        {"Lihat"}
+                                      </ExternalLink>
+                                    ) : (
+                                      <Badge size={"xs"} colorPalette={"gray"}>
+                                        {"-"}
+                                      </Badge>
+                                    )}
+                                  </Box>
+                                </HStack>
+                              );
+                            })}
+                          </SimpleGrid>
+                        </VStack>
+                      </>
+                    )}
+                  </VStack>
+                )}
+              </>
             )}
 
             {/* Results Section */}
-            {statusData && (
-              <VStack align={"stretch"} gap={"xl"} mt={2}>
-                {/* <Separator borderColor={"border.subtle"} /> */}
-
-                {/* 1. Status Overview Header */}
-                <VStack align={"stretch"} gap={3}>
-                  <HStack
-                    justify={"space-between"}
-                    align={"start"}
-                    wrap={"wrap"}
-                    gap={2}
-                  >
-                    <VStack align={"start"} gap={1}>
-                      <P fontSize={"xs"} color={"fg.subtle"}>
-                        {"NOMOR REGISTRASI PENDAFTARAN"}
-                      </P>
-
-                      <HStack align={"center"} gap={2}>
-                        <Heading size={"xl"} letterSpacing={"wider"}>
-                          {statusData.registrationNumber}
-                        </Heading>
-                        <ClipboardButton
-                          value={statusData.registrationNumber}
-                          size={"xs"}
-                        />
-                      </HStack>
-                    </VStack>
-
-                    <MitraRegistrationStatusBadge size={"md"} showIcon={true}>
-                      {statusData.status}
-                    </MitraRegistrationStatusBadge>
-                  </HStack>
-
-                  <P fontSize={"sm"} color={"fg.muted"}>
-                    {statusData.statusDescription ||
-                      STATUS_DESCRIPTIONS[statusData.status] ||
-                      "-"}
-                  </P>
-
-                  {/* Timestamps Bar */}
-                  <HStack
-                    gap={4}
-                    wrap={"wrap"}
-                    color={"fg.subtle"}
-                    fontSize={"xs"}
-                  >
-                    {statusData.createdAt && (
-                      <HStack gap={1} align={"center"}>
-                        <AppIcon icon={CalendarIcon} size={"xs"} />
-                        <P>
-                          {`Diajukan: ${formatUtcDateTime(statusData.createdAt, preferredTimezone)}`}
-                        </P>
-                      </HStack>
-                    )}
-
-                    {statusData.verifiedAt && (
-                      <HStack gap={1} align={"center"}>
-                        <AppIcon icon={CheckCircle2Icon} size={"xs"} />
-                        <P>
-                          {`Diverifikasi: ${formatUtcDateTime(statusData.verifiedAt, preferredTimezone)}`}
-                        </P>
-                      </HStack>
-                    )}
-                  </HStack>
-                </VStack>
-
-                {/* 2. Contract Action (If Approved/Verified) */}
-                {isApproved && contractUrl && (
-                  <VStack
-                    justify={"space-between"}
-                    align={"center"}
-                    gap={"md"}
-                    p={"md"}
-                    rounded={theme.radii.container}
-                    bg={"blue.subtle"}
-                    color={"blue.fg"}
-                  >
-                    <VStack gap={"md"} align={"center"}>
-                      <AppIcon icon={FileCheckIcon} size={"lg"} />
-
-                      <VStack align={"start"} gap={"xs"}>
-                        <P fontWeight={"semibold"}>
-                          {"Dokumen Perjanjian Kerjasama (PKS) Resmi"}
-                        </P>
-
-                        <P fontSize={"sm"} color={"blue.fg/50"}>
-                          {contractFileName}
-                          {contractFileSize ? ` • ${contractFileSize}` : ""}
-                        </P>
-                      </VStack>
-                    </VStack>
-
-                    <HStack gap={2}>
-                      <ExternalLink
-                        href={contractUrl}
-                        variant={"plain"}
-                        download
-                      >
-                        <Button
-                          colorPalette={"blue"}
-                          size={"sm"}
-                          variant={"surface"}
-                        >
-                          <AppIcon icon={DownloadIcon} />
-                          {"Unduh Kontrak"}
-                        </Button>
-                      </ExternalLink>
-
-                      <Link to={"/"}>
-                        <Button
-                          colorPalette={"blue"}
-                          size={"sm"}
-                          variant={"surface"}
-                        >
-                          <AppIcon icon={LogInIcon} />
-                          {"Halaman Login"}
-                        </Button>
-                      </Link>
-                    </HStack>
-                  </VStack>
-                )}
-
-                {/* 3. Rejection Reason Banner (If Rejected) */}
-                {statusData.status === "rejected" && (
-                  <Alert.Root status={"error"} size={"sm"}>
-                    <Alert.Indicator />
-                    <Alert.Content>
-                      <Alert.Title>{"Catatan / Alasan Penolakan"}</Alert.Title>
-                      <Alert.Description>
-                        {statusData.rejectionReason ||
-                          statusData.statusDescription ||
-                          "Persyaratan berkas belum memenuhi kriteria yang ditetapkan."}
-                      </Alert.Description>
-                    </Alert.Content>
-                  </Alert.Root>
-                )}
-
-                {/* <Separator borderColor={"border.subtle"} /> */}
-
-                {/* 4. Detail Data Pengajuan (Instansi & Penanggung Jawab) */}
-                <SimpleGrid columns={[1, null, 2]} gap={6}>
-                  {/* Instansi Info */}
-                  <VStack align={"stretch"} gap={3}>
-                    <HStack gap={2} color={"fg.muted"}>
-                      <AppIcon icon={Building2Icon} />
-                      <Heading size={"sm"}>{"Informasi Instansi"}</Heading>
-                    </HStack>
-
-                    <VStack align={"start"} gap={1}>
-                      <P fontSize={"xs"} color={"fg.subtle"}>
-                        {"Nama Instansi / Perusahaan"}
-                      </P>
-                      <P fontWeight={"medium"}>
-                        {statusData.organizationName ??
-                          statusData.namaInstansi ??
-                          "-"}
-                      </P>
-                    </VStack>
-
-                    <VStack align={"start"} gap={1}>
-                      <P fontSize={"xs"} color={"fg.subtle"}>
-                        {"NIB"}
-                      </P>
-                      <P fontWeight={"medium"}>{statusData.nib || "-"}</P>
-                    </VStack>
-
-                    <VStack align={"start"} gap={1}>
-                      <P fontSize={"xs"} color={"fg.subtle"}>
-                        {"NPWP"}
-                      </P>
-                      <P fontWeight={"medium"}>{statusData.npwp || "-"}</P>
-                    </VStack>
-
-                    <VStack align={"start"} gap={1}>
-                      <P fontSize={"xs"} color={"fg.subtle"}>
-                        {"Alamat Kantor"}
-                      </P>
-                      <P fontSize={"sm"} color={"fg.muted"}>
-                        {statusData.officeAddress ??
-                          statusData.alamatKantor ??
-                          "-"}
-                      </P>
-                    </VStack>
-
-                    {statusData.website && (
-                      <VStack align={"start"} gap={1}>
-                        <P fontSize={"xs"} color={"fg.subtle"}>
-                          {"Situs Web"}
-                        </P>
-                        <ExternalLink href={statusData.website}>
-                          <HStack gap={1} align={"center"}>
-                            <AppIcon icon={GlobeIcon} size={"xs"} />
-                            <P fontSize={"sm"}>{statusData.website}</P>
-                          </HStack>
-                        </ExternalLink>
-                      </VStack>
-                    )}
-                  </VStack>
-
-                  {/* Penanggung Jawab (PIC) Info */}
-                  <VStack align={"stretch"} gap={3}>
-                    <HStack gap={2} color={"fg.muted"}>
-                      <AppIcon icon={UserCheckIcon} />
-                      <Heading size={"sm"}>{"Penanggung Jawab (PIC)"}</Heading>
-                    </HStack>
-
-                    <VStack align={"start"} gap={1}>
-                      <P fontSize={"xs"} color={"fg.subtle"}>
-                        {"Nama Penanggung Jawab"}
-                      </P>
-                      <P fontWeight={"medium"}>
-                        {statusData.picName ??
-                          statusData.namaPenanggungJawab ??
-                          "-"}
-                      </P>
-                    </VStack>
-
-                    <VStack align={"start"} gap={1}>
-                      <P fontSize={"xs"} color={"fg.subtle"}>
-                        {"Jabatan"}
-                      </P>
-                      <P fontWeight={"medium"}>
-                        {statusData.position ?? statusData.jabatan ?? "-"}
-                      </P>
-                    </VStack>
-
-                    <VStack align={"start"} gap={1}>
-                      <P fontSize={"xs"} color={"fg.subtle"}>
-                        {"Email Resmi SSO"}
-                      </P>
-                      <HStack gap={1} align={"center"}>
-                        <AppIcon icon={MailIcon} size={"xs"} />
-                        <P fontSize={"sm"}>{statusData.email || "-"}</P>
-                      </HStack>
-                    </VStack>
-
-                    <VStack align={"start"} gap={1}>
-                      <P fontSize={"xs"} color={"fg.subtle"}>
-                        {"Nomor Telepon / Kontak"}
-                      </P>
-                      <HStack gap={1} align={"center"}>
-                        <AppIcon icon={PhoneIcon} size={"xs"} />
-                        <P fontSize={"sm"}>
-                          {statusData.phoneNumber ?? statusData.nomorHp ?? "-"}
-                        </P>
-                      </HStack>
-                    </VStack>
-                  </VStack>
-                </SimpleGrid>
-
-                {/* 5. Uploaded Documents Checklist */}
-                {statusData.documents && (
-                  <>
-                    {/* <Separator borderColor={"border.subtle"} /> */}
-
-                    <VStack align={"stretch"} gap={3}>
-                      <HStack gap={2} color={"fg.muted"}>
-                        <AppIcon icon={FileTextIcon} />
-                        <Heading size={"sm"}>
-                          {"Berkas Persyaratan yang Diunggah"}
-                        </Heading>
-                      </HStack>
-
-                      <SimpleGrid columns={[1, null, 2]} gap={3}>
-                        {DOCUMENT_ITEMS.map((docItem) => {
-                          const docFile = statusData.documents?.[docItem.key];
-                          const hasDoc = Boolean(docFile?.url);
-
-                          return (
-                            <HStack
-                              key={docItem.key}
-                              align={"center"}
-                              justify={"space-between"}
-                              gap={2}
-                              rounded={theme.radii.container}
-                              border={"1px solid"}
-                              borderColor={"border.subtle"}
-                            >
-                              <VStack
-                                flex={1}
-                                align={"start"}
-                                gap={"xs"}
-                                p={"md"}
-                              >
-                                <P>{docItem.label}</P>
-
-                                {docFile?.size ? (
-                                  <P fontSize={"xs"} color={"fg.subtle"}>
-                                    {formatByte(docFile.size, {
-                                      decimals: 1,
-                                    })}
-                                  </P>
-                                ) : null}
-                              </VStack>
-
-                              <Box px={"md"} py={"xs"} mt={"auto"}>
-                                {hasDoc && docFile?.url ? (
-                                  <ExternalLink
-                                    href={docFile.url}
-                                    download={true}
-                                  >
-                                    <AppIcon icon={ExternalLinkIcon} />
-                                    {"Lihat"}
-                                  </ExternalLink>
-                                ) : (
-                                  <Badge size={"xs"} colorPalette={"gray"}>
-                                    {"-"}
-                                  </Badge>
-                                )}
-                              </Box>
-                            </HStack>
-                          );
-                        })}
-                      </SimpleGrid>
-                    </VStack>
-                  </>
-                )}
-              </VStack>
-            )}
           </Container.Body>
         </Container.Root>
 

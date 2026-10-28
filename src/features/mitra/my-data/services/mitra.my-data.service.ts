@@ -4,6 +4,8 @@ import {
   fetchMitraWorkspaceDetailApi,
   fetchMitraWorkspacesApi,
   fetchMyDataApi,
+  renewWorkspaceApi,
+  rotateApiKeyApi,
   updateMyDataItemApi,
 } from "@/features/mitra/my-data/api/mitra.my-data.api";
 import type {
@@ -13,6 +15,9 @@ import type {
   MyDataItem,
   MyDataQueryParams,
   MyDataResponse,
+  RenewWorkspacePayload,
+  RenewWorkspaceResponse,
+  RotateApiKeyResponse,
   UpdateMyDataItemPayload,
 } from "@/features/mitra/my-data/types/my-data.type";
 import {
@@ -43,7 +48,23 @@ export const getPaginatedWorkspaces = (
       (item.wmsUrl && item.wmsUrl.toLowerCase().includes(search)) ||
       item.layers.some((l) => l.title.toLowerCase().includes(search));
 
-    return matchesStatus && matchesQuery;
+    let matchesActiveStatus = true;
+    if (params?.activeStatus && params.activeStatus !== "all") {
+      const now = Date.now();
+      const expiry = item.expiresAt ? new Date(item.expiresAt).getTime() : 0;
+      const daysRemaining = Math.ceil((expiry - now) / (1000 * 60 * 60 * 24));
+      const windowDays = 7;
+
+      if (params.activeStatus === "active") {
+        matchesActiveStatus = daysRemaining > windowDays && item.status === "ready";
+      } else if (params.activeStatus === "almost_expired") {
+        matchesActiveStatus = daysRemaining > 0 && daysRemaining <= windowDays;
+      } else if (params.activeStatus === "expired") {
+        matchesActiveStatus = daysRemaining <= 0 || item.status === "expired";
+      }
+    }
+
+    return matchesStatus && matchesQuery && matchesActiveStatus;
   });
 
   const startIndex = (page - 1) * pageSize;
@@ -51,6 +72,8 @@ export const getPaginatedWorkspaces = (
 
   return {
     items: paginated,
+    apiKey: dummyApiKey,
+    workspaceUrl: dummyWorkspaceUrl,
     pagination: createPaginationMeta(page, pageSize, filtered.length),
   };
 };
@@ -81,8 +104,45 @@ export const getMitraWorkspaceDetail = async (
 ): Promise<MitraWorkspaceItem | null> => {
   try {
     const response = await fetchMitraWorkspaceDetailApi(workspaceId, signal);
+    const res = response as typeof response & {
+      aoiPolygon?: MitraWorkspaceItem["aoiPolygon"];
+      selectionType?: MitraWorkspaceItem["selectionType"];
+      kawasanCoverageHa?: number | null;
+      bidangCoverageCount?: number | null;
+      apiKey?: string | null;
+      canRenew?: boolean;
+      renewalEligibility?: MitraWorkspaceItem["renewalEligibility"];
+    };
     if (response.data) {
-      return response.data;
+      const item = { ...response.data };
+      if (!item.apiKey && res.apiKey) {
+        item.apiKey = res.apiKey;
+      }
+      if (!item.aoiPolygon && res.aoiPolygon) {
+        item.aoiPolygon = res.aoiPolygon;
+      }
+      if (!item.selectionType && res.selectionType) {
+        item.selectionType = res.selectionType;
+      }
+      if (
+        item.kawasanCoverageHa === undefined &&
+        res.kawasanCoverageHa !== undefined
+      ) {
+        item.kawasanCoverageHa = res.kawasanCoverageHa;
+      }
+      if (
+        item.bidangCoverageCount === undefined &&
+        res.bidangCoverageCount !== undefined
+      ) {
+        item.bidangCoverageCount = res.bidangCoverageCount;
+      }
+      if (item.canRenew === undefined && res.canRenew !== undefined) {
+        item.canRenew = res.canRenew;
+      }
+      if (!item.renewalEligibility && res.renewalEligibility) {
+        item.renewalEligibility = res.renewalEligibility;
+      }
+      return item;
     }
     if (isDummyDataEnabled()) {
       return (
@@ -91,7 +151,7 @@ export const getMitraWorkspaceDetail = async (
             w.id === workspaceId ||
             w.orderId === workspaceId ||
             w.workspaceName === workspaceId,
-        ) ?? null
+        ) ?? dummyMitraWorkspaces[0] ?? null
       );
     }
     return null;
@@ -103,7 +163,7 @@ export const getMitraWorkspaceDetail = async (
             w.id === workspaceId ||
             w.orderId === workspaceId ||
             w.workspaceName === workspaceId,
-        ) ?? null
+        ) ?? dummyMitraWorkspaces[0] ?? null
       );
     }
     throw error;
@@ -202,6 +262,76 @@ export const updateMyData = async (
       });
 
       return { ...existing };
+    }
+    throw error;
+  }
+};
+
+export const renewWorkspace = async (
+  workspaceId: string,
+  payload: RenewWorkspacePayload = {},
+): Promise<RenewWorkspaceResponse> => {
+  try {
+    const response = await renewWorkspaceApi(workspaceId, payload);
+    if (response.data) {
+      return response.data;
+    }
+    throw new Error("Gagal memperpanjang masa aktif workspace");
+  } catch (error) {
+    if (isDummyDataEnabled()) {
+      const targetWorkspace = dummyMitraWorkspaces.find(
+        (w) => w.id === workspaceId,
+      );
+      const currentExpiry = targetWorkspace?.expiresAt
+        ? new Date(targetWorkspace.expiresAt).getTime()
+        : Date.now();
+      const baseTime = currentExpiry > Date.now() ? currentExpiry : Date.now();
+      const accessDays = 30;
+      const extendedUntil = new Date(
+        baseTime + accessDays * 24 * 60 * 60 * 1000,
+      ).toISOString();
+
+      const orderNumber = `RNW-${Date.now().toString().slice(-6)}`;
+      const billingCode = `82026${Math.floor(1000000 + Math.random() * 9000000)}`;
+      const totalAmount = 750000;
+
+      return {
+        workspaceId,
+        orderId: `renew-1-${workspaceId}-${Date.now()}`,
+        orderNumber,
+        billingCode,
+        totalAmount,
+        expiresAt: targetWorkspace?.expiresAt ?? new Date().toISOString(),
+        extendedUntil,
+        status: "pending_payment",
+        policySnapshot: {
+          accessDays,
+          maxExtensionCount: 1,
+          extensionWindowDays: 7,
+          currentExtensionIndex: 1,
+        },
+      };
+    }
+    throw error;
+  }
+};
+
+export const rotateApiKey = async (
+  signal?: AbortSignal,
+): Promise<RotateApiKeyResponse> => {
+  try {
+    const response = await rotateApiKeyApi(signal);
+    if (response.data) {
+      return response.data;
+    }
+    throw new Error("Gagal melakukan rotasi API Key");
+  } catch (error) {
+    if (isDummyDataEnabled()) {
+      const generated = `vlt_${Math.random().toString(36).substring(2, 10)}${Math.random().toString(36).substring(2, 10)}`;
+      return {
+        apiKey: generated,
+        generatedAt: new Date().toISOString(),
+      };
     }
     throw error;
   }

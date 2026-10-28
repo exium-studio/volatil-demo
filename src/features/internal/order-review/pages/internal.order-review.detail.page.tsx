@@ -10,11 +10,13 @@ import type {
   FormattedTableHeader,
 } from "@/design-system/components/data-display/types/data-view-table.type";
 import { DataViewTable } from "@/design-system/components/data-display/ui/data-view-table";
+import { ConfirmationTrigger } from "@/design-system/components/feedback/ui/confirmation-trigger";
 import { Skeleton } from "@/design-system/components/feedback/ui/skeleton";
 import { AppIcon } from "@/design-system/components/icon/ui/app-icon";
 import { Switch } from "@/design-system/components/input/ui/switch";
 import { Container } from "@/design-system/components/layout/ui/container";
 import { HStack, VStack } from "@/design-system/components/layout/ui/flex-box";
+import { SimpleGrid } from "@/design-system/components/layout/ui/grid";
 import { AppContentContainer } from "@/design-system/components/layout/ui/page-container";
 import { Separator } from "@/design-system/components/layout/ui/separator";
 import { useMapInstanceStore } from "@/design-system/components/map/stores/map.instance.store";
@@ -30,7 +32,10 @@ import {
   useProvisionOrder,
 } from "@/features/internal/order-review/hooks/use-order-review";
 import { useOrderReviewLayerStore } from "@/features/internal/order-review/stores/order-review-layer.store";
-import type { OrderLayerDataViewProps } from "@/features/internal/order-review/types/order-review.type";
+import type {
+  OrderLayerDataViewProps,
+  OrderSummaryProps,
+} from "@/features/internal/order-review/types/order-review.type";
 import type { CartOrderItem } from "@/features/mitra/cart/types/mitra.cart.order.type";
 import { useFlyToLayer } from "@/features/mitra/data-request/hooks/use-fly-to-layer";
 import { normalizePolygonFeature } from "@/features/mitra/data-request/utils/clip-and-union-kawasan";
@@ -46,21 +51,24 @@ import {
   formatCurrency,
   formatNumber,
 } from "@/shared/utils/formatter/number.formatter";
-import { buildWmsProxyUrl } from "@/shared/utils/url/wms-proxy.utils";
+import { getIgtLayers } from "@/features/mitra/data-request/api/mitra.data-request-igt-layers.api";
+import { queryKeys } from "@/shared/libs/tanstack-query/query.keys";
+import { useQuery } from "@tanstack/react-query";
 import { useNavigate, useParams } from "@tanstack/react-router";
 import {
   CheckCircleIcon,
   EyeIcon,
   EyeOffIcon,
   FocusIcon,
-  LoaderIcon,
+  HandshakeIcon,
   MapPlusIcon,
+  RefreshCwIcon,
 } from "lucide-react";
-import { useCallback, useEffect, useMemo } from "react";
+import { useCallback, useEffect, useMemo, useRef } from "react";
 
-import { Center } from "@/design-system/components/layout/ui/center";
 import { MAP_EVENTS_MAP } from "@/design-system/components/map/constants/map.config";
 import { DRAW_FILL_LAYER_ID } from "@/design-system/components/map/hooks/use-map-draw";
+import { useThemeStore } from "@/design-system/stores/theme-store";
 import { getSelectionTypeMapColors } from "@/features/shared/constants/volatil.ssot-map";
 import type GeoJSON from "geojson";
 import type maplibregl from "maplibre-gl";
@@ -155,21 +163,29 @@ const renderOrderReviewAoiLayer = (
   }
 };
 
-export function InternalOrderReviewDetailPage() {
+export const InternalOrderReviewDetailPage = () => {
   // Hooks
   const { orderId } = useParams({ strict: false }) as { orderId: string };
   const navigate = useNavigate();
   const map = useMapInstanceStore((state) => state.map);
 
   // Stores
-  const { isAoiVisible, setAoiPolygon, setAoiVisible } =
+  const { isAoiVisible, setAoiPolygon, setAoiVisible, setLayerEnabled } =
     useOrderReviewLayerStore();
 
   // Queries
   const { data: order, isLoading } = useInternalOrderDetailQuery(orderId);
+  const { data: masterIgtData } = useQuery({
+    queryKey: queryKeys.map.layers(),
+    queryFn: ({ signal }) => getIgtLayers(signal),
+    staleTime: 1000 * 60 * 5,
+  });
 
   // Mutations
   const provisionOrderMutation = useProvisionOrder();
+
+  // Refs
+  const hasFlownAoiRef = useRef<string | null>(null);
 
   // Background SSE listening if current order is 'processing'
   const processingOrderIds = useMemo(() => {
@@ -180,12 +196,96 @@ export function InternalOrderReviewDetailPage() {
 
   useOrdersProvisionStream(processingOrderIds);
 
-  // Sync order AOI Polygon with store on load
+  // Sync order AOI Polygon with store on load (auto ON)
   useEffect(() => {
     if (order?.aoiPolygon) {
-      setAoiPolygon(order.aoiPolygon, false);
+      setAoiPolygon(order.aoiPolygon, true);
     }
   }, [order?.aoiPolygon, setAoiPolygon]);
+
+  // Effects — Auto-enable purchased IGT layers based on defaultVisible from master IGT layers
+  useEffect(() => {
+    if (!order?.items || order.items.length === 0) return;
+
+    const masterItems = masterIgtData?.items ?? [];
+    const defaultMasterLayers = masterItems.filter((m) =>
+      Boolean(m.defaultVisible),
+    );
+
+    const layersToAutoEnable = order.items.filter((orderItem) => {
+      if (defaultMasterLayers.length > 0) {
+        const matchExact = defaultMasterLayers.some((m) => {
+          const mTitle = m.title?.toLowerCase().trim();
+          const itemTitle = orderItem.sourceLayerTitle?.toLowerCase().trim();
+
+          return (
+            m.id === orderItem.sourceLayerId ||
+            m.typeName === orderItem.sourceLayerId ||
+            (mTitle && itemTitle && mTitle === itemTitle)
+          );
+        });
+        if (matchExact) return true;
+
+        const hasDefaultBidangMaster = defaultMasterLayers.some(
+          (m) => (m.spatialBasis ?? m.igtBasis) === "bidang",
+        );
+        if (
+          hasDefaultBidangMaster &&
+          (orderItem.spatialBasis === "bidang" ||
+            orderItem.igtBasis === "bidang")
+        ) {
+          return true;
+        }
+        return false;
+      }
+
+      return (
+        orderItem.spatialBasis === "bidang" || orderItem.igtBasis === "bidang"
+      );
+    });
+
+    layersToAutoEnable.forEach((item) => {
+      const previewUrl = item.previewWmsUrl || item.wmsUrl || "";
+      setLayerEnabled(item.sourceLayerId, true, {
+        wmsUrl: previewUrl,
+        layers: item.sourceLayerId,
+        spatialBasis: item.spatialBasis,
+      });
+    });
+  }, [order?.items, masterIgtData, setLayerEnabled]);
+
+  // Effects — Auto fly camera to AOI polygon on initial load
+  useEffect(() => {
+    if (
+      !map ||
+      !order?.aoiPolygon ||
+      hasFlownAoiRef.current === order.orderId
+    ) {
+      return;
+    }
+
+    const feature = normalizePolygonFeature(order.aoiPolygon);
+    if (!feature) return;
+
+    hasFlownAoiRef.current = order.orderId;
+
+    const triggerFly = () => {
+      highlightFeatureOnMap(map, feature, {
+        zoom: 15,
+        timeoutMs: 1000,
+        fitCamera: true,
+      });
+    };
+
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    if ((map as any).style && map.isStyleLoaded()) {
+      triggerFly();
+    } else {
+      map.once("style.load", () => {
+        triggerFly();
+      });
+    }
+  }, [map, order?.aoiPolygon, order?.orderId]);
 
   // Effects — Reactive sync for permanent AOI layer (survives style ready)
   useEffect(() => {
@@ -272,35 +372,66 @@ export function InternalOrderReviewDetailPage() {
         <Container.Body overflowY={"auto"}>
           {/* Header */}
           <HeaderContainer px={"xs"}>
-            <HStack justify={"space-between"} align={"center"} w={"full"}>
+            <HStack
+              justify={"space-between"}
+              align={"center"}
+              w={"full"}
+              gap={"md"}
+            >
               <HStack align={"center"} gap={"sm"}>
                 <BackButton
                   onClick={() => navigate({ to: "/internal/order-review" })}
                 />
 
-                <ClampedHeading>{"Review Permintaan Detail"}</ClampedHeading>
+                <ClampedHeading>{`Review Permintaan`}</ClampedHeading>
               </HStack>
 
               <HStack gap={2}>
                 {order.status === "paid" && (
-                  <Button
-                    primary={true}
+                  <ConfirmationTrigger
+                    modalKey={`provision-wms-${order.orderId}`}
+                    icon={MapPlusIcon}
                     colorPalette={"blue"}
-                    loading={provisionOrderMutation.isPending}
-                    onClick={() => {
+                    title={"Buat Layanan WMS"}
+                    description={`Apakah Anda yakin ingin memulai pembuatan layanan WMS untuk pesanan "${order.orderNumber || order.orderId}" (Mitra: ${order.mitraName})? Proses ini akan menyiapkan workspace dan service layer di latar belakang.`}
+                    confirmLabel={"Buat Layanan WMS"}
+                    onConfirm={() => {
                       provisionOrderMutation.mutate({ orderId: order.orderId });
                     }}
                   >
-                    <AppIcon icon={MapPlusIcon} />
-                    {"Create Service WMS"}
-                  </Button>
+                    <Button
+                      primary={true}
+                      colorPalette={"blue"}
+                      loading={provisionOrderMutation.isPending}
+                    >
+                      <AppIcon icon={MapPlusIcon} />
+                      {"Buat Layanan WMS"}
+                    </Button>
+                  </ConfirmationTrigger>
                 )}
 
-                {order.status === "processing" && (
-                  <Button variant={"outline"} disabled={true}>
-                    <AppIcon icon={LoaderIcon} className={"animate-spin"} />
-                    {"Menyiapkan Layanan WMS..."}
-                  </Button>
+                {(order.status === "processing" ||
+                  order.status === "wms_failed") && (
+                  <ConfirmationTrigger
+                    modalKey={`re-provision-wms-detail-${order.orderId}`}
+                    icon={RefreshCwIcon}
+                    colorPalette={"orange"}
+                    title={"Buat Ulang Layanan WMS"}
+                    description={`Apakah Anda yakin ingin membuat ulang layanan WMS untuk pesanan "${order.orderNumber || order.orderId}" (Mitra: ${order.mitraName})? Gunakan aksi ini jika proses pembuatan layanan WMS sebelumnya mengalami kendala atau terhenti.`}
+                    confirmLabel={"Buat Ulang Layanan WMS"}
+                    onConfirm={() => {
+                      provisionOrderMutation.mutate({ orderId: order.orderId });
+                    }}
+                  >
+                    <Button
+                      primary={order.status === "wms_failed"}
+                      colorPalette={"orange"}
+                      loading={provisionOrderMutation.isPending}
+                    >
+                      <AppIcon icon={RefreshCwIcon} />
+                      {"Buat Ulang WMS"}
+                    </Button>
+                  </ConfirmationTrigger>
                 )}
 
                 {order.status === "pending_review" && (
@@ -308,7 +439,13 @@ export function InternalOrderReviewDetailPage() {
                     order={order}
                     modalKey={`approve-detail-${order.orderId}`}
                     onSuccessRedirect={() => {
-                      void navigate({ to: "/internal/order-review" });
+                      void navigate({
+                        to: "/internal/order-review",
+                        search: (old: Record<string, unknown>) => {
+                          const { activeModalKey: _, ...rest } = old;
+                          return rest;
+                        },
+                      });
                     }}
                   >
                     <Button primary={true} colorPalette={"green"}>
@@ -323,145 +460,16 @@ export function InternalOrderReviewDetailPage() {
 
           <Separator borderColor={"bg.canvas"} />
 
-          {/* Metadata Detail */}
-          <VStack gap={"md"} p={"md"} align={"stretch"}>
-            <HStack wrap={"wrap"} gap={"lg"}>
-              <VStack gap={"xs"} align={"start"}>
-                <P fontSize={"xs"} color={"fg.subtle"}>
-                  {"Mitra"}
-                </P>
+          {/* Metadata Summary */}
+          <OrderSummary
+            order={order}
+            isAoiVisible={isAoiVisible}
+            hasAoi={hasAoi}
+            onToggleAoi={handleToggleAoi}
+            onFlyToAoi={handleFlyToAoi}
+          />
 
-                <P fontWeight={"semibold"}>{order.mitraName}</P>
-              </VStack>
-
-              <VStack gap={"xs"} align={"start"}>
-                <P fontSize={"xs"} color={"fg.subtle"}>
-                  {"Nomor Pesanan"}
-                </P>
-
-                <P fontWeight={"semibold"}>
-                  {order.orderNumber || order.orderId}
-                </P>
-              </VStack>
-            </HStack>
-
-            <Separator borderColor={"bg.canvas"} />
-
-            <HStack wrap={"wrap"} gap={"lg"}>
-              <VStack gap={"xs"} align={"start"}>
-                <P fontSize={"xs"} color={"fg.subtle"}>
-                  {"Metode Pengajuan"}
-                </P>
-
-                <SelectionTypeBadge my={"auto"}>
-                  {order.selectionType}
-                </SelectionTypeBadge>
-              </VStack>
-
-              <VStack gap={"xs"} align={"start"}>
-                <P fontSize={"xs"} color={"fg.subtle"}>
-                  {"Status Pesanan"}
-                </P>
-
-                <OrderStatusBadge my={"auto"}>{order.status}</OrderStatusBadge>
-              </VStack>
-
-              <VStack gap={"xs"} align={"start"}>
-                <P fontSize={"xs"} color={"fg.subtle"}>
-                  {"Total Estimasi PNBP"}
-                </P>
-
-                <P fontWeight={"semibold"} my={"auto"}>
-                  {formatCurrency(order.totalPrice ?? 0)}
-                </P>
-              </VStack>
-
-              <VStack gap={"xs"} align={"start"}>
-                <P fontSize={"xs"} color={"fg.subtle"}>
-                  {"TTE & Faktur"}
-                </P>
-
-                <Center mt={"3px"}>
-                  <TteBadge
-                    tte={order.tte}
-                    invoiceUrl={order.invoiceUrl}
-                    tteInvoiceUrl={order.tteInvoiceUrl}
-                  />
-                </Center>
-              </VStack>
-
-              {hasAoi && (
-                <VStack gap={"xs"} align={"start"}>
-                  <P fontSize={"xs"} color={"fg.subtle"}>
-                    {"AOI Polygon"}
-                  </P>
-
-                  <HStack align={"center"} gap={"xs"} my={"auto"}>
-                    <Switch
-                      checked={isAoiVisible}
-                      onCheckedChange={({ checked }) => {
-                        handleToggleAoi(checked);
-                      }}
-                      tooltip={
-                        isAoiVisible
-                          ? "Sembunyikan Polygon AOI"
-                          : "Tampilkan Polygon AOI"
-                      }
-                    />
-
-                    <Tooltip content={"Zoom ke AOI Polygon"}>
-                      <IconButton
-                        aria-label={"Zoom to AOI polygon"}
-                        // variant={"outline"}
-                        size={"xs"}
-                        onClick={handleFlyToAoi}
-                      >
-                        <AppIcon icon={FocusIcon} />
-                      </IconButton>
-                    </Tooltip>
-                  </HStack>
-                </VStack>
-              )}
-            </HStack>
-
-            <Separator borderColor={"bg.canvas"} />
-
-            {/* Workspace URLs */}
-            <HStack wrap={"wrap"} gap={"lg"}>
-              <VStack gap={"xs"} align={"start"} flex={1} minW={"260px"}>
-                <P fontSize={"xs"} color={"fg.subtle"}>
-                  {"URL Workspace GeoServer Volatil (Internal)"}
-                </P>
-
-                <Url
-                  url={
-                    order.internalWorkspaceUrl ||
-                    `https://geoserver.internal.volatil.atrbpn.go.id/geoserver/${order.workspaceName || `ws_${order.orderId}`}/ows`
-                  }
-                  label={"Salin URL Workspace Volatil"}
-                  isExternalLink={false}
-                  maxW={"full"}
-                />
-              </VStack>
-
-              {order.workspaceInteropUrl && (
-                <VStack gap={"xs"} align={"start"} flex={1} minW={"260px"}>
-                  <P fontSize={"xs"} color={"fg.subtle"}>
-                    {"URL Workspace Resmi (INTEROP Pusdatin)"}
-                  </P>
-
-                  <Url
-                    url={order.workspaceInteropUrl}
-                    label={"Salin URL Workspace INTEROP"}
-                    isExternalLink={true}
-                    maxW={"full"}
-                  />
-                </VStack>
-              )}
-            </HStack>
-          </VStack>
-
-          <Separator borderColor={"bg.canvas"} />
+          {/* <Separator borderColor={"bg.canvas"} /> */}
 
           {/* Layer List */}
           <OrderLayerDataView order={order} />
@@ -469,7 +477,167 @@ export function InternalOrderReviewDetailPage() {
       </Container.Root>
     </AppContentContainer>
   );
-}
+};
+
+const OrderSummary = (props: OrderSummaryProps) => {
+  // Props
+  const { order, isAoiVisible, hasAoi, onToggleAoi, onFlyToAoi } = props;
+
+  // Stores
+  const { theme } = useThemeStore();
+
+  return (
+    <VStack p={"md"} align={"stretch"} w={"full"}>
+      <VStack gap={"md"} rounded={theme.radii.container} w={"full"}>
+        {/* Top Header Section: Order Number, Status Badge, Mitra & Draw AOI Method */}
+        <VStack align={"stretch"} gap={"xs"}>
+          <HStack
+            justify={"space-between"}
+            align={"flex-start"}
+            wrap={"wrap"}
+            gap={"sm"}
+          >
+            <VStack align={"start"} gap={"2xs"}>
+              <P fontSize={"xl"} fontWeight={"bold"} lineHeight={"short"}>
+                {order.orderNumber || order.orderId}
+              </P>
+            </VStack>
+
+            <OrderStatusBadge>{order.status}</OrderStatusBadge>
+          </HStack>
+
+          <HStack wrap={"wrap"} align={"center"} gap={"xs"}>
+            <HStack align={"center"} gap={"2xs"}>
+              <AppIcon icon={HandshakeIcon} size={"sm"} color={"fg.subtle"} />
+
+              <P fontSize={"sm"} color={"fg.muted"}>
+                {order.mitraName}
+              </P>
+            </HStack>
+          </HStack>
+        </VStack>
+
+        <VStack gap={"sm"}>
+          {/* Middle Metric Cards Grid */}
+          <SimpleGrid minChildWidth={"240px"} gap={"sm"}>
+            {/* Card: Total Estimasi PNBP */}
+            <VStack
+              align={"start"}
+              justify={"space-between"}
+              p={"md"}
+              rounded={theme.radii.container}
+              border={"1px solid"}
+              borderColor={"border.subtle"}
+              minH={"110px"}
+            >
+              <P fontSize={"xs"} color={"fg.subtle"}>
+                {"Total estimasi PNBP"}
+              </P>
+
+              <P fontSize={"xl"} fontWeight={"bold"} color={"fg.emphasized"}>
+                {formatCurrency(order.totalPrice ?? 0)}
+              </P>
+            </VStack>
+
+            {/* Card: TTE dan Faktur */}
+            <VStack
+              align={"start"}
+              justify={"space-between"}
+              p={"md"}
+              rounded={theme.radii.container}
+              border={"1px solid"}
+              borderColor={"border.subtle"}
+              minH={"110px"}
+            >
+              <P fontSize={"xs"} color={"fg.subtle"}>
+                {"TTE dan faktur"}
+              </P>
+
+              <TteBadge
+                tte={order.tte}
+                invoiceUrl={order.invoiceUrl}
+                tteInvoiceUrl={order.tteInvoiceUrl}
+              />
+            </VStack>
+
+            {/* Card: AOI Polygon */}
+            {hasAoi && (
+              <VStack
+                justify={"space-between"}
+                p={"md"}
+                rounded={theme.radii.container}
+                border={"1px solid"}
+                borderColor={"border.subtle"}
+                minH={"110px"}
+              >
+                <HStack align={"center"} justify={"space-between"} gap={"xs"}>
+                  <P fontSize={"xs"} color={"fg.subtle"}>
+                    {"AOI polygon"}
+                  </P>
+
+                  <SelectionTypeBadge>{order.selectionType}</SelectionTypeBadge>
+                </HStack>
+
+                <HStack align={"center"} gap={"xs"} w={"full"}>
+                  <Switch
+                    checked={isAoiVisible}
+                    onCheckedChange={({ checked }) => {
+                      onToggleAoi(checked);
+                    }}
+                    tooltip={
+                      isAoiVisible
+                        ? "Sembunyikan Polygon AOI"
+                        : "Tampilkan Polygon AOI"
+                    }
+                  />
+
+                  <Tooltip content={"Zoom ke AOI Polygon"}>
+                    <IconButton
+                      aria-label={"Zoom to AOI polygon"}
+                      size={"xs"}
+                      onClick={onFlyToAoi}
+                    >
+                      <AppIcon icon={FocusIcon} />
+                    </IconButton>
+                  </Tooltip>
+                </HStack>
+              </VStack>
+            )}
+          </SimpleGrid>
+
+          {/* Bottom Card: URL Workspace GeoServer Volatil (Internal) */}
+          <VStack
+            align={"start"}
+            p={"md"}
+            rounded={theme.radii.container}
+            border={"1px solid"}
+            borderColor={"border.subtle"}
+            gap={"xs"}
+            w={"full"}
+          >
+            <P fontSize={"xs"} color={"fg.subtle"}>
+              {"URL workspace GeoServer Volatil (internal)"}
+            </P>
+
+            <Url
+              url={
+                order.internalWorkspaceUrl ||
+                `https://geoserver.internal.volatil.atrbpn.go.id/geoserver/${order.workspaceName || `ws_${order.orderId}`}/ows`
+              }
+              label={"Salin URL Workspace Volatil"}
+              isExternalLink={false}
+              maxW={"full"}
+              p={"2xs"}
+              pl={"sm"}
+              bg={"bg.subtle"}
+              rounded={theme.radii.component}
+            />
+          </VStack>
+        </VStack>
+      </VStack>
+    </VStack>
+  );
+};
 
 const OrderLayerDataView = (props: OrderLayerDataViewProps) => {
   const { order } = props;
@@ -517,19 +685,14 @@ const OrderLayerDataView = (props: OrderLayerDataViewProps) => {
       { th: "Layer IGT", sortable: true },
       { th: "Basis IGT", sortable: true },
       { th: "WMS URL (Volatil)", sortable: false },
-      { th: "Jumlah / Luas", sortable: true, align: "center" },
+      { th: "Jumlah / Luas", sortable: true, align: "end" },
       // { th: "Estimasi Biaya", sortable: true, align: "end" },
       { th: "Tampilkan di Peta", align: "center" },
     ];
 
     const items: FormattedListItem<CartOrderItem>[] = (order.items ?? []).map(
       (item) => {
-        const previewUrl =
-          item.previewWmsUrl ||
-          item.wmsUrl ||
-          (item.sourceLayerId
-            ? buildWmsProxyUrl(`/api/proxy/wms?layerId=${item.sourceLayerId}`)
-            : "");
+        const previewUrl = item.previewWmsUrl || item.wmsUrl || "";
 
         return {
           id: item.id,
@@ -574,7 +737,7 @@ const OrderLayerDataView = (props: OrderLayerDataViewProps) => {
                     : `${formatNumber(item.featuresCount ?? 0)} bidang`}
                 </P>
               ),
-              align: "center" as const,
+              align: "end" as const,
             },
             // {
             //   value: item.subtotalPrice ?? 0,

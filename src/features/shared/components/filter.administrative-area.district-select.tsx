@@ -37,7 +37,9 @@ export const FilterAdministrativeAreaDistrictSelect = (
   const {
     data: kecamatanOptionsData,
     isLoading,
+    isFetching,
     isError,
+    error,
     refetch,
   } = useFilterOptionsKecamatan({
     provinsiId: provinceId,
@@ -79,8 +81,13 @@ export const FilterAdministrativeAreaDistrictSelect = (
             : undefined,
         )
       }
-      isFetching={isLoading}
+      isFetching={isLoading || isFetching}
       isError={isError}
+      errorTitle={"Gagal Memuat Daftar Kecamatan"}
+      errorMessage={
+        error?.message ||
+        "Data batas wilayah kecamatan belum tersedia di GeoServer."
+      }
       onRetry={() => void refetch()}
       disabled={disabled}
     />

@@ -15,7 +15,6 @@ import { apiClient } from "@/shared/libs/api-client/api-client";
 import type { ApiResponse } from "@/shared/types/common-response.type";
 import { createPaginationMeta } from "@/shared/types/common-response.type";
 import { isDummyDataEnabled } from "@/shared/utils/env/env.utils";
-import { buildWmsProxyUrl } from "@/shared/utils/url/wms-proxy.utils";
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 const normalizeCartOrderItem = (raw: any): CartOrderItem => {
@@ -36,6 +35,7 @@ const normalizeCartOrderItem = (raw: any): CartOrderItem => {
       raw.sourceLayerId ??
       "",
     spatialBasis: raw.spatialBasis ?? raw.spatial_basis ?? "bidang",
+    igtBasis: raw.igtBasis ?? raw.spatialBasis ?? raw.spatial_basis ?? "bidang",
     featuresCount: Number(
       raw.featuresCount ?? raw.features_count ?? raw.count ?? 0,
     ),
@@ -55,25 +55,25 @@ const normalizeCartOrderItem = (raw: any): CartOrderItem => {
     ),
     wfsUrl: raw.wfsUrl ?? raw.wfs_url,
     wmsUrl: raw.wmsUrl ?? raw.wms_url,
-    previewWmsUrl: buildWmsProxyUrl(
+    previewWmsUrl:
       raw.previewWmsUrl ??
-        raw.preview_wms_url ??
-        raw.wmsUrl ??
-        raw.wms_url ??
-        (raw.sourceLayerId
-          ? `/api/proxy/wms?layerId=${raw.sourceLayerId}`
-          : undefined),
-    ),
+      raw.preview_wms_url ??
+      raw.wmsUrl ??
+      raw.wms_url ??
+      undefined,
     previewWfsUrl:
       raw.previewWfsUrl ??
       raw.preview_wfs_url ??
       raw.wfsUrl ??
       raw.wfs_url ??
-      (raw.sourceLayerId
-        ? `/api/proxy/wfs?layerId=${raw.sourceLayerId}`
-        : undefined),
+      undefined,
     externalWfsUrl: raw.externalWfsUrl ?? raw.external_wfs_url ?? null,
     externalWmsUrl: raw.externalWmsUrl ?? raw.external_wms_url ?? null,
+    approvedWmsUrl: raw.approvedWmsUrl ?? raw.approved_wms_url ?? null,
+    approvedWfsUrl: raw.approvedWfsUrl ?? raw.approved_wfs_url ?? null,
+    selectionType: raw.selectionType ?? raw.selection_type ?? undefined,
+    cqlFilter: raw.cqlFilter ?? raw.cql_filter ?? null,
+    provisionStatus: raw.provisionStatus ?? raw.provision_status ?? undefined,
     bbox:
       Array.isArray(raw.bbox) && raw.bbox.length === 4
         ? (raw.bbox as [number, number, number, number])
@@ -103,14 +103,44 @@ const normalizeInternalOrderItem = (raw: any): InternalOrderItem => {
       raw.mitraName ?? raw.mitra_name ?? raw.userName ?? raw.name ?? "Mitra",
     agencyOrCompany: raw.agencyOrCompany ?? raw.agency_or_company ?? undefined,
     email: raw.email ?? undefined,
-    status: raw.status ?? "pending_review",
+    status: raw.status ?? raw.orderStatus ?? raw.order_status ?? "pending_review",
     selectionType: raw.selectionType ?? raw.selection_type ?? "catalog",
     createdAt: raw.createdAt ?? raw.created_at ?? new Date().toISOString(),
     readyAt: raw.readyAt ?? raw.ready_at ?? undefined,
-    expiredAt: raw.expiredAt ?? raw.expired_at ?? undefined,
+    expiredAt: raw.expiredAt ?? raw.expired_at ?? raw.expiresAt ?? raw.expires_at ?? undefined,
+    expiresAt: raw.expiresAt ?? raw.expires_at ?? raw.expiredAt ?? raw.expired_at ?? undefined,
+    paidAt: raw.paidAt ?? raw.paid_at ?? undefined,
     totalPrice: Number(
-      raw.totalPrice ?? raw.total_price ?? calculatedTotalPrice,
+      raw.totalPrice ?? raw.total_price ?? raw.totalAmount ?? raw.total_amount ?? calculatedTotalPrice,
     ),
+    totalAmount: Number(
+      raw.totalAmount ?? raw.total_amount ?? raw.totalPrice ?? raw.total_price ?? calculatedTotalPrice,
+    ),
+    transactionStatus: raw.transactionStatus ?? raw.transaction_status ?? undefined,
+    coverageHa:
+      raw.coverageHa != null
+        ? Number(raw.coverageHa)
+        : raw.coverage_ha != null
+          ? Number(raw.coverage_ha)
+          : undefined,
+    kawasanCoverageHa:
+      raw.kawasanCoverageHa != null
+        ? Number(raw.kawasanCoverageHa)
+        : raw.kawasan_coverage_ha != null
+          ? Number(raw.kawasan_coverage_ha)
+          : null,
+    featuresCount:
+      raw.featuresCount != null
+        ? Number(raw.featuresCount)
+        : raw.features_count != null
+          ? Number(raw.features_count)
+          : null,
+    bidangCoverageCount:
+      raw.bidangCoverageCount != null
+        ? Number(raw.bidangCoverageCount)
+        : raw.bidang_coverage_count != null
+          ? Number(raw.bidang_coverage_count)
+          : null,
     items,
     aoiPolygon,
     invoiceUrl: raw.invoiceUrl ?? raw.invoice_url ?? null,
@@ -132,6 +162,19 @@ const normalizeInternalOrderItem = (raw: any): InternalOrderItem => {
       raw.workspaceName ??
       raw.workspace_name ??
       `ws_${idVal}`,
+    updatePeriods: Array.isArray(raw.updatePeriods ?? raw.update_periods)
+      ? (raw.updatePeriods ?? raw.update_periods).map(
+          (p: Record<string, unknown>) => ({
+            unit: String(p.unit ?? "minutes"),
+            jobId: (p.jobId as string | undefined) ?? (p.job_id as string | undefined) ?? null,
+            offset: Number(p.offset ?? 0),
+            targetAt: String(p.targetAt ?? p.target_at ?? ""),
+            completed: Boolean(p.completed),
+            milestone: Number(p.milestone ?? 1),
+            executedAt: (p.executedAt as string | undefined) ?? (p.executed_at as string | undefined) ?? null,
+          }),
+        )
+      : undefined,
   };
 };
 

@@ -14,12 +14,18 @@ export const DUMMY_TRANSACTION_HISTORY: TransactionRecord[] = [
     orderStatus: "ready",
     selectionType: "draw_aoi",
     totalAmount: 235000000,
+    coverageHa: 1166.67,
+    kawasanCoverageHa: 1166.67,
+    bidangCoverageCount: 1200,
+    featuresCount: 1200,
     createdAt: "2026-08-25T08:30:00Z",
     paidAt: "2026-08-25T08:45:12Z",
     expiredAt: "2026-08-27T08:30:00Z",
     billingExpiredAt: "2026-08-27T08:30:00Z",
-    invoiceUrl: "https://volatil-be.exium.web.id/invoices/INV-2026-0825-001.pdf",
-    tteInvoiceUrl: "https://volatil-be.exium.web.id/invoices/TTE-INV-2026-0825-001.pdf",
+    invoiceUrl:
+      "https://volatil-be.exium.web.id/invoices/INV-2026-0825-001.pdf",
+    tteInvoiceUrl:
+      "https://volatil-be.exium.web.id/invoices/TTE-INV-2026-0825-001.pdf",
     tte: true,
     items: [
       {
@@ -60,10 +66,15 @@ export const DUMMY_TRANSACTION_HISTORY: TransactionRecord[] = [
     orderStatus: "processing",
     selectionType: "catalog",
     totalAmount: 75000000,
+    coverageHa: 0,
+    kawasanCoverageHa: 0,
+    bidangCoverageCount: 1500,
+    featuresCount: 1500,
     createdAt: "2026-08-24T14:15:00Z",
     expiredAt: "2026-08-26T14:15:00Z",
     billingExpiredAt: "2026-08-26T14:15:00Z",
-    invoiceUrl: "https://volatil-be.exium.web.id/invoices/INV-2026-0824-002.pdf",
+    invoiceUrl:
+      "https://volatil-be.exium.web.id/invoices/INV-2026-0824-002.pdf",
     tteInvoiceUrl: null,
     tte: false,
     items: [
@@ -92,6 +103,10 @@ export const DUMMY_TRANSACTION_HISTORY: TransactionRecord[] = [
     orderStatus: "pending_payment",
     selectionType: "upload_aoi",
     totalAmount: 150000000,
+    coverageHa: 1000,
+    kawasanCoverageHa: 1000,
+    bidangCoverageCount: 0,
+    featuresCount: 0,
     createdAt: "2026-08-20T09:00:00Z",
     expiredAt: "2026-08-21T09:00:00Z",
     billingExpiredAt: "2026-08-21T09:00:00Z",

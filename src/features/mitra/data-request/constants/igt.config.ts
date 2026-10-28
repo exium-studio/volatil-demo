@@ -65,6 +65,6 @@ export const ADMIN_BOUNDARY_WFS_CONFIG = {
     wfsUrl:
       import.meta.env.VITE_WFS_ADMIN_DESA_URL ||
       "/api/proxy/wfs?layerId=wilayah-administrasi-indonesia:BATAS_ADMIN_BIG_LEVEL_DESA",
-    attributeKey: "WADMKD",
+    attributeKey: "NAMBOJ",
   },
 } as const;

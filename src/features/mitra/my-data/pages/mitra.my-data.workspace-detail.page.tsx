@@ -1,44 +1,64 @@
 // src/features/mitra/my-data/pages/mitra.my-data.workspace-detail.page.tsx
 
 import { BackButton } from "@/design-system/components/button/ui/back-button";
+import { IconButton } from "@/design-system/components/button/ui/button";
 import type {
   FormattedListItem,
   FormattedTableHeader,
 } from "@/design-system/components/data-display/types/data-view-table.type";
 import type { DataViewItemActionsGenerator } from "@/design-system/components/data-display/types/data-view.type";
-import { Countdown } from "@/design-system/components/data-display/ui/countdown";
 import { DataViewTable } from "@/design-system/components/data-display/ui/data-view-table";
 import { Skeleton } from "@/design-system/components/feedback/ui/skeleton";
-import { NoDataState } from "@/design-system/components/feedback/ui/state.no-data";
-import { RetryState } from "@/design-system/components/feedback/ui/state.retry";
+import { StateNoData } from "@/design-system/components/feedback/ui/state.no-data";
+import { StateRetry } from "@/design-system/components/feedback/ui/state.retry";
+import { AppIcon } from "@/design-system/components/icon/ui/app-icon";
 import { Switch } from "@/design-system/components/input/ui/switch";
 import { Box } from "@/design-system/components/layout/ui/box";
 import { Center } from "@/design-system/components/layout/ui/center";
 import { Container } from "@/design-system/components/layout/ui/container";
 import { HStack, VStack } from "@/design-system/components/layout/ui/flex-box";
+import { SimpleGrid } from "@/design-system/components/layout/ui/grid";
 import { AppContentContainer } from "@/design-system/components/layout/ui/page-container";
 import { Separator } from "@/design-system/components/layout/ui/separator";
+import { MAP_EVENTS_MAP } from "@/design-system/components/map/constants/map.config";
+import { DRAW_FILL_LAYER_ID } from "@/design-system/components/map/hooks/use-map-draw";
 import { useMapLayerStore } from "@/design-system/components/map/stores/map.layer.store";
+import { Tooltip } from "@/design-system/components/overlay/ui/tooltip";
 import { HeaderContainer } from "@/design-system/components/shell/ui/header-container";
 import { ClampedHeading } from "@/design-system/components/typography/ui/heading";
 import { ClampedP, P } from "@/design-system/components/typography/ui/p";
 import { Url } from "@/design-system/components/typography/ui/url";
 import { useSearchParam } from "@/design-system/hooks/use-search-param";
 import { useThemeStore } from "@/design-system/stores/theme-store";
+import { getIgtLayers } from "@/features/mitra/data-request/api/mitra.data-request-igt-layers.api";
 import { useFlyToLayer } from "@/features/mitra/data-request/hooks/use-fly-to-layer";
+import { normalizePolygonFeature } from "@/features/mitra/data-request/utils/clip-and-union-kawasan";
+import {
+  highlightFeatureOnMap,
+  removeFeatureHighlightFromMap,
+} from "@/features/mitra/data-request/utils/highlight-feature-on-map";
+import { toast } from "@/design-system/components/toast";
 import { MitraMyDataEditTrigger } from "@/features/mitra/my-data/components/mitra.my-data.edit-modal";
-import { useMitraWorkspaceDetailQuery } from "@/features/mitra/my-data/hooks/use-mitra-my-data";
+import { MitraWorkspaceRenewalTrigger } from "@/features/mitra/my-data/components/mitra.my-data.renewal-modal";
+import {
+  useMitraMyDataQuery,
+  useMitraWorkspaceDetailQuery,
+} from "@/features/mitra/my-data/hooks/use-mitra-my-data";
 import type { MyDataItem } from "@/features/mitra/my-data/types/my-data.type";
 import { IgtBasisBadge } from "@/features/shared/components/igt-basis.badge";
 import { LayerAttributeTableView } from "@/features/shared/components/layer-attribute-table.view";
-import { MyDataStatusBadge } from "@/features/shared/components/my-data-status.badge";
+import { OrderStatusBadge } from "@/features/shared/components/order-status.badge";
+import { SelectionTypeBadge } from "@/features/shared/components/selection-type.badge";
+import { getSelectionTypeMapColors } from "@/features/shared/constants/volatil.ssot-map";
+import { queryKeys } from "@/shared/libs/tanstack-query/query.keys";
 import { isEmptyArray } from "@/shared/utils/data/array";
-import {
-  formatUtcDateTime,
-  getPreferredUserTimezone,
-} from "@/shared/utils/formatter/date.formatter";
+import { formatNumber } from "@/shared/utils/formatter/number.formatter";
+import { useQuery } from "@tanstack/react-query";
 import { useNavigate, useParams } from "@tanstack/react-router";
+import * as turf from "@turf/turf";
+import type GeoJSON from "geojson";
 import {
+  ClockPlusIcon,
   DatabaseIcon,
   Edit3Icon,
   EyeIcon,
@@ -48,7 +68,98 @@ import {
   FocusIcon,
   TablePropertiesIcon,
 } from "lucide-react";
-import { useCallback, useEffect, useMemo } from "react";
+import type maplibregl from "maplibre-gl";
+import { useCallback, useEffect, useMemo, useRef, useState } from "react";
+
+const WORKSPACE_AOI_SOURCE_ID = "workspace-detail-aoi-source";
+const WORKSPACE_AOI_FILL_ID = "workspace-detail-aoi-fill";
+const WORKSPACE_AOI_LINE_ID = "workspace-detail-aoi-line";
+
+const removeWorkspaceAoiLayer = (map: maplibregl.Map) => {
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  if (!map || !(map as any).style) return;
+
+  try {
+    if (map.getLayer(WORKSPACE_AOI_FILL_ID)) {
+      map.removeLayer(WORKSPACE_AOI_FILL_ID);
+    }
+    if (map.getLayer(WORKSPACE_AOI_LINE_ID)) {
+      map.removeLayer(WORKSPACE_AOI_LINE_ID);
+    }
+    if (map.getSource(WORKSPACE_AOI_SOURCE_ID)) {
+      map.removeSource(WORKSPACE_AOI_SOURCE_ID);
+    }
+  } catch (err) {
+    console.warn("Failed to remove workspace AOI layer:", err);
+  }
+};
+
+const renderWorkspaceAoiLayer = (
+  map: maplibregl.Map,
+  feature: GeoJSON.Feature<GeoJSON.Polygon | GeoJSON.MultiPolygon>,
+  selectionType?: string | null,
+) => {
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  if (!map || !(map as any).style) return;
+
+  const { fillColor, lineColor } = getSelectionTypeMapColors(selectionType);
+
+  try {
+    const existingSource = map.getSource(WORKSPACE_AOI_SOURCE_ID) as
+      | maplibregl.GeoJSONSource
+      | undefined;
+
+    if (existingSource) {
+      existingSource.setData(feature);
+    } else {
+      map.addSource(WORKSPACE_AOI_SOURCE_ID, {
+        type: "geojson",
+        data: feature,
+      });
+    }
+
+    const beforeId = map.getLayer(DRAW_FILL_LAYER_ID)
+      ? DRAW_FILL_LAYER_ID
+      : undefined;
+
+    if (!map.getLayer(WORKSPACE_AOI_FILL_ID)) {
+      map.addLayer(
+        {
+          id: WORKSPACE_AOI_FILL_ID,
+          type: "fill",
+          source: WORKSPACE_AOI_SOURCE_ID,
+          paint: {
+            "fill-color": fillColor,
+            "fill-opacity": 0.25,
+          },
+        } as maplibregl.LayerSpecification,
+        beforeId,
+      );
+    } else {
+      map.setPaintProperty(WORKSPACE_AOI_FILL_ID, "fill-color", fillColor);
+    }
+
+    if (!map.getLayer(WORKSPACE_AOI_LINE_ID)) {
+      map.addLayer(
+        {
+          id: WORKSPACE_AOI_LINE_ID,
+          type: "line",
+          source: WORKSPACE_AOI_SOURCE_ID,
+          paint: {
+            "line-color": lineColor,
+            "line-width": 2.5,
+            "line-opacity": 1,
+          },
+        } as maplibregl.LayerSpecification,
+        beforeId,
+      );
+    } else {
+      map.setPaintProperty(WORKSPACE_AOI_LINE_ID, "line-color", lineColor);
+    }
+  } catch (err) {
+    console.warn("Failed to render workspace AOI layer:", err);
+  }
+};
 
 export const MitraMyDataWorkspaceDetailPage = () => {
   // Navigation
@@ -60,6 +171,8 @@ export const MitraMyDataWorkspaceDetailPage = () => {
   // Search Params
   const { queryValue: layerId, setQueryValue: setLayerId } =
     useSearchParam("layerId");
+  const { queryValue: apiKeyParam, setQueryValue: setApiKeyParam } =
+    useSearchParam("apiKey");
 
   // Stores
   const { theme } = useThemeStore();
@@ -68,7 +181,7 @@ export const MitraMyDataWorkspaceDetailPage = () => {
   const setCustomLayerConfig = useMapLayerStore((s) => s.setCustomLayerConfig);
 
   // Hooks
-  const { flyTo } = useFlyToLayer();
+  const { map, flyTo } = useFlyToLayer();
 
   // Queries
   const {
@@ -79,41 +192,356 @@ export const MitraMyDataWorkspaceDetailPage = () => {
     refetch,
   } = useMitraWorkspaceDetailQuery(workspaceId);
 
-  // Effects — Cleanup loaded workspace layers on unmount / navigation
+  const { myData } = useMitraMyDataQuery({
+    page: 1,
+    pageSize: 1,
+  });
+
+  const { data: igtMasterLayers } = useQuery({
+    queryKey: queryKeys.map.layers(),
+    queryFn: ({ signal }) => getIgtLayers(signal),
+    staleTime: 1000 * 60 * 5,
+  });
+
+  // Refs
+  const hasFlownWorkspaceRef = useRef<string | null>(null);
+
+  // States
+  const [isAoiVisible, setIsAoiVisible] = useState(false);
+
+  // Effects — Intercept expired workspace, notify user and redirect to workspaces list
   useEffect(() => {
-    return () => {
-      const state = useMapLayerStore.getState();
-      if (workspace?.layers) {
-        for (const item of workspace.layers) {
-          state.setLayerEnabled(item.id, false);
-          state.setCustomLayerConfig(item.id, null);
+    if (!workspace) return;
+
+    const isExpired =
+      workspace.status === "expired" ||
+      (Boolean(workspace.expiresAt) &&
+        new Date(workspace.expiresAt).getTime() <= Date.now());
+
+    if (isExpired) {
+      toast.error(
+        "Workspace telah kedaluwarsa dan tidak dapat diperpanjang atau digunakan kembali.",
+      );
+      void navigate({ to: "/mitra/my-data" });
+    }
+  }, [workspace, navigate]);
+
+  // Effects — Reactive sync for permanent AOI polygon layer (survives style ready)
+  useEffect(() => {
+    if (!map) return;
+
+    const syncAoiLayer = () => {
+      if (isAoiVisible && workspace?.aoiPolygon) {
+        const feature = normalizePolygonFeature(workspace.aoiPolygon);
+        if (feature) {
+          renderWorkspaceAoiLayer(map, feature, workspace.selectionType);
         }
+      } else {
+        removeWorkspaceAoiLayer(map);
       }
     };
-  }, [workspace?.layers]);
+
+    const handleReady = () => {
+      syncAoiLayer();
+    };
+
+    map.on(MAP_EVENTS_MAP.styleReady as string, handleReady);
+    map.on(MAP_EVENTS_MAP.layersReady as string, handleReady);
+    syncAoiLayer();
+
+    return () => {
+      map.off(MAP_EVENTS_MAP.styleReady as string, handleReady);
+      map.off(MAP_EVENTS_MAP.layersReady as string, handleReady);
+      removeWorkspaceAoiLayer(map);
+    };
+  }, [map, isAoiVisible, workspace]);
+
+  // Effects — Manage workspace layers on mount (unload master IGT, auto-enable matching defaultVisible workspace layers) and restore master default layers on unmount
+  useEffect(() => {
+    // 1. Landing: reset/unload master layers
+    const state = useMapLayerStore.getState();
+    state.resetLayers();
+
+    // 2. Auto-enable workspace layer(s) that match defaultVisible === true
+    if (workspace && workspace.layers && workspace.wmsUrl) {
+      const masterItems = igtMasterLayers?.items ?? [];
+      const defaultMasterLayers = masterItems.filter((l) =>
+        Boolean(l.defaultVisible),
+      );
+
+      const layersToAutoEnable = workspace.layers.filter((wsLayer) => {
+        if (defaultMasterLayers.length > 0) {
+          const matchExact = defaultMasterLayers.some((m) => {
+            const wsLayerId = wsLayer.id;
+            const wsSourceId = wsLayer.sourceLayerId;
+            const wsLayerName = wsLayer.id.includes(":")
+              ? wsLayer.id.split(":")[1]
+              : wsLayer.id;
+            const wsTitle = wsLayer.title?.toLowerCase().trim();
+            const wsSourceTitle = wsLayer.sourceLayerTitle
+              ?.toLowerCase()
+              .trim();
+            const mTitle = m.title?.toLowerCase().trim();
+
+            return (
+              m.id === wsSourceId ||
+              m.id === wsLayerId ||
+              m.typeName === wsSourceId ||
+              m.typeName === wsLayer.wfsTypeName ||
+              m.layerName === wsLayerName ||
+              (mTitle && (mTitle === wsTitle || mTitle === wsSourceTitle))
+            );
+          });
+          if (matchExact) return true;
+
+          const hasDefaultBidangMaster = defaultMasterLayers.some(
+            (m) => (m.spatialBasis ?? m.igtBasis) === "bidang",
+          );
+          if (
+            hasDefaultBidangMaster &&
+            (wsLayer.spatialBasis === "bidang" || wsLayer.igtBasis === "bidang")
+          ) {
+            return true;
+          }
+          return false;
+        }
+
+        return (
+          wsLayer.spatialBasis === "bidang" || wsLayer.igtBasis === "bidang"
+        );
+      });
+
+      layersToAutoEnable.forEach((layer) => {
+        const wmsLayers =
+          layer.wmsLayers ??
+          layer.wfsTypeName ??
+          layer.id;
+        if (!wmsLayers) return;
+
+        state.setCustomLayerConfig(layer.id, {
+          wmsUrl: workspace.wmsUrl,
+          layers: wmsLayers,
+          spatialBasis: layer.spatialBasis ?? layer.igtBasis,
+        });
+        state.setLayerEnabled(layer.id, true);
+      });
+
+      // Initialize layerOrder for workspace layers (descending by zIndex)
+      const sortedWorkspaceLayers = [...workspace.layers].sort(
+        (a, b) => (b.zIndex ?? 0) - (a.zIndex ?? 0),
+      );
+      state.setLayerOrder(sortedWorkspaceLayers.map((l) => l.id));
+    }
+
+    return () => {
+      // 3. Exit / unmount: reset custom workspace configs, AOI layer, and clean highlights
+      const exitState = useMapLayerStore.getState();
+      exitState.resetLayers();
+      if (map) {
+        removeWorkspaceAoiLayer(map);
+        removeFeatureHighlightFromMap(map);
+      }
+
+      // 4. Restore master IGT layers where defaultVisible === true
+      const masterItems = igtMasterLayers?.items ?? [];
+      const defaultActiveLayers = masterItems.filter((l) =>
+        Boolean(l.defaultVisible),
+      );
+      defaultActiveLayers.forEach((layer) => {
+        exitState.setLayerEnabled(layer.id, true);
+      });
+    };
+  }, [map, workspace, igtMasterLayers]);
+
+  // Effects — Auto fly camera to workspace bounding box on load
+  useEffect(() => {
+    if (!map || !workspace || hasFlownWorkspaceRef.current === workspace.id) {
+      return;
+    }
+
+    let targetBbox = workspace.bbox;
+
+    // Fallback 1: Derive bbox from aoiPolygon if workspace.bbox is not present
+    if (!targetBbox && workspace.aoiPolygon) {
+      try {
+        const feature = normalizePolygonFeature(workspace.aoiPolygon);
+        if (feature) {
+          const computed = turf.bbox(feature);
+          if (
+            Array.isArray(computed) &&
+            computed.length === 4 &&
+            computed.every(
+              (n) =>
+                typeof n === "number" && !Number.isNaN(n) && Number.isFinite(n),
+            )
+          ) {
+            targetBbox = [computed[0], computed[1], computed[2], computed[3]];
+          }
+        }
+      } catch {
+        // Fall through to layers bbox
+      }
+    }
+
+    // Fallback 2: Derive bounding box from workspace layers
+    if (!targetBbox && workspace.layers?.length) {
+      let minLng = Infinity;
+      let minLat = Infinity;
+      let maxLng = -Infinity;
+      let maxLat = -Infinity;
+      for (const layer of workspace.layers) {
+        if (layer.bbox && layer.bbox.length === 4) {
+          if (layer.bbox[0] < minLng) minLng = layer.bbox[0];
+          if (layer.bbox[1] < minLat) minLat = layer.bbox[1];
+          if (layer.bbox[2] > maxLng) maxLng = layer.bbox[2];
+          if (layer.bbox[3] > maxLat) maxLat = layer.bbox[3];
+        }
+      }
+      if (
+        minLng !== Infinity &&
+        minLat !== Infinity &&
+        maxLng !== -Infinity &&
+        maxLat !== -Infinity
+      ) {
+        targetBbox = [minLng, minLat, maxLng, maxLat];
+      }
+    }
+
+    if (targetBbox) {
+      hasFlownWorkspaceRef.current = workspace.id;
+
+      const triggerFly = () => {
+        void flyTo({
+          id: workspace.id,
+          title: workspace.workspaceName,
+          bbox: targetBbox,
+        });
+      };
+
+      // Ensure style is ready before triggering camera navigation on page load
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      if ((map as any).style && map.isStyleLoaded()) {
+        triggerFly();
+      } else {
+        map.once("style.load", () => {
+          triggerFly();
+        });
+      }
+    }
+  }, [map, workspace, flyTo]);
 
   // Derived Values
-  const preferredTimezone = useMemo(() => getPreferredUserTimezone(), []);
+  const effectiveApiKey =
+    apiKeyParam ?? workspace?.apiKey ?? myData?.apiKey ?? null;
+
   const selectedAttributeLayer = useMemo(() => {
     if (!layerId || !workspace?.layers) return null;
     const found = workspace.layers.find((item) => item.id === layerId);
     if (!found) return null;
+    const workspaceWfsUrl = workspace.wfsUrl ?? found.wfsUrl ?? null;
     return {
       ...found,
-      wfsUrl: workspace.wfsUrl ?? null,
-      wmsUrl: workspace.wmsUrl ?? null,
+      wfsUrl: workspaceWfsUrl,
+      wmsUrl: workspace.wmsUrl ?? found.wmsUrl ?? null,
+      wfs: {
+        ...(found.wfs ?? {}),
+        wfsTypeName: found.wfsTypeName ?? found.sourceLayerId ?? found.id,
+        wfsUrl: workspaceWfsUrl ?? undefined,
+        url: workspaceWfsUrl ?? undefined,
+        baseUrl: workspaceWfsUrl ?? undefined,
+      },
+      apiKey: effectiveApiKey ?? found.apiKey ?? null,
     };
-  }, [layerId, workspace]);
+  }, [layerId, workspace, effectiveApiKey]);
 
   // Handlers
+  const handleToggleAoi = useCallback((checked: boolean) => {
+    setIsAoiVisible(checked);
+  }, []);
+
+  const handleFlyToAoi = useCallback(() => {
+    if (!map || !workspace?.aoiPolygon) return;
+    const feature = normalizePolygonFeature(workspace.aoiPolygon);
+    if (!feature) return;
+
+    highlightFeatureOnMap(map, feature, {
+      zoom: 15,
+      timeoutMs: 1000,
+      fitCamera: true,
+    });
+  }, [map, workspace]);
+
+  const handleFlyToWorkspace = useCallback(() => {
+    if (!workspace) return;
+    let targetBbox = workspace.bbox;
+
+    if (!targetBbox && workspace.aoiPolygon) {
+      try {
+        const feature = normalizePolygonFeature(workspace.aoiPolygon);
+        if (feature) {
+          const computed = turf.bbox(feature);
+          if (
+            Array.isArray(computed) &&
+            computed.length === 4 &&
+            computed.every(
+              (n) =>
+                typeof n === "number" && !Number.isNaN(n) && Number.isFinite(n),
+            )
+          ) {
+            targetBbox = [computed[0], computed[1], computed[2], computed[3]];
+          }
+        }
+      } catch {
+        // Fall through
+      }
+    }
+
+    if (!targetBbox && workspace.layers?.length) {
+      let minLng = Infinity;
+      let minLat = Infinity;
+      let maxLng = -Infinity;
+      let maxLat = -Infinity;
+      for (const layer of workspace.layers) {
+        if (layer.bbox && layer.bbox.length === 4) {
+          if (layer.bbox[0] < minLng) minLng = layer.bbox[0];
+          if (layer.bbox[1] < minLat) minLat = layer.bbox[1];
+          if (layer.bbox[2] > maxLng) maxLng = layer.bbox[2];
+          if (layer.bbox[3] > maxLat) maxLat = layer.bbox[3];
+        }
+      }
+      if (
+        minLng !== Infinity &&
+        minLat !== Infinity &&
+        maxLng !== -Infinity &&
+        maxLat !== -Infinity
+      ) {
+        targetBbox = [minLng, minLat, maxLng, maxLat];
+      }
+    }
+
+    if (targetBbox) {
+      void flyTo({
+        id: workspace.id,
+        title: workspace.workspaceName,
+        bbox: targetBbox,
+      });
+    }
+  }, [workspace, flyTo]);
+
   const handleToggleLayer = useCallback(
     (item: MyDataItem, checked: boolean) => {
       if (checked) {
-        if (!workspace?.wmsUrl) return;
+        const wmsUrl = workspace?.wmsUrl ?? item.wms?.url;
+        if (!wmsUrl) return;
+
+        const layerName =
+          item.wmsLayers ??
+          item.wfsTypeName ??
+          item.id;
 
         setCustomLayerConfig(item.id, {
-          wmsUrl: workspace.wmsUrl,
-          layers: item.wmsLayers || item.id,
+          wmsUrl,
+          layers: layerName,
           spatialBasis: item.spatialBasis,
         });
         setLayerEnabled(item.id, true);
@@ -131,9 +559,7 @@ export const MitraMyDataWorkspaceDetailPage = () => {
     const headers: FormattedTableHeader[] = [
       { th: "Layer IGT (Label)", sortable: true },
       { th: "Basis IGT", sortable: true },
-      { th: "Status Aktif", sortable: true },
-      { th: "Sisa Waktu", sortable: true },
-      { th: "Tanggal Kedaluwarsa", sortable: true },
+      { th: "Jumlah / Luas", sortable: true, align: "start" },
       { th: "Tampilkan di Peta", sortable: false, align: "center" },
     ];
 
@@ -142,6 +568,21 @@ export const MitraMyDataWorkspaceDetailPage = () => {
         const layerDisplayName =
           item.label || item.title || item.id.replace(/_/g, " ");
         const isVisibleOnMap = Boolean(enabledLayerIds[item.id]);
+
+        const basis = item.spatialBasis ?? item.igtBasis;
+        const isKawasan = basis === "kawasan";
+        const isBidang = basis === "bidang";
+
+        let quantityLabel = "-";
+        if (isBidang && (item.featuresCount ?? 0) > 0) {
+          quantityLabel = `${formatNumber(item.featuresCount ?? 0)} bidang`;
+        } else if (isKawasan && (item.areaHa ?? 0) > 0) {
+          quantityLabel = `${formatNumber(item.areaHa ?? 0, { maximumFractionDigits: 2 })} ha`;
+        } else if ((item.featuresCount ?? 0) > 0) {
+          quantityLabel = `${formatNumber(item.featuresCount ?? 0)} fitur`;
+        } else if ((item.areaHa ?? 0) > 0) {
+          quantityLabel = `${formatNumber(item.areaHa ?? 0, { maximumFractionDigits: 2 })} ha`;
+        }
 
         return {
           id: item.id,
@@ -153,8 +594,8 @@ export const MitraMyDataWorkspaceDetailPage = () => {
                 <VStack align={"start"} gap={"2xs"}>
                   <ClampedP maxW={"220px"}>{layerDisplayName}</ClampedP>
 
-                  <P fontSize={"sm"} color={"fg.subtle"}>
-                    {item.id}
+                  <P fontSize={"xs"} color={"fg.subtle"} fontFamily={"mono"}>
+                    {`ID: ${item.id}`}
                   </P>
                 </VStack>
               ),
@@ -166,26 +607,10 @@ export const MitraMyDataWorkspaceDetailPage = () => {
               align: "start" as const,
             },
             {
-              value: item.status,
-              td: <MyDataStatusBadge>{item.status}</MyDataStatusBadge>,
-              align: "start" as const,
-            },
-            {
-              value: item.expiresAt,
-              td: item.expiresAt ? (
-                <Countdown finishedAt={item.expiresAt} />
-              ) : (
-                <P color={"fg.subtle"}>{"-"}</P>
-              ),
-              align: "start" as const,
-            },
-            {
-              value: item.expiresAt,
+              value: quantityLabel,
               td: (
-                <P whiteSpace={"nowrap"}>
-                  {item.expiresAt
-                    ? formatUtcDateTime(item.expiresAt, preferredTimezone)
-                    : "-"}
+                <P fontSize={"sm"} whiteSpace={"nowrap"}>
+                  {quantityLabel}
                 </P>
               ),
               align: "start" as const,
@@ -281,7 +706,23 @@ export const MitraMyDataWorkspaceDetailPage = () => {
         label: "Detail Atribut",
         icon: TablePropertiesIcon,
         onClick: (item: MyDataItem) => {
-          setLayerId(item.id);
+          const resolvedKey =
+            apiKeyParam ??
+            workspace?.apiKey ??
+            myData?.apiKey ??
+            item.apiKey ??
+            undefined;
+          void navigate({
+            to: ".",
+            search: (prev) => {
+              const updated = { ...prev } as Record<string, unknown>;
+              updated.layerId = item.id;
+              if (resolvedKey) {
+                updated.apiKey = resolvedKey;
+              }
+              return updated;
+            },
+          });
         },
       },
     ];
@@ -289,11 +730,13 @@ export const MitraMyDataWorkspaceDetailPage = () => {
     return { headers, items, itemActions };
   }, [
     workspace?.layers,
+    workspace?.apiKey,
+    myData?.apiKey,
+    apiKeyParam,
+    navigate,
     enabledLayerIds,
-    preferredTimezone,
     handleToggleLayer,
     flyTo,
-    setLayerId,
   ]);
 
   if (isLoading) {
@@ -316,7 +759,7 @@ export const MitraMyDataWorkspaceDetailPage = () => {
         <Container.Root flex={1}>
           <Container.Body flex={1}>
             <Center flex={1} w={"full"} py={"xl"} bg={"bg.body"}>
-              <RetryState
+              <StateRetry
                 title={"Gagal Memuat Detail Workspace"}
                 description={
                   error?.message ||
@@ -340,7 +783,11 @@ export const MitraMyDataWorkspaceDetailPage = () => {
           <Container.Body flex={1} minH={0} overflow={"auto"}>
             <LayerAttributeTableView
               layer={selectedAttributeLayer}
-              onBack={() => setLayerId(undefined)}
+              apiKey={effectiveApiKey}
+              onBack={() => {
+                setLayerId(undefined);
+                setApiKeyParam(undefined);
+              }}
               showActions={false}
             />
           </Container.Body>
@@ -355,28 +802,131 @@ export const MitraMyDataWorkspaceDetailPage = () => {
         <Container.Body overflowY={"auto"}>
           {/* Header */}
           <HeaderContainer px={"xs"}>
-            <HStack justify={"space-between"} align={"center"} w={"full"}>
+            <HStack
+              justify={"space-between"}
+              align={"center"}
+              gap={"md"}
+              w={"full"}
+            >
               <HStack align={"center"} gap={"sm"}>
                 <BackButton
                   onClick={() => navigate({ to: "/mitra/my-data" })}
                 />
 
                 <ClampedHeading>{`${workspace.workspaceName}`}</ClampedHeading>
+                <OrderStatusBadge>{workspace.status}</OrderStatusBadge>
               </HStack>
             </HStack>
           </HeaderContainer>
 
-          {/* Workspace WMS URL & QGIS Guide */}
-          <VStack gap={"sm"} p={"md"} align={"stretch"}>
-            <P fontSize={"xs"} color={"fg.subtle"}>
-              {"WMS URL Workspace (INTEROP Pusdatin)"}
-            </P>
+          <Separator borderColor={"bg.canvas"} />
 
-            <Url
-              url={workspace.wmsUrl}
-              label={"Salin WMS URL Workspace"}
-              maxW={"full"}
-            />
+          {/* Workspace Metadata Cards: AOI Polygon & URL Workspace */}
+          <VStack gap={"sm"} p={"md"} align={"stretch"}>
+            <SimpleGrid minChildWidth={"280px"} gap={"sm"} w={"full"}>
+              {/* Workspace WMS URL & Actions */}
+              <VStack
+                align={"start"}
+                justify={"space-between"}
+                p={"md"}
+                rounded={theme.radii.container}
+                border={"1px solid"}
+                borderColor={"border.subtle"}
+                minH={"110px"}
+              >
+                <P fontSize={"xs"} color={"fg.subtle"}>
+                  {"WMS URL Workspace (INTEROP Pusdatin)"}
+                </P>
+
+                <HStack gap={"2xs"} w={"full"} align={"center"}>
+                  <Url
+                    url={workspace.wmsUrl}
+                    label={"Salin WMS URL Workspace"}
+                    maxW={"full"}
+                  />
+
+                  <Tooltip content={"Zoom ke Workspace"}>
+                    <IconButton
+                      aria-label={"Zoom ke Workspace"}
+                      onClick={handleFlyToWorkspace}
+                    >
+                      <AppIcon icon={FocusIcon} />
+                    </IconButton>
+                  </Tooltip>
+
+                  <MitraWorkspaceRenewalTrigger
+                    workspace={workspace}
+                    renderTrigger={({ eligibility, open }) => (
+                      <Tooltip
+                        content={eligibility.reason ?? "Perpanjang Workspace"}
+                      >
+                        <IconButton
+                          aria-label={"Perpanjang Workspace"}
+                          disabled={!eligibility.canExtend}
+                          onClick={open}
+                        >
+                          <AppIcon icon={ClockPlusIcon} />
+                        </IconButton>
+                      </Tooltip>
+                    )}
+                  />
+                </HStack>
+              </VStack>
+
+              {/* AOI Polygon */}
+              {workspace.aoiPolygon && (
+                <VStack
+                  align={"start"}
+                  justify={"space-between"}
+                  p={"md"}
+                  rounded={theme.radii.container}
+                  border={"1px solid"}
+                  borderColor={"border.subtle"}
+                  minH={"110px"}
+                >
+                  <HStack
+                    align={"center"}
+                    justify={"space-between"}
+                    gap={"xs"}
+                    w={"full"}
+                  >
+                    <P fontSize={"xs"} color={"fg.subtle"}>
+                      {"AOI Polygon"}
+                    </P>
+
+                    {workspace.selectionType && (
+                      <SelectionTypeBadge>
+                        {workspace.selectionType}
+                      </SelectionTypeBadge>
+                    )}
+                  </HStack>
+
+                  <HStack align={"center"} gap={"xs"} w={"full"}>
+                    <Switch
+                      checked={isAoiVisible}
+                      onCheckedChange={({ checked }) => {
+                        handleToggleAoi(checked);
+                      }}
+                      tooltip={
+                        isAoiVisible
+                          ? "Sembunyikan Polygon AOI"
+                          : "Tampilkan Polygon AOI"
+                      }
+                    />
+
+                    <Tooltip content={"Zoom ke AOI Polygon"}>
+                      <IconButton
+                        aria-label={"Zoom ke AOI Polygon"}
+                        size={"xs"}
+                        onClick={handleFlyToAoi}
+                      >
+                        <AppIcon icon={FocusIcon} />
+                      </IconButton>
+                    </Tooltip>
+                  </HStack>
+                </VStack>
+              )}
+            </SimpleGrid>
 
             <Box
               p={"sm"}
@@ -384,7 +934,7 @@ export const MitraMyDataWorkspaceDetailPage = () => {
               rounded={theme.radii.component}
               mt={"xs"}
             >
-              <P fontSize={"xs"} color={"fg.muted"}>
+              <P color={"fg.muted"}>
                 {
                   "Gunakan URL WMS Workspace di atas untuk menambahkan seluruh layer dalam pesanan ini ke QGIS melalui menu Layer → Add Layer → Add WMS/WMTS Layer..."
                 }
@@ -398,7 +948,7 @@ export const MitraMyDataWorkspaceDetailPage = () => {
           <VStack flex={1} w={"full"}>
             {isEmptyArray(workspace.layers) ? (
               <Center flex={1} w={"full"} py={"xl"} bg={"bg.body"}>
-                <NoDataState
+                <StateNoData
                   icon={DatabaseIcon}
                   title={"Belum Ada Layer di Workspace Ini"}
                   description={

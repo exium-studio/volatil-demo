@@ -1,3 +1,5 @@
+// src/features/mitra/data-request/components/mitra.data-request.upload-aoi.tabs-content.tsx
+
 import {
   Button,
   IconButton,
@@ -26,6 +28,7 @@ import {
   useCartAoiCoverageMap,
 } from "@/features/mitra/cart/hooks/use-cart-aoi-coverage-map";
 import { MitraDataRequestIgtLayerDataView } from "@/features/mitra/data-request/components/mitra.data-request.igt-layer.data-view";
+import { useBidangAoiFeatures } from "@/features/mitra/data-request/hooks/use-bidang-aoi-features";
 import { useMitraUploadAoi } from "@/features/mitra/data-request/hooks/use-mitra-upload-aoi";
 import { useSelectedIgtLayer } from "@/features/mitra/data-request/hooks/use-selected-igt-layer";
 import { useMitraDataRequestStore } from "@/features/mitra/data-request/stores/mitra.data-request.store";
@@ -353,78 +356,78 @@ export const MitraDataRequestUploadAoiTabsContent = (
         <>
           {/* Step 1: Upload Dropzone (No File Uploaded Yet) */}
           {!uploadedFile && !confirmedFeature && (
-              <Box flex={1} p={"md"} display={"flex"} flexDir={"column"}>
-                <FileInput
-                  variant={"dropzone"}
-                  label={
-                    "Upload file AOI (.shp/.zip atau .geojson/.json) untuk mengambil data IGT"
+            <Box flex={1} p={"md"} display={"flex"} flexDir={"column"}>
+              <FileInput
+                variant={"dropzone"}
+                label={
+                  "Upload file AOI (.shp/.zip atau .geojson/.json) untuk mengambil data IGT"
+                }
+                accept={[
+                  ".zip",
+                  ".shp",
+                  ".geojson",
+                  ".json",
+                  "application/zip",
+                  "application/x-zip-compressed",
+                ]}
+                maxFiles={1}
+                maxFileSize={10 * 1024 * 1024}
+                onFileChange={({ acceptedFiles }) => {
+                  if (!isEmptyArray(acceptedFiles)) {
+                    void processFile(acceptedFiles[0]);
                   }
-                  accept={[
-                    ".zip",
-                    ".shp",
-                    ".geojson",
-                    ".json",
-                    "application/zip",
-                    "application/x-zip-compressed",
-                  ]}
-                  maxFiles={1}
-                  maxFileSize={10 * 1024 * 1024}
-                  onFileChange={({ acceptedFiles }) => {
-                    if (!isEmptyArray(acceptedFiles)) {
-                      void processFile(acceptedFiles[0]);
-                    }
-                  }}
-                  dropzoneProps={{
-                    flex: 1,
-                    h: "full",
-                    minH: "0",
-                  }}
-                  dropzoneButtonProps={{
-                    primary: true,
-                    children: (
-                      <>
-                        <AppIcon icon={FilePlusIcon} />
-                        {"Upload Berkas AOI"}
-                      </>
-                    ),
-                  }}
-                  flex={1}
-                  h={"full"}
-                />
-              </Box>
-            )}
+                }}
+                dropzoneProps={{
+                  flex: 1,
+                  h: "full",
+                  minH: "0",
+                }}
+                dropzoneButtonProps={{
+                  primary: true,
+                  children: (
+                    <>
+                      <AppIcon icon={FilePlusIcon} />
+                      {"Upload Berkas AOI"}
+                    </>
+                  ),
+                }}
+                flex={1}
+                h={"full"}
+              />
+            </Box>
+          )}
 
-            {/* Loading skeleton while parsing */}
-            {uploadedFile?.status === "parsing" && (
-              <Skeleton h={"full"} w={"full"} flex={1} p={"md"} rounded={0} />
-            )}
+          {/* Loading skeleton while parsing */}
+          {uploadedFile?.status === "parsing" && (
+            <Skeleton h={"full"} w={"full"} flex={1} p={"md"} rounded={0} />
+          )}
 
-            {/* Step 2: Uploaded State — Polygon Selection List */}
-            {uploadedFile &&
-              uploadedFile.status === "done" &&
-              !confirmedFeature && (
-                <UploadAoiFeatureList
-                  file={uploadedFile}
-                  selectedFeatureId={selectedFeatureId}
-                  onSelectFeature={handleSelectFeature}
-                  onToggleFeatureVisibility={handleToggleFeatureVisibility}
-                  onConfirmSelection={handleConfirmSelection}
-                  onResetFile={handleResetFile}
-                />
-              )}
-
-            {/* Step 3: Confirmed AOI State — Query & IGT Layer Data View */}
-            {confirmedFeature && aoiCqlFilter && (
-              <UploadAoiConfirmedAttributeList
-                aoiCqlFilter={aoiCqlFilter}
-                confirmedPolygon={confirmedFeature.polygon}
-                isActive={isActive}
-                onResetAoi={handleResetAoi}
+          {/* Step 2: Uploaded State — Polygon Selection List */}
+          {uploadedFile &&
+            uploadedFile.status === "done" &&
+            !confirmedFeature && (
+              <UploadAoiFeatureList
+                file={uploadedFile}
+                selectedFeatureId={selectedFeatureId}
+                onSelectFeature={handleSelectFeature}
+                onToggleFeatureVisibility={handleToggleFeatureVisibility}
+                onConfirmSelection={handleConfirmSelection}
+                onResetFile={handleResetFile}
               />
             )}
-          </>
-        )}
-      </Tabs.Content>
+
+          {/* Step 3: Confirmed AOI State — Query & IGT Layer Data View */}
+          {confirmedFeature && aoiCqlFilter && (
+            <UploadAoiConfirmedAttributeList
+              aoiCqlFilter={aoiCqlFilter}
+              confirmedPolygon={confirmedFeature.polygon}
+              isActive={isActive}
+              onResetAoi={handleResetAoi}
+            />
+          )}
+        </>
+      )}
+    </Tabs.Content>
   );
 };
 
@@ -463,14 +466,12 @@ const UploadAoiFeatureList = memo((props: UploadAoiFeatureListProps) => {
           justify={"space-between"}
           align={"center"}
           wrap={"wrap"}
-          gap={2}
+          gap={"sm"}
         >
           <VStack align={"start"} gap={0}>
-            <P fontWeight={"semibold"} fontSize={"md"}>
-              {"Pilih Area AOI"}
-            </P>
+            <P fontWeight={"semibold"}>{"Pilih Area AOI"}</P>
 
-            <P fontSize={"xs"} color={"fg.subtle"}>
+            <P fontSize={"sm"} color={"fg.subtle"}>
               {`${file.fileName} (${formatByte(file.fileSize)}) • ${file.features.length} Polygon`}
             </P>
           </VStack>
@@ -551,13 +552,13 @@ const UploadAoiFeatureList = memo((props: UploadAoiFeatureListProps) => {
                         <VStack align={"start"} gap={0} flex={1} minW={0}>
                           <P
                             fontWeight={isSelected ? "semibold" : "medium"}
-                            fontSize={"sm"}
                             truncate
                           >
                             {feat.name}
                           </P>
+
                           {feat.areaHa > 0 && (
-                            <P fontSize={"xs"} color={"fg.subtle"}>
+                            <P fontSize={"sm"} color={"fg.subtle"}>
                               {`Luas: ${formatNumber(feat.areaHa, { maximumFractionDigits: 2 })} ha`}
                             </P>
                           )}
@@ -649,17 +650,27 @@ const UploadAoiConfirmedAttributeList = memo(
     const isCoverageVisible = useMitraDataRequestStore(
       (state) => state.isUploadCoverageVisible,
     );
+    const isBidangVisible = useMitraDataRequestStore(
+      (state) => state.isUploadBidangVisible,
+    );
     const calculationResult = useMitraDataRequestStore(
       (state) => state.calculationResults["upload_aoi"] ?? state.result,
     );
 
-    // Keep AOI and Coverage layers mounted across both layer list and attribute table view
+    const bidangQueryResult = useBidangAoiFeatures({
+      aoiPolygon: confirmedPolygon,
+      enabled: Boolean(isActive && confirmedPolygon && isBidangVisible),
+    });
+
+    // Keep AOI, Coverage, and Bidang layers mounted across both layer list and attribute table view
     useCartAoiCoverageMap(map, {
       aoiPolygon: confirmedPolygon,
-      coveragePolygon: calculationResult?.coveragePolygon,
+      kawasanCoveragePolygon: calculationResult?.kawasanCoveragePolygon,
+      bidangFeatures: bidangQueryResult.features,
       selectionType: "upload_aoi",
       isAoiVisible,
       isCoverageVisible,
+      isBidangVisible,
       isActive,
     });
 
@@ -677,7 +688,7 @@ const UploadAoiConfirmedAttributeList = memo(
         <VStack
           flex={1}
           gap={0}
-          overflowY={"auto"}
+          overflow={"hidden"}
           bg={"bg.canvas"}
           position={"relative"}
           w={"full"}
@@ -690,6 +701,7 @@ const UploadAoiConfirmedAttributeList = memo(
             p={"md"}
             bg={"bg.body"}
             w={"full"}
+            flexShrink={0}
           >
             <HStack
               wrap={"wrap"}
@@ -699,18 +711,16 @@ const UploadAoiConfirmedAttributeList = memo(
               w={"full"}
             >
               <VStack align={"start"} gap={0}>
-                <P fontWeight={"semibold"} fontSize={"md"}>
-                  {"AOI Upload"}
-                </P>
+                <P fontWeight={"semibold"}>{"AOI Upload"}</P>
 
                 {aoiAreaHa > 0 && (
-                  <P fontSize={"xs"} color={"fg.muted"}>
+                  <P fontSize={"sm"} color={"fg.muted"}>
                     {`Luas AOI: ${formatNumber(aoiAreaHa, { maximumFractionDigits: 2 })} ha`}
                   </P>
                 )}
               </VStack>
 
-              <HStack align={"center"} gap={"sm"}>
+              <HStack align={"center"} gap={"xs"}>
                 {confirmedPolygon && map && (
                   <>
                     <Tooltip
@@ -755,7 +765,7 @@ const UploadAoiConfirmedAttributeList = memo(
             </HStack>
           </VStack>
 
-          <Separator borderColor={"bg.canvas"} />
+          <Separator borderColor={"bg.canvas"} flexShrink={0} />
 
           <MitraDataRequestIgtLayerDataView
             cqlFilter={aoiCqlFilter}

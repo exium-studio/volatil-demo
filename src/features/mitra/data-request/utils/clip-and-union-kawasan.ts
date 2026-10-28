@@ -64,7 +64,7 @@ export const clipAndUnionKawasanFeatures = (
   onProgress?: (progress: number, message?: string) => void,
 ): KawasanCoverageResult => {
   const emptyResult: KawasanCoverageResult = {
-    coveragePolygon: null,
+    kawasanCoveragePolygon: null,
     totalAreaHa: 0,
     totalIntersectedFeatures: 0,
     isEmpty: true,
@@ -279,7 +279,7 @@ export const clipAndUnionKawasanFeatures = (
   onProgress?.(100, "Selesai");
 
   return {
-    coveragePolygon: finalCoveragePolygon,
+    kawasanCoveragePolygon: finalCoveragePolygon,
     totalAreaHa,
     totalIntersectedFeatures: clippedPolygons.length,
     isEmpty: false,

@@ -11,9 +11,9 @@ import { DEFAULT_PAGE_SIZE_OPTIONS } from "@/design-system/components/data-displ
 import { DataViewTable } from "@/design-system/components/data-display/ui/data-view-table";
 import { ConfirmationTrigger } from "@/design-system/components/feedback/ui/confirmation-trigger";
 import { Skeleton } from "@/design-system/components/feedback/ui/skeleton";
-import { NoDataState } from "@/design-system/components/feedback/ui/state.no-data";
-import { NoResultState } from "@/design-system/components/feedback/ui/state.no-result";
-import { RetryState } from "@/design-system/components/feedback/ui/state.retry";
+import { StateNoData } from "@/design-system/components/feedback/ui/state.no-data";
+import { StateNoResult } from "@/design-system/components/feedback/ui/state.no-result";
+import { StateRetry } from "@/design-system/components/feedback/ui/state.retry";
 import { TopBarLoader } from "@/design-system/components/feedback/ui/top-bar-loader";
 import { AppIcon } from "@/design-system/components/icon/ui/app-icon";
 import { SearchInput } from "@/design-system/components/input/ui/search-input";
@@ -24,13 +24,16 @@ import { Center } from "@/design-system/components/layout/ui/center";
 import { HStack, VStack } from "@/design-system/components/layout/ui/flex-box";
 import { Separator } from "@/design-system/components/layout/ui/separator";
 import { useMapLayerStore } from "@/design-system/components/map/stores/map.layer.store";
+import { NavLink } from "@/design-system/components/navigation/ui/link";
 import { HeaderContainer } from "@/design-system/components/shell/ui/header-container";
 import { Badge } from "@/design-system/components/typography/ui/badge";
-import { Heading } from "@/design-system/components/typography/ui/heading";
+import { ClampedHeading } from "@/design-system/components/typography/ui/heading";
 import { ClampedP, P } from "@/design-system/components/typography/ui/p";
 import { InternalDataManagementCreateTrigger } from "@/features/internal/data-management/components/internal.data-management.create-modal";
-import { InternalDataManagementEditTrigger } from "@/features/internal/data-management/components/internal.data-management.edit-modal";
-import { PUBLISH_STATUS_OPTIONS } from "@/features/internal/data-management/constants/data-management.config";
+import {
+  PUBLISH_STATUS_CONFIG_MAP,
+  PUBLISH_STATUS_OPTIONS,
+} from "@/features/internal/data-management/constants/data-management.config";
 import {
   useDeleteMasterIgtLayer,
   useMasterIgtLayersQuery,
@@ -38,19 +41,22 @@ import {
 import type {
   IgtBasisType,
   MasterIgtLayerItem,
+  PublishStatusType,
 } from "@/features/internal/data-management/types/data-management.type";
 import { useTriggerMitraLayerSyncMutation } from "@/features/internal/mitra-layer-sync-jobs/hooks/use-mitra-layer-sync-jobs.query";
 import { useFlyToLayer } from "@/features/mitra/data-request/hooks/use-fly-to-layer";
 import { IgtBasisFilterSelect } from "@/features/shared/components/igt-basis-filter.select";
 import { IgtBasisBadge } from "@/features/shared/components/igt-basis.badge";
 import { StatusFilterSelect } from "@/features/shared/components/status-filter.select";
+import { IGT_BASIS_MAP } from "@/features/shared/constants/volatil.ssot-map";
 import { isEmptyArray } from "@/shared/utils/data/array";
 import {
   formatUtcDateTime,
   getPreferredUserTimezone,
 } from "@/shared/utils/formatter/date.formatter";
-import { buildWmsProxyUrl } from "@/shared/utils/url/wms-proxy.utils";
+import { normalizeApiUrl } from "@/shared/utils/url/url.utils";
 import { IconLayersOff } from "@tabler/icons-react";
+import { useNavigate, useSearch } from "@tanstack/react-router";
 import {
   EyeIcon,
   EyeOffIcon,
@@ -63,23 +69,56 @@ import {
 import { useCallback, useMemo, useState, useTransition } from "react";
 
 export const InternalDataManagementDataView = () => {
+  // Navigation
+  const navigate = useNavigate();
+
+  // Route Search Params
+  const searchParams = useSearch({
+    from: "/_private/internal/data-management/",
+  });
+
   // Transitions
   const [_isPending, startTransition] = useTransition();
+
+  // Derived Initial Values from search params
+  const initialPublishStatus = useMemo(() => {
+    if (searchParams.isActive === undefined || searchParams.isActive === null) {
+      return "all";
+    }
+    const val = String(searchParams.isActive).toLowerCase();
+    if (val === "1" || val === "true" || val === "published") {
+      return "published";
+    }
+    if (val === "0" || val === "false" || val === "draft") {
+      return "draft";
+    }
+    return "all";
+  }, [searchParams.isActive]);
+
+  const initialIgtBasis = useMemo(() => {
+    if (
+      searchParams.basisIgt === "bidang" ||
+      searchParams.basisIgt === "kawasan"
+    ) {
+      return searchParams.basisIgt;
+    }
+    return "all";
+  }, [searchParams.basisIgt]);
 
   // States — Centralized query/action parameters
   const [params, setParams] = useState<{
     page: number;
     pageSize: number;
     search: string;
-    spatialBasis: string;
+    igtBasis: string;
     publishStatus: string;
-  }>({
+  }>(() => ({
     page: 1,
     pageSize: DEFAULT_PAGE_SIZE_OPTIONS[0],
     search: "",
-    spatialBasis: "all",
-    publishStatus: "all",
-  });
+    igtBasis: initialIgtBasis,
+    publishStatus: initialPublishStatus,
+  }));
 
   // Mutations
   const deleteMutation = useDeleteMasterIgtLayer();
@@ -98,10 +137,8 @@ export const InternalDataManagementDataView = () => {
     page: params.page,
     pageSize: params.pageSize,
     search: params.search || undefined,
-    spatialBasis:
-      params.spatialBasis !== "all"
-        ? (params.spatialBasis as IgtBasisType)
-        : undefined,
+    igtBasis:
+      params.igtBasis !== "all" ? (params.igtBasis as IgtBasisType) : undefined,
     isActive:
       params.publishStatus === "published"
         ? true
@@ -114,18 +151,32 @@ export const InternalDataManagementDataView = () => {
   const preferredTimezone = useMemo(() => getPreferredUserTimezone(), []);
   const isSearching = Boolean(
     params.search.trim() ||
-    params.spatialBasis !== "all" ||
+    params.igtBasis !== "all" ||
     params.publishStatus !== "all",
   );
   const searchQuery = useMemo(() => {
-    if (params.search.trim()) return params.search;
-    if (params.spatialBasis !== "all" && params.publishStatus !== "all") {
-      return `${params.spatialBasis}, ${params.publishStatus}`;
+    const parts: string[] = [];
+
+    if (params.search.trim()) {
+      parts.push(params.search.trim());
     }
-    if (params.spatialBasis !== "all") return params.spatialBasis;
-    if (params.publishStatus !== "all") return params.publishStatus;
-    return "...";
-  }, [params.search, params.spatialBasis, params.publishStatus]);
+
+    if (params.igtBasis && params.igtBasis !== "all") {
+      const basisLabel =
+        IGT_BASIS_MAP[params.igtBasis as IgtBasisType]?.label ??
+        params.igtBasis;
+      parts.push(basisLabel);
+    }
+
+    if (params.publishStatus && params.publishStatus !== "all") {
+      const statusLabel =
+        PUBLISH_STATUS_CONFIG_MAP[params.publishStatus as PublishStatusType]
+          ?.label ?? params.publishStatus;
+      parts.push(statusLabel);
+    }
+
+    return parts.length > 0 ? parts.join(", ") : "...";
+  }, [params.search, params.igtBasis, params.publishStatus]);
 
   // Map Layer Store for toggling visibility
   const enabledLayerIds = useMapLayerStore((s) => s.enabledLayerIds);
@@ -140,35 +191,36 @@ export const InternalDataManagementDataView = () => {
         setLayerEnabled(item.id, false);
         setCustomLayerConfig(item.id, null);
       } else {
-        const proxyWmsUrl = buildWmsProxyUrl(
-          `/api/proxy/wms?layerId=${item.typeName}`,
-        );
-        // const proxyWfsUrl = `/api/proxy/wfs?layerId=${item.id}`;
+        const rawWmsUrl = item.wms.url || item.wms.baseUrl;
+        const rawWfsUrl = item.wfs.url || item.wfs.baseUrl;
+        const normalizedWmsUrl = normalizeApiUrl(rawWmsUrl);
+        const normalizedWfsUrl = normalizeApiUrl(rawWfsUrl);
 
         setCustomLayerConfig(item.id, {
-          wmsUrl: proxyWmsUrl,
-          layers: item.typeName || item.id,
-          spatialBasis: item.spatialBasis,
+          wmsUrl: normalizedWmsUrl || "",
+          layers: item.typeName || "",
+          spatialBasis: item.igtBasis,
+          minZoom: item.minZoom ?? 12,
         });
         setLayerEnabled(item.id, true);
 
-        // void flyTo({
-        //   id: item.id,
-        //   title: item.title,
-        //   spatialBasis: item.spatialBasis,
-        //   bbox: item.bbox,
-        //   wfs: {
-        //     wfsTypeName: item.typeName || item.id,
-        //     wfsUrl: proxyWfsUrl,
-        //   },
-        // });
+        if (item.bbox || normalizedWfsUrl) {
+          void flyTo({
+            id: item.id,
+            title: item.title,
+            spatialBasis: item.igtBasis,
+            bbox: item.bbox,
+            wfs: normalizedWfsUrl
+              ? {
+                  wfsTypeName: item.typeName || "",
+                  wfsUrl: normalizedWfsUrl,
+                }
+              : undefined,
+          });
+        }
       }
     },
-    [
-      // flyTo,
-      setCustomLayerConfig,
-      setLayerEnabled,
-    ],
+    [flyTo, setCustomLayerConfig, setLayerEnabled],
   );
 
   const dataList = useMemo(() => {
@@ -178,6 +230,7 @@ export const InternalDataManagementDataView = () => {
       { th: "Workspace / Typename", sortable: true },
       { th: "Basis IGT", sortable: true },
       { th: "Urutan (Z-Index)", sortable: true, align: "center" },
+      { th: "Min Zoom", sortable: true, align: "center" },
       { th: "Default Tampil", sortable: true },
       { th: "Terakhir Diperbarui", sortable: true },
       { th: "Tampilkan di Peta", align: "center" },
@@ -185,6 +238,7 @@ export const InternalDataManagementDataView = () => {
 
     const items = rawItems.map((item) => {
       const isVisibleOnMap = Boolean(enabledLayerIds[item.id]);
+      const basis = item.igtBasis;
 
       return {
         id: item.id,
@@ -192,8 +246,24 @@ export const InternalDataManagementDataView = () => {
         columns: [
           {
             value: item.title,
-            td: <ClampedP w={"200px"}>{item.title}</ClampedP>,
+            td: (
+              <NavLink
+                to={"/internal/data-management/$layerId"}
+                params={{ layerId: item.id }}
+              >
+                <ClampedP
+                  fontWeight={"medium"}
+                  color={"colorPalette.fg"}
+                  _hover={{ color: "blue.fg" }}
+                >
+                  {item.title}
+                </ClampedP>
+              </NavLink>
+            ),
             align: "start" as const,
+            cellProps: {
+              w: "200px",
+            },
           },
           {
             value: item.isActive ? "Publik" : "Draft",
@@ -214,13 +284,18 @@ export const InternalDataManagementDataView = () => {
             align: "start" as const,
           },
           {
-            value: item.spatialBasis,
-            td: <IgtBasisBadge>{item.spatialBasis}</IgtBasisBadge>,
+            value: basis,
+            td: <IgtBasisBadge>{basis}</IgtBasisBadge>,
             align: "start" as const,
           },
           {
             value: item.zIndex ?? 0,
             td: <P>{item.zIndex != null ? `${item.zIndex}` : "-"}</P>,
+            align: "center" as const,
+          },
+          {
+            value: item.minZoom ?? 12,
+            td: <P>{item.minZoom != null ? `${item.minZoom}` : "12"}</P>,
             align: "center" as const,
           },
           {
@@ -345,29 +420,28 @@ export const InternalDataManagementDataView = () => {
         label: "Zoom ke Layer",
         icon: FocusIcon,
         onClick: (item: MasterIgtLayerItem) => {
+          const rawWfsUrl = item.wfs.url || item.wfs.baseUrl;
           void flyTo({
             id: item.id,
             title: item.title,
-            spatialBasis: item.spatialBasis,
+            spatialBasis: item.igtBasis,
             bbox: item.bbox,
             wfs: {
-              wfsTypeName: item.typeName,
-              wfsUrl: item.wfsUrl || "",
+              wfsTypeName: item.typeName || "",
+              wfsUrl: rawWfsUrl || "",
             },
           });
         },
       },
       {
         key: "edit-layer",
-        label: "Ubah Layer",
+        label: "Konfigurasi Layer",
         icon: PencilIcon,
-        modal: {
-          triggerComponent: (layer: MasterIgtLayerItem) => (
-            <InternalDataManagementEditTrigger
-              modalKey={`layer-edit-${layer.id}`}
-              item={layer}
-            />
-          ),
+        onClick: (layer: MasterIgtLayerItem) => {
+          void navigate({
+            to: "/internal/data-management/$layerId",
+            params: { layerId: layer.id },
+          });
         },
       },
       {
@@ -427,14 +501,20 @@ export const InternalDataManagementDataView = () => {
     deleteMutation,
     syncMitraMutation,
     flyTo,
+    navigate,
   ]);
 
   return (
     <>
       <HeaderContainer pr={"xs"}>
-        <HStack justify={"space-between"} align={"center"} w={"full"}>
+        <HStack
+          justify={"space-between"}
+          align={"center"}
+          gap={"md"}
+          w={"full"}
+        >
           <HStack gap={"xs"} align={"center"}>
-            <Heading>{"Manajemen Data IGT"}</Heading>
+            <ClampedHeading>{"Manajemen Master Layer IGT"}</ClampedHeading>
 
             <InfoTip
               variant={"icon"}
@@ -474,12 +554,21 @@ export const InternalDataManagementDataView = () => {
 
         <IgtBasisFilterSelect
           modalKey={"data-management-igt-basis-filter"}
-          value={params.spatialBasis}
-          onValueChange={(val) =>
+          value={params.igtBasis}
+          onValueChange={(val) => {
             startTransition(() => {
-              setParams((prev) => ({ ...prev, spatialBasis: val, page: 1 }));
-            })
-          }
+              setParams((prev) => ({ ...prev, igtBasis: val, page: 1 }));
+            });
+            void navigate({
+              to: "/internal/data-management",
+              replace: true,
+              search: (prev: Record<string, unknown>) => {
+                const next = { ...prev };
+                delete next.basisIgt;
+                return next;
+              },
+            });
+          }}
           w={"150px"}
         />
 
@@ -488,15 +577,24 @@ export const InternalDataManagementDataView = () => {
           options={PUBLISH_STATUS_OPTIONS}
           placeholder={"Semua Status"}
           value={params.publishStatus}
-          onValueChange={(val) =>
+          onValueChange={(val) => {
             startTransition(() => {
               setParams((prev) => ({
                 ...prev,
                 publishStatus: val,
                 page: 1,
               }));
-            })
-          }
+            });
+            void navigate({
+              to: "/internal/data-management",
+              replace: true,
+              search: (prev: Record<string, unknown>) => {
+                const next = { ...prev };
+                delete next.isActive;
+                return next;
+              },
+            });
+          }}
           w={"150px"}
         />
       </ActionHeaderScrollContainer>
@@ -508,7 +606,7 @@ export const InternalDataManagementDataView = () => {
 
         {!isLoading && isError && (
           <Center flex={1} w={"full"} p={"xl"} bg={"bg.body"}>
-            <RetryState
+            <StateRetry
               title={"Gagal Memuat Layer IGT"}
               description={
                 error?.message ||
@@ -526,9 +624,9 @@ export const InternalDataManagementDataView = () => {
             {isEmptyArray(rawItems) && (
               <Center flex={1} w={"full"} p={"xl"} bg={"bg.body"}>
                 {isSearching ? (
-                  <NoResultState query={searchQuery} />
+                  <StateNoResult query={searchQuery} />
                 ) : (
-                  <NoDataState
+                  <StateNoData
                     icon={IconLayersOff}
                     title={"Layer IGT Kosong"}
                     description={

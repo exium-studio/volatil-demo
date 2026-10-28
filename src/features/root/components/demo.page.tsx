@@ -33,10 +33,10 @@ import {
   SkeletonCircle,
   SkeletonText,
 } from "@/design-system/components/feedback/ui/skeleton";
-import { AccessDeniedState } from "@/design-system/components/feedback/ui/state.access-denied";
-import { NoDataState } from "@/design-system/components/feedback/ui/state.no-data";
-import { NoResultState } from "@/design-system/components/feedback/ui/state.no-result";
-import { RetryState } from "@/design-system/components/feedback/ui/state.retry";
+import { StateAccessDenied } from "@/design-system/components/feedback/ui/state.access-denied";
+import { StateNoData } from "@/design-system/components/feedback/ui/state.no-data";
+import { StateNoResult } from "@/design-system/components/feedback/ui/state.no-result";
+import { StateRetry } from "@/design-system/components/feedback/ui/state.retry";
 import { AppIcon } from "@/design-system/components/icon/ui/app-icon";
 import { useExistingFiles } from "@/design-system/components/input/hooks/use-existing-files";
 import type { FieldProps } from "@/design-system/components/input/types/field.type";
@@ -45,6 +45,7 @@ import { DateInput } from "@/design-system/components/input/ui/date-input";
 import { Field } from "@/design-system/components/input/ui/field";
 import { Fieldset } from "@/design-system/components/input/ui/fieldset";
 import { FileInput } from "@/design-system/components/input/ui/file-input";
+import { FocusSelectInput } from "@/design-system/components/input/ui/focus-select";
 import { Input } from "@/design-system/components/input/ui/input";
 import {
   NumberInput,
@@ -680,8 +681,8 @@ const Layout = () => {
     <Splitter.Panel
       key={"a"}
       id={"a"}
-      borderRight={"1px solid"}
-      borderColor={"border"}
+      defaultSize={splitterSize[0]}
+      minSize={20}
     >
       <Center boxSize={"full"} textStyle={"2xl"}>
         A
@@ -700,7 +701,12 @@ const Layout = () => {
   );
 
   const panelB = (
-    <Splitter.Panel key={"b"} id={"b"}>
+    <Splitter.Panel
+      key={"b"}
+      id={"b"}
+      defaultSize={splitterSize[1]}
+      minSize={20}
+    >
       <Center boxSize={"full"} textStyle={"2xl"}>
         B
       </Center>
@@ -726,13 +732,11 @@ const Layout = () => {
           h={"300px"}
         >
           <Splitter.Root
-            panels={[
-              { id: "a", minSize: 30 },
-              { id: "b", minSize: 30 },
-            ]}
-            size={splitterSize}
-            onResize={(details) => setSplitterSize("demo-layout", details.size)}
-            orientation={"horizontal"}
+            direction={"horizontal"}
+            defaultLayout={DEFAULT_DEMO_SPLITTER_SIZE}
+            onLayout={(layout: number[]) =>
+              setSplitterSize("demo-layout", layout)
+            }
             borderWidth={"1px"}
             h={"300px"}
             w={"full"}
@@ -903,7 +907,7 @@ export const Inputs = () => {
               <SearchInput placeholder={"Search..."} />
             </FieldTemplate>
 
-            <FieldTemplate invalid={invalid}>
+            <FieldTemplate label={"Date Input"} invalid={invalid}>
               <DateInput
                 modalKey={"date-input"}
                 datePickerSubtitle={"Pick a day for your leaves"}
@@ -911,8 +915,21 @@ export const Inputs = () => {
               />
             </FieldTemplate>
 
-            <FieldTemplate invalid={invalid}>
+            <FieldTemplate label={"Select Input"} invalid={invalid}>
               <Select
+                options={[
+                  { label: "Option 1", value: "option-1" },
+                  { label: "Option 2", value: "option-2" },
+                  { label: "Option 3", value: "option-3" },
+                  { label: "Option 4", value: "option-4" },
+                  { label: "Option 5", value: "option-5" },
+                ]}
+                w={"200px"}
+              />
+            </FieldTemplate>
+
+            <FieldTemplate label={"Focus Select Input"} invalid={invalid}>
+              <FocusSelectInput
                 options={[
                   { label: "Option 1", value: "option-1" },
                   { label: "Option 2", value: "option-2" },
@@ -1557,13 +1574,13 @@ export const Feedback = () => {
             justify={"center"}
             gap={10}
           >
-            <NoDataState />
+            <StateNoData />
 
-            <AccessDeniedState />
+            <StateAccessDenied />
 
-            <NoResultState />
+            <StateNoResult />
 
-            <RetryState />
+            <StateRetry />
           </HStack>
 
           <HStack wrap={"wrap"} align={"center"} justify={"center"} gap={10}>

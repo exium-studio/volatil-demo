@@ -8,8 +8,8 @@ import type {
 import type { DataViewItemActionsGenerator } from "@/design-system/components/data-display/types/data-view.type";
 import { DataViewTable } from "@/design-system/components/data-display/ui/data-view-table";
 import { Skeleton } from "@/design-system/components/feedback/ui/skeleton";
-import { NoDataState } from "@/design-system/components/feedback/ui/state.no-data";
-import { RetryState } from "@/design-system/components/feedback/ui/state.retry";
+import { StateNoData } from "@/design-system/components/feedback/ui/state.no-data";
+import { StateRetry } from "@/design-system/components/feedback/ui/state.retry";
 import { TopBarLoader } from "@/design-system/components/feedback/ui/top-bar-loader";
 import { AppIcon } from "@/design-system/components/icon/ui/app-icon";
 import { InfoTip } from "@/design-system/components/input/ui/toggle-tip";
@@ -17,7 +17,6 @@ import { Box } from "@/design-system/components/layout/ui/box";
 import { Container } from "@/design-system/components/layout/ui/container";
 import { HStack, VStack } from "@/design-system/components/layout/ui/flex-box";
 import { Separator } from "@/design-system/components/layout/ui/separator";
-import { Tooltip } from "@/design-system/components/overlay/ui/tooltip";
 import { Heading } from "@/design-system/components/typography/ui/heading";
 import { P, TNum } from "@/design-system/components/typography/ui/p";
 import { FormatNumber } from "@/design-system/components/utilities/ui/fornat-number";
@@ -25,6 +24,7 @@ import type { MitraHomeLastTransactionProps } from "@/features/mitra/home/types/
 import { useTransactionHistoryQuery } from "@/features/mitra/transaction-history/hooks/use-transaction-history";
 import type { TransactionRecord } from "@/features/mitra/transaction-history/types/transaction-history.type";
 import { OrderStatusBadge } from "@/features/shared/components/order-status.badge";
+import { OrderedIgtLayers } from "@/features/shared/components/ordered-igt-layers";
 import { PaymentMethodBadge } from "@/features/shared/components/payment-method.badge";
 import { SelectionTypeBadge } from "@/features/shared/components/selection-type.badge";
 import { TransactionDetailTrigger } from "@/features/shared/components/transaction-detail.modal";
@@ -146,7 +146,6 @@ const MitraHomeLastTransactionDataView = (props: {
   // Derived Values - DataList headers & items
   const dataList = useMemo(() => {
     const headers: FormattedTableHeader[] = [
-      { th: "No. Transaksi", sortable: false, align: "start" },
       { th: "No. Pesanan", sortable: false, align: "start" },
       { th: "Status Pesanan", sortable: false, align: "start" },
       { th: "Kode Billing", sortable: false, align: "start" },
@@ -167,7 +166,7 @@ const MitraHomeLastTransactionDataView = (props: {
         const effectiveOrderStatus: OrderStatus | undefined =
           item.transactionStatus === "expired" &&
           (!item.orderStatus || item.orderStatus === "pending_payment")
-            ? "rejected"
+            ? "expired"
             : item.orderStatus;
 
         return {
@@ -175,13 +174,8 @@ const MitraHomeLastTransactionDataView = (props: {
           data: item,
           columns: [
             {
-              value: item.transactionNumber,
-              td: <P>{item.transactionNumber}</P>,
-              align: "start" as const,
-            },
-            {
               value: item.orderNumber,
-              td: <P color={"fg.muted"}>{item.orderNumber}</P>,
+              td: <P>{item.orderNumber}</P>,
               align: "start" as const,
             },
             {
@@ -221,11 +215,18 @@ const MitraHomeLastTransactionDataView = (props: {
             {
               value: itemNames,
               td: (
-                <Tooltip content={itemNames || "-"}>
-                  <P lineClamp={2} w={"220px"} title={itemNames}>
-                    {itemNames || "-"}
-                  </P>
-                </Tooltip>
+                <OrderedIgtLayers
+                  items={item.items}
+                  orderNumber={item.orderNumber}
+                  coverageHa={
+                    item.kawasanCoverageHa ?? item.coverageHa ?? undefined
+                  }
+                  bidangCoverageCount={
+                    item.bidangCoverageCount ??
+                    item.featuresCount ??
+                    undefined
+                  }
+                />
               ),
               align: "start" as const,
             },
@@ -267,7 +268,8 @@ const MitraHomeLastTransactionDataView = (props: {
         label: "Bayar",
         icon: CreditCardIcon,
         hidden: (transaction: TransactionRecord) =>
-          transaction.transactionStatus !== "pending",
+          transaction.orderStatus !== "pending_payment" ||
+          transaction.transactionStatus === "expired",
         onClick: (transaction: TransactionRecord) => {
           if (transaction.billingCode) {
             void navigate({
@@ -313,7 +315,7 @@ const MitraHomeLastTransactionDataView = (props: {
           py={"xl"}
           bg={"bg.body"}
         >
-          <RetryState
+          <StateRetry
             title={"Gagal Memuat Riwayat Transaksi"}
             description={
               error?.message ||
@@ -333,7 +335,7 @@ const MitraHomeLastTransactionDataView = (props: {
           py={"xl"}
           bg={"bg.body"}
         >
-          <NoDataState
+          <StateNoData
             icon={HistoryIcon}
             title={"Belum Ada Riwayat Transaksi"}
             description={

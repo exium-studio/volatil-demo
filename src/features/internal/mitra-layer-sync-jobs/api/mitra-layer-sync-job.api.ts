@@ -110,9 +110,12 @@ export const triggerMitraLayerSyncApi = async (
 
   try {
     const response = await apiClient.post<
-      | ApiResponse<TriggerMitraLayerSyncResponse>
-      | TriggerMitraLayerSyncResponse
-    >("/api/internal/igt-layers/sync-mitra", { layerIds: resolvedLayerIds }, { signal });
+      ApiResponse<TriggerMitraLayerSyncResponse> | TriggerMitraLayerSyncResponse
+    >(
+      "/api/internal/igt-layers/sync-mitra",
+      { layerIds: resolvedLayerIds },
+      { signal },
+    );
 
     const resultData =
       response && "data" in response && response.data
@@ -129,7 +132,7 @@ export const triggerMitraLayerSyncApi = async (
       layerIds: resolvedLayerIds,
       status: "queued",
       message:
-        "Job antrean pembaruan layer mitra telah dijadwalkan di latar belakang.",
+        "Job Antrean Pembaruan Data Mitra telah dijadwalkan di latar belakang.",
       createdAt: new Date().toISOString(),
     };
 
@@ -142,7 +145,7 @@ export const triggerMitraLayerSyncApi = async (
         layerIds: resolvedLayerIds,
         status: "queued",
         message:
-          "Job antrean pembaruan layer mitra telah dijadwalkan di latar belakang.",
+          "Job Antrean Pembaruan Data Mitra telah dijadwalkan di latar belakang.",
         createdAt: new Date().toISOString(),
       };
     }

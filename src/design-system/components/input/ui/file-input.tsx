@@ -551,13 +551,14 @@ const FileItem = (props: FileItemProps) => {
       )}
 
       <ClampedP
+        flex={1}
         textDecoration={markedForDelete ? "line-through" : undefined}
         opacity={contentOpacity}
       >
         {name}
       </ClampedP>
 
-      <HStack align={"center"} gap={4} ml={"auto"}>
+      <HStack align={"center"} gap={2} ml={"auto"} flexShrink={0}>
         {markedForDelete && (
           <P
             fontSize={"xs"}

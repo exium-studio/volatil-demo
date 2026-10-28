@@ -58,6 +58,8 @@ export const queryKeys = {
         [...queryKeys.mitra.dataRequest.all, "admin-boundary", levelOrHierarchy, name] as const,
       kawasanCoverage: (aoiHash: string) =>
         [...queryKeys.mitra.dataRequest.all, "kawasan-coverage", aoiHash] as const,
+      bidangFeatures: (aoiHash: string) =>
+        [...queryKeys.mitra.dataRequest.all, "bidang-features", aoiHash] as const,
     },
     helpCenter: {
       all: ["mitra", "help-center"] as const,
@@ -75,6 +77,8 @@ export const queryKeys = {
       inbox: () => [...queryKeys.mitra.notification.all, "inbox"] as const,
       inboxList: (params?: Record<string, unknown>) =>
         [...queryKeys.mitra.notification.all, "inbox", "list", params] as const,
+      inboxUnreadCount: () =>
+        [...queryKeys.mitra.notification.all, "inbox", "unread-count"] as const,
     },
   },
   internal: {
@@ -92,6 +96,10 @@ export const queryKeys = {
         [...queryKeys.internal.home.all, "leaderboard", "mitra"] as const,
       leaderboardLayers: () =>
         [...queryKeys.internal.home.all, "leaderboard", "layers"] as const,
+      pricing: () =>
+        [...queryKeys.internal.home.all, "pricing"] as const,
+      policies: () =>
+        [...queryKeys.internal.home.all, "policies"] as const,
     },
     userManagement: {
       all: ["internal", "user-management"] as const,
@@ -106,6 +114,9 @@ export const queryKeys = {
       all: ["internal", "pricing"] as const,
       list: (params?: Record<string, unknown>) =>
         [...queryKeys.internal.pricing.all, "list", params] as const,
+    },
+    systemPolicies: {
+      all: ["internal", "system-policies"] as const,
     },
     dataManagement: {
       all: ["internal", "data-management"] as const,
@@ -152,5 +163,12 @@ export const queryKeys = {
   map: {
     all: ["map"] as const,
     layers: () => [...queryKeys.map.all, "layers"] as const,
+  },
+  userGuide: {
+    all: ["user-guide"] as const,
+    list: (params?: Record<string, unknown>) =>
+      [...queryKeys.userGuide.all, "list", params] as const,
+    detail: (id: string) =>
+      [...queryKeys.userGuide.all, "detail", id] as const,
   },
 };

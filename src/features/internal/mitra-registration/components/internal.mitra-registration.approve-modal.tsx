@@ -5,19 +5,24 @@ import { Alert } from "@/design-system/components/feedback/ui/alert";
 import { AppIcon } from "@/design-system/components/icon/ui/app-icon";
 import { Field } from "@/design-system/components/input/ui/field";
 import { FileInput } from "@/design-system/components/input/ui/file-input";
+import { Input } from "@/design-system/components/input/ui/input";
+import { PasswordInput } from "@/design-system/components/input/ui/password-input";
 import { Box } from "@/design-system/components/layout/ui/box";
 import { VStack } from "@/design-system/components/layout/ui/flex-box";
 import { usePopModal } from "@/design-system/components/overlay/hooks/use-pop-modal";
 import { Modal } from "@/design-system/components/overlay/ui/modal";
 import { P } from "@/design-system/components/typography/ui/p";
 import { useApproveMitraRegistration } from "@/features/internal/mitra-registration/hooks/use-mitra-registration.query";
-import type {
-  InternalMitraRegistrationApproveModalContentProps,
-  InternalMitraRegistrationApproveTriggerProps,
+import {
+  approveMitraRegistrationSchema,
+  type ApproveMitraRegistrationFormValues,
+  type InternalMitraRegistrationApproveModalContentProps,
+  type InternalMitraRegistrationApproveTriggerProps,
 } from "@/features/internal/mitra-registration/types/mitra-registration.type";
 import { back } from "@/shared/utils/client/navigation";
+import { zodResolver } from "@hookform/resolvers/zod";
 import { CheckCircleIcon, InfoIcon } from "lucide-react";
-import { useState } from "react";
+import { Controller, useForm } from "react-hook-form";
 
 export const InternalMitraRegistrationApproveTrigger = (
   props: InternalMitraRegistrationApproveTriggerProps,
@@ -64,29 +69,45 @@ export const InternalMitraRegistrationApproveModalContent = (
   // Props
   const { registration, isOpen, onSuccessRedirect, close } = props;
 
-  // States
-  const [contractFiles, setContractFiles] = useState<File[]>([]);
+  // Forms
+  const {
+    register,
+    handleSubmit,
+    control,
+    formState: { errors, isValid, isSubmitting },
+  } = useForm<ApproveMitraRegistrationFormValues>({
+    resolver: zodResolver(approveMitraRegistrationSchema),
+    defaultValues: {
+      contractFiles: [],
+      ssoUsername: registration.ssoUsername ?? "",
+      ssoPassword: registration.ssoPassword ?? "",
+    },
+    mode: "onChange",
+  });
 
   // Mutations
   const approveMutation = useApproveMitraRegistration();
 
-  // Handlers
-  const handleApprove = () => {
-    if (!contractFiles[0]) return;
+  const onSubmit = (values: ApproveMitraRegistrationFormValues) => {
+    const contractDocument = values.contractFiles[0];
+    if (!contractDocument) return;
 
     approveMutation.mutate(
       {
         id: registration.id,
-        contractDocument: contractFiles[0],
+        contractDocument,
+        ssoUsername: values.ssoUsername.trim(),
+        ssoPassword: values.ssoPassword.trim(),
       },
       {
         onSuccess: () => {
-          if (close) {
+          if (onSuccessRedirect) {
+            onSuccessRedirect();
+          } else if (close) {
             close();
           } else if (isOpen) {
             back();
           }
-          onSuccessRedirect?.();
         },
       },
     );
@@ -100,8 +121,6 @@ export const InternalMitraRegistrationApproveModalContent = (
     }
   };
 
-  const isSubmitDisabled = !contractFiles[0] || approveMutation.isPending;
-
   return (
     <Modal.Content>
       <Modal.Header>
@@ -110,60 +129,111 @@ export const InternalMitraRegistrationApproveModalContent = (
         <VStack gap={"2xs"}>
           <Modal.Title>{"Verifikasi & Setujui Pendaftaran Mitra"}</Modal.Title>
 
-          <P fontSize={"xs"} textAlign={"center"} color={"fg.subtle"}>
+          <P fontSize={"xs"} textAlign={"center"} color={"fg.muted"}>
             {`${registration.organizationName ?? registration.namaInstansi} (${registration.registrationNumber})`}
           </P>
         </VStack>
       </Modal.Header>
 
-      <Modal.Body>
-        <VStack align={"stretch"} gap={"md"}>
-          <Alert.Root status={"info"} colorPalette={"blue"} variant={"subtle"}>
-            <AppIcon icon={InfoIcon} />
-            <Alert.Description>
-              {
-                "Pastikan seluruh dokumen legalitas dan proposal teknis pemohon telah diverifikasi. Unggah dokumen kontrak kemitraan resmi untuk menyelesaikan proses aktivasi mitra."
-              }
-            </Alert.Description>
-          </Alert.Root>
+      <VStack
+        as={"form"}
+        align={"stretch"}
+        gap={0}
+        onSubmit={handleSubmit(onSubmit)}
+      >
+        <Modal.Body>
+          <VStack align={"stretch"} gap={"md"}>
+            <Alert.Root
+              status={"info"}
+              colorPalette={"blue"}
+              variant={"subtle"}
+            >
+              <AppIcon icon={InfoIcon} />
+              <Alert.Description>
+                {`Pastikan seluruh dokumen legalitas dan proposal teknis pemohon telah diverifikasi. Unggah dokumen kontrak resmi dan masukkan kredensial akun SSO yang akan dikirimkan ke mitra.`}
 
-          {/* File input for contract document */}
-          <Field
-            variant={"default"}
-            label={"Unggah Berkas Kontrak Resmi (Wajib)"}
-          >
-            <Box w={"full"}>
-              <FileInput
-                accept={[".pdf", ".doc", ".docx"]}
-                maxFiles={1}
-                onFileAccept={(details) => setContractFiles(details.files)}
+                <Box mt={"md"}>
+                  <P fontWeight={"semibold"} color={"blue.fg"}>
+                    {`Email Mitra: ${registration.email}`}
+                  </P>
+                </Box>
+              </Alert.Description>
+            </Alert.Root>
+
+            {/* File input for contract document */}
+            <Field
+              variant={"default"}
+              label={"Unggah Berkas Kontrak Resmi (Wajib)"}
+              invalid={Boolean(errors.contractFiles)}
+              errorText={errors.contractFiles?.message}
+            >
+              <Box w={"full"}>
+                <Controller
+                  name={"contractFiles"}
+                  control={control}
+                  render={({ field }) => (
+                    <FileInput
+                      accept={[".pdf", ".doc", ".docx"]}
+                      maxFiles={1}
+                      value={field.value}
+                      onFileAccept={(details) => {
+                        field.onChange(details.files);
+                      }}
+                    />
+                  )}
+                />
+              </Box>
+            </Field>
+
+            {/* SSO Username */}
+            <Field
+              label={"Username Akun SSO"}
+              invalid={Boolean(errors.ssoUsername)}
+              errorText={errors.ssoUsername?.message}
+            >
+              <Input
+                {...register("ssoUsername")}
+                placeholder={"Masukkan username SSO..."}
+                w={"full"}
               />
-            </Box>
-          </Field>
-        </VStack>
-      </Modal.Body>
+            </Field>
 
-      <Modal.Footer>
-        <VStack gap={"xs"} w={"full"}>
-          <Button
-            variant={"solid"}
-            primary
-            colorPalette={"green"}
-            disabled={isSubmitDisabled}
-            loading={approveMutation.isPending}
-            onClick={handleApprove}
-            w={"full"}
-          >
-            <AppIcon icon={CheckCircleIcon} />
-            {"Setujui & Terbitkan Kontrak"}
-          </Button>
+            {/* SSO Password */}
+            <Field
+              label={"Kata Sandi Akun SSO"}
+              invalid={Boolean(errors.ssoPassword)}
+              errorText={errors.ssoPassword?.message}
+            >
+              <PasswordInput
+                {...register("ssoPassword")}
+                placeholder={"Masukkan kata sandi SSO..."}
+                w={"full"}
+              />
+            </Field>
+          </VStack>
+        </Modal.Body>
 
-          <Button onClick={handleClose} w={"full"}>
-            {"Batal"}
-          </Button>
-        </VStack>
-      </Modal.Footer>
+        <Modal.Footer>
+          <VStack gap={"xs"} w={"full"}>
+            <Button
+              type={"submit"}
+              variant={"solid"}
+              primary={true}
+              colorPalette={"green"}
+              disabled={!isValid || approveMutation.isPending || isSubmitting}
+              loading={approveMutation.isPending || isSubmitting}
+              w={"full"}
+            >
+              <AppIcon icon={CheckCircleIcon} />
+              {"Setujui & Terbitkan Kontrak"}
+            </Button>
+
+            <Button type={"button"} onClick={handleClose} w={"full"}>
+              {"Batal"}
+            </Button>
+          </VStack>
+        </Modal.Footer>
+      </VStack>
     </Modal.Content>
   );
 };
-

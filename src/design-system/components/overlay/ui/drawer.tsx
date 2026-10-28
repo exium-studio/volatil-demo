@@ -6,7 +6,9 @@ import type { IconButtonProps } from "@/design-system/components/button/types/bu
 import { IconButton } from "@/design-system/components/button/ui/button";
 import { CloseButton } from "@/design-system/components/button/ui/close-button";
 import { AppIcon } from "@/design-system/components/icon/ui/app-icon";
+import type { VScrollContainerProps } from "@/design-system/components/layout/types/scroll-container.type";
 import { Box } from "@/design-system/components/layout/ui/box";
+import { VScrollContainer } from "@/design-system/components/layout/ui/scroll-container";
 import type {
   DrawerCloseButtonProps,
   DrawerContentProps,
@@ -27,7 +29,6 @@ import {
   useMemo,
   useRef,
   useState,
-  type TouchEvent,
 } from "react";
 
 const DrawerContext = createContext<DrawerContextValue | undefined>(undefined);
@@ -253,84 +254,104 @@ const DrawerContent = (props: DrawerContentProps) => {
   // Derived Values
   const zIndex = 1400 + modalKey.split(".").length;
 
-  // Handlers
-  function handleTouchStart(event: TouchEvent<HTMLDivElement>) {
-    const target = event.target as HTMLElement;
-
-    event.stopPropagation();
-
-    startYRef.current = event.touches[0].clientY;
-    startTimeRef.current = performance.now();
-
-    modeRef.current = null;
-    scrollElRef.current = getScrollableAncestor(target);
-  }
-
-  function handleTouchMove(event: TouchEvent<HTMLDivElement>) {
-    if (!contentRef.current) return;
-    if (!swipeToDismiss) return;
-
-    event.stopPropagation();
-
-    const currentY = event.touches[0].clientY;
-    const deltaY = currentY - startYRef.current;
-
-    if (modeRef.current === null) {
-      const scrollEl = scrollElRef.current;
-
-      const canScroll =
-        scrollEl !== null && scrollEl.scrollTop > 0 && deltaY > 0;
-
-      if (canScroll) {
-        modeRef.current = "scroll";
-        return;
-      }
-
-      modeRef.current = "drag";
-    }
-
-    if (modeRef.current === "scroll") return;
-
-    const offset = Math.max(0, deltaY);
-    offsetYRef.current = offset;
-
-    contentRef.current.style.transition = "none";
-    contentRef.current.style.transform = `translateY(${offset}px)`;
-  }
-
-  function handleTouchEnd() {
-    if (!contentRef.current) return;
-    if (!swipeToDismiss) return;
-
-    const elapsed = performance.now() - startTimeRef.current;
-    const velocity = elapsed > 0 ? offsetYRef.current / elapsed : 0;
-    const height = contentRef.current.offsetHeight;
-
-    const shouldClose = offsetYRef.current > height * 0.3 || velocity > 0.8;
-
-    contentRef.current.style.transition = "transform 200ms ease";
-
-    if (shouldClose) {
-      contentRef.current.style.transform = `translateY(${height}px)`;
-
-      window.setTimeout(() => {
-        back();
-      }, 200);
-    } else {
-      contentRef.current.style.transform = "translateY(0)";
-    }
-
-    offsetYRef.current = 0;
-    modeRef.current = null;
-    scrollElRef.current = null;
-  }
-
+  // Effects
   useEffect(() => {
     if (opened && contentRef.current) {
       contentRef.current.style.transform = "";
       contentRef.current.style.transition = "";
     }
   }, [opened]);
+
+  useEffect(() => {
+    const el = contentRef.current;
+    if (!el || !swipeToDismiss) return;
+
+    function onTouchStart(event: globalThis.TouchEvent) {
+      const target = event.target as HTMLElement;
+
+      event.stopPropagation();
+
+      startYRef.current = event.touches[0].clientY;
+      startTimeRef.current = performance.now();
+
+      modeRef.current = null;
+      scrollElRef.current = getScrollableAncestor(target);
+    }
+
+    function onTouchMove(event: globalThis.TouchEvent) {
+      if (!contentRef.current) return;
+
+      const currentY = event.touches[0].clientY;
+      const deltaY = currentY - startYRef.current;
+
+      if (modeRef.current === null) {
+        const scrollEl = scrollElRef.current;
+
+        const canScroll =
+          scrollEl !== null && scrollEl.scrollTop > 0 && deltaY > 0;
+
+        if (canScroll) {
+          modeRef.current = "scroll";
+          return;
+        }
+
+        if (deltaY > 0) {
+          modeRef.current = "drag";
+        }
+      }
+
+      if (modeRef.current === "drag") {
+        if (event.cancelable) {
+          event.preventDefault();
+        }
+        event.stopPropagation();
+
+        const offset = Math.max(0, deltaY);
+        offsetYRef.current = offset;
+
+        contentRef.current.style.transition = "none";
+        contentRef.current.style.transform = `translateY(${offset}px)`;
+      }
+    }
+
+    function onTouchEnd() {
+      if (!contentRef.current) return;
+
+      const elapsed = performance.now() - startTimeRef.current;
+      const velocity = elapsed > 0 ? offsetYRef.current / elapsed : 0;
+      const height = contentRef.current.offsetHeight;
+
+      const shouldClose = offsetYRef.current > height * 0.3 || velocity > 0.8;
+
+      contentRef.current.style.transition = "transform 200ms ease";
+
+      if (shouldClose) {
+        contentRef.current.style.transform = `translateY(${height}px)`;
+
+        window.setTimeout(() => {
+          back();
+        }, 200);
+      } else {
+        contentRef.current.style.transform = "translateY(0)";
+      }
+
+      offsetYRef.current = 0;
+      modeRef.current = null;
+      scrollElRef.current = null;
+    }
+
+    el.addEventListener("touchstart", onTouchStart, { passive: true });
+    el.addEventListener("touchmove", onTouchMove, { passive: false });
+    el.addEventListener("touchend", onTouchEnd, { passive: true });
+    el.addEventListener("touchcancel", onTouchEnd, { passive: true });
+
+    return () => {
+      el.removeEventListener("touchstart", onTouchStart);
+      el.removeEventListener("touchmove", onTouchMove);
+      el.removeEventListener("touchend", onTouchEnd);
+      el.removeEventListener("touchcancel", onTouchEnd);
+    };
+  }, [swipeToDismiss]);
 
   return (
     <Portal disabled={!portalled} container={portalRef}>
@@ -345,9 +366,7 @@ const DrawerContent = (props: DrawerContentProps) => {
           border={"1px solid"}
           borderColor={"border.subtle"}
           shadow={"md"}
-          onTouchStart={handleTouchStart}
-          onTouchMove={handleTouchMove}
-          onTouchEnd={handleTouchEnd}
+          overscrollBehavior={"contain"}
           data-placement={placement}
           {...(fullscreen || size === "full"
             ? { rounded: 0 }
@@ -447,12 +466,36 @@ const DrawerFullscreenButton = (props: IconButtonProps) => {
 };
 
 const DrawerHeader = (props: ChakraDrawer.HeaderProps) => {
-  return <ChakraDrawer.Header pos={"relative"} p={4} {...props} />;
+  return (
+    <ChakraDrawer.Header
+      justifyContent={"center"}
+      pos={"relative"}
+      minH={"headerH"}
+      py={4}
+      px={"78px"}
+      {...props}
+    />
+  );
 };
 
-const DrawerBody = (props: ChakraDrawer.BodyProps) => {
+const DrawerBody = (props: VScrollContainerProps) => {
+  // Props
+  const { children, ...restProps } = props;
+
   return (
-    <ChakraDrawer.Body display={"flex"} flexDir={"column"} p={4} {...props} />
+    <ChakraDrawer.Body
+      display={"flex"}
+      flexDir={"column"}
+      flex={1}
+      minH={0}
+      h={"full"}
+      overflow={"hidden"}
+      p={0}
+    >
+      <VScrollContainer p={4} {...restProps}>
+        {children}
+      </VScrollContainer>
+    </ChakraDrawer.Body>
   );
 };
 

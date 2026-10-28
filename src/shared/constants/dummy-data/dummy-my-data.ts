@@ -68,7 +68,7 @@ export const dummyMitraMyDataItems: MyDataItem[] = [
     wfsUrl: "/api/proxy/wfs?layerId=testing_workspace:TEST_BIDANG_DENPASAR",
     wmsUrl: "/api/proxy/wms?layerId=testing_workspace:TEST_BIDANG_DENPASAR",
     externalWmsUrl: null,
-    status: "provisioning",
+    status: "processing",
     expiresAt: "2026-10-03T10:25:00.000Z",
     bbox: [115.2, -8.65, 115.25, -8.6],
     invoiceUrl: "https://volatil-be.exium.web.id/invoices/INV-2026-0818-004.pdf",
@@ -83,7 +83,7 @@ export const dummyMitraMyDataItems: MyDataItem[] = [
     wfsUrl: "/api/proxy/wfs?layerId=testing_workspace:TEST_KAWASAN_SANUR",
     wmsUrl: "/api/proxy/wms?layerId=testing_workspace:TEST_KAWASAN_SANUR",
     externalWmsUrl: null,
-    status: "queued",
+    status: "processing",
     expiresAt: "2026-10-03T10:25:00.000Z",
     bbox: [115.24, -8.7, 115.28, -8.66],
     invoiceUrl: null,
@@ -100,7 +100,7 @@ export const dummyMitraMyDataItems: MyDataItem[] = [
     externalWmsUrl: null,
     wfsTypeName: "testing_workspace:TEST_RDTR_KUTA",
     wmsLayers: "testing_workspace:TEST_RDTR_KUTA",
-    status: "failed",
+    status: "transaction_failed",
     expiresAt: "2026-01-01T00:00:00.000Z",
     bbox: [115.15, -8.75, 115.2, -8.68],
     invoiceUrl: null,
@@ -111,7 +111,7 @@ export const dummyMitraMyDataItems: MyDataItem[] = [
 
 export const dummyMitraWorkspaces: MitraWorkspaceItem[] = [
   {
-    id: "ws_ord_20260830_001",
+    id: "22a298d6-e948-49a7-a8ac-4374c3f3f063",
     workspaceName: "ws_ord_20260830_001",
     orderId: "ord-2026-0830-001",
     orderNumber: "ORD-20260830-001",
@@ -124,6 +124,7 @@ export const dummyMitraWorkspaces: MitraWorkspaceItem[] = [
       "https://geoportal.atrbpn.go.id/interop/wfs?workspace=ws_ord_20260830_001",
     qgisWmsUrl:
       "https://geoportal.atrbpn.go.id/interop/wms?workspace=ws_ord_20260830_001",
+    bbox: [115.083839, -8.850039, 115.251534, -8.239441],
     layersCount: 2,
     layers: [dummyMitraMyDataItems[0], dummyMitraMyDataItems[1]],
     createdAt: "2026-08-30T09:15:00.000Z",
@@ -133,6 +134,32 @@ export const dummyMitraWorkspaces: MitraWorkspaceItem[] = [
     tteInvoiceUrl:
       "https://volatil-be.exium.web.id/invoices/TTE-INV-2026-0825-001.pdf",
     tte: true,
+    selectionType: "draw_aoi",
+    kawasanCoverageHa: 25.5,
+    bidangCoverageCount: 0,
+    updatePeriods: [
+      {
+        unit: "minutes",
+        jobId: null,
+        offset: 15,
+        targetAt: "2026-10-24T06:52:58.510Z",
+        completed: false,
+        milestone: 1,
+        executedAt: null,
+      },
+    ],
+    aoiPolygon: {
+      type: "Polygon",
+      coordinates: [
+        [
+          [115.083839, -8.850039],
+          [115.251534, -8.850039],
+          [115.251534, -8.239441],
+          [115.083839, -8.239441],
+          [115.083839, -8.850039],
+        ],
+      ],
+    },
   },
   {
     id: "ws_ord_20260829_003",
@@ -148,6 +175,7 @@ export const dummyMitraWorkspaces: MitraWorkspaceItem[] = [
       "https://geoportal.atrbpn.go.id/interop/wfs?workspace=ws_ord_20260829_003",
     qgisWmsUrl:
       "https://geoportal.atrbpn.go.id/interop/wms?workspace=ws_ord_20260829_003",
+    bbox: [115.134102, -8.685009, 115.183136, -8.622203],
     layersCount: 1,
     layers: [dummyMitraMyDataItems[2]],
     createdAt: "2026-08-29T14:30:00.000Z",
@@ -157,6 +185,8 @@ export const dummyMitraWorkspaces: MitraWorkspaceItem[] = [
     tteInvoiceUrl:
       "https://volatil-be.exium.web.id/invoices/TTE-INV-2026-0820-003.pdf",
     tte: true,
+    bidangCoverageCount: 150,
+    kawasanCoverageHa: 0,
   },
   {
     id: "ws_ord_20260818_004",
@@ -165,8 +195,9 @@ export const dummyMitraWorkspaces: MitraWorkspaceItem[] = [
     orderNumber: "ORD-20260818-004",
     transactionNumber: "TRX-20260818-004",
     userId: 42,
-    status: "provisioning",
+    status: "processing",
     wmsUrl: null,
+    bbox: [115.2, -8.65, 115.25, -8.6],
     layersCount: 1,
     layers: [dummyMitraMyDataItems[3]],
     createdAt: "2026-08-18T10:25:00.000Z",

@@ -10,9 +10,13 @@ import type {
 export type { OrderStatus, TransactionStatus };
 
 export type InternalTransactionStatistics = {
-  activeOrders: number;
-  settledTransactions: number;
+  revenueWmsBidang: number;
+  revenueWmsKawasan: number;
   netWorth: number;
+  wmsPotential: number;
+  wmsProcessing: number;
+  wmsActive: number;
+  wmsExpired: number;
 };
 
 export type InternalTransactionMitra = {
@@ -45,6 +49,10 @@ export type InternalTransactionItem = {
   orderStatus: OrderStatus;
   selectionType: SelectionType;
   totalAmount: number;
+  coverageHa?: number;
+  kawasanCoverageHa?: number | null;
+  featuresCount?: number | null;
+  bidangCoverageCount?: number | null;
   mitra: InternalTransactionMitra;
   createdAt: string;
   paidAt?: string;

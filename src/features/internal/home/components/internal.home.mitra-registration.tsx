@@ -15,7 +15,9 @@ import { Span } from "@/design-system/components/typography/ui/span";
 import { FormatNumber } from "@/design-system/components/utilities/ui/fornat-number";
 import { useInternalMitraRegistrationQuery } from "@/features/internal/home/hooks/use-internal-home.query";
 import type { InternalHomeMitraRegistrationProps } from "@/features/internal/home/types/internal.home.mitra-registration.type";
+import type { MitraRegistrationStatus } from "@/features/internal/mitra-registration/types/mitra-registration.type";
 import { Chart, useChart } from "@chakra-ui/charts";
+import { useNavigate } from "@tanstack/react-router";
 import { Bar, BarChart, CartesianGrid, Cell, XAxis, YAxis } from "recharts";
 
 export const InternalHomeMitraRegistration = (
@@ -35,22 +37,38 @@ const InternalHomeMitraRegistrationContent = () => {
     return <Skeleton minH={"240px"} w={"full"} />;
   }
 
-  return <InternalHomeMitraRegistrationChart mitraRegistration={mitraRegistration} />;
+  return (
+    <InternalHomeMitraRegistrationChart mitraRegistration={mitraRegistration} />
+  );
 };
 
 const InternalHomeMitraRegistrationChart = (props: {
   mitraRegistration: { active: number; pendingVerification: number };
 }) => {
+  // Hooks
+  const navigate = useNavigate();
+
+  // Props
   const { mitraRegistration } = props;
+
+  // Handlers
+  const handleFilterMitra = (status: MitraRegistrationStatus) => {
+    void navigate({
+      to: "/internal/mitra-registration",
+      search: { status },
+    });
+  };
 
   const chartData = [
     {
-      status: "Mitra Aktif",
+      status: "Mitra Terverifikasi",
+      statusKey: "verified" as MitraRegistrationStatus,
       count: mitraRegistration.active,
       color: "teal.solid",
     },
     {
       status: "Pending Verifikasi",
+      statusKey: "pending_verification" as MitraRegistrationStatus,
       count: mitraRegistration.pendingVerification,
       color: "orange.solid",
     },
@@ -63,94 +81,112 @@ const InternalHomeMitraRegistrationChart = (props: {
 
   return (
     <Container.Body justify={"space-between"} gap={"md"} py={"md"}>
-        <HStack justify={"space-between"} align={"center"} px={"md"}>
-          <HStack gap={"xs"} align={"center"}>
-            <Heading>{"Registrasi Mitra"}</Heading>
-            <InfoTip
-              variant={"icon"}
-              appIconProps={{ size: "xs", color: "fg.subtle" }}
+      <HStack justify={"space-between"} align={"center"} px={"md"}>
+        <HStack gap={"xs"} align={"center"}>
+          <Heading>{"Registrasi Mitra"}</Heading>
+          <InfoTip
+            variant={"icon"}
+            appIconProps={{ size: "xs", color: "fg.subtle" }}
+          >
+            {
+              "Jumlah mitra aktif dan pengajuan pendaftaran yang menunggu verifikasi"
+            }
+          </InfoTip>
+        </HStack>
+      </HStack>
+
+      <VStack align={"stretch"} gap={"xs"} px={"md"} mt={"lg"}>
+        <Chart.Root maxH={"150px"} chart={chart}>
+          <BarChart
+            data={chart.data}
+            responsive
+            margin={{ top: 10, right: 10, left: -20, bottom: 0 }}
+          >
+            <CartesianGrid
+              stroke={chart.color("border.muted")}
+              vertical={false}
+            />
+            <XAxis
+              dataKey={chart.key("status")}
+              axisLine={false}
+              stroke={chart.color("border")}
+              tickLine={false}
+              tickMargin={10}
+            />
+            <YAxis
+              axisLine={false}
+              tickLine={false}
+              stroke={chart.color("border")}
+              tickMargin={10}
+              allowDecimals={false}
+            />
+            <ChartTooltip cursor={false} content={<ChartTooltipContent />} />
+            <Bar
+              isAnimationActive={false}
+              dataKey={chart.key("count")}
+              name={String(chart.series[0]?.label ?? "Jumlah")}
+              radius={[4, 4, 0, 0]}
+              barSize={32}
             >
-              {
-                "Jumlah mitra aktif dan pengajuan pendaftaran yang menunggu verifikasi"
-              }
-            </InfoTip>
+              {chartData.map((item) => (
+                <Cell
+                  key={item.status}
+                  fill={chart.color(item.color)}
+                  cursor={"pointer"}
+                  onClick={() => handleFilterMitra(item.statusKey)}
+                />
+              ))}
+            </Bar>
+          </BarChart>
+        </Chart.Root>
+
+        {/* Legend */}
+        <HStack
+          gapX={"md"}
+          gapY={"sm"}
+          justify={"center"}
+          wrap={"wrap"}
+          mt={"xs"}
+        >
+          <HStack
+            gap={"xs"}
+            align={"center"}
+            cursor={"pointer"}
+            onClick={() => handleFilterMitra("verified")}
+            _hover={{ opacity: 0.8 }}
+          >
+            <Box w={"8px"} h={"8px"} rounded={"full"} bg={"teal.solid"} />
+            <P fontSize={"xs"} color={"fg.subtle"}>
+              {"Terverifikasi:"}
+            </P>
+            <P fontSize={"xs"} fontWeight={"semibold"}>
+              <FormatNumber value={mitraRegistration.active} />
+              <Span ml={1} color={"fg.subtle"} fontWeight={"normal"}>
+                {"Mitra"}
+              </Span>
+            </P>
+          </HStack>
+
+          <HStack
+            gap={"xs"}
+            align={"center"}
+            cursor={"pointer"}
+            onClick={() => handleFilterMitra("pending_verification")}
+            _hover={{ opacity: 0.8 }}
+          >
+            <Box w={"8px"} h={"8px"} rounded={"full"} bg={"orange.solid"} />
+            <P fontSize={"xs"} color={"fg.subtle"}>
+              {"Pending:"}
+            </P>
+            <P fontSize={"xs"} fontWeight={"semibold"}>
+              <FormatNumber value={mitraRegistration.pendingVerification} />
+              <Span ml={1} color={"fg.subtle"} fontWeight={"normal"}>
+                {"Mitra"}
+              </Span>
+            </P>
           </HStack>
         </HStack>
-
-        <VStack align={"stretch"} gap={"xs"} px={"md"}>
-          <Chart.Root maxH={"150px"} chart={chart}>
-            <BarChart
-              data={chart.data}
-              responsive
-              margin={{ top: 10, right: 10, left: -20, bottom: 0 }}
-            >
-              <CartesianGrid
-                stroke={chart.color("border.muted")}
-                vertical={false}
-              />
-              <XAxis
-                dataKey={chart.key("status")}
-                axisLine={false}
-                stroke={chart.color("border")}
-                tickLine={false}
-                tickMargin={10}
-              />
-              <YAxis
-                axisLine={false}
-                tickLine={false}
-                stroke={chart.color("border")}
-                tickMargin={10}
-                allowDecimals={false}
-              />
-              <ChartTooltip cursor={false} content={<ChartTooltipContent />} />
-              <Bar
-                isAnimationActive={false}
-                dataKey={chart.key("count")}
-                radius={[4, 4, 0, 0]}
-                barSize={32}
-              >
-                {chartData.map((item) => (
-                  <Cell key={item.status} fill={chart.color(item.color)} />
-                ))}
-              </Bar>
-            </BarChart>
-          </Chart.Root>
-
-          {/* Legend */}
-          <HStack
-            gapX={"md"}
-            gapY={"sm"}
-            justify={"center"}
-            wrap={"wrap"}
-            mt={"xs"}
-          >
-            <HStack gap={"xs"} align={"center"}>
-              <Box w={"8px"} h={"8px"} rounded={"full"} bg={"teal.solid"} />
-              <P fontSize={"xs"} color={"fg.subtle"}>
-                {"Aktif:"}
-              </P>
-              <P fontSize={"xs"} fontWeight={"semibold"}>
-                <FormatNumber value={mitraRegistration.active} />
-                <Span ml={1} color={"fg.subtle"} fontWeight={"normal"}>
-                  {"Mitra"}
-                </Span>
-              </P>
-            </HStack>
-
-            <HStack gap={"xs"} align={"center"}>
-              <Box w={"8px"} h={"8px"} rounded={"full"} bg={"orange.solid"} />
-              <P fontSize={"xs"} color={"fg.subtle"}>
-                {"Pending:"}
-              </P>
-              <P fontSize={"xs"} fontWeight={"semibold"}>
-                <FormatNumber value={mitraRegistration.pendingVerification} />
-                <Span ml={1} color={"fg.subtle"} fontWeight={"normal"}>
-                  {"Mitra"}
-                </Span>
-              </P>
-            </HStack>
-          </HStack>
-        </VStack>
-      </Container.Body>
+      </VStack>
+    </Container.Body>
   );
 };

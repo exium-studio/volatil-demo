@@ -28,5 +28,7 @@ export type MapBaseMapState = {
   is3D: boolean;
   setIs3D: (is3D: boolean) => void;
   toggle3D: () => void;
+  opacity: number;
+  setOpacity: (opacity: number) => void;
 };
 

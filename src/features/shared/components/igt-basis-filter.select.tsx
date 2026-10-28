@@ -4,11 +4,10 @@ import type { FocusSelectOption } from "@/design-system/components/input/types/f
 import { FocusSelectInput } from "@/design-system/components/input/ui/focus-select";
 import type { IgtBasisFilterSelectProps } from "@/features/shared/types/igt-basis-filter-select.type";
 
-export const DEFAULT_IGT_BASIS_FILTER_OPTIONS: FocusSelectOption[] = [
-  { value: "all", label: "Semua Basis" },
-  { value: "bidang", label: "Bidang" },
-  { value: "kawasan", label: "Kawasan" },
-];
+import { IGT_BASIS_FILTER_OPTIONS } from "@/features/shared/constants/volatil.ssot-map";
+
+export const DEFAULT_IGT_BASIS_FILTER_OPTIONS: FocusSelectOption[] =
+  IGT_BASIS_FILTER_OPTIONS;
 
 export const IgtBasisFilterSelect = (props: IgtBasisFilterSelectProps) => {
   // Props
@@ -22,6 +21,8 @@ export const IgtBasisFilterSelect = (props: IgtBasisFilterSelectProps) => {
     w = "150px",
     disabled = false,
     clearable = false,
+    isLoading = false,
+    isFetching = false,
   } = props;
 
   return (
@@ -34,6 +35,8 @@ export const IgtBasisFilterSelect = (props: IgtBasisFilterSelectProps) => {
       w={w}
       disabled={disabled}
       clearable={clearable}
+      isLoading={isLoading}
+      isFetching={isFetching}
     />
   );
 };

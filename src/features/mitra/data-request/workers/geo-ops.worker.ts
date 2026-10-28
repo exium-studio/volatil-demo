@@ -5,6 +5,7 @@ import type {
   GeoOpsWorkerResponse,
 } from "@/features/mitra/data-request/types/geo-ops.worker.type";
 import { clipAndUnionKawasanFeatures } from "@/features/mitra/data-request/utils/clip-and-union-kawasan";
+import { filterBidangAoiFeatures } from "@/features/mitra/data-request/utils/filter-bidang-aoi";
 import { unionGeoJsonPolygons } from "@/features/mitra/data-request/utils/union-geojson-polygons";
 
 self.onmessage = (e: MessageEvent<GeoOpsWorkerRequest>) => {
@@ -45,6 +46,22 @@ self.onmessage = (e: MessageEvent<GeoOpsWorkerRequest>) => {
         id: message.id,
         ok: true,
         type: "UNION_GEOJSON_POLYGONS",
+        data: result,
+      };
+      self.postMessage(response);
+      return;
+    }
+
+    if (message.type === "FILTER_BIDANG_AOI") {
+      const result = filterBidangAoiFeatures(
+        message.payload.rawFeatures,
+        message.payload.aoiPolygon,
+      );
+
+      const response: GeoOpsWorkerResponse = {
+        id: message.id,
+        ok: true,
+        type: "FILTER_BIDANG_AOI",
         data: result,
       };
       self.postMessage(response);

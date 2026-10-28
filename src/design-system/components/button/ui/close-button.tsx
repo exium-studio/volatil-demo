@@ -20,3 +20,15 @@ export const CloseButton = forwardRef<HTMLButtonElement, IconButtonProps>(
     );
   },
 );
+
+export const HeaderCloseButton = ({ ...props }: IconButtonProps) => {
+  return (
+    <CloseButton
+      size={"2xs"}
+      variant={"subtle"}
+      bg={"an1"}
+      rounded={"full"}
+      {...props}
+    />
+  );
+};

@@ -1,9 +1,11 @@
+// src/features/mitra/data-request/components/mitra.data-request.draw-aoi.tabs-content.tsx
+
 import {
   Button,
   IconButton,
 } from "@/design-system/components/button/ui/button";
 import { Tabs } from "@/design-system/components/disclosure/ui/tabs";
-import { NoDataState } from "@/design-system/components/feedback/ui/state.no-data";
+import { StateNoData } from "@/design-system/components/feedback/ui/state.no-data";
 import { AppIcon } from "@/design-system/components/icon/ui/app-icon";
 import { Switch } from "@/design-system/components/input/ui/switch";
 import { HStack, VStack } from "@/design-system/components/layout/ui/flex-box";
@@ -14,6 +16,7 @@ import { P } from "@/design-system/components/typography/ui/p";
 import { useThemeStore } from "@/design-system/stores/theme-store";
 import { useCartAoiCoverageMap } from "@/features/mitra/cart/hooks/use-cart-aoi-coverage-map";
 import { MitraDataRequestIgtLayerDataView } from "@/features/mitra/data-request/components/mitra.data-request.igt-layer.data-view";
+import { useBidangAoiFeatures } from "@/features/mitra/data-request/hooks/use-bidang-aoi-features";
 import { useMitraDrawAoi } from "@/features/mitra/data-request/hooks/use-mitra-draw-aoi";
 import { useSelectedIgtLayer } from "@/features/mitra/data-request/hooks/use-selected-igt-layer";
 import { useMitraDataRequestStore } from "@/features/mitra/data-request/stores/mitra.data-request.store";
@@ -82,7 +85,7 @@ export const MitraDataRequestDrawAoiTabsContent = memo(
               isVisible={hasStartedDrawing}
             />
 
-            <NoDataState
+            <StateNoData
               description={
                 "Tentukan area spesifik pada peta untuk mengambil data IGT."
               }
@@ -133,7 +136,7 @@ export const MitraDataRequestDrawAoiTabsContent = memo(
                   </Button>
                 </HStack>
               )}
-            </NoDataState>
+            </StateNoData>
 
             <GuideAlert
               isLoading={isLoading}
@@ -248,17 +251,27 @@ const DrawAoiAttributeList = memo((props: DrawAoiAttributeViewProps) => {
   const isCoverageVisible = useMitraDataRequestStore(
     (state) => state.isDrawCoverageVisible,
   );
+  const isBidangVisible = useMitraDataRequestStore(
+    (state) => state.isDrawBidangVisible,
+  );
   const calculationResult = useMitraDataRequestStore(
     (state) => state.calculationResults["draw_aoi"] ?? state.result,
   );
 
-  // Keep AOI and Coverage layers mounted across both layer list and attribute table view
+  const bidangQueryResult = useBidangAoiFeatures({
+    aoiPolygon: confirmedPolygon,
+    enabled: Boolean(isActive && confirmedPolygon && isBidangVisible),
+  });
+
+  // Keep AOI, Coverage, and Bidang layers mounted across both layer list and attribute table view
   useCartAoiCoverageMap(map, {
     aoiPolygon: confirmedPolygon,
-    coveragePolygon: calculationResult?.coveragePolygon,
+    kawasanCoveragePolygon: calculationResult?.kawasanCoveragePolygon,
+    bidangFeatures: bidangQueryResult.features,
     selectionType: "draw_aoi",
     isAoiVisible,
     isCoverageVisible,
+    isBidangVisible,
     isActive,
   });
 
@@ -276,7 +289,7 @@ const DrawAoiAttributeList = memo((props: DrawAoiAttributeViewProps) => {
       <VStack
         flex={1}
         gap={0}
-        overflowY={"auto"}
+        overflow={"hidden"}
         bg={"bg.canvas"}
         position={"relative"}
         w={"full"}
@@ -288,6 +301,7 @@ const DrawAoiAttributeList = memo((props: DrawAoiAttributeViewProps) => {
           p={"md"}
           bg={"bg.body"}
           w={"full"}
+          flexShrink={0}
         >
           <HStack
             wrap={"wrap"}
@@ -297,17 +311,15 @@ const DrawAoiAttributeList = memo((props: DrawAoiAttributeViewProps) => {
             w={"full"}
           >
             <VStack align={"start"} gap={0}>
-              <P fontWeight={"medium"} fontSize={"md"}>
-                {"AOI Gambar"}
-              </P>
+              <P fontWeight={"medium"}>{"AOI Gambar"}</P>
               {aoiAreaHa > 0 && (
-                <P fontSize={"xs"} color={"fg.muted"}>
+                <P fontSize={"sm"} color={"fg.muted"}>
                   {`Luas AOI: ${formatNumber(aoiAreaHa, { maximumFractionDigits: 2 })} ha`}
                 </P>
               )}
             </VStack>
 
-            <HStack align={"center"} gap={"sm"}>
+            <HStack align={"center"} gap={"xs"}>
               {confirmedPolygon && map && (
                 <>
                   <Tooltip
@@ -352,7 +364,7 @@ const DrawAoiAttributeList = memo((props: DrawAoiAttributeViewProps) => {
           </HStack>
         </VStack>
 
-        <Separator borderColor={"bg.canvas"} />
+        <Separator borderColor={"bg.canvas"} flexShrink={0} />
 
         <MitraDataRequestIgtLayerDataView
           cqlFilter={aoiCqlFilter}

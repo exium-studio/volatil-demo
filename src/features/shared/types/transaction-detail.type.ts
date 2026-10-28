@@ -21,7 +21,8 @@ export type SharedTransactionOrderItem = {
   id: string;
   sourceLayerId: string;
   sourceLayerTitle: string;
-  spatialBasis: IgtBasisType;
+  igtBasis?: IgtBasisType;
+  spatialBasis?: IgtBasisType;
   featuresCount?: number;
   snapshotFeaturesCount?: number;
   areaHa?: number;
@@ -44,6 +45,10 @@ export type SharedTransactionRecord = {
   orderStatus?: OrderStatus;
   selectionType: SelectionType;
   totalAmount: number;
+  coverageHa?: number;
+  kawasanCoverageHa?: number | null;
+  featuresCount?: number | null;
+  bidangCoverageCount?: number | null;
   createdAt: string;
   paidAt?: string;
   expiredAt?: string;

@@ -4,9 +4,9 @@ import { Button } from "@/design-system/components/button/ui/button";
 import type { FormattedListItem } from "@/design-system/components/data-display/types/data-view-table.type";
 import { DEFAULT_PAGE_SIZE_OPTIONS } from "@/design-system/components/data-display/ui/data-view-page-size";
 import { Skeleton } from "@/design-system/components/feedback/ui/skeleton";
-import { NoDataState } from "@/design-system/components/feedback/ui/state.no-data";
-import { NoResultState } from "@/design-system/components/feedback/ui/state.no-result";
-import { RetryState } from "@/design-system/components/feedback/ui/state.retry";
+import { StateNoData } from "@/design-system/components/feedback/ui/state.no-data";
+import { StateNoResult } from "@/design-system/components/feedback/ui/state.no-result";
+import { StateRetry } from "@/design-system/components/feedback/ui/state.retry";
 import { AppIcon } from "@/design-system/components/icon/ui/app-icon";
 import { Box } from "@/design-system/components/layout/ui/box";
 import { VStack } from "@/design-system/components/layout/ui/flex-box";
@@ -100,7 +100,7 @@ export const MitraCartDataView = (props: MitraCartTableProps) => {
       align={"stretch"}
       {...restProps}
     >
-      {/* If cart is completely empty, show NoDataState immediately */}
+      {/* If cart is completely empty, show StateNoData immediately */}
       {!hasLocalIds && (
         <Box
           flex={1}
@@ -111,7 +111,7 @@ export const MitraCartDataView = (props: MitraCartTableProps) => {
           py={"md"}
           bg={"bg.body"}
         >
-          <NoDataState
+          <StateNoData
             icon={ShoppingCartIcon}
             title={"Keranjang kosong"}
             description={"Tambahkan data IGT dari halaman Permintaan Data"}
@@ -135,7 +135,7 @@ export const MitraCartDataView = (props: MitraCartTableProps) => {
               py={"md"}
               bg={"bg.body"}
             >
-              <RetryState
+              <StateRetry
                 title={"Gagal Memuat Item Keranjang"}
                 description={
                   error?.message ||
@@ -158,7 +158,7 @@ export const MitraCartDataView = (props: MitraCartTableProps) => {
               py={"md"}
               bg={"bg.body"}
             >
-              <NoResultState />
+              <StateNoResult />
             </Box>
           )}
 

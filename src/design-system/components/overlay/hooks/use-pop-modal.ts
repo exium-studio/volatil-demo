@@ -24,7 +24,7 @@ export function usePopModal(options: UsePopModalOptions) {
   // param changes, not on any other search param mutation
   const activeModalKey = useSearch({
     strict: false,
-    select: (s: Record<string, string | undefined>) => s.activeModalKey,
+    select: (s) => (s as Record<string, unknown>)?.activeModalKey as string | undefined,
   });
 
   const navigate = useNavigate();

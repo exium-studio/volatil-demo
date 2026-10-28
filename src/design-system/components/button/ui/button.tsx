@@ -8,12 +8,12 @@ import type {
 } from "@/design-system/components/button/types/button.type";
 import { Tooltip } from "@/design-system/components/overlay/ui/tooltip";
 import { useThemeStore } from "@/design-system/stores/theme-store";
+import type { ButtonProps as ChakraButtonProps } from "@chakra-ui/react";
 import {
   Button as ChakraButton,
   IconButton as ChakraIconButton,
   Span,
 } from "@chakra-ui/react";
-import type { ButtonProps as ChakraButtonProps } from "@chakra-ui/react";
 import { Children, forwardRef, useMemo } from "react";
 
 export const Button = forwardRef<HTMLButtonElement, ButtonProps>(
@@ -22,7 +22,7 @@ export const Button = forwardRef<HTMLButtonElement, ButtonProps>(
     const {
       primary,
       variant,
-      clicky = true,
+      // clicky = true,
       colorPalette,
       lineClamp = 1,
       children,
@@ -56,6 +56,7 @@ export const Button = forwardRef<HTMLButtonElement, ButtonProps>(
               fontSize={restProps?.fontSize}
               lineHeight={"normal"}
               lineClamp={clampVal > 0 ? clampVal : undefined}
+              wordBreak={"break-all"}
             >
               {combinedText}
             </Span>
@@ -109,9 +110,9 @@ export const Button = forwardRef<HTMLButtonElement, ButtonProps>(
         minW={minW}
         maxW={maxW}
         overflow={"hidden"}
-        _active={{
-          transform: clicky ? "translateY(2px)" : "none",
-        }}
+        // _active={{
+        //   transform: clicky ? "translateY(2px)" : "none",
+        // }}
         transition={"150ms"}
         {...restProps}
       >

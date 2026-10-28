@@ -5,9 +5,9 @@ import { DataViewFooter } from "@/design-system/components/data-display/ui/data-
 import { DEFAULT_PAGE_SIZE_OPTIONS } from "@/design-system/components/data-display/ui/data-view-page-size";
 import { DataViewTable } from "@/design-system/components/data-display/ui/data-view-table";
 import { Skeleton } from "@/design-system/components/feedback/ui/skeleton";
-import { NoDataState } from "@/design-system/components/feedback/ui/state.no-data";
-import { NoResultState } from "@/design-system/components/feedback/ui/state.no-result";
-import { RetryState } from "@/design-system/components/feedback/ui/state.retry";
+import { StateNoData } from "@/design-system/components/feedback/ui/state.no-data";
+import { StateNoResult } from "@/design-system/components/feedback/ui/state.no-result";
+import { StateRetry } from "@/design-system/components/feedback/ui/state.retry";
 import { TopBarLoader } from "@/design-system/components/feedback/ui/top-bar-loader";
 import { SearchInput } from "@/design-system/components/input/ui/search-input";
 import { Center } from "@/design-system/components/layout/ui/center";
@@ -70,6 +70,18 @@ export const InternalPricingDataView = () => {
   // Derived Values
   const preferredTimezone = useMemo(() => getPreferredUserTimezone(), []);
 
+  const isSearching = Boolean(params.search?.trim() || params.spatialBasis);
+  const searchQuery = useMemo(() => {
+    const parts: string[] = [];
+    if (params.search?.trim()) {
+      parts.push(params.search.trim());
+    }
+    if (params.spatialBasis) {
+      parts.push(params.spatialBasis === "bidang" ? "Bidang" : "Kawasan");
+    }
+    return parts.length > 0 ? parts.join(", ") : "...";
+  }, [params.search, params.spatialBasis]);
+
   const filteredItems = useMemo(() => {
     if (!params.search) return rawItems;
     const lower = params.search.toLowerCase();
@@ -114,24 +126,28 @@ export const InternalPricingDataView = () => {
             align: "start" as const,
           },
           {
-            value: item.spatialBasis,
-            td: <IgtBasisBadge>{item.spatialBasis}</IgtBasisBadge>,
+            value: item.igtBasis ?? item.spatialBasis,
+            td: (
+              <IgtBasisBadge>
+                {item.igtBasis ?? item.spatialBasis ?? "kawasan"}
+              </IgtBasisBadge>
+            ),
             align: "start" as const,
           },
           {
-            value: item.unitPrice,
+            value: item.price ?? item.unitPrice ?? 0,
             td: (
               <VStack align={"end"} gap={0}>
                 <P color={"teal.fg"}>
                   <FormatNumber
-                    value={item.unitPrice}
+                    value={item.price ?? item.unitPrice ?? 0}
                     style={"currency"}
                     currency={"IDR"}
                     maximumFractionDigits={0}
                   />
                 </P>
                 <P fontSize={"xs"} color={"fg.subtle"}>
-                  {item.unitLabel}
+                  {`per ${item.unit ?? (item.igtBasis === "bidang" ? "bidang" : "ha")}`}
                 </P>
               </VStack>
             ),
@@ -258,7 +274,7 @@ export const InternalPricingDataView = () => {
             <Skeleton p={"md"} rounded={0} h={"320px"} />
           ) : isError ? (
             <Center flex={1} w={"full"} py={"xl"} bg={"bg.body"}>
-              <RetryState
+              <StateRetry
                 title={"Gagal Memuat Tarif PNBP"}
                 description={
                   error?.message ||
@@ -271,15 +287,15 @@ export const InternalPricingDataView = () => {
             </Center>
           ) : isEmptyArray(filteredItems) ? (
             <Center flex={1} w={"full"} py={"xl"} bg={"bg.body"}>
-              {params.search || params.spatialBasis ? (
-                <NoResultState
-                  query={params.search || params.spatialBasis}
+              {isSearching ? (
+                <StateNoResult
+                  query={searchQuery}
                   description={
                     "Tidak ada komponen tarif yang sesuai dengan filter atau kata kunci pencarian Anda."
                   }
                 />
               ) : (
-                <NoDataState
+                <StateNoData
                   title={"Belum Ada Data Tarif"}
                   description={
                     "Belum ada data tarif PNBP terdaftar pada sistem."

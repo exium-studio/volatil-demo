@@ -1,17 +1,99 @@
-# Design System Reference Guide
+---
+trigger: always_on
+---
 
-Dokumen ini berisi panduan lengkap komponen, props, hooks, konstanta, dan _code style pattern_ yang berlaku di dalam `@/design-system/`.
+# Design System Reference
+
+Panduan komponen, hooks, konstanta, dan pola kode di `@/design-system/`.
+
+Semua aturan di Bagian 1 bersifat wajib. Jika sebuah contoh kode bertentangan dengan aturan, aturan yang berlaku.
 
 ---
 
-## 1. Design Tokens & Styling Constants
+## 1. Aturan Wajib
 
-### Imports: `@/design-system/constants/styles`
+### 1.1 Gaya kode
+
+- Semua nilai prop dibungkus curly bracket, apa pun tipenya: `value={"foo"}`, `primary={true}`. Bukan `value="foo"` atau `primary`.
+- Import di dalam `src/` memakai alias `@/`.
+- Beri komentar section di komponen: `// Contexts`, `// States`, `// Derived Values`, `// Hooks (Queries & Mutations)`, dan seterusnya.
+- Cek array kosong dengan `isEmptyArray(arr)` dari `@/shared/utils/data/array`. Dilarang memakai `.length === 0`.
+- Jangan menulis prop yang nilainya sama dengan default komponen. Contoh: `VStack` dan `HStack` sudah default `align={"stretch"}` dan `gap={0}`. Sebelum memakai atau me-refactor komponen, baca implementasinya di `@/design-system/` untuk mengetahui default-nya.
+
+### 1.2 Render kondisional
+
+- Di dalam JSX hanya boleh `&&` atau early return. Ternary (`? :`) dilarang untuk merender elemen.
+- Ternary hanya boleh untuk menentukan nilai variabel atau prop primitif di luar JSX.
+
+```tsx
+// Boleh: nilai variabel
+const color = isKawasan ? "orange" : "blue";
+
+// Boleh: logical AND
+{
+  isLoading && <Skeleton />;
+}
+{
+  !isLoading && isEmpty && <NoDataState />;
+}
+{
+  !isLoading && !isEmpty && <DataView />;
+}
+
+// Boleh: early return
+if (isLoading) return <Skeleton />;
+```
+
+### 1.3 Ukuran dan tipografi
+
+- Jangan mengecilkan `size` (`xs` atau `sm`) pada `Button`, `IconButton`, `AppIcon`, dan `Badge` kecuali diinstruksikan eksplisit. Pakai ukuran default.
+- Teks biasa memakai `fontSize` default (`md`), jadi jangan menulis `fontSize={"md"}`. `sm` hanya bila perlu untuk hierarki tertentu, `xs` sangat jarang.
+- Sel atau kolom yang berisi `Badge` memakai alignment default (`"start"`), jangan di-center.
+- Semua input (`Input`, `NumberInput`, `SearchInput`, `Select`, `Field`, dan sejenisnya) selalu `w={"full"}` di dalam container atau form.
+
+### 1.4 Teks dan placeholder
+
+- Jangan pakai prop `truncate`. Pakai `ClampedP` untuk memotong teks satu atau banyak baris.
+- Jangan beri prefix "contoh:" di `placeholder` maupun `helperText`. Tulis nilainya langsung: `placeholder={"admin_spatial"}`.
+
+```tsx
+import { ClampedP } from "@/design-system/components/typography/ui/p";
+```
+
+### 1.5 Form
+
+- Semua form memakai React Hook Form dan Zod (`@hookform/resolvers/zod`), dengan pola uncontrolled `{...register("field")}`. Dilarang memakai banyak `useState` terpisah untuk field form.
+- Submit lewat semantic form: `<VStack as={"form"} onSubmit={form.handleSubmit(onSubmit)}>` dengan `<Button type={"submit"}>`. Dengan begitu `Enter` otomatis men-submit tanpa `onKeyDown` manual.
+- PinInput, OTP, dan TOTP: saat semua digit terisi (`onValueComplete`), panggil `form.handleSubmit(onSubmit)()`. Jika verifikasi gagal, user cukup menekan `Enter` untuk submit ulang.
+
+### 1.6 Overlay
+
+- `Modal`, `Dialog`, `Drawer`, dan overlay lain mengontrol open/close lewat `usePopModal`. Hook ini menyinkronkan state dengan URL search params (`activeModalKey`) sehingga tombol back browser menutup overlay. Jangan kontrol hanya dengan `useState` lokal.
+
+```tsx
+import { usePopModal } from "@/design-system/components/overlay/hooks/use-pop-modal";
+```
+
+### 1.7 Data dan API
+
+- Service dan query memakai response asli dari backend selama endpoint tersedia.
+- Dummy data hanya boleh jadi fallback jika endpoint belum ada atau mengembalikan 404 DAN `VITE_ENABLE_DUMMY_RESPONSE_FALLBACK=true` (dicek lewat `isDummyDataEnabled()`). Jangan menimpa data valid dari backend dengan dummy.
+- URL proxy WMS dibangun dengan `buildWmsProxyUrl()` dari `@/shared/utils/url/wms-proxy.utils`, yang mengacu ke `VITE_API_BASE_WMS_PROXY_URL`.
+
+### 1.8 Perlindungan UI user
+
+- Jangan menyentuh, merombak, atau mengubah JSX, layout, dan styling UI yang sudah dibuat user. Boleh hanya jika user secara eksplisit meminta dibuatkan page atau komponen tertentu, atau meminta refactor UI.
+
+---
+
+## 2. Design Tokens dan Theme
+
+Konstanta dari `@/design-system/constants/styles`:
 
 - `PADDING_MD`, `PADDING_SM`
 - `SPACING_MD`, `SPACING_SM`
 
-### Theme Store: `@/design-system/stores/use-theme-store`
+Theme store:
 
 ```tsx
 import { useThemeStore } from "@/design-system/stores/use-theme-store";
@@ -22,61 +104,21 @@ const { theme } = useThemeStore();
 
 ---
 
-## 2. Code Style & Rules Mutlak
+## 3. Komponen
 
-- **Wajib Curly Brackets**: Semua nilai prop (tipe apapun) WAJIB dibungkus curly bracket — tidak boleh bare string props (`value={"foo"}` bukan `value="foo"`).
-- **Import Alias**: Import di dalam `src/` WAJIB menggunakan alias `@/`.
-- **Komentar Section**: Wajib menambahkan komentar section di komponen (`// Contexts`, `// States`, `// Derived Values`, `// Hooks (Queries & Mutations)`, dll).
-- **Default Props**: DILARANG menuliskan prop yang nilainya sama dengan default komponen (misal: `VStack` default `align` adalah `stretch`, tidak perlu ditulis `align={"stretch"}`).
-- **Forms & Validation (MUTLAK RHF + Zod + Uncontrolled)**: Seluruh form input di aplikasi WAJIB menggunakan **React Hook Form (RHF)** dipadukan dengan **Zod Schema Resolver** (`@hookform/resolvers/zod`). Input fields WAJIB mengutamakan pola **uncontrolled** (`{...register("field")}`) untuk performa optimal tanpa re-render yang tidak perlu. DILARANG membuat form dengan kumpulan `useState` terpisah-pisah untuk field form.
-- **Array Empty Checks (MUTLAK)**: DILARANG menggunakan `.length === 0` untuk pengecekan array kosong. WAJIB menggunakan helper `isEmptyArray(arr)` dari `@/shared/utils/data/array`.
-- **Input Width (MUTLAK)**: Seluruh komponen input (`Input`, `NumberInput`, `SearchInput`, `Select`, `Field`, dll) WAJIB selalu berukuran width 100% / `w={"full"}` di dalam container/form.
-- **Dilarang Prefix 'contoh:' (MUTLAK)**: DILARANG menyertakan prefix `"contoh:"` atau `"Contoh:"` di dalam `placeholder` maupun `helperText` input field manapun. Langsung tuliskan nilai contohnya secara ringkas dan profesional (misal: `placeholder={"admin_spatial"}` bukan `placeholder={"contoh: admin_spatial"}`).
-- **Dilarang Gunakan Props `truncate` (MUTLAK)**: DILARANG menggunakan prop `truncate` pada teks/elemen apapun. WAJIB menggunakan komponen `<ClampedP>` dari `@/design-system/components/typography/ui/p` untuk pemotongan/clamping teks satu atau multi baris.
-- **Button & Component Sizes**: DILARANG asal mengecilkan `size` (misal sembarangan menambah `size={"xs"}` atau `size={"sm"}`) jika tidak diinstruksikan secara spesifik. Gunakan ukuran default komponen design system.
-- **Overlay Control State (MUTLAK usePopModal)**: Seluruh komponen overlay (`Modal`, `Dialog`, `Drawer`, dll) WAJIB menggunakan hook `usePopModal` dari `@/design-system/components/overlay/hooks/use-pop-modal` untuk sinkronisasi state open/close dengan URL search params (`activeModalKey`). DILARANG mengontrol open/close overlay hanya dengan `useState` lokal agar navigasi tombol back browser otomatis menutup overlay.
-- **Conditional Rendering (Eksplisit & Anti-Ternary Kompleks)**: DILARANG menggunakan nested/kompleks ternary operator (`a ? b : c ? d : e`). Ternary maksimal hanya untuk 2 kondisi sederhana (misal simple styling/variant). Untuk rendering blok view, state utama (loading, empty, error, content), WAJIB menggunakan kondisi eksplisit (`isLoading && <Skeleton />` dan nested eksplisit `!isLoading && (<>{isEmpty && <NoDataState />}{hasData && <DataView />}</>)`) atau early return eksplisit (`if (condition) return <... />;`).
-- **Form Submission & Keyboard UX (Enter to Submit & PinInput Auto-Submit - MUTLAK)**:
-  1. **Enter to Submit (Semantic `<form>` + `onSubmit`)**: Seluruh form input WAJIB dibungkus dengan container semantik form (`<VStack as={"form"} onSubmit={form.handleSubmit(onSubmit)}>`) dan memiliki tombol `<Button type={"submit"}>`. Ini memastikan penekanan tombol `Enter` secara natural men-trigger submit tanpa perlu menambahkan event listener `onKeyDown` manual.
-  2. **PinInput / OTP / TOTP Auto-Submit**: Ketika seluruh digit PIN / OTP / TOTP selesai diketik (`onValueComplete`), langsung trigger submit otomatis via `form.handleSubmit(onSubmit)()`.
-  3. **PinInput Failure Recovery**: Jika verifikasi OTP/TOTP gagal, user cukup menekan tombol `Enter` untuk men-submit ulang form secara langsung.
-- **JANGAN PERNAH SENTUH UI YANG SUDAH DIDEV USER (MUTLAK)**: Dilarang keras menyentuh, merombak, memodifikasi struktur JSX/layout/styling UI yang sudah dibuat user. Hanya boleh menyentuh UI jika user secara eksplisit meminta dibuatkan page/komponen tertentu atau secara eksplisit meminta refactor UI.
+### 3.1 Typography (`@/design-system/components/typography/ui/*`)
 
-
-
----
-
-## 3. Typography Components
-
-### Imports: `@/design-system/components/typography/ui/*`
-
-#### Typography Size Rule (WAJIB)
-
-- **Default Font Size**: Wajib gunakan ukuran `md` (default komponen) untuk teks biasa. JANGAN tulis `fontSize={"md"}` karena itu sudah default.
-- **Dilarang Over-Styling `sm`/`xs`**: Gak perlu pakai `fontSize={"sm"}` atau `fontSize={"xs"}` untuk hal biasa. Ukuran `sm` hanya jika benar-benar diperlukan untuk hierarki tertentu, dan `xs` sangat jarang dipakai.
-
-#### `P` (Paragraph / Text)
-
-- **Props**: Menerima seluruh Chakra `TextProps`.
-- **Penggunaan**:
+`P` menerima seluruh Chakra `TextProps`.
 
 ```tsx
 import { P } from "@/design-system/components/typography/ui/p";
 
 <P color={"fg.subtle"} fontWeight={"medium"}>
-  {"Teks "}
+  {"Teks"}
 </P>;
 ```
 
-#### `Badge`
-
-- **Props**: `BadgeProps` (`colorPalette`, `variant`: `"subtle"` | `"outline"` | `"solid"`)
-- **Aturan Ukuran Badge (WAJIB)**:
-  - DILARANG menggunakan `size={"xs"}` atau `size={"sm"}` pada `Badge`.
-  - Gunakan ukuran default dari `Badge` tanpa override size kecil.
-- **Aturan Alignment Tabel/List (WAJIB)**:
-  - Kolom/sel yang merender `Badge` alignment-nya WAJIB default (`"start"`), DILARANG di-`center`.
-- **Penggunaan**:
+`Badge` menerima `BadgeProps` (`colorPalette`, `variant`: `"subtle"` | `"outline"` | `"solid"`).
 
 ```tsx
 import { Badge } from "@/design-system/components/typography/ui/badge";
@@ -86,13 +128,9 @@ import { Badge } from "@/design-system/components/typography/ui/badge";
 </Badge>;
 ```
 
----
+### 3.2 Layout (`@/design-system/components/layout/ui/*`)
 
-## 4. Layout Components
-
-### Imports: `@/design-system/components/layout/ui/*`
-
-#### `Box`, `HStack`, `VStack`, `Flex`, `Separator`, `Grid`, `Card`
+`Box`, `HStack`, `VStack`, `Flex`, `Separator`, `Grid`, `Card`.
 
 ```tsx
 import { HStack, VStack } from "@/design-system/components/layout/ui/flex-box";
@@ -107,7 +145,7 @@ import { Separator } from "@/design-system/components/layout/ui/separator";
 </VStack>;
 ```
 
-#### `Container` & `useContainerContext()`
+`Container` dan `useContainerContext()`:
 
 ```tsx
 import {
@@ -115,46 +153,40 @@ import {
   useContainerContext,
 } from "@/design-system/components/layout/ui/container";
 
-// Parent Page
+// Parent page
 <Container.Root flex={1} overflowY={"auto"} withContext={true}>
   <ChildComponent />
 </Container.Root>;
 
-// Child Component
+// Child component
 const ChildComponent = () => {
   const { isSmContainer } = useContainerContext();
   return <Container.Body flex={1}>...</Container.Body>;
 };
 ```
 
----
+### 3.3 Button dan Input
 
-## 5. Buttons & Inputs
-
-### Imports: `@/design-system/components/button/ui/*` & `@/design-system/components/input/ui/*`
-
-#### `Button` & `IconButton`
-
-- **Aturan Sizing (MUTLAK)**:
-  - DILARANG melakukan override ukuran `size={"xs"}` atau `size={"sm"}` pada `Button`, `IconButton`, dan `AppIcon` kecuali ada instruksi eksplisit khusus.
-  - Gunakan ukuran standar/default dari komponen design system (`md`).
+Sumber: `@/design-system/components/button/ui/*` dan `@/design-system/components/input/ui/*`. Aturan ukuran ada di 1.3.
 
 ```tsx
-import { Button, IconButton } from "@/design-system/components/button/ui/button";
+import { Button } from "@/design-system/components/button/ui/button";
 import { AppIcon } from "@/design-system/components/icon/ui/app-icon";
-import { IconTrash } from "@tabler/icons-react";
+import { Trash2Icon } from "lucide-react";
 
-<Button primary onClick={handleAction}>
+<Button primary={true} onClick={handleAction}>
   {"Simpan"}
 </Button>
 
 <Button variant={"outline"} colorPalette={"red"}>
-  <AppIcon icon={IconTrash} />
+  <AppIcon icon={Trash2Icon} />
   {"Hapus"}
 </Button>
 ```
 
-#### `SearchInput`
+`IconButton` diimpor dari file yang sama dengan `Button`.
+
+`SearchInput`:
 
 ```tsx
 import { SearchInput } from "@/design-system/components/input/ui/search-input";
@@ -166,11 +198,26 @@ import { SearchInput } from "@/design-system/components/input/ui/search-input";
 />;
 ```
 
+### 3.4 Icons dan Shell
+
+- Ikon: Lucide sebagai pilihan utama, Tabler sebagai fallback, lewat `<AppIcon icon={IconComponent} />`.
+- `AppNavTitle` adalah judul navigasi header.
+
+```tsx
+import { AppIcon } from "@/design-system/components/icon/ui/app-icon";
+import { AppNavTitle } from "@/design-system/components/shell/ui/app-nav-title";
+import { APP_NAVS_MAP } from "@/shared/constants/app.navs";
+import { MapPinIcon } from "lucide-react";
+
+<AppNavTitle navsMap={APP_NAVS_MAP} />
+<AppIcon icon={MapPinIcon} boxSize={5} />
+```
+
 ---
 
-## 6. DataList Table Pattern (MUTLAK)
+## 4. Pola DataList Table
 
-Semua komponen DataList/Table **WAJIB** menggunakan 1 object literal `const dataList = useMemo(() => ({ headers, items, batchActions, itemActions }), [deps])` dengan **implicit return** (tanpa kurung kurawal block body `{}` & tanpa klausa `return`):
+Semua DataList atau tabel memakai satu object literal di `useMemo` dengan implicit return (tanpa block body `{}` dan tanpa `return`), berisi `headers`, `items`, `batchActions`, dan `itemActions`.
 
 ```tsx
 import type {
@@ -179,6 +226,7 @@ import type {
 } from "@/design-system/components/data-display/types/data-list.type";
 import type { FormattedListItem } from "@/design-system/components/data-display/types/data-list-table.type";
 import { DataListTable } from "@/design-system/components/data-display/ui/data-list-table";
+import { Trash2Icon } from "lucide-react";
 
 const dataList = useMemo(
   () => ({
@@ -186,7 +234,7 @@ const dataList = useMemo(
       { th: "ID Bidang", sortable: true },
       { th: "Tema IGT-PR" },
       { th: "Basis IGT-PR", sortable: true },
-      { th: "Deskripsi", headerCellProps: { minW: "200px" } },
+      { th: "Deskripsi", cellProps: { minW: "200px" } },
     ],
 
     items: itemsData.map((item) => ({
@@ -195,13 +243,13 @@ const dataList = useMemo(
       columns: [
         {
           value: item.id,
-          td: <P fontSize={"sm"}>{item.id}</P>,
+          td: <P>{item.id}</P>,
           align: "start" as const,
         },
         {
           value: item.basis,
           td: <Badge colorPalette={"blue"}>{item.basis}</Badge>,
-          align: "center" as const,
+          align: "start" as const,
         },
       ],
     })),
@@ -212,7 +260,6 @@ const dataList = useMemo(
           key={"remove-selected"}
           variant={"outline"}
           colorPalette={"red"}
-          size={"xs"}
           onClick={() => {
             onRemoveItems?.(selectedItemIds);
             clearSelectedItems();
@@ -254,21 +301,24 @@ return (
 
 ---
 
-## 7. Feedback & Loading States
+## 5. Loading State
 
-- **`isLoading` (fetch pertama, belum ada data)**: Renders `Skeleton` (full-width, fixed height block).
-- **`isFetching` (refetch berikutnya / search / pagination)**: Table tetap tampil dengan overlay loader (`bg={"bg.canvas/50"}`).
+- `isLoading` (fetch pertama, belum ada data): tampilkan `Skeleton` full-width dengan tinggi tetap.
+- `isFetching` (refetch, search, atau pagination): tabel tetap tampil dengan overlay loader (`bg={"bg.canvas/50"}`).
 
 ```tsx
 import { Skeleton } from "@/design-system/components/feedback/ui/skeleton";
 import { Loader } from "@/design-system/components/feedback/ui/loader";
 
 {
-  isLoading ? (
-    <Skeleton />
-  ) : (
+  isLoading && <Skeleton />;
+}
+
+{
+  !isLoading && (
     <Box w={"full"} position={"relative"}>
       <DataListTable.Root headers={dataList.headers} items={dataList.items} />
+
       {isFetching && (
         <Box
           position={"absolute"}
@@ -286,29 +336,3 @@ import { Loader } from "@/design-system/components/feedback/ui/loader";
   );
 }
 ```
-
----
-
-## 8. Icons & Shell Components
-
-- Icons menggunakan **Lucide Icons** sebagai pilihan utama dan **Tabler Icons** sebagai _fallback_ via `<AppIcon icon={IconComponent} />`.
-- `AppNavTitle`: Judul navigasi header.
-
-```tsx
-import { AppIcon } from "@/design-system/components/icon/ui/app-icon";
-import { AppNavTitle } from "@/design-system/components/shell/ui/app-nav-title";
-import { APP_NAVS_MAP } from "@/shared/constants/app.navs";
-import { IconMapPin } from "@tabler/icons-react";
-
-<AppNavTitle navsMap={APP_NAVS_MAP} />
-<AppIcon icon={IconMapPin} boxSize={5} />
-```
-
----
-
-## 9. API Data & Dummy Fallback Rules
-
-- **Strict Real Data by Default**: Seluruh service dan API query WAJIB mengonsumsi response data asli dari backend jika resource/endpoint tersedia.
-- **Dummy Fallback Condition**: Dummy data HANYA boleh digunakan sebagai fallback ketika endpoint belum ada / return 404 DAN environment variable `VITE_ENABLE_DUMMY_RESPONSE_FALLBACK=true` (dicek via `isDummyDataEnabled()`). DILARANG keras meng-override data real dari backend dengan dummy data jika endpoint backend mengembalikan data valid.
-- **WMS Proxy URLs**: URL proxy internal Volatil WAJIB dibangun menggunakan helper `buildWmsProxyUrl()` dari `@/shared/utils/url/wms-proxy.utils` yang mengacu pada `VITE_API_BASE_WMS_PROXY_URL`.
-

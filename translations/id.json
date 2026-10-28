@@ -18,7 +18,7 @@
       "home": "Home",
       "user_management": "Manajemen Pengguna",
       "master_geoserver": "Master Geoserver",
-      "data_management": "Manajemen Data IGT",
+      "data_management": "Manajemen Master Layer IGT",
       "order_review": "Review Permintaan",
       "mitra_registration": "Pendaftaran Mitra",
       "order_statistic": "Statistik Pesanan",
@@ -88,7 +88,8 @@
     "settings": "Pengaturan",
     "notifications": "Notifikasi",
     "dismiss_all": "Singkirkan semua",
-    "link_not_found": "Tautan tidak ditemukan"
+    "link_not_found": "Tautan tidak ditemukan",
+    "page_size": "Jumlah Data"
   },
   "action": {
     "actions": "Aksi",
@@ -288,5 +289,14 @@
       "title": "Tentang",
       "description": "Informasi tentang aplikasi dan detail versi."
     }
+  },
+
+  "duration": {
+    "unit_millisecond": "Milidetik",
+    "unit_second": "Detik",
+    "unit_minute": "Menit",
+    "unit_hour": "Jam",
+    "unit_day": "Hari",
+    "unit_week": "Minggu"
   }
 }

@@ -11,11 +11,11 @@ export type FeedbackStateProps = StackProps & {
   description?: string;
 };
 
-export type NoResultStateProps = FeedbackStateProps & {
+export type StateNoResultProps = FeedbackStateProps & {
   icon?: ComponentType;
   query?: string;
 };
 
-export type RetryStateProps = FeedbackStateProps & {
+export type StateRetryProps = FeedbackStateProps & {
   onRetry?: () => void;
 };

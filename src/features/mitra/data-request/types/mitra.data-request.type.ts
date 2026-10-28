@@ -32,4 +32,28 @@ export type MitraDataRequestSearch = {
   layerId?: string;
 };
 
+import type { IgtLayerItem } from "@/design-system/components/map/types/map.type";
+import type { ApiResponse } from "@/shared/types/common-response.type";
+
+export type IgtLayersApiData = {
+  items: IgtLayerItem[];
+  pagination: {
+    totalItems: number;
+    totalPages: number;
+    currentPage: number;
+    itemsPerPage: number;
+  };
+};
+
+export type IgtLayersApiResponse = ApiResponse<IgtLayersApiData> & {
+  items?: IgtLayerItem[];
+  pagination?: {
+    totalItems: number;
+    totalPages: number;
+    currentPage: number;
+    itemsPerPage: number;
+  };
+  timestamp?: string;
+};
+
 

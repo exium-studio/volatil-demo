@@ -2,20 +2,19 @@
 
 import type { FocusSelectOption } from "@/design-system/components/input/types/focus-select.type";
 import type {
+  IgtBasisType,
+  IgtBasisTypeConfig,
   PaymentMethod,
   PaymentMethodConfig,
   SelectionType,
   SelectionTypeConfig,
-  IgtBasisType,
-  IgtBasisTypeConfig,
 } from "@/features/mitra/cart/types/mitra.cart.order.type";
 import type {
   MitraRegistrationStatus,
   MitraRegistrationStatusConfig,
-  MyDataStatus,
-  MyDataStatusConfig,
   OrderStatus,
   OrderStatusConfig,
+  SystemPolicyConfig,
   TransactionStatus,
   TransactionStatusConfig,
   UserRoleConfig,
@@ -24,26 +23,25 @@ import { IconPolygon } from "@tabler/icons-react";
 import {
   AlertCircleIcon,
   CheckCircleIcon,
+  CircleQuestionMarkIcon,
   ClockIcon,
+  ClockPlusIcon,
   CreditCardIcon,
   FolderArchiveIcon,
   Grid2X2Icon,
   HandshakeIcon,
+  HourglassIcon,
   LandmarkIcon,
   Layers2Icon,
   ListIcon,
   LoaderIcon,
   QrCodeIcon,
-  RotateCcwIcon,
+  RefreshCwIcon,
   ShieldAlertIcon,
   ShieldCheckIcon,
   TimerOffIcon,
   XCircleIcon,
 } from "lucide-react";
-
-/**
- * SSOT 1: Selection & Spatial Basis Config Maps
- */
 
 export const SELECTION_TYPE_CONFIG_MAP: Record<
   SelectionType,
@@ -69,12 +67,6 @@ export const SELECTION_TYPE_CONFIG_MAP: Record<
   },
 };
 
-/**
- * SSOT for MapLibre AOI & Coverage polygon layer colors by SelectionType:
- * - catalog: Purple (#a855f7 / #7c3aed)
- * - upload_aoi: Teal (#06b6d4 / #0891b2)
- * - draw_aoi: Blue (#3b82f6 / #2563eb)
- */
 export const SELECTION_TYPE_MAP_COLOR: Record<
   SelectionType,
   {
@@ -96,9 +88,6 @@ export const SELECTION_TYPE_MAP_COLOR: Record<
   },
 };
 
-/**
- * Returns the fill and line colors for MapLibre AOI & Coverage polygon layers based on selectionType.
- */
 export const getSelectionTypeMapColors = (
   selectionType?: string | null,
 ): {
@@ -118,6 +107,8 @@ export const getSelectionTypeMapColors = (
   };
 };
 
+// -----------------------------------------------------------------
+
 export const IGT_BASIS_MAP: Record<IgtBasisType, IgtBasisTypeConfig> = {
   bidang: {
     label: "Bidang",
@@ -136,20 +127,22 @@ export const IGT_BASIS_OPTIONS: {
   label: string;
   colorPalette: "blue" | "orange";
   icon: typeof Layers2Icon;
-}[] = [
-  {
-    value: "bidang",
-    label: IGT_BASIS_MAP.bidang.label,
-    colorPalette: IGT_BASIS_MAP.bidang.colorPalette,
-    icon: IGT_BASIS_MAP.bidang.icon,
-  },
-  {
-    value: "kawasan",
-    label: IGT_BASIS_MAP.kawasan.label,
-    colorPalette: IGT_BASIS_MAP.kawasan.colorPalette,
-    icon: IGT_BASIS_MAP.kawasan.icon,
-  },
+}[] = (Object.keys(IGT_BASIS_MAP) as IgtBasisType[]).map((key) => ({
+  value: key,
+  label: IGT_BASIS_MAP[key].label,
+  colorPalette: IGT_BASIS_MAP[key].colorPalette,
+  icon: IGT_BASIS_MAP[key].icon,
+}));
+
+export const IGT_BASIS_FILTER_OPTIONS: FocusSelectOption[] = [
+  { value: "all", label: "Semua Basis" },
+  ...(Object.keys(IGT_BASIS_MAP) as IgtBasisType[]).map((key) => ({
+    value: key,
+    label: IGT_BASIS_MAP[key].label,
+  })),
 ];
+
+// -----------------------------------------------------------------
 
 export const PAYMENT_METHOD_MAP: Record<PaymentMethod, PaymentMethodConfig> = {
   MPN_GEN2: {
@@ -179,17 +172,23 @@ export const PAYMENT_METHOD_MAP: Record<PaymentMethod, PaymentMethodConfig> = {
   },
 };
 
-export const PAYMENT_METHOD_LABEL_MAP: Record<PaymentMethod, string> = {
-  MPN_GEN2: PAYMENT_METHOD_MAP.MPN_GEN2.label,
-  VA_MANDIRI: PAYMENT_METHOD_MAP.VA_MANDIRI.label,
-  VA_BRI: PAYMENT_METHOD_MAP.VA_BRI.label,
-  VA_BCA: PAYMENT_METHOD_MAP.VA_BCA.label,
-  QRIS: PAYMENT_METHOD_MAP.QRIS.label,
-};
+export const PAYMENT_METHOD_LABEL_MAP: Record<PaymentMethod, string> =
+  Object.fromEntries(
+    (Object.keys(PAYMENT_METHOD_MAP) as PaymentMethod[]).map((key) => [
+      key,
+      PAYMENT_METHOD_MAP[key].label,
+    ]),
+  ) as Record<PaymentMethod, string>;
 
-/**
- * SSOT 2: Transaction Status Map (Payment & Billing)
- */
+export const PAYMENT_METHOD_OPTIONS: (PaymentMethodConfig & {
+  value: PaymentMethod;
+})[] = (Object.keys(PAYMENT_METHOD_MAP) as PaymentMethod[]).map((key) => ({
+  value: key,
+  ...PAYMENT_METHOD_MAP[key],
+}));
+
+// -----------------------------------------------------------------
+
 export const TRANSACTION_STATUS_MAP: Record<
   TransactionStatus,
   TransactionStatusConfig
@@ -214,24 +213,25 @@ export const TRANSACTION_STATUS_MAP: Record<
     colorPalette: "red",
     icon: AlertCircleIcon,
   },
-  refunded: {
-    label: "Dikembalikan",
-    colorPalette: "purple",
-    icon: RotateCcwIcon,
-  },
+  // refunded: {
+  //   label: "Dikembalikan",
+  //   colorPalette: "purple",
+  //   icon: RotateCcwIcon,
+  // },
 };
 
 export const TRANSACTION_STATUS_OPTIONS: FocusSelectOption[] = [
   { label: "Semua Status", value: "" },
-  { label: "Terbayar", value: "paid" },
-  { label: "Kedaluwarsa", value: "expired" },
-  { label: "Gagal", value: "failed" },
-  { label: "Dikembalikan", value: "refunded" },
+  ...(Object.keys(TRANSACTION_STATUS_MAP) as TransactionStatus[]).map(
+    (key) => ({
+      value: key,
+      label: TRANSACTION_STATUS_MAP[key].label,
+    }),
+  ),
 ];
 
-/**
- * SSOT 3: Order & Provisioning Status Map (Single Order Table & Spatial Services)
- */
+// -----------------------------------------------------------------
+
 export const ORDER_STATUS_MAP: Record<OrderStatus, OrderStatusConfig> = {
   requesting: {
     label: "Menyiapkan Data IGT",
@@ -241,18 +241,25 @@ export const ORDER_STATUS_MAP: Record<OrderStatus, OrderStatusConfig> = {
     noticeDescription:
       "Sedang mengkalkulasi clipping, luas kawasan & estimasi harga di server...",
   },
-  preparing: {
-    label: "Penyiapkan Pesanan",
-    colorPalette: "gray",
-    icon: LoaderIcon,
-    iconColor: "gray.fg",
-    noticeDescription: "Sedang menyiapkan pesanan...",
-  },
   pending_payment: {
     label: "Menunggu Pembayaran",
     colorPalette: "orange",
     icon: ClockIcon,
     iconColor: "orange.fg",
+  },
+  transaction_expired: {
+    label: "Pembayaran Kedaluwarsa",
+    colorPalette: "gray",
+    icon: TimerOffIcon,
+    iconColor: "gray.fg",
+    noticeDescription: "Batas waktu pembayaran SIMPONI telah kedaluwarsa.",
+  },
+  transaction_failed: {
+    label: "Transaksi Gagal",
+    colorPalette: "red",
+    icon: AlertCircleIcon,
+    iconColor: "red.fg",
+    noticeDescription: "Terjadi kesalahan/kegagalan transaksi pembayaran.",
   },
   paid: {
     label: "Terbayar",
@@ -268,6 +275,13 @@ export const ORDER_STATUS_MAP: Record<OrderStatus, OrderStatusConfig> = {
     iconColor: "purple.fg",
     noticeDescription: "Layanan WMS sedang dipersiapkan...",
   },
+  wms_failed: {
+    label: "Gagal Menyiapkan WMS",
+    colorPalette: "red",
+    icon: AlertCircleIcon,
+    iconColor: "red.fg",
+    noticeDescription: "Terjadi kesalahan saat menyiapkan layanan WMS.",
+  },
   pending_tte: {
     label: "Menunggu TTE",
     colorPalette: "yellow",
@@ -282,13 +296,6 @@ export const ORDER_STATUS_MAP: Record<OrderStatus, OrderStatusConfig> = {
     iconColor: "orange.fg",
     noticeDescription: "Menunggu validasi Admin Internal...",
   },
-  rejected: {
-    label: "Ditolak",
-    colorPalette: "red",
-    icon: AlertCircleIcon,
-    iconColor: "red.fg",
-    noticeDescription: "Pesanan ditolak oleh Admin Internal.",
-  },
   ready: {
     label: "Siap Digunakan",
     colorPalette: "green",
@@ -296,69 +303,48 @@ export const ORDER_STATUS_MAP: Record<OrderStatus, OrderStatusConfig> = {
     iconColor: "green.fg",
     noticeDescription: "Layanan data spasial siap digunakan.",
   },
-};
-
-/**
- * SSOT 4: My Data Active Status Map (Mitra Data Saya)
- */
-export const MY_DATA_STATUS_MAP: Record<MyDataStatus, MyDataStatusConfig> = {
-  queued: {
-    label: "Dalam Antrean",
-    colorPalette: "gray",
-    icon: ClockIcon,
-    iconColor: "gray.fg",
-  },
-  provisioning: {
-    label: "Menyiapkan Layanan WMS",
-    colorPalette: "purple",
-    icon: LoaderIcon,
-    iconColor: "purple.fg",
-  },
-  active: {
-    label: "Aktif",
-    colorPalette: "green",
-    icon: CheckCircleIcon,
-    iconColor: "green.fg",
-  },
-  ready: {
-    label: "Aktif",
-    colorPalette: "green",
-    icon: CheckCircleIcon,
-    iconColor: "green.fg",
-  },
-  failed: {
-    label: "Gagal",
+  rejected: {
+    label: "Ditolak",
     colorPalette: "red",
-    icon: AlertCircleIcon,
+    icon: XCircleIcon,
     iconColor: "red.fg",
+    noticeDescription: "Pesanan data spasial ditolak oleh Admin Internal.",
   },
   expired: {
     label: "Kedaluwarsa",
-    colorPalette: "orange",
+    colorPalette: "gray",
     icon: TimerOffIcon,
-    iconColor: "orange.fg",
+    iconColor: "gray.fg",
+    noticeDescription: "Masa aktif layanan data spasial telah berakhir.",
   },
-  revoked: {
-    label: "Dicabut",
-    colorPalette: "red",
-    icon: ShieldAlertIcon,
-    iconColor: "red.fg",
+  renewed: {
+    label: "Diperbarui (Legacy)",
+    colorPalette: "neutral",
+    icon: RefreshCwIcon,
+    iconColor: "fg.subtle",
+    noticeDescription:
+      "Layanan data spasial telah diperpanjang/diperbarui dan berstatus legacy.",
   },
 };
 
-export const MY_DATA_STATUS_OPTIONS: FocusSelectOption[] = [
-  { label: "Semua Status", value: "" },
-  { label: "Aktif", value: "ready" },
-  { label: "Dalam Antrean", value: "queued" },
-  { label: "Sedang Diproses", value: "provisioning" },
-  { label: "Gagal", value: "failed" },
-  { label: "Kedaluwarsa", value: "expired" },
-  { label: "Dicabut", value: "revoked" },
+export const ORDER_STATUS_OPTIONS: FocusSelectOption[] = [
+  { label: "Semua Status", value: "all" },
+  ...(Object.keys(ORDER_STATUS_MAP) as OrderStatus[]).map((key) => ({
+    value: key,
+    label: ORDER_STATUS_MAP[key].label,
+  })),
 ];
 
-/**
- * SSOT 5: User Role Map
- */
+export const ORDER_STATUS_FILTER_OPTIONS: FocusSelectOption[] = [
+  { label: "Semua Status", value: "" },
+  ...(Object.keys(ORDER_STATUS_MAP) as OrderStatus[]).map((key) => ({
+    value: key,
+    label: ORDER_STATUS_MAP[key].label,
+  })),
+];
+
+// -----------------------------------------------------------------
+
 export const USER_ROLE_MAP: Record<"internal" | "mitra", UserRoleConfig> = {
   internal: {
     label: "Internal",
@@ -372,9 +358,16 @@ export const USER_ROLE_MAP: Record<"internal" | "mitra", UserRoleConfig> = {
   },
 };
 
-/**
- * SSOT 6: Mitra Registration Status Map
- */
+export const USER_ROLE_OPTIONS: FocusSelectOption[] = [
+  { label: "Semua Role", value: "all" },
+  ...(Object.keys(USER_ROLE_MAP) as ("internal" | "mitra")[]).map((key) => ({
+    value: key,
+    label: USER_ROLE_MAP[key].label,
+  })),
+];
+
+// -----------------------------------------------------------------
+
 export const MITRA_REGISTRATION_STATUS_MAP: Record<
   MitraRegistrationStatus,
   MitraRegistrationStatusConfig
@@ -403,7 +396,73 @@ export const MITRA_REGISTRATION_STATUS_MAP: Record<
 
 export const MITRA_REGISTRATION_STATUS_OPTIONS: FocusSelectOption[] = [
   { label: "Semua Status", value: "all" },
-  { label: "Menunggu Verifikasi", value: "pending_verification" },
-  { label: "Terverifikasi", value: "verified" },
-  { label: "Ditolak", value: "rejected" },
+  ...(Object.keys(MITRA_REGISTRATION_STATUS_MAP) as MitraRegistrationStatus[])
+    .filter((key) => key !== "approved")
+    .map((key) => ({
+      value: key,
+      label: MITRA_REGISTRATION_STATUS_MAP[key].label,
+    })),
 ];
+
+// -----------------------------------------------------------------
+
+export const SYSTEM_POLICY_MAP: Record<string, SystemPolicyConfig> = {
+  payment_timeout_fallback_hours: {
+    label: "Batas Waktu Pembayaran",
+    description:
+      "Batas toleransi waktu penyelesaian pembayaran SIMPONI sebelum pesanan otomatis kedaluwarsa.",
+    colorPalette: "grey",
+    icon: HourglassIcon,
+  },
+  order_access_duration_days: {
+    label: "Durasi Akses Layanan",
+    description:
+      "Masa aktif layanan data spasial & streaming WMS setelah pesanan berstatus siap.",
+    colorPalette: "green",
+    icon: ClockIcon,
+  },
+  order_max_extension_count: {
+    label: "Maksimal Perpanjangan",
+    description:
+      "Jumlah maksimum pengajuan perpanjangan masa aktif pesanan yang diizinkan untuk mitra.",
+    colorPalette: "cyan",
+    icon: ClockPlusIcon,
+    helperText: "Masukkan 0 untuk batas perpanjangan tak terbatas.",
+  },
+  order_extension_window_days: {
+    label: "Jendela Pengajuan Perpanjangan",
+    description:
+      "Rentang waktu sebelum masa aktif berakhir ketika mitra dapat mengajukan perpanjangan.",
+    colorPalette: "red",
+    icon: ShieldAlertIcon,
+  },
+  mitra_sync_cycle_days: {
+    label: "Siklus Pembaruan Data Mitra",
+    description:
+      "Interval waktu untuk sinkronisasi otomatis layer spasial mitra dari master IGT ATR/BPN.",
+    colorPalette: "purple",
+    icon: RefreshCwIcon,
+    helperText: "Pembaruan otomatis dieksekusi secara berkala sesuai durasi yang ditentukan.",
+  },
+  mitra_sync_schedule: {
+    label: "Siklus Pembaruan Data Mitra",
+    description:
+      "Jadwal pembaruan berkala layer spasial mitra dari tanggal pembelian/perpanjangan.",
+    colorPalette: "purple",
+    icon: RefreshCwIcon,
+    helperText: "Tentukan jatah dan titik waktu pembaruan otomatis data mitra.",
+  },
+};
+
+export const getSystemPolicyConfig = (key: string): SystemPolicyConfig => {
+  if (SYSTEM_POLICY_MAP[key]) {
+    return SYSTEM_POLICY_MAP[key];
+  }
+
+  return {
+    label: key,
+    description: "",
+    colorPalette: "blue",
+    icon: CircleQuestionMarkIcon,
+  };
+};

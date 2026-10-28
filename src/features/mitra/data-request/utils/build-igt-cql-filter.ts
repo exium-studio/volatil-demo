@@ -10,7 +10,7 @@ const ADMIN_COLUMN_SYNONYMS: Record<string, string[]> = {
   wadmpr: ["wadmpr", "provinsi", "propinsi", "wadm_provinsi"],
   wadmkk: ["wadmkk", "kabupaten", "kotakab", "kab_kota", "wadm_kotakab"],
   wadmkc: ["wadmkc", "kecamatan", "wadm_kecamatan"],
-  wadmkd: ["wadmkd", "kelurahan", "desa", "wadmpd", "wadm_desa"],
+  wadmkd: ["wadmkd", "kelurahan", "desa", "wadmpd", "wadm_desa", "namboj"],
 };
 
 /**

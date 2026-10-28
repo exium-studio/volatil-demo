@@ -91,7 +91,7 @@ const InternalOrderReviewRejectModalContent = (
         <VStack gap={"xs"}>
           <Modal.Title>{"Tolak Permintaan Pesanan"}</Modal.Title>
 
-          <P fontSize={"xs"} textAlign={"center"} color={"fg.subtle"}>
+          <P fontSize={"xs"} textAlign={"center"} color={"fg.muted"}>
             {`ID Pesanan: ${order.orderId} (${order.mitraName})`}
           </P>
         </VStack>

@@ -231,6 +231,40 @@ import { Field } from "@/design-system/components/input/ui/field";
 
 ---
 
-## 12. SegmentGroup (`segment-group.tsx`, `segment-group-input.tsx`)
+---
 
-Pilihan opsi segmented button horizontal (misal tab switch view list/grid).
+## 13. DurationInput (`duration-input.tsx`)
+
+Input durasi 2-segmen (input nilai numerik + select unit waktu). Menyimpan nilai hakiki dalam bentuk **milidetik (`ms`)**, terintegrasi dengan RHF, dan mendukung **floating label** saat dibungkus `<Field variant={"floating"}>`.
+
+### Key Props:
+- `value?: number` (dalam milidetik / ms)
+- `defaultValue?: number` (dalam milidetik / ms)
+- `onValueChange?: (ms: number, details: DurationValue) => void`
+- `allowedUnits?: DurationUnit[]` (default: `["week", "day", "hour", "minute", "second", "millisecond"]`)
+- `defaultUnit?: DurationUnit` (default: `"minute"`)
+- `name?: string`
+- `min?: number`, `max?: number`, `step?: number`
+- `disabled?: boolean`, `readOnly?: boolean`
+
+### Utility Helpers (`@/shared/utils/date/duration.utils`):
+- `durationToMs(value, unit)`: Mengubah nilai & unit menjadi total milidetik.
+- `msToBestDuration(ms, options)`: Mengonversi milidetik ke unit terbesar yang sesuai (misal 2000 ms -> 2 detik).
+- `formatDurationMs(ms, options)`: Format string siap render unit terbesar (misal `2000` -> `"2 Detik"`).
+- `getDurationUnitLabel(unit)`: Mendapatkan label unit terlokalisasi via Paraglide JS.
+
+### Example:
+```tsx
+import { DurationInput } from "@/design-system/components/input/ui/duration-input";
+import { Field } from "@/design-system/components/input/ui/field";
+
+<Field label={"Batas Waktu Toleransi"}>
+  <DurationInput
+    defaultValue={2000}
+    onValueChange={(ms, details) => {
+      console.log("Milliseconds:", ms); // 2000
+      console.log("Unit details:", details); // { value: 2, unit: "second" }
+    }}
+  />
+</Field>
+```

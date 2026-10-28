@@ -6,15 +6,16 @@ import {
 } from "@/design-system/components/button/ui/button";
 import { ConfirmationTrigger } from "@/design-system/components/feedback/ui/confirmation-trigger";
 import { Skeleton } from "@/design-system/components/feedback/ui/skeleton";
-import { NoDataState } from "@/design-system/components/feedback/ui/state.no-data";
-import { RetryState } from "@/design-system/components/feedback/ui/state.retry";
+import { StateNoData } from "@/design-system/components/feedback/ui/state.no-data";
+import { StateRetry } from "@/design-system/components/feedback/ui/state.retry";
 import { AppIcon } from "@/design-system/components/icon/ui/app-icon";
 import { Box, Circle } from "@/design-system/components/layout/ui/box";
 import { Center } from "@/design-system/components/layout/ui/center";
 import { HStack, VStack } from "@/design-system/components/layout/ui/flex-box";
 import { Badge } from "@/design-system/components/typography/ui/badge";
-import { P } from "@/design-system/components/typography/ui/p";
+import { ClampedP, P } from "@/design-system/components/typography/ui/p";
 import { useThemeStore } from "@/design-system/stores/theme-store";
+import { resolveInboxUI } from "@/features/notification/constants/inbox-code-resolver";
 import {
   useClearAllInbox,
   useDeleteInboxItem,
@@ -22,42 +23,13 @@ import {
   useMarkAllInboxAsRead,
   useMarkInboxAsRead,
 } from "@/features/notification/hooks/use-inbox.query";
-import type {
-  InboxCardItemProps,
-  InboxCategory,
-} from "@/features/notification/types/inbox.type";
+import type { InboxCardItemProps } from "@/features/notification/types/inbox.type";
 import { t } from "@/shared/libs/i18n";
 import { isEmptyArray } from "@/shared/utils/data/array";
-import {
-  formatUtcDateTime,
-  getPreferredUserTimezone,
-} from "@/shared/utils/formatter/date.formatter";
-import {
-  BellIcon,
-  CheckCheckIcon,
-  CreditCardIcon,
-  HelpCircleIcon,
-  InboxIcon,
-  InfoIcon,
-  Trash2Icon,
-  UserIcon,
-  XIcon,
-} from "lucide-react";
-import { memo, useMemo } from "react";
-
-const CATEGORY_ICON_MAP: Record<InboxCategory, typeof BellIcon> = {
-  transaksi: CreditCardIcon,
-  sistem: InfoIcon,
-  bantuan: HelpCircleIcon,
-  akun: UserIcon,
-};
-
-const CATEGORY_COLOR_MAP: Record<InboxCategory, string> = {
-  transaksi: "blue",
-  sistem: "gray",
-  bantuan: "green",
-  akun: "purple",
-};
+import { formatRelativeTime } from "@/shared/utils/formatter/date.formatter";
+import { useNavigate } from "@tanstack/react-router";
+import { ArrowRightIcon, CheckCheckIcon, InboxIcon, XIcon } from "lucide-react";
+import { memo, useCallback, useMemo } from "react";
 
 export const NotificationInboxDataView = memo(() => {
   // Queries & Mutations
@@ -85,7 +57,7 @@ export const NotificationInboxDataView = memo(() => {
   if (isError) {
     return (
       <Center flex={1} py={"xl"}>
-        <RetryState
+        <StateRetry
           title={"Gagal Memuat Inbox"}
           description={
             error?.message || "Terjadi kesalahan saat memuat pesan inbox."
@@ -100,7 +72,7 @@ export const NotificationInboxDataView = memo(() => {
 
   if (isEmptyArray(items)) {
     return (
-      <NoDataState
+      <StateNoData
         icon={InboxIcon}
         title={"Inbox Kosong"}
         description={"Belum ada pesan atau pengumuman baru untuk Anda."}
@@ -132,7 +104,7 @@ export const NotificationInboxDataView = memo(() => {
               loading={markAllAsReadMutation.isPending}
               onClick={() => markAllAsReadMutation.mutate()}
             >
-              <AppIcon icon={CheckCheckIcon} />
+              {/* <AppIcon icon={CheckCheckIcon} /> */}
               {"Tandai Semua Dibaca"}
             </Button>
           )}
@@ -152,7 +124,7 @@ export const NotificationInboxDataView = memo(() => {
               colorPalette={"red"}
               loading={clearAllInboxMutation.isPending}
             >
-              <AppIcon icon={Trash2Icon} />
+              {/* <AppIcon icon={Trash2Icon} /> */}
               {t["action.clear_all"]()}
             </Button>
           </ConfirmationTrigger>
@@ -173,11 +145,9 @@ export const NotificationInboxDataView = memo(() => {
 
       {/* Load More Button if hasNextPage */}
       {hasNextPage && (
-        <Center pt={2}>
+        <Center mt={"md"}>
           <Button
             size={"sm"}
-            variant={"subtle"}
-            colorPalette={"gray"}
             loading={isFetchingNextPage}
             onClick={() => void fetchNextPage()}
           >
@@ -193,13 +163,43 @@ const InboxCardItem = memo((props: InboxCardItemProps) => {
   // Props
   const { item, onMarkAsRead, onDelete } = props;
 
+  // Navigation
+  const navigate = useNavigate();
+
   // Stores & Hooks
   const { theme } = useThemeStore();
-  const preferredTimezone = useMemo(() => getPreferredUserTimezone(), []);
 
   // Derived Values
-  const IconComponent = CATEGORY_ICON_MAP[item.category] ?? BellIcon;
-  const colorPalette = CATEGORY_COLOR_MAP[item.category] ?? "blue";
+  const resolved = useMemo(() => resolveInboxUI(item), [item]);
+  const IconComponent = resolved.icon;
+  const colorPalette = resolved.colorPalette;
+  const hasAction = Boolean(resolved.actionUrl);
+
+  // Handlers
+  const handleNavigate = useCallback(async () => {
+    if (!resolved.actionUrl) return;
+
+    if (resolved.actionUrl.startsWith("/")) {
+      const [pathname, searchStr] = resolved.actionUrl.split("?");
+
+      // If URL contains activeModalKey, push the base page first so closing the modal goes back to the page
+      if (searchStr && searchStr.includes("activeModalKey=")) {
+        await navigate({ href: pathname });
+      }
+
+      await navigate({ href: resolved.actionUrl });
+    } else {
+      window.location.href = resolved.actionUrl;
+    }
+  }, [resolved.actionUrl, navigate]);
+
+  const handleActionClick = (e: React.MouseEvent) => {
+    e.stopPropagation();
+    if (!item.isRead) {
+      onMarkAsRead(item.id);
+    }
+    void handleNavigate();
+  };
 
   return (
     <HStack
@@ -208,16 +208,14 @@ const InboxCardItem = memo((props: InboxCardItemProps) => {
       p={"sm"}
       gap={["sm", null, "md"]}
       bg={item.isRead ? "bg.body" : "bg.subtle"}
-      borderWidth={"1px"}
-      borderColor={"border.subtle"}
       shadow={"xs"}
       rounded={theme.radii.container}
       w={"full"}
     >
       <Circle
         aspectRatio={1}
-        w={"28px"}
-        h={"28px"}
+        w={"24px"}
+        h={"24px"}
         p={1}
         bg={item.isRead ? "bg.muted" : `${colorPalette}.muted`}
         color={item.isRead ? "fg.muted" : `${colorPalette}.fg`}
@@ -228,32 +226,16 @@ const InboxCardItem = memo((props: InboxCardItemProps) => {
       </Circle>
 
       <VStack flex={1} minW={0} gap={"xs"} align={"stretch"}>
-        {/* Header Row: Title, Dot, Badge, Date, Delete */}
-        <HStack
-          justify={"space-between"}
-          align={["start", null, "center"]}
-          wrap={"wrap"}
-          gap={"xs"}
-          w={"full"}
-        >
-          {/* Left: Title + Dot + Badge */}
-          <HStack gap={"xs"} align={"center"} wrap={"wrap"} flex={1} minW={0}>
-            <P
+        {/* Header*/}
+        <VStack gap={"sm"} w={"full"}>
+          {/* Title + Dot + Badge */}
+          <HStack align={"center"} gap={"sm"}>
+            <ClampedP
               fontWeight={item.isRead ? "medium" : "semibold"}
               wordBreak={"break-word"}
             >
-              {item.title}
-            </P>
-
-            {!item.isRead && (
-              <Box
-                w={"6px"}
-                h={"6px"}
-                rounded={"full"}
-                bg={"blue.500"}
-                flexShrink={0}
-              />
-            )}
+              {resolved.title}
+            </ClampedP>
 
             <Badge
               variant={"subtle"}
@@ -264,18 +246,6 @@ const InboxCardItem = memo((props: InboxCardItemProps) => {
             >
               {item.category}
             </Badge>
-          </HStack>
-
-          {/* Right: Date + Delete Action */}
-          <HStack
-            gap={"xs"}
-            align={"center"}
-            flexShrink={0}
-            ml={["0", null, "auto"]}
-          >
-            <P fontSize={"sm"} color={"fg.subtle"} whiteSpace={"nowrap"}>
-              {formatUtcDateTime(item.createdAt, preferredTimezone)}
-            </P>
 
             <ConfirmationTrigger
               modalKey={`delete-inbox-item-${item.id}`}
@@ -289,13 +259,20 @@ const InboxCardItem = memo((props: InboxCardItemProps) => {
                 size={"2xs"}
                 variant={"subtle"}
                 aria-label={"Hapus pesan"}
+                ml={"auto"}
                 rounded={"full"}
+                onClick={(e) => e.stopPropagation()}
               >
-                <AppIcon icon={XIcon} size={"xs"} />
+                <AppIcon icon={XIcon} size={"sm"} />
               </IconButton>
             </ConfirmationTrigger>
           </HStack>
-        </HStack>
+
+          {/* Date */}
+          <P fontSize={"sm"} color={"fg.subtle"} whiteSpace={"nowrap"}>
+            {formatRelativeTime(item.createdAt)}
+          </P>
+        </VStack>
 
         {/* Message Content */}
         <Box w={"full"} pt={"2xs"}>
@@ -306,23 +283,39 @@ const InboxCardItem = memo((props: InboxCardItemProps) => {
             wordBreak={"break-word"}
             whiteSpace={"pre-line"}
           >
-            {item.message}
+            {resolved.message}
           </P>
         </Box>
 
-        {/* Action Button: Mark As Read */}
-        {!item.isRead && (
-          <HStack justify={"end"} pt={"2xs"}>
+        {/* Action Footer: Navigation Button / Mark As Read */}
+        <HStack align={"center"} wrap={"wrap"} gap={"xs"} mt={"xs"}>
+          {hasAction && (
             <Button
+              variant={"outline"}
               size={"xs"}
-              variant={"ghost"}
-              onClick={() => onMarkAsRead(item.id)}
+              pr={"6px"}
+              onClick={handleActionClick}
             >
-              <AppIcon icon={CheckCheckIcon} size={"xs"} />
-              {"Tandai dibaca"}
+              {resolved.actionLabel || "Buka"}
+              <AppIcon icon={ArrowRightIcon} />
             </Button>
-          </HStack>
-        )}
+          )}
+
+          {!item.isRead && (
+            <Button
+              onClick={(e) => {
+                e.stopPropagation();
+                onMarkAsRead(item.id);
+              }}
+              size={"xs"}
+              pr={"6px"}
+              color={"fg.muted"}
+            >
+              {"Tandai dibaca"}
+              <AppIcon icon={CheckCheckIcon} />
+            </Button>
+          )}
+        </HStack>
       </VStack>
     </HStack>
   );

@@ -3,7 +3,7 @@
 import { IconButton } from "@/design-system/components/button/ui/button";
 import { Collapsible } from "@/design-system/components/disclosure/ui/collapsible";
 import { Loader } from "@/design-system/components/feedback/ui/loader";
-import { RetryState } from "@/design-system/components/feedback/ui/state.retry";
+import { StateRetry } from "@/design-system/components/feedback/ui/state.retry";
 import { AppIcon } from "@/design-system/components/icon/ui/app-icon";
 import { Slider } from "@/design-system/components/input/ui/slider";
 import { Switch } from "@/design-system/components/input/ui/switch";
@@ -75,7 +75,7 @@ export const MapMyDataLayerSelect = memo(() => {
       } else {
         setCustomLayerConfig(item.id, {
           wmsUrl: item.externalWmsUrl || item.wmsUrl,
-          layers: item.wmsLayers || item.id,
+          layers: item.wmsLayers || item.wfsTypeName || "",
           spatialBasis: item.spatialBasis,
         });
         setLayerEnabled(item.id, true);
@@ -90,7 +90,7 @@ export const MapMyDataLayerSelect = memo(() => {
         if (checked) {
           setCustomLayerConfig(item.id, {
             wmsUrl: item.externalWmsUrl || item.wmsUrl,
-            layers: item.wmsLayers || item.id,
+            layers: item.wmsLayers || item.wfsTypeName || "",
             spatialBasis: item.spatialBasis,
           });
           setLayerEnabled(item.id, true);
@@ -153,7 +153,7 @@ export const MapMyDataLayerSelect = memo(() => {
             </HStack>
           ) : isError ? (
             <Center p={"md"}>
-              <RetryState
+              <StateRetry
                 title={"Gagal Memuat Data Saya"}
                 description={
                   error instanceof Error
@@ -275,7 +275,7 @@ const MapMyDataLayerItem = memo((props: MapMyDataLayerItemProps) => {
       spatialBasis: item.spatialBasis,
       bbox: item.bbox,
       wfs: {
-        wfsTypeName: item.wfsTypeName || item.id,
+        wfsTypeName: item.wfsTypeName || item.wmsLayers || "",
         wfsUrl: item.externalWfsUrl || item.wfsUrl,
       },
     });

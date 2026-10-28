@@ -66,7 +66,7 @@ export const useTriggerMitraLayerSyncMutation = () => {
     successMessage: {
       title: "Job pembaruan dijadwalkan di latar belakang",
       description:
-        "Proses pembaruan layer mitra berjalan secara asinkron. Cek menu Antrean Job untuk memantau progres.",
+        "Proses pembaruan layer mitra berjalan secara asinkron. Cek Antrean Job di Beranda untuk memantau progres.",
     },
     errorMessage: {
       title: "Gagal menjadwalkan pembaruan layer mitra",

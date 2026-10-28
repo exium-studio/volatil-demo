@@ -145,13 +145,10 @@ export const FilterAdministrativeAreaTrigger = (
               {"Terapkan Filter"}
             </Button>
 
-            <Button variant={"outline"} onClick={handleReset}>
-              {t["action.reset"]()}
-            </Button>
+            <Button onClick={handleReset}>{t["action.reset"]()}</Button>
           </VStack>
         </Modal.Footer>
       </Modal.Content>
     </Modal.Root>
   );
 };
-

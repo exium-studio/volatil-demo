@@ -1,16 +1,13 @@
 // src/shared/types/status.type.ts
 
+import type { ColorPalette } from "@/design-system/chakra/types/color.type";
 import type { LucideIcon } from "lucide-react";
 
 /**
  * SSOT 1: Transaction Status Types (Billing & Payment)
  */
-export type TransactionStatus =
-  | "pending"
-  | "expired"
-  | "paid"
-  | "failed"
-  | "refunded";
+export type TransactionStatus = "pending" | "expired" | "paid" | "failed";
+// | "refunded";
 
 export type TransactionStatusConfig = {
   label: string;
@@ -23,14 +20,18 @@ export type TransactionStatusConfig = {
  */
 export type OrderStatus =
   | "requesting"
-  | "preparing"
   | "pending_payment"
   | "paid"
   | "processing"
+  | "wms_failed"
   | "pending_tte"
   | "pending_review"
+  | "ready"
+  | "expired"
+  | "renewed"
   | "rejected"
-  | "ready";
+  | "transaction_expired"
+  | "transaction_failed";
 
 export type OrderProvisionStatus = OrderStatus;
 
@@ -48,32 +49,6 @@ export type OrderStatusConfig = {
   icon?: LucideIcon;
   iconColor?: string;
   noticeDescription?: string;
-};
-
-/**
- * SSOT 3: My Data Active Status Types (Mitra Data Saya)
- */
-export type MyDataStatus =
-  | "queued"
-  | "provisioning"
-  | "ready"
-  | "active"
-  | "failed"
-  | "expired"
-  | "revoked";
-
-export type MyDataStatusConfig = {
-  label: string;
-  colorPalette:
-    | "orange"
-    | "blue"
-    | "purple"
-    | "green"
-    | "red"
-    | "neutral"
-    | "gray";
-  icon?: LucideIcon;
-  iconColor?: string;
 };
 
 /**
@@ -98,4 +73,15 @@ export type MitraRegistrationStatusConfig = {
   label: string;
   colorPalette: "orange" | "green" | "red" | "gray";
   icon?: LucideIcon;
+};
+
+/**
+ * SSOT 6: System Policy Config (Kebijakan Siklus & Perpanjangan)
+ */
+export type SystemPolicyConfig = {
+  label: string;
+  description: string;
+  colorPalette: ColorPalette;
+  icon: LucideIcon;
+  helperText?: string;
 };

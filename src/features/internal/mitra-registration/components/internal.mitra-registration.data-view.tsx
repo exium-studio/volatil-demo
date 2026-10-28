@@ -6,9 +6,9 @@ import { DataViewFooter } from "@/design-system/components/data-display/ui/data-
 import { DEFAULT_PAGE_SIZE_OPTIONS } from "@/design-system/components/data-display/ui/data-view-page-size";
 import { DataViewTable } from "@/design-system/components/data-display/ui/data-view-table";
 import { Skeleton } from "@/design-system/components/feedback/ui/skeleton";
-import { NoDataState } from "@/design-system/components/feedback/ui/state.no-data";
-import { NoResultState } from "@/design-system/components/feedback/ui/state.no-result";
-import { RetryState } from "@/design-system/components/feedback/ui/state.retry";
+import { StateNoData } from "@/design-system/components/feedback/ui/state.no-data";
+import { StateNoResult } from "@/design-system/components/feedback/ui/state.no-result";
+import { StateRetry } from "@/design-system/components/feedback/ui/state.retry";
 import { TopBarLoader } from "@/design-system/components/feedback/ui/top-bar-loader";
 import { SearchInput } from "@/design-system/components/input/ui/search-input";
 import { InfoTip } from "@/design-system/components/input/ui/toggle-tip";
@@ -24,6 +24,7 @@ import { Heading } from "@/design-system/components/typography/ui/heading";
 import { ClampedP, P } from "@/design-system/components/typography/ui/p";
 import { InternalMitraRegistrationApproveTrigger } from "@/features/internal/mitra-registration/components/internal.mitra-registration.approve-modal";
 import { InternalMitraRegistrationRejectTrigger } from "@/features/internal/mitra-registration/components/internal.mitra-registration.reject-modal";
+import { InternalMitraRegistrationResendSsoTrigger } from "@/features/internal/mitra-registration/components/internal.mitra-registration.resend-sso-modal";
 import { useInternalMitraRegistrationsQuery } from "@/features/internal/mitra-registration/hooks/use-mitra-registration.query";
 import type {
   InternalMitraRegistrationItem,
@@ -32,18 +33,22 @@ import type {
 } from "@/features/internal/mitra-registration/types/mitra-registration.type";
 import { MitraRegistrationStatusBadge } from "@/features/shared/components/mitra-registration-status.badge";
 import { StatusFilterSelect } from "@/features/shared/components/status-filter.select";
-import { MITRA_REGISTRATION_STATUS_OPTIONS } from "@/features/shared/constants/volatil.ssot-map";
+import {
+  MITRA_REGISTRATION_STATUS_MAP,
+  MITRA_REGISTRATION_STATUS_OPTIONS,
+} from "@/features/shared/constants/volatil.ssot-map";
 import { isEmptyArray } from "@/shared/utils/data/array";
 import {
   formatUtcDateTime,
   getPreferredUserTimezone,
 } from "@/shared/utils/formatter/date.formatter";
-import { useNavigate } from "@tanstack/react-router";
+import { useNavigate, useSearch } from "@tanstack/react-router";
 import {
   CheckCircleIcon,
   EyeIcon,
   HandshakeIcon,
   FilePenLine,
+  KeyRoundIcon,
   XCircleIcon,
 } from "lucide-react";
 import { useMemo, useState, useTransition } from "react";
@@ -52,16 +57,23 @@ export const InternalMitraRegistrationDataView = () => {
   // Hooks
   const navigate = useNavigate();
 
+  // Route Search Params
+  const searchParams = useSearch({
+    from: "/_private/internal/mitra-registration/",
+  });
+
   // Transitions
   const [_isPending, startTransition] = useTransition();
 
   // States — Centralized query parameters
-  const [params, setParams] = useState<InternalMitraRegistrationQueryParams>({
-    page: 1,
-    pageSize: DEFAULT_PAGE_SIZE_OPTIONS[0],
-    search: "",
-    status: "all",
-  });
+  const [params, setParams] = useState<InternalMitraRegistrationQueryParams>(
+    () => ({
+      page: 1,
+      pageSize: DEFAULT_PAGE_SIZE_OPTIONS[0],
+      search: "",
+      status: searchParams.status ?? "all",
+    }),
+  );
 
   // Queries
   const {
@@ -83,9 +95,19 @@ export const InternalMitraRegistrationDataView = () => {
   const preferredTimezone = useMemo(() => getPreferredUserTimezone(), []);
   const isSearching = Boolean(params.search?.trim() || params.status !== "all");
   const searchQuery = useMemo(() => {
-    if (params.search?.trim()) return params.search;
-    if (params.status !== "all") return params.status ?? "...";
-    return "...";
+    const parts: string[] = [];
+
+    if (params.search?.trim()) {
+      parts.push(params.search.trim());
+    }
+
+    if (params.status && params.status !== "all") {
+      const statusConfig =
+        MITRA_REGISTRATION_STATUS_MAP[params.status as MitraRegistrationStatus];
+      parts.push(statusConfig?.label ?? params.status);
+    }
+
+    return parts.length > 0 ? parts.join(", ") : "...";
   }, [params.search, params.status]);
 
   // Derived Values - Headers, Items, BatchActions, ItemActions in 1 useMemo
@@ -113,9 +135,7 @@ export const InternalMitraRegistrationDataView = () => {
             value: reg.organizationName ?? reg.namaInstansi,
             td: (
               <VStack gap={"2xs"}>
-                <ClampedP>
-                  {reg.organizationName ?? reg.namaInstansi}
-                </ClampedP>
+                <ClampedP>{reg.organizationName ?? reg.namaInstansi}</ClampedP>
                 <P fontSize={"sm"} color={"fg.subtle"}>
                   {`NIB: ${reg.nib}`}
                 </P>
@@ -267,6 +287,21 @@ export const InternalMitraRegistrationDataView = () => {
             ),
           },
         },
+        {
+          key: "resend-sso-credential",
+          label: "Kirim Kredensial SSO",
+          icon: KeyRoundIcon,
+          hidden: (reg: InternalMitraRegistrationItem) =>
+            reg.status !== "verified",
+          modal: {
+            triggerComponent: (reg: InternalMitraRegistrationItem) => (
+              <InternalMitraRegistrationResendSsoTrigger
+                modalKey={`resend-sso-${reg.id}`}
+                registration={reg}
+              />
+            ),
+          },
+        },
       ];
 
     return {
@@ -330,6 +365,15 @@ export const InternalMitraRegistrationDataView = () => {
                   page: 1,
                 }));
               });
+              void navigate({
+                to: "/internal/mitra-registration",
+                replace: true,
+                search: (prev: Record<string, unknown>) => {
+                  const next = { ...prev };
+                  delete next.status;
+                  return next;
+                },
+              });
             }}
             placeholder={"Semua Status"}
             modalKey={"mitra-reg-status-filter"}
@@ -345,7 +389,7 @@ export const InternalMitraRegistrationDataView = () => {
 
           {!isLoading && isError && (
             <Center flex={1} w={"full"} p={"xl"} bg={"bg.body"}>
-              <RetryState
+              <StateRetry
                 title={"Gagal Memuat Pendaftaran Mitra"}
                 description={
                   error?.message ||
@@ -363,9 +407,9 @@ export const InternalMitraRegistrationDataView = () => {
               {isEmptyArray(rawItems) && (
                 <Center flex={1} w={"full"} p={"xl"} bg={"bg.body"}>
                   {isSearching ? (
-                    <NoResultState query={searchQuery} />
+                    <StateNoResult query={searchQuery} />
                   ) : (
-                    <NoDataState
+                    <StateNoData
                       title={"Belum Ada Pendaftaran Mitra"}
                       description={
                         "Daftar pengajuan kemitraan dari calon mitra luar akan muncul di sini."

@@ -28,6 +28,7 @@ import { queryKeys } from "@/shared/libs/tanstack-query/query.keys";
 import { mutationToastHandlers } from "@/shared/libs/toast/toast.handler";
 import { isDummyDataEnabled } from "@/shared/utils/env/env.utils";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
+import { useNavigate } from "@tanstack/react-router";
 import { useEffect, useRef } from "react";
 
 const EMPTY_CART_SUMMARY: CartSummaryResponse = {
@@ -235,6 +236,7 @@ export const useActiveCartOrderQuery = () => {
 
 export const useCreateCartOrder = () => {
   const queryClient = useQueryClient();
+  const navigate = useNavigate();
   const toastHandlers = mutationToastHandlers("create-cart-order", {
     group: "Keranjang",
     loadingMessage: {
@@ -242,8 +244,7 @@ export const useCreateCartOrder = () => {
     },
     successMessage: {
       title: "Data dimasukkan ke keranjang!",
-      description:
-        "Sistem sedang memproses penyiapan layer spasial Anda.",
+      description: "Sistem sedang memproses penyiapan layer spasial Anda.",
     },
     errorMessage: {
       title: "Gagal membuat pesanan keranjang",
@@ -253,13 +254,20 @@ export const useCreateCartOrder = () => {
   return useMutation({
     mutationFn: (payload: AddToCartOrderRequest) => createCartOrder(payload),
     onMutate: toastHandlers.onLoading,
-    onSuccess: () => {
+    onSuccess: (data) => {
       toastHandlers.onSuccess();
       void queryClient.invalidateQueries({
         queryKey: ["mitra", "cart", "active-order"],
       });
       void queryClient.invalidateQueries({
         queryKey: ["mitra", "cart", "orders"],
+      });
+      void queryClient.invalidateQueries({
+        queryKey: queryKeys.mitra.cart.all,
+      });
+      void navigate({
+        to: "/mitra/cart",
+        search: data?.orderId ? { orderId: data.orderId } : undefined,
       });
     },
     onError: toastHandlers.onError,
@@ -390,7 +398,8 @@ export const useReorderCartOrder = (onSuccessCallback?: () => void) => {
     },
     successMessage: {
       title: "Permintaan ulang berhasil dibuat!",
-      description: "Pesanan baru telah masuk ke keranjang dan sedang disiapkan.",
+      description:
+        "Pesanan baru telah masuk ke keranjang dan sedang disiapkan.",
     },
     errorMessage: {
       title: "Gagal membuat permintaan ulang",

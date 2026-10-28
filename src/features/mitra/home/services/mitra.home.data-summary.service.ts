@@ -26,20 +26,20 @@ export const normalizeSummaryItem = (
       almostExpired: Number(
         field.almostExpired ??
           field.almost_expired ??
-          field.hampirKadaluwarsa ??
+          field.hampirKedaluwarsa ??
           0,
       ),
-      expired: Number(field.expired ?? field.kadaluwarsa ?? 0),
+      expired: Number(field.expired ?? field.Kedaluwarsa ?? 0),
     },
     area: {
       active: Number(area.active ?? area.aktif ?? 0),
       almostExpired: Number(
         area.almostExpired ??
           area.almost_expired ??
-          area.hampirKadaluwarsa ??
+          area.hampirKedaluwarsa ??
           0,
       ),
-      expired: Number(area.expired ?? area.kadaluwarsa ?? 0),
+      expired: Number(area.expired ?? area.Kedaluwarsa ?? 0),
     },
   };
 };
@@ -50,11 +50,19 @@ export const getMitraDataSummary = async (
 ): Promise<MitraHomeDataSummaryResponse> => {
   try {
     const response = await fetchMitraDataSummaryApi(period, signal);
-    const rawData = response?.data ?? response;
+    const rawData =
+      (response?.data as unknown as Record<string, unknown>)?.data ??
+      response?.data ??
+      response;
 
     if (rawData && typeof rawData === "object") {
       const obj = rawData as Record<string, unknown>;
-      if ("field" in obj || "area" in obj || "bidang" in obj || "kawasan" in obj) {
+      if (
+        "field" in obj ||
+        "area" in obj ||
+        "bidang" in obj ||
+        "kawasan" in obj
+      ) {
         return normalizeSummaryItem(obj);
       }
       if (period in obj && obj[period]) {

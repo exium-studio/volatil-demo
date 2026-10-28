@@ -2,7 +2,6 @@
 
 import { IgtLogo } from "@/design-system/components/branding/ui/igt-logo";
 import { AppIcon } from "@/design-system/components/icon/ui/app-icon";
-import { Center } from "@/design-system/components/layout/ui/center";
 import { HStack, VStack } from "@/design-system/components/layout/ui/flex-box";
 import { AppPageContainer } from "@/design-system/components/layout/ui/page-container";
 import { Avatar } from "@/design-system/components/media/ui/avatar";
@@ -10,6 +9,7 @@ import { Splitter } from "@/design-system/components/layout/ui/splitter";
 import { useMapViewPadding } from "@/design-system/components/map/hooks/use-map-view-padding";
 import { useMapInstanceStore } from "@/design-system/components/map/stores/map.instance.store";
 import { useMapLayerStore } from "@/design-system/components/map/stores/map.layer.store";
+import { fitBoundsSafe } from "@/design-system/components/map/utils/map-camera";
 import {
   getWmsRasterConfigFromIgtLayer,
   type IgtLayerItem,
@@ -33,8 +33,6 @@ import { useSidebarStore } from "@/design-system/stores/sidebar-store";
 import { useSplitterStore } from "@/design-system/stores/splitter-store";
 import { useThemeStore } from "@/design-system/stores/theme-store";
 import { useAuthSession } from "@/features/auth/hooks/use-auth-session";
-import { InternalSigninPage } from "@/features/auth/pages/internal.signin.page";
-import { MitraSigninPage } from "@/features/auth/pages/mitra.signin.page";
 import { UserProfilePopoverTrigger } from "@/features/auth/components/ui/user-profile-popover";
 import { getIgtLayers } from "@/features/mitra/data-request/api/mitra.data-request-igt-layers.api";
 import { useIgtLayerStore } from "@/features/mitra/data-request/stores/igt-layer.store";
@@ -58,6 +56,7 @@ import { Box } from "@chakra-ui/react";
 import { useQuery } from "@tanstack/react-query";
 import { Outlet, useLocation, useNavigate } from "@tanstack/react-router";
 import { recordRecentNav } from "@/shared/utils/navigation/recent-nav.utils";
+import { usePricingPolicy } from "@/features/mitra/data-request/hooks/use-pricing-policy";
 import { UserIcon } from "lucide-react";
 import { useEffect, useMemo, useRef } from "react";
 
@@ -75,6 +74,7 @@ export const GisAppShell = (props: GisAppShellProps) => {
   const { ...restProps } = props;
 
   // Hooks
+  usePricingPolicy();
   const isSmallViewport = useIsSmallViewport();
   const pathname = useLocation().pathname;
   const { user } = useAuthSession();
@@ -82,20 +82,9 @@ export const GisAppShell = (props: GisAppShellProps) => {
   // Derived Values
   const userSession = user ?? getUserSession();
   const currentUserId = userSession?.id;
-  const isInternal =
-    pathname.startsWith("/admin") ||
-    pathname.startsWith("/internal") ||
-    userSession?.role === "internal";
-  const isLoginRoute = pathname === "/" || pathname === "/admin";
-  const isStandaloneRoute =
-    !isLoginRoute &&
-    !pathname.startsWith("/mitra") &&
-    !pathname.startsWith("/internal");
 
   // Effects
   useEffect(() => {
-    if (isLoginRoute || isStandaloneRoute) return;
-
     const userData = getUserSession();
     const role = pathname.startsWith("/internal")
       ? "internal"
@@ -113,7 +102,7 @@ export const GisAppShell = (props: GisAppShellProps) => {
         titleKey: navItem.titleKey,
       });
     }
-  }, [pathname, isLoginRoute, isStandaloneRoute]);
+  }, [pathname]);
 
   // Reset all active map layers and filters when user/role changes
   useEffect(() => {
@@ -125,50 +114,13 @@ export const GisAppShell = (props: GisAppShellProps) => {
       flexDir={isSmallViewport ? "column" : "row"}
       pos={"relative"}
       overflow={"hidden"}
-      bg={"transparent"}
       {...restProps}
     >
       {!isSmallViewport && <GisAppSidebar />}
 
-      <Content isLoginRoute={isLoginRoute} />
+      <Content />
 
       {isSmallViewport && <MobileBottomNav />}
-
-      {/* Overlay */}
-      <Box
-        pos={"fixed"}
-        top={0}
-        left={0}
-        right={0}
-        bottom={0}
-        zIndex={100}
-        bg={"bodyDark/20"}
-        backdropFilter={"blur(5px)"}
-        pointerEvents={"none"}
-        opacity={isLoginRoute ? 1 : 0}
-        transition={"300ms"}
-      />
-
-      {/* Login Screen Container with smooth opacity and scale transition */}
-      <Center
-        pos={"fixed"}
-        top={0}
-        left={0}
-        right={0}
-        bottom={0}
-        zIndex={101}
-        w={"full"}
-        h={"full"}
-        p={["0 !important", 4, 6]}
-        overflow={"auto"}
-        pointerEvents={isLoginRoute ? "auto" : "none"}
-        opacity={isLoginRoute ? 1 : 0}
-        transform={isLoginRoute ? "scale(1)" : "scale(0.96)"}
-        transition={"300ms"}
-        aria-hidden={!isLoginRoute}
-      >
-        {isInternal ? <InternalSigninPage /> : <MitraSigninPage />}
-      </Center>
     </AppPageContainer>
   );
 };
@@ -203,9 +155,21 @@ const SidebarHeader = () => {
     (s) => s.expandedByKey[SIDE_BAR_KEY] ?? DEFAULT_SIDEBAR_EXPANDED,
   );
 
+  // Hooks
+  const pathname = useLocation().pathname;
+
+  // Derived Values
+  const userData = getUserSession();
+  const role = pathname.startsWith("/internal")
+    ? "internal"
+    : pathname.startsWith("/mitra")
+      ? "mitra"
+      : (userData?.role ?? "mitra");
+  const logoPath = role === "internal" ? "/admin" : "/";
+
   return (
     <Sidebar.Header>
-      <NavLink to={"/"}>
+      <NavLink to={logoPath}>
         <HStack align={"center"} gap={"sm"}>
           <IgtLogo flexShrink={0} boxSize={"24px"} ml={1} />
 
@@ -351,10 +315,7 @@ const SidebarFooter = () => {
 
 // -------------------------------------------------------------------------------------
 
-const Content = (props: GisContentProps) => {
-  // Props
-  const { isLoginRoute } = props;
-
+const Content = (_props: GisContentProps) => {
   // Refs
   const contentPanelRef = useRef<HTMLDivElement | null>(null);
 
@@ -372,16 +333,22 @@ const Content = (props: GisContentProps) => {
   // Hooks
   const isSmallViewport = useIsSmallViewport();
   const hasInitializedDefaultsRef = useRef(false);
+  const location = useLocation();
 
   const userSession = getUserSession();
   const isAuthenticated = Boolean(userSession?.id);
+
+  // Derived Values
+  const isWorkspaceDetailRoute =
+    location.pathname.startsWith("/mitra/my-data/") &&
+    location.pathname.split("/").length > 3;
 
   // Derived Values — Build layer config from fetched layer list
   const { data: fetchedLayers } = useQuery({
     queryKey: queryKeys.map.layers(),
     queryFn: ({ signal }) => getIgtLayers(signal),
     staleTime: 1000 * 60 * 5,
-    enabled: !isLoginRoute && isAuthenticated,
+    enabled: isAuthenticated,
   });
 
   const {
@@ -390,13 +357,14 @@ const Content = (props: GisContentProps) => {
     customLayerConfigs,
     cqlFilter,
     globalOpacity,
+    layerOrder,
   } = useIgtLayerStore();
   const {
     enabledLayerIds: previewEnabledLayerIds,
     layerConfigs: previewLayerConfigs,
   } = useOrderReviewLayerStore();
 
-  // Auto-enable layers configured with defaultVisible on initial load
+  // Auto-enable layers configured with defaultVisible on initial load and fit map camera
   useEffect(() => {
     const rawList = fetchedLayers?.items;
     if (rawList && rawList.length > 0 && !hasInitializedDefaultsRef.current) {
@@ -407,18 +375,38 @@ const Content = (props: GisContentProps) => {
       defaultActiveLayers.forEach((l) => {
         useMapLayerStore.getState().setLayerEnabled(l.id, true);
       });
+
+      const targetLayer = defaultActiveLayers[0] ?? rawList[0];
+      if (targetLayer?.bbox && map) {
+        fitBoundsSafe(map, targetLayer.bbox, {
+          padding: 80,
+          maxZoom: 14,
+          duration: 1200,
+        });
+      }
     }
-  }, [fetchedLayers]);
+  }, [fetchedLayers, map]);
 
   const mapLayers = useMemo<MapLayerConfig[]>(() => {
-    if (isLoginRoute) return [];
-
     const rawList = fetchedLayers?.items ?? [];
-    const sorted = [...rawList].sort(
-      (a, b) => (a.zIndex ?? 0) - (b.zIndex ?? 0),
-    );
+    const sorted = [...rawList].sort((a, b) => {
+      if (layerOrder.length > 0) {
+        const indexA = layerOrder.indexOf(a.id);
+        const indexB = layerOrder.indexOf(b.id);
+        if (indexA !== -1 && indexB !== -1) {
+          // Bottom-to-top rendering: item with higher index in bottom or top
+          // In MapLibre layer stack, earlier configs are added first (at the bottom).
+          // If layer list shows top-to-bottom (0 is top-most visually), then 0 has highest z-index.
+          // In reverse: layer at index 0 should be rendered on top (added last).
+          return indexB - indexA;
+        }
+      }
+      return (a.zIndex ?? 0) - (b.zIndex ?? 0);
+    });
     const configs: MapLayerConfig[] = sorted
-      .filter((layer: IgtLayerItem) => Boolean(layer.wms))
+      .filter((layer: IgtLayerItem) =>
+        Boolean(layer.wms?.wmsUrl || layer.wms?.layers || layer.id),
+      )
       .map((layer: IgtLayerItem) => {
         const isEnabled = Boolean(enabledLayerIds[layer.id]);
         const individualOpacity = layerOpacities[layer.id] ?? 1.0;
@@ -428,13 +416,13 @@ const Content = (props: GisContentProps) => {
           const baseConfig = getWmsRasterConfigFromIgtLayer(
             layer,
             wmsVisible && isEnabled,
-            individualOpacity,
+            individualOpacity * globalOpacity,
           );
           return {
             ...baseConfig,
             ...customOverride,
             visible: wmsVisible && isEnabled,
-            opacity: layerOpacities[layer.id] ?? 1.0,
+            opacity: (layerOpacities[layer.id] ?? 1.0) * globalOpacity,
           };
         }
 
@@ -447,21 +435,37 @@ const Content = (props: GisContentProps) => {
       });
 
     // Also include any layer in enabledLayerIds (e.g. My Data / custom workspace layers)
+    const customConfigs: MapLayerConfig[] = [];
     Object.entries(enabledLayerIds).forEach(([layerId, isEnabled]) => {
       if (!configs.some((c) => c.id === layerId)) {
         const customOverride = customLayerConfigs[layerId];
-        configs.push({
+        if (!customOverride?.wmsUrl || !customOverride?.layers) return;
+        customConfigs.push({
           id: layerId,
           type: "wms-raster",
-          spatialBasis: customOverride?.spatialBasis ?? "bidang",
+          spatialBasis: customOverride.spatialBasis ?? "bidang",
           visible: wmsVisible && Boolean(isEnabled),
-          opacity: layerOpacities[layerId] ?? 1.0,
-          wmsUrl: "",
-          layers: layerId,
-          ...(customOverride ?? {}),
+          opacity: (layerOpacities[layerId] ?? 1.0) * globalOpacity,
+          wmsUrl: customOverride.wmsUrl,
+          layers: customOverride.layers,
+          ...customOverride,
         });
       }
     });
+
+    if (customConfigs.length > 0 && layerOrder.length > 0) {
+      customConfigs.sort((a, b) => {
+        const indexA = layerOrder.indexOf(a.id);
+        const indexB = layerOrder.indexOf(b.id);
+        if (indexA !== -1 && indexB !== -1) {
+          // Bottom-to-top rendering: item with higher index rendered below (added earlier)
+          return indexB - indexA;
+        }
+        return 0;
+      });
+    }
+
+    configs.push(...customConfigs);
 
     // Include isolated Order Review preview layers
     Object.entries(previewEnabledLayerIds).forEach(([layerId, isEnabled]) => {
@@ -474,7 +478,7 @@ const Content = (props: GisContentProps) => {
           visible: wmsVisible && Boolean(isEnabled),
           opacity: 1.0,
           wmsUrl: previewConfig?.wmsUrl ?? "",
-          layers: previewConfig?.layers ?? layerId,
+          layers: previewConfig?.layers ?? "",
           ...(previewConfig ?? {}),
         });
       }
@@ -482,7 +486,6 @@ const Content = (props: GisContentProps) => {
 
     return configs;
   }, [
-    isLoginRoute,
     fetchedLayers,
     wmsVisible,
     enabledLayerIds,
@@ -491,20 +494,17 @@ const Content = (props: GisContentProps) => {
     previewEnabledLayerIds,
     previewLayerConfigs,
     globalOpacity,
+    layerOrder,
   ]);
 
   // Derived Values
   const sidebarPx = sidebarExpanded ? SIDEBAR_EXPANDED_W : SIDEBAR_COLLAPSED_W;
 
-  const panels = [
-    { id: "content", minSize: 5 },
-    { id: "spacer", minSize: 5 },
-  ];
-
   // Sync map padding — ResizeObserver inside hook handles splitter drag,
   // sidebar toggle triggers a smooth animated transition
   useMapViewPadding(map, {
-    contentPanelRef,
+    referenceElementRef: contentPanelRef,
+    referenceElementId: "gis-content-panel-a",
     sidebarPx,
     isVertical: isSmallViewport,
   });
@@ -513,18 +513,23 @@ const Content = (props: GisContentProps) => {
     <Splitter.Panel
       key={"content"}
       id={"content"}
+      domId={"gis-content-panel-a"}
+      panelRole={"a"}
+      minSize={isSmallViewport ? 80 : 50}
+      elementRef={contentPanelRef}
+      defaultSize={isSmallViewport ? splitterSize[1] : splitterSize[0]}
       alignItems={"end"}
       overflow={"auto"}
     >
       <VStack
-        ref={contentPanelRef}
         flex={1}
         overflow={"auto"}
-        minW={[0, null, "360px"]}
+        minW={isSmallViewport ? 0 : [0, null, "360px"]}
         w={"full"}
-        minH={"300px"}
-        bg={"bg.canvas"}
-        shadow={"md"}
+        minH={isSmallViewport ? 0 : "300px"}
+        layerStyle={"frosted"}
+        bg={"bg.canvasAlpha"}
+        // bg={"bg.canvas"}
         pointerEvents={"auto"}
       >
         <Outlet />
@@ -537,19 +542,29 @@ const Content = (props: GisContentProps) => {
     <Splitter.Panel
       key={"spacer"}
       id={"spacer"}
+      panelRole={"b"}
+      minSize={50}
+      defaultSize={isSmallViewport ? splitterSize[0] : splitterSize[1]}
+      minW={isSmallViewport ? "full" : "480px"}
       display={"flex"}
       flexDir={"column"}
       justifyContent={"end"}
       pointerEvents={"none"}
     >
-      <VStack pos={"relative"} minH={"300px"} h={"full"} pointerEvents={"none"}>
+      <VStack
+        pos={"relative"}
+        minH={"300px"}
+        minW={isSmallViewport ? "full" : "480px"}
+        w={"full"}
+        h={"full"}
+        flexShrink={0}
+        pointerEvents={"none"}
+      >
         <MapShell
           layers={mapLayers}
           cqlFilter={cqlFilter}
           showMasterIgtLayerSelect={true}
-          // onDrawFinish={(feature, originalPoints) => {
-          //   console.log("draw finished", { feature, originalPoints });
-          // }}
+          showWorkspaceLayerSelect={isWorkspaceDetailRoute}
         />
       </VStack>
     </Splitter.Panel>
@@ -575,13 +590,15 @@ const Content = (props: GisContentProps) => {
 
       {/* Splitter — content panel + transparent spacer (no map inside) */}
       <Splitter.Root
+        variant={"plain"}
         flex={1}
-        panels={panels}
-        size={splitterSize}
-        onResize={(details) => {
-          setSplitterSize(SPLITTER_KEY, details.size);
+        mode={isSmallViewport ? "snappy" : "free"}
+        triggerAlwaysVisible={isSmallViewport}
+        direction={isSmallViewport ? "vertical" : "horizontal"}
+        defaultLayout={DEFAULT_SPLITTER_SIZE}
+        onLayout={(layout: number[]) => {
+          setSplitterSize(SPLITTER_KEY, layout);
         }}
-        orientation={isSmallViewport ? "vertical" : "horizontal"}
         pos={"relative"}
         zIndex={2}
         pointerEvents={"none"}

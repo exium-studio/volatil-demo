@@ -6,14 +6,17 @@ import type {
   SelectProps,
 } from "@/design-system/components/input/types/select.type";
 import { Skeleton } from "@/design-system/components/feedback/ui/skeleton";
-import { NoResultState } from "@/design-system/components/feedback/ui/state.no-result";
-import { RetryState } from "@/design-system/components/feedback/ui/state.retry";
+import { StateNoResult } from "@/design-system/components/feedback/ui/state.no-result";
+import { StateRetry } from "@/design-system/components/feedback/ui/state.retry";
 import { Box } from "@/design-system/components/layout/ui/box";
 import { HStack, VStack } from "@/design-system/components/layout/ui/flex-box";
 import { isEmptyArray } from "@/shared/utils/data/array";
 import { Tooltip } from "@/design-system/components/overlay/ui/tooltip";
 import { P } from "@/design-system/components/typography/ui/p";
 import { useThemeStore } from "@/design-system/stores/theme-store";
+import { useIsSmallViewport } from "@/design-system/hooks/use-is-small-viewport";
+import { FocusSelectInput } from "@/design-system/components/input/ui/focus-select";
+import type { FocusSelectOption } from "@/design-system/components/input/types/focus-select.type";
 import {
   Select as ChakraSelect,
   createListCollection,
@@ -26,6 +29,9 @@ import { isValidElement, useMemo, useState } from "react";
 const EMPTY_OPTIONS: SelectOption[] = [];
 
 export default function SelectInput(props: SelectProps) {
+  // Hooks
+  const isSmallViewport = useIsSmallViewport();
+
   // Props
   const {
     value: controlledValue,
@@ -50,6 +56,8 @@ export default function SelectInput(props: SelectProps) {
     onRetry,
     errorTitle,
     errorMessage,
+    title,
+    modalKey,
     ...restProps
   } = props;
 
@@ -65,16 +73,73 @@ export default function SelectInput(props: SelectProps) {
   const currentValue = isControlled ? controlledValue : internalValue;
 
   // Derived Values
+  const focusSelectOptions: FocusSelectOption[] = useMemo(() => {
+    return options.map((opt) => ({
+      label: opt.label,
+      value: String(opt.value),
+      description: opt.description,
+      startElement: opt.startElement,
+      icon: opt.icon,
+    }));
+  }, [options]);
+
   const selectedOption = useMemo(() => {
     return options.find((opt) => String(opt.value) === String(currentValue));
   }, [options, currentValue]);
 
-  // States
-  const collection = createListCollection({
-    items: options,
-    itemToString: (item) => item.label,
-    itemToValue: (item) => String(item.value),
-  });
+  const collection = useMemo(
+    () =>
+      createListCollection({
+        items: options,
+        itemToString: (item) => item.label,
+        itemToValue: (item) => String(item.value),
+      }),
+    [options],
+  );
+
+  // Render FocusSelectInput when on small viewport
+  if (isSmallViewport) {
+    return (
+      <FocusSelectInput
+        modalKey={modalKey}
+        title={title ?? placeholder}
+        placeholder={placeholder}
+        options={focusSelectOptions}
+        value={currentValue}
+        defaultValue={defaultValue}
+        onValueChange={(val) => {
+          if (!isControlled) {
+            setInternalValue(val);
+          }
+          const matched = options.find(
+            (opt) => String(opt.value) === String(val),
+          );
+          onValueChange?.(val, matched);
+        }}
+        disabled={disabled}
+        clearable={clearable}
+        suffixLabel={suffixLabel}
+        iconSize={iconSize}
+        isFetching={isFetching}
+        isLoading={isLoading}
+        isError={isError}
+        onRetry={onRetry}
+        errorTitle={errorTitle}
+        errorMessage={errorMessage}
+        size={size}
+        renderOption={
+          renderOption
+            ? (opt) => {
+                const originalOpt =
+                  options.find((o) => String(o.value) === String(opt.value)) ??
+                  (opt as unknown as SelectOption);
+                return renderOption(originalOpt);
+              }
+            : undefined
+        }
+      />
+    );
+  }
 
   // Handlers
   const handleClear = (e: React.MouseEvent) => {
@@ -121,7 +186,7 @@ export default function SelectInput(props: SelectProps) {
     }
 
     return (
-      <HStack w={"full"} minW={0} justify={"space-between"} align={"center"}>
+      <HStack w={"full"} justify={"space-between"} align={"center"}>
         <HStack flex={1} minW={0} gap={2} align={"center"}>
           {renderStartElement(
             selectedOption?.startElement,
@@ -258,7 +323,7 @@ export default function SelectInput(props: SelectProps) {
               </VStack>
             ) : isError ? (
               <Box p={2}>
-                <RetryState
+                <StateRetry
                   onRetry={onRetry}
                   title={errorTitle}
                   description={errorMessage}
@@ -266,40 +331,41 @@ export default function SelectInput(props: SelectProps) {
               </Box>
             ) : isEmptyArray(options) ? (
               <Box p={2}>
-                <NoResultState />
+                <StateNoResult />
               </Box>
             ) : (
               collection.items.map((item) => (
-              <ChakraSelect.Item
-                key={String(item.value)}
-                item={item}
-                gap={2}
-                p={2}
-                rounded={theme?.radii.component}
-                fontSize={restProps.fontSize}
-                cursor={"pointer"}
-                transition={"200ms"}
-                _hover={{
-                  bg: "bg.subtle",
-                }}
-                _selected={{
-                  bg: "bg.muted",
-                }}
-              >
-                {renderOption ? (
-                  renderOption(item)
-                ) : (
-                  <HStack gap={2} align={"center"} flex={1} minW={0}>
-                    {renderStartElement(item.startElement, item.icon, "sm")}
-                    {item.label}
-                  </HStack>
-                )}
+                <ChakraSelect.Item
+                  key={String(item.value)}
+                  item={item}
+                  gap={2}
+                  p={2}
+                  rounded={theme?.radii.component}
+                  fontSize={restProps.fontSize}
+                  cursor={"pointer"}
+                  transition={"200ms"}
+                  _hover={{
+                    bg: "bg.subtle",
+                  }}
+                  _selected={{
+                    bg: "bg.muted",
+                  }}
+                >
+                  {renderOption ? (
+                    renderOption(item)
+                  ) : (
+                    <HStack gap={2} align={"center"} flex={1} minW={0}>
+                      {renderStartElement(item.startElement, item.icon, "sm")}
+                      {item.label}
+                    </HStack>
+                  )}
 
-                <ChakraSelect.ItemIndicator
-                  color={`${theme.colorPalette}.fg`}
-                />
-              </ChakraSelect.Item>
-            )))}
+                  <ChakraSelect.ItemIndicator
+                    color={`${theme.colorPalette}.fg`}
+                  />
+                </ChakraSelect.Item>
+              ))
+            )}
           </ChakraSelect.Content>
         </ChakraSelect.Positioner>
       </Portal>

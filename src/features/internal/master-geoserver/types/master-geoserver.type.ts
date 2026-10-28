@@ -12,6 +12,8 @@ export type MasterGeoserverItem = {
   username: string;
   password?: string;
   description?: string;
+  isActive?: boolean;
+  status?: "active" | "inactive" | "unreachable";
   deletedAt?: string | null;
   createdAt: string;
   updatedAt: string;
@@ -30,12 +32,28 @@ export type CreateMasterGeoserverPayload = {
   username: string;
   password?: string;
   description?: string;
+  isActive?: boolean;
 };
 
 export type UpdateMasterGeoserverPayload =
   Partial<CreateMasterGeoserverPayload> & {
     id: string;
   };
+
+export type TestGeoserverConnectionPayload = {
+  id?: string;
+  baseUrl: string;
+  username?: string;
+  password?: string;
+};
+
+export type TestGeoserverConnectionResponse = {
+  success: boolean;
+  message: string;
+  version?: string;
+  latencyMs?: number;
+  workspacesCount?: number;
+};
 
 import { masterGeoserverFormSchema } from "@/features/internal/master-geoserver/types/master-geoserver.schema";
 import type { ReactNode } from "react";
@@ -60,5 +78,10 @@ export type InternalMasterGeoserverEditTriggerProps = {
 export type InternalMasterGeoserverEditModalContentProps = {
   item: MasterGeoserverItem;
   close: () => void;
+};
+
+export type InternalMasterGeoserverTestResultAlertProps = {
+  testResult?: TestGeoserverConnectionResponse | null;
+  testError?: string | null;
 };
 

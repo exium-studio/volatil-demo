@@ -22,7 +22,6 @@ export const OrderStatusBadge = (props: OrderStatusBadgeProps) => {
     >
       {showIcon && <AppIcon icon={config?.icon} size={"xs"} />}
 
-
       {config?.label ?? children ?? "-"}
     </Badge>
   );

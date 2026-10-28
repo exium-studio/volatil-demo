@@ -31,9 +31,10 @@ export const updateInternalPricingApi = async (
   payload: UpdatePricingPayload,
   signal?: AbortSignal,
 ): Promise<ApiResponse<void>> => {
+  const { id, ...body } = payload;
   return apiClient.put<ApiResponse<void>>(
-    `/api/internal/pricing/${payload.id}`,
-    payload,
+    `/api/internal/pricing/${id}`,
+    body,
     { signal },
   );
 };

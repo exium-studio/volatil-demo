@@ -2,6 +2,7 @@
 
 import { Tabs } from "@/design-system/components/disclosure/ui/tabs";
 import { AppIcon } from "@/design-system/components/icon/ui/app-icon";
+import { Box } from "@/design-system/components/layout/ui/box";
 import { Container } from "@/design-system/components/layout/ui/container";
 import { HStack } from "@/design-system/components/layout/ui/flex-box";
 import { AppContentContainer } from "@/design-system/components/layout/ui/page-container";
@@ -168,7 +169,9 @@ const NotificationTabs = memo((props: NotificationTabsProps) => {
         overflowY={"auto"}
         p={0}
       >
-        <NotificationInboxDataView />
+        <Box w={"full"} maxW={"600px"} mx={"auto"} flex={1} display={"flex"} flexDir={"column"}>
+          <NotificationInboxDataView />
+        </Box>
       </Tabs.Content>
 
       {/* Tab 2: Notifikasi Toast History Content */}
@@ -180,15 +183,17 @@ const NotificationTabs = memo((props: NotificationTabsProps) => {
         overflowY={"auto"}
         p={0}
       >
-        <NotificationToastHistoryDataView
-          categoryGroups={categoryGroups}
-          hasNotifications={hasNotifications}
-          isReady={isReady}
-          isPending={isPending}
-          onDeleteGroup={onDeleteGroup}
-          onDeleteNotification={onDeleteNotification}
-          onClearAllHistory={onClearAllHistory}
-        />
+        <Box w={"full"} maxW={"600px"} mx={"auto"} flex={1} display={"flex"} flexDir={"column"}>
+          <NotificationToastHistoryDataView
+            categoryGroups={categoryGroups}
+            hasNotifications={hasNotifications}
+            isReady={isReady}
+            isPending={isPending}
+            onDeleteGroup={onDeleteGroup}
+            onDeleteNotification={onDeleteNotification}
+            onClearAllHistory={onClearAllHistory}
+          />
+        </Box>
       </Tabs.Content>
     </Tabs.Root>
   );

@@ -17,10 +17,11 @@ const cachedStringAttributes: Record<string, string[]> = {};
 export const getWfsDynamicAttributes = async (
   typeName?: string,
   wfsUrl?: string,
+  apiKey?: string | null,
   signal?: AbortSignal,
 ): Promise<string[]> => {
   if (!typeName || !wfsUrl) return [];
-  const cacheKey = `${wfsUrl}:${typeName}`;
+  const cacheKey = `${wfsUrl}:${typeName}:${apiKey ?? ""}`;
   if (cachedAttributes[cacheKey]) {
     return cachedAttributes[cacheKey];
   }
@@ -29,7 +30,7 @@ export const getWfsDynamicAttributes = async (
     const res = await fetchWfs({
       typeName,
       wfsUrl,
-      version: "2.0.0",
+      apiKey,
       maxFeatures: 1,
       signal,
     });
@@ -61,10 +62,11 @@ export const getWfsDynamicAttributes = async (
 export const getWfsStringAttributes = async (
   typeName?: string,
   wfsUrl?: string,
+  apiKey?: string | null,
   signal?: AbortSignal,
 ): Promise<string[]> => {
   if (!typeName || !wfsUrl) return [];
-  const cacheKey = `${wfsUrl}:${typeName}`;
+  const cacheKey = `${wfsUrl}:${typeName}:${apiKey ?? ""}`;
   if (cachedStringAttributes[cacheKey]) {
     return cachedStringAttributes[cacheKey];
   }
@@ -73,7 +75,7 @@ export const getWfsStringAttributes = async (
     const res = await fetchWfs({
       typeName,
       wfsUrl,
-      version: "2.0.0",
+      apiKey,
       maxFeatures: 1,
       signal,
     });
@@ -117,6 +119,7 @@ export const fetchWfsCatalog = async ({
   pageSize,
   cqlFilter,
   search,
+  apiKey,
   signal,
 }: FetchWfsCatalogParams): Promise<FetchWfsCatalogResult> => {
   if (!typeName || !wfsUrl) {
@@ -138,6 +141,7 @@ export const fetchWfsCatalog = async ({
     const stringAttributes = await getWfsStringAttributes(
       typeName,
       wfsUrl,
+      apiKey,
       signal,
     );
     if (stringAttributes.length > 0) {
@@ -150,6 +154,7 @@ export const fetchWfsCatalog = async ({
   const dynamicAttributes = await getWfsDynamicAttributes(
     typeName,
     wfsUrl,
+    apiKey,
     signal,
   );
 
@@ -164,11 +169,11 @@ export const fetchWfsCatalog = async ({
   );
 
   try {
-    // Fetch current page of actual features using WFS 2.0.0
+    // Fetch current page of actual features using adaptive WFS
     const pageResult = await fetchWfs({
       typeName,
       wfsUrl,
-      version: "2.0.0",
+      apiKey,
       maxFeatures: pageSize,
       startIndex,
       cqlFilter: mergedCqlFilter,

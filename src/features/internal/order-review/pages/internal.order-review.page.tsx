@@ -5,7 +5,7 @@ import { InternalOrderReviewDataView } from "@/features/internal/order-review/co
 
 export const InternalOrderReviewPage = () => {
   return (
-    <AppContentContainer h={"auto"} position={"relative"}>
+    <AppContentContainer flex={1} minH={0} position={"relative"}>
       <InternalOrderReviewDataView />
     </AppContentContainer>
   );

@@ -8,6 +8,10 @@ import type {
 
 export type { MitraRegistrationStatus };
 
+export type InternalMitraRegistrationSearch = {
+  status?: MitraRegistrationStatus | "all";
+};
+
 export type MitraRegistrationDocumentFile = {
   url: string;
   size?: number;
@@ -60,6 +64,8 @@ export type InternalMitraRegistrationItem = {
   suratKomitmenEvaluasi?: string | null;
   suratKomitmenPerbaikan?: string | null;
   proposalTeknis?: string | null;
+  ssoUsername?: string | null;
+  ssoPassword?: string | null;
 };
 
 export type InternalMitraRegistrationQueryParams = PaginatedParams & {
@@ -75,7 +81,29 @@ export type ApproveMitraRegistrationPayload = {
   id: string | number;
   contractDocument: File;
   workspaceInteropUrl?: string;
+  ssoUsername?: string;
+  ssoPassword?: string;
 };
+
+import { z } from "zod";
+
+export const approveMitraRegistrationSchema = z.object({
+  contractFiles: z
+    .array(z.custom<File>())
+    .min(1, "Berkas kontrak resmi wajib diunggah"),
+  ssoUsername: z
+    .string()
+    .trim()
+    .min(1, "Username akun SSO wajib diisi"),
+  ssoPassword: z
+    .string()
+    .trim()
+    .min(1, "Kata sandi akun SSO wajib diisi"),
+});
+
+export type ApproveMitraRegistrationFormValues = z.infer<
+  typeof approveMitraRegistrationSchema
+>;
 
 export type RejectMitraRegistrationPayload = {
   id: string | number;
@@ -110,6 +138,25 @@ export type InternalMitraRegistrationRejectModalContentProps = {
   onSuccessRedirect?: () => void;
 };
 
+export type ResendMitraSsoCredentialsPayload = {
+  id: string | number;
+  ssoUsername?: string;
+  ssoPassword?: string;
+};
+
+export type InternalMitraRegistrationResendSsoTriggerProps = {
+  modalKey?: string;
+  registration: InternalMitraRegistrationItem;
+  children?: ReactNode;
+  onSuccess?: () => void;
+};
+
+export type InternalMitraRegistrationResendSsoModalContentProps = {
+  registration: InternalMitraRegistrationItem;
+  isOpen: boolean;
+  onSuccess?: () => void;
+};
+
 export type MitraRegistrationDocumentItem = {
   title: string;
   url?: string | null;
@@ -119,3 +166,18 @@ export type MitraRegistrationDocumentItem = {
   originalName?: string;
   size?: number;
 };
+
+export type MitraRegistrationDetailFieldItem = {
+  label: string;
+  value?: React.ReactNode;
+  isFullWidth?: boolean;
+};
+
+export type MitraRegistrationDetailSectionItem = {
+  value: string;
+  icon: React.ComponentType<{ size?: string | number; color?: string }>;
+  label: string;
+  content: React.ReactNode;
+};
+
+

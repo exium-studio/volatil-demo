@@ -5,9 +5,15 @@
 import { ThemeProvider } from "next-themes";
 import type { ThemeProviderProps } from "next-themes";
 
-export function ColorModeProvider({ children }: ThemeProviderProps) {
+export function ColorModeProvider(props: ThemeProviderProps) {
+  const { children, ...restProps } = props;
   return (
-    <ThemeProvider attribute={"class"} disableTransitionOnChange>
+    <ThemeProvider
+      attribute={"class"}
+      defaultTheme={"light"}
+      disableTransitionOnChange
+      {...restProps}
+    >
       {children}
     </ThemeProvider>
   );

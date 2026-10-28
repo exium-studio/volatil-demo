@@ -3,7 +3,10 @@
 import { toast } from "@/design-system/components/toast";
 import { useMapInstanceStore } from "@/design-system/components/map/stores/map.instance.store";
 import { createCartOrder } from "@/features/mitra/cart/services/mitra.cart.service";
-import type { AddToCartOrderRequest } from "@/features/mitra/cart/types/mitra.cart.order.type";
+import type {
+  AddToCartOrderRequest,
+  PurchasedIgtBasis,
+} from "@/features/mitra/cart/types/mitra.cart.order.type";
 import {
   getIgtByAoi,
   getIgtByUploadedAoi,
@@ -17,6 +20,7 @@ import { mutationToastHandlers } from "@/shared/libs/toast/toast.handler";
 import { highlightFeatureOnMap } from "@/features/mitra/data-request/utils/highlight-feature-on-map";
 import { formatNumber } from "@/shared/utils/formatter/number.formatter";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
+import { useNavigate } from "@tanstack/react-router";
 import type GeoJSON from "geojson";
 
 export const useIgtCatalog = (params?: MitraDataRequestGetCatalogParams) => {
@@ -76,19 +80,26 @@ export const useIgtByUploadedAoi = () => {
  * Add ALL WFS features matching the given filter/AOI to cart.
  */
 export const useAddToCartAll = () => {
+  // Hooks
   const queryClient = useQueryClient();
+  const navigate = useNavigate();
 
   return useMutation({
     mutationFn: (params: AddToCartLayerParam) => {
+      const basis: PurchasedIgtBasis =
+        params.spatialBasis === "bidang"
+          ? "bidang"
+          : params.spatialBasis === "kawasan"
+            ? "kawasan"
+            : "all";
+
       const payload: AddToCartOrderRequest = {
+        calculationToken: params.calculationToken,
         selectionType: params.selectionType ?? "catalog",
-        cqlFilter: params.cqlFilter,
-        items: [
-          {
-            sourceLayerId: params.layerId,
-            cqlFilter: params.cqlFilter,
-          },
-        ],
+        purchasedIgtBasis: basis,
+        aoiPolygon: params.aoiPolygon,
+        kawasanCoveragePolygon:
+          basis === "bidang" ? undefined : params.kawasanCoveragePolygon,
       };
       return createCartOrder(payload);
     },
@@ -98,13 +109,16 @@ export const useAddToCartAll = () => {
         params.typeName.split(":")[1]?.replace(/_/g, " ") ||
         params.typeName;
       const toastId = `add-to-cart-${params.layerId}-${Date.now()}`;
-      toast.loading(`Menambahkan data layer "${layerDisplayName}" ke keranjang...`, {
-        id: toastId,
-        group: "Keranjang",
-      });
+      toast.loading(
+        `Menambahkan data layer "${layerDisplayName}" ke keranjang...`,
+        {
+          id: toastId,
+          group: "Keranjang",
+        },
+      );
       return { toastId };
     },
-    onSuccess: (_, params, context) => {
+    onSuccess: (data, params, context) => {
       const toastId = context?.toastId;
       const layerDisplayName =
         params.title ||
@@ -134,6 +148,10 @@ export const useAddToCartAll = () => {
       void queryClient.invalidateQueries({
         queryKey: queryKeys.mitra.cart.all,
       });
+      void navigate({
+        to: "/mitra/cart",
+        search: data?.orderId ? { orderId: data.orderId } : undefined,
+      });
     },
     onError: (error, _params, context) => {
       const toastId = context?.toastId;
@@ -150,29 +168,35 @@ export const useAddToCartAll = () => {
  * Add multiple selected IGT layers to cart in a single request and 1 toast.
  */
 export const useAddToCartMultipleLayers = () => {
+  // Hooks
   const queryClient = useQueryClient();
+  const navigate = useNavigate();
 
   return useMutation({
     mutationFn: (params: {
+      calculationToken?: string;
       layers: AddToCartLayerParam[];
       selectionType?: "catalog" | "upload_aoi" | "draw_aoi";
+      purchasedIgtBasis?: PurchasedIgtBasis;
       cqlFilter?: string;
       aoiPolygon?: GeoJSON.MultiPolygon | GeoJSON.Polygon;
-      coveragePolygon?: GeoJSON.MultiPolygon | GeoJSON.Polygon;
+      kawasanCoveragePolygon?: GeoJSON.MultiPolygon | GeoJSON.Polygon;
     }) => {
+      const basis: PurchasedIgtBasis = params.purchasedIgtBasis ?? "all";
       const payload: AddToCartOrderRequest = {
+        calculationToken:
+          params.calculationToken ?? params.layers?.[0]?.calculationToken,
         selectionType:
           params.selectionType ??
-          params.layers[0]?.selectionType ??
+          params.layers?.[0]?.selectionType ??
           "catalog",
-        cqlFilter: params.cqlFilter ?? params.layers[0]?.cqlFilter,
-        aoiPolygon: params.aoiPolygon ?? params.layers[0]?.aoiPolygon,
-        coveragePolygon:
-          params.coveragePolygon ?? params.layers[0]?.coveragePolygon,
-        items: params.layers.map((l) => ({
-          sourceLayerId: l.layerId,
-          cqlFilter: l.cqlFilter,
-        })),
+        purchasedIgtBasis: basis,
+        aoiPolygon: params.aoiPolygon ?? params.layers?.[0]?.aoiPolygon,
+        kawasanCoveragePolygon:
+          basis === "bidang"
+            ? undefined
+            : (params.kawasanCoveragePolygon ??
+              params.layers?.[0]?.kawasanCoveragePolygon),
       };
       return createCartOrder(payload);
     },
@@ -192,7 +216,7 @@ export const useAddToCartMultipleLayers = () => {
       toast.loading(title, { id: toastId, group: "Keranjang" });
       return { toastId, count };
     },
-    onSuccess: (_, params, context) => {
+    onSuccess: (data, params, context) => {
       const toastId = context?.toastId ?? `add-to-cart-${Date.now()}`;
       const count = params.layers.length;
 
@@ -218,6 +242,10 @@ export const useAddToCartMultipleLayers = () => {
       });
       void queryClient.invalidateQueries({
         queryKey: queryKeys.mitra.cart.all,
+      });
+      void navigate({
+        to: "/mitra/cart",
+        search: data?.orderId ? { orderId: data.orderId } : undefined,
       });
     },
     onError: (error, _params, context) => {
