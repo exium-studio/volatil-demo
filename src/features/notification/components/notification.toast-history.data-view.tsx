@@ -2,9 +2,8 @@
 
 import { Button } from "@/design-system/components/button/ui/button";
 import { ConfirmationTrigger } from "@/design-system/components/feedback/ui/confirmation-trigger";
-import { Loader } from "@/design-system/components/feedback/ui/loader";
+import { Skeleton } from "@/design-system/components/feedback/ui/skeleton";
 import { StateNoData } from "@/design-system/components/feedback/ui/state.no-data";
-import { Center } from "@/design-system/components/layout/ui/center";
 import { HStack, VStack } from "@/design-system/components/layout/ui/flex-box";
 import { NotificationGroupStackCard } from "@/features/notification/components/notification.item";
 import type { NotificationToastHistoryContentProps } from "@/features/notification/types/notification.type";
@@ -30,13 +29,19 @@ export const NotificationToastHistoryDataView = memo(
         <VStack
           flex={1}
           align={"stretch"}
-          gap={"md"}
+          gap={"sm"}
           p={"md"}
           overflowY={"auto"}
         >
-          <Center flex={1} py={12}>
-            <Loader />
-          </Center>
+          {Array.from({ length: 20 }).map((_, index) => (
+            <Skeleton
+              key={index}
+              w={"full"}
+              h={"68px"}
+              rounded={"md"}
+              flexShrink={0}
+            />
+          ))}
         </VStack>
       );
     }

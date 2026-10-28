@@ -51,7 +51,19 @@ export const NotificationInboxDataView = memo(() => {
   const deleteInboxMutation = useDeleteInboxItem();
 
   if (isLoading) {
-    return <Skeleton p={"md"} />;
+    return (
+      <VStack flex={1} align={"stretch"} gap={"sm"} p={"md"} overflowY={"auto"}>
+        {Array.from({ length: 20 }).map((_, index) => (
+          <Skeleton
+            key={index}
+            w={"full"}
+            h={"76px"}
+            rounded={"md"}
+            flexShrink={0}
+          />
+        ))}
+      </VStack>
+    );
   }
 
   if (isError) {
