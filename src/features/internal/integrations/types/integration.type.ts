@@ -3,30 +3,24 @@
 export type IntegrationType = "sso" | "smtp" | "simponi";
 
 // SSO Keycloak Types
-export type SsoInternalConfig = {
+export type SsoEntityConfig = {
   isEnabled: boolean;
   issuerUrl: string;
   clientId: string;
   clientSecret?: string;
   redirectUri: string;
-  allowedDomains: string[];
+  allowedDomains?: string[];
   hasClientSecret?: boolean;
 };
 
-export type SsoMitraConfig = {
-  isEnabled: boolean;
-  isLocked: boolean;
-  name: string;
-  description: string;
-};
-
 export type SsoIntegrationConfig = {
-  mitra: SsoMitraConfig;
-  internal: SsoInternalConfig;
+  mitra: SsoEntityConfig;
+  internal: SsoEntityConfig;
 };
 
 export type SsoFormValues = {
-  internal: Omit<SsoInternalConfig, "hasClientSecret">;
+  mitra: Omit<SsoEntityConfig, "hasClientSecret" | "isEnabled">;
+  internal: Omit<SsoEntityConfig, "hasClientSecret">;
 };
 
 // Layanan Email (SMTP) Types

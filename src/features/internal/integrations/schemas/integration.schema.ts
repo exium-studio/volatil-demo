@@ -2,20 +2,24 @@
 
 import { z } from "zod";
 
+const ssoEntitySchema = z.object({
+  issuerUrl: z
+    .string()
+    .min(1, "URL Issuer/Realm wajib diisi")
+    .url("Issuer URL harus berupa URL yang valid"),
+  clientId: z.string().min(1, "Client ID wajib diisi"),
+  clientSecret: z.string().optional(),
+  redirectUri: z
+    .string()
+    .min(1, "Redirect URI wajib diisi")
+    .url("Redirect URI harus berupa URL yang valid"),
+  allowedDomains: z.array(z.string()).optional(),
+});
+
 export const ssoFormSchema = z.object({
-  internal: z.object({
+  mitra: ssoEntitySchema,
+  internal: ssoEntitySchema.extend({
     isEnabled: z.boolean(),
-    issuerUrl: z
-      .string()
-      .min(1, "URL Issuer/Realm wajib diisi")
-      .url("Format URL tidak valid"),
-    clientId: z.string().min(1, "Client ID wajib diisi"),
-    clientSecret: z.string().optional(),
-    redirectUri: z
-      .string()
-      .min(1, "Redirect URI wajib diisi")
-      .url("Format URL tidak valid"),
-    allowedDomains: z.array(z.string()),
   }),
 });
 
