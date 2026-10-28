@@ -7,7 +7,7 @@ import { Container } from "@/design-system/components/layout/ui/container";
 import { HStack } from "@/design-system/components/layout/ui/flex-box";
 import { Separator } from "@/design-system/components/layout/ui/separator";
 import { HeaderContainer } from "@/design-system/components/shell/ui/header-container";
-import { Heading } from "@/design-system/components/typography/ui/heading";
+import { ClampedHeading } from "@/design-system/components/typography/ui/heading";
 import { InternalUserGuideTableView } from "@/features/user-guide/components/internal.user-guide.table-view";
 import { UserGuideFormModal } from "@/features/user-guide/components/user-guide.form-modal";
 import { PlusIcon } from "lucide-react";
@@ -18,8 +18,10 @@ export const InternalHomeUserGuideManagement = () => {
       <Container.Body overflowY={"auto"}>
         {/* Header */}
         <HeaderContainer justify={"space-between"} pr={"xs"}>
-          <HStack wrap={"wrap"} gap={"sm"} py={"sm"}>
-            <Heading>{"Manajemen Dokumen Panduan Pengguna"}</Heading>
+          <HStack align={"center"} gap={"sm"} py={"sm"}>
+            <ClampedHeading>
+              {"Manajemen Dokumen Panduan Pengguna"}
+            </ClampedHeading>
 
             <InfoTip
               variant={"icon"}
