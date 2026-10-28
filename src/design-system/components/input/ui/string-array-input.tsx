@@ -8,7 +8,7 @@ import { Input } from "@/design-system/components/input/ui/input";
 import { HStack, VStack } from "@/design-system/components/layout/ui/flex-box";
 import { P } from "@/design-system/components/typography/ui/p";
 import { isEmptyArray } from "@/shared/utils/data/array";
-import { PlusIcon, Trash2Icon } from "lucide-react";
+import { PlusIcon, XIcon } from "lucide-react";
 
 export const StringArrayInput = (props: StringArrayInputProps) => {
   // Props
@@ -71,10 +71,10 @@ export const StringArrayInput = (props: StringArrayInputProps) => {
                   type={"button"}
                   aria-label={`Hapus item ke-${index + 1}`}
                   variant={"outline"}
-                  colorPalette={"red"}
+                  color={"fg.muted"}
                   onClick={() => handleRemoveItem(index)}
                 >
-                  <AppIcon icon={Trash2Icon} />
+                  <AppIcon icon={XIcon} />
                 </IconButton>
               </HStack>
             ))}

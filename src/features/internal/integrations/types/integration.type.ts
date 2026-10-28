@@ -9,7 +9,6 @@ export type SsoEntityConfig = {
   clientId: string;
   clientSecret?: string;
   redirectUri: string;
-  allowedDomains?: string[];
   hasClientSecret?: boolean;
 };
 

@@ -13,7 +13,6 @@ const ssoEntitySchema = z.object({
     .string()
     .min(1, "Redirect URI wajib diisi")
     .url("Redirect URI harus berupa URL yang valid"),
-  allowedDomains: z.array(z.string()).optional(),
 });
 
 export const ssoFormSchema = z.object({

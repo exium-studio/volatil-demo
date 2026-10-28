@@ -14,11 +14,9 @@ import { Field } from "@/design-system/components/input/ui/field";
 import { Fieldset } from "@/design-system/components/input/ui/fieldset";
 import { Input } from "@/design-system/components/input/ui/input";
 import { PasswordInput } from "@/design-system/components/input/ui/password-input";
-import { StringArrayInput } from "@/design-system/components/input/ui/string-array-input";
 import { Switch } from "@/design-system/components/input/ui/switch";
 import { Box } from "@/design-system/components/layout/ui/box";
 import { HStack, VStack } from "@/design-system/components/layout/ui/flex-box";
-import { Separator } from "@/design-system/components/layout/ui/separator";
 import { Badge } from "@/design-system/components/typography/ui/badge";
 import { P } from "@/design-system/components/typography/ui/p";
 import { useThemeStore } from "@/design-system/stores/theme-store";
@@ -30,11 +28,11 @@ import { ssoFormSchema } from "@/features/internal/integrations/schemas/integrat
 import type { SsoFormValues } from "@/features/internal/integrations/types/integration.type";
 import { zodResolver } from "@hookform/resolvers/zod";
 import {
-  Building2Icon,
+  HandshakeIcon,
   InfoIcon,
-  KeyRoundIcon,
   LockIcon,
   SaveIcon,
+  UsersIcon,
 } from "lucide-react";
 import { useEffect } from "react";
 import { Controller, useForm, useWatch } from "react-hook-form";
@@ -56,7 +54,6 @@ export const SsoConfigForm = () => {
         clientId: "",
         clientSecret: "",
         redirectUri: "",
-        allowedDomains: [],
       },
       internal: {
         isEnabled: true,
@@ -64,7 +61,6 @@ export const SsoConfigForm = () => {
         clientId: "",
         clientSecret: "",
         redirectUri: "",
-        allowedDomains: [],
       },
     },
   });
@@ -84,7 +80,6 @@ export const SsoConfigForm = () => {
           clientId: config.mitra?.clientId ?? "",
           clientSecret: config.mitra?.clientSecret ?? "",
           redirectUri: config.mitra?.redirectUri ?? "",
-          allowedDomains: config.mitra?.allowedDomains ?? [],
         },
         internal: {
           isEnabled: config.internal?.isEnabled ?? true,
@@ -92,7 +87,6 @@ export const SsoConfigForm = () => {
           clientId: config.internal?.clientId ?? "",
           clientSecret: config.internal?.clientSecret ?? "",
           redirectUri: config.internal?.redirectUri ?? "",
-          allowedDomains: config.internal?.allowedDomains ?? [],
         },
       });
     }
@@ -147,7 +141,7 @@ export const SsoConfigForm = () => {
             <HStack gap={3} align={"start"}>
               <Box p={2} rounded={"full"} bg={"bg.surface"} shadow={"xs"}>
                 <AppIcon
-                  icon={Building2Icon}
+                  icon={HandshakeIcon}
                   color={`${theme.colorPalette}.solid`}
                 />
               </Box>
@@ -257,7 +251,7 @@ export const SsoConfigForm = () => {
             <HStack gap={3}>
               <Box p={2} rounded={"full"} bg={"bg.surface"} shadow={"xs"}>
                 <AppIcon
-                  icon={KeyRoundIcon}
+                  icon={UsersIcon}
                   color={`${theme.colorPalette}.solid`}
                 />
               </Box>
@@ -368,38 +362,10 @@ export const SsoConfigForm = () => {
                   w={"full"}
                 />
               </Field>
-
-              <Field
-                variant={"default"}
-                label={"Whitelist Domain Email"}
-                helperText={
-                  "Daftar domain email resmi yang diizinkan login SSO (contoh: atrbpn.go.id). Kosongkan jika seluruh domain diizinkan."
-                }
-                errorText={
-                  form.formState.errors.internal?.allowedDomains?.message
-                }
-                w={"full"}
-              >
-                <Controller
-                  control={form.control}
-                  name={"internal.allowedDomains"}
-                  render={({ field }) => (
-                    <StringArrayInput
-                      value={field.value}
-                      onChange={(nextVal) => field.onChange(nextVal)}
-                      placeholder={"atrbpn.go.id"}
-                      addButtonText={"Tambah Domain Email"}
-                      emptyText={"Semua domain diizinkan (tidak ada batasan)."}
-                    />
-                  )}
-                />
-              </Field>
             </VStack>
           )}
         </VStack>
       </Fieldset>
-
-      <Separator borderColor={"border.subtle"} />
 
       {/* Actions */}
       <HStack justify={"flex-end"} gap={3}>
