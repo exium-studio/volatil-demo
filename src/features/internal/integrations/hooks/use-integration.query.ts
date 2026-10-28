@@ -1,4 +1,4 @@
-// src/features/internal/integrasi/hooks/use-integration.query.ts
+// src/features/internal/integration/hooks/use-integration.query.ts
 
 import {
   fetchSimponiIntegrationConfig,
@@ -115,7 +115,8 @@ export const useTestSmtpMutation = () => {
     group: "Uji Coba Email",
     loadingMessage: {
       title: "Mengirim email uji coba...",
-      description: "Menghubungkan ke server SMTP dan mengirimkan pesan verifikasi...",
+      description:
+        "Menghubungkan ke server SMTP dan mengirimkan pesan verifikasi...",
     },
     successMessage: {
       title: "Email uji coba berhasil dikirim!",
@@ -126,7 +127,11 @@ export const useTestSmtpMutation = () => {
     },
   });
 
-  return useMutation<{ success: boolean; message: string }, Error, SmtpTestPayload>({
+  return useMutation<
+    { success: boolean; message: string },
+    Error,
+    SmtpTestPayload
+  >({
     mutationFn: async (payload) => {
       return testSmtpConnection(payload);
     },

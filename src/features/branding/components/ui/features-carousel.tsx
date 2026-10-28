@@ -19,7 +19,7 @@ const CAROUSEL_ITEMS_LIST = [
     image: `${PATH_CONFIG.images}/signin_carousel/1.png`,
     title: "Layanan Jasa Akses IGT",
     description:
-      "Layanan Jasa Akses IGT merupakan layanan penyediaan akses terhadap Informasi Geospasial Tematik (IGT) Pertanahan dan Ruang secara digital melalui mekanisme integrasi sistem berupa Web Map Service (WMS) kepada Pelaksana Kerja Sama dengan melakukan pengayaan data dengan mengintegrasikan IGT untuk menghasilkan informasi geospasial baru sesuai dengan kebutuhan pemanfaatan dan ketentuan yang berlaku.",
+      "Layanan Jasa Akses IGT merupakan layanan penyediaan akses terhadap Informasi Geospasial Tematik (IGT) Pertanahan dan Ruang secara digital melalui mekanisme integration sistem berupa Web Map Service (WMS) kepada Pelaksana Kerja Sama dengan melakukan pengayaan data dengan mengintegrasikan IGT untuk menghasilkan informasi geospasial baru sesuai dengan kebutuhan pemanfaatan dan ketentuan yang berlaku.",
   },
   {
     image: `${PATH_CONFIG.images}/signin_carousel/2.png`,

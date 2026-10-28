@@ -1,4 +1,4 @@
-// src/features/internal/integrasi/schemas/integration.schema.ts
+// src/features/internal/integration/schemas/integration.schema.ts
 
 import { z } from "zod";
 
@@ -32,7 +32,10 @@ export const smtpFormSchema = z.object({
   security: z.enum(["SSL", "STARTTLS", "NONE"]),
   user: z.string().min(1, "Username / API user wajib diisi"),
   password: z.string().optional(),
-  fromEmail: z.string().min(1, "Email pengirim wajib diisi").email("Format email tidak valid"),
+  fromEmail: z
+    .string()
+    .min(1, "Email pengirim wajib diisi")
+    .email("Format email tidak valid"),
   fromName: z.string().min(1, "Nama pengirim wajib diisi"),
   rejectUnauthorized: z.boolean(),
 });

@@ -29,6 +29,7 @@ type ApiErrorResponse = {
 ```
 
 ### Kebijakan Interceptor Frontend:
+
 1. **`code: "AUTH_EXPIRED"` (atau HTTP 401/403 sesi kedaluwarsa)**: Interceptor membersihkan auth token di client, menampilkan 1x toast sesi berakhir, dan mengarahkan pengguna ke halaman login.
 2. **`code: "SOMETHING_WRONG"` (atau HTTP 500 fatal)**: Interceptor menampilkan 1x toast error fatal sistem.
 3. **Error lainnya (Validation Error, 404 Not Found, Domain/Business Logic Error)**: **TIDAK di-intercept secara global**. Error diteruskan utuh (_pass-through_) agar antarmuka UI / form / `useMutation.onError` dapat menampilkan pesan atau aksi kontekstual tanpa menyebabkan _double toast_.
@@ -591,7 +592,7 @@ type HelpCenterListApiResponse = {
 
 ### Get List Inbox / Notifikasi
 
-> **PENTING (Standar SSOT):** Backend menggunakan contract `code` + `metadata`. URL navigasi dan label aksi diatur penuh oleh Frontend melalui resolver UI. Panduan integrasi lengkap dan daftar enum `InboxCode` tersedia di: [`INBOX_CODE_SSOT_INTEGRATION_GUIDE.md`](../INBOX_CODE_SSOT_INTEGRATION_GUIDE.md).
+> **PENTING (Standar SSOT):** Backend menggunakan contract `code` + `metadata`. URL navigasi dan label aksi diatur penuh oleh Frontend melalui resolver UI. Panduan integration lengkap dan daftar enum `InboxCode` tersedia di: [`INBOX_CODE_SSOT_INTEGRATION_GUIDE.md`](../INBOX_CODE_SSOT_INTEGRATION_GUIDE.md).
 
 - **Endpoint**: `GET /api/inbox` (atau `/api/notifications`)
 - **Akses**: `Authenticated (Mitra & Internal)`
@@ -664,7 +665,11 @@ type HelpCenterListApiResponse = {
 - **Akses**: `Authenticated (Mitra & Internal)`
 - **Response (200 OK)**:
   ```json
-  { "success": true, "message": "Notification marked as read", "data": { "id": "46", "isRead": true, "readAt": "2026-10-11T05:12:20.713Z" } }
+  {
+    "success": true,
+    "message": "Notification marked as read",
+    "data": { "id": "46", "isRead": true, "readAt": "2026-10-11T05:12:20.713Z" }
+  }
   ```
 
 ### Tandai Semua Notifikasi Telah Dibaca
@@ -673,7 +678,11 @@ type HelpCenterListApiResponse = {
 - **Akses**: `Authenticated (Mitra & Internal)`
 - **Response (200 OK)**:
   ```json
-  { "success": true, "message": "All notifications marked as read", "data": { "updated": 45 } }
+  {
+    "success": true,
+    "message": "All notifications marked as read",
+    "data": { "updated": 45 }
+  }
   ```
 
 ### Hapus Notifikasi
@@ -1385,9 +1394,11 @@ type CalculateSpatialErrorEvent = {
 ### Kebijakan Tarif & Batas Pembelian (Pricing & Policies)
 
 #### 1. Master Tarif PNBP
+
 - **Endpoint**: `GET /api/mitra/data-request/pricing` (atau `GET /api/internal/pricing`)
 - **Akses**: `Mitra / Internal`
 - **Response (200 OK)**:
+
 ```typescript
 type MasterPricingItem = {
   id: string;
@@ -1404,9 +1415,11 @@ type MasterPricingItem = {
   - Payload: `{ price?: number; pnbpCode?: string; minimumPurchase?: number; }`
 
 #### 2. Kebijakan Sistem
+
 - **Endpoint**: `GET /api/mitra/data-request/policies` (atau `GET /api/internal/policies`)
 - **Akses**: `Mitra / Internal`
 - **Response (200 OK)**:
+
 ```typescript
 type SystemPolicyItem = {
   key: string;
@@ -1662,7 +1675,9 @@ type OrderPaymentStatusResponse = {
   - `activeStatus?: "all" | "active" | "almost_expired" | "expired"` (Filter status masa aktif berbasis kebijakan renewal window)
 
 #### Catatan Logika `activeStatus` di Backend:
+
 BE mengkalkulasi status masa aktif workspace/order berdasarkan perbandingan `expiresAt` dengan `now()` serta nilai konfigurasi kebijakan `order_extension_window_days` dari `SystemPolicies` (default 7 hari):
+
 - `active`: Masa aktif masih berlaku dan belum memasuki jendela peringatan kedaluwarsa (`daysRemaining > order_extension_window_days` dan `status == "ready"`).
 - `almost_expired`: Masa aktif berada dalam jendela perpanjangan (`0 < daysRemaining <= order_extension_window_days` dan `status == "ready"`).
 - `expired`: Masa aktif telah habis (`daysRemaining <= 0` atau `status == "expired"`).
@@ -1738,7 +1753,8 @@ type RenewWorkspaceResponse = {
 - **Payload**: `{}` (Kosong)
 
 #### Deskripsi Alur:
-1. Digunakan oleh mitra untuk mengganti (rotate/roll) API Key yang digunakan untuk mengakses endpoint proxy WMS/WFS dan integrasi GIS eksternal.
+
+1. Digunakan oleh mitra untuk mengganti (rotate/roll) API Key yang digunakan untuk mengakses endpoint proxy WMS/WFS dan integration GIS eksternal.
 2. Ketika API Key baru berhasil digenerate oleh backend, API Key lama secara otomatis dideaktivasi/ditarik.
 3. Setelah menerima respon sukses, frontend secara otomatis me-refetch dan menginvalidasi cache query `my-data`, `workspaces`, dan `workspace detail`.
 
@@ -1973,6 +1989,7 @@ type RejectMitraRegistrationPayload = {
   }
   ```
 - **TypeScript DTO**:
+
   ```typescript
   type ResendMitraSsoCredentialsPayload = {
     ssoUsername?: string;
@@ -1987,6 +2004,7 @@ type RejectMitraRegistrationPayload = {
     };
   };
   ```
+
 - **Response Sukses (200 OK)**:
   ```json
   {
@@ -2280,6 +2298,7 @@ type UpdateMasterIgtLayerRequest = {
 ```
 
 **Deskripsi Field Data**:
+
 - `revenueWmsBidang` _(number)_: Akumulasi total pendapatan PNBP dari transaksi penjualan layanan WMS ber-basis Bidang (Rupiah).
 - `revenueWmsKawasan` _(number)_: Akumulasi total pendapatan PNBP dari transaksi penjualan layanan WMS ber-basis Kawasan (Rupiah).
 - `netWorth` _(number)_: Akumulasi total seluruh pendapatan PNBP dari transaksi lunas/settled (Rupiah).
@@ -2381,6 +2400,7 @@ type UpdateMasterIgtLayerRequest = {
 
 > [!NOTE]
 > **Kebijakan Durasi Siklus Pembaruan Data Mitra (`mitra_sync_cycle_days`)**:
+>
 > - Disimpan dan dikirim dalam satuan **milidetik (`ms`)** (contoh: 30 hari = `2592000000`, 15 menit = `900000`, 90 detik = `90000`).
 > - Backend harus mengembalikan nilai berbasis milidetik (`value: number` dalam ms, `unit: "ms"`).
 > - Frontend otomatis merender nilai durasi ke unit terbaik yang fleksibel dan mudah dibaca (misal jam, menit, hari).
@@ -2393,7 +2413,7 @@ type UpdateMasterIgtLayerRequest = {
     "value": 2592000000
   }
   ```
-  *(Catatan: Untuk `mitra_sync_cycle_days`, nilai yang dikirimkan adalah integer dalam satuan milidetik)*
+  _(Catatan: Untuk `mitra_sync_cycle_days`, nilai yang dikirimkan adalah integer dalam satuan milidetik)_
 
 ---
 
@@ -2529,4 +2549,3 @@ export type InboxCode =
   | "INTERNAL_NEW_REGISTRATION"
   | "SYSTEM_ANNOUNCEMENT";
 ```
-

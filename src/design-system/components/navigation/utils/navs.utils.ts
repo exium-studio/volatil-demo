@@ -27,22 +27,29 @@ export function getNavKeyFromPathname<TNavKey extends string>(
   const entries = Object.entries(navsMap) as [TNavKey, NavItem][];
 
   // Exact matches first, then longest prefix match
-  const exactMatch = entries.find(([, item]) => item.pathname === pathname && item.pathname !== undefined);
+  const exactMatch = entries.find(
+    ([, item]) => item.pathname === pathname && item.pathname !== undefined,
+  );
   if (exactMatch) {
     // If multiple entries share the exact same pathname (e.g. parent container vs first child),
     // find all matching keys and prefer child/sub-nav over the parent container key
-    const allExactMatches = entries.filter(([, item]) => item.pathname === pathname);
+    const allExactMatches = entries.filter(
+      ([, item]) => item.pathname === pathname,
+    );
     if (allExactMatches.length > 1) {
-      const childMatch = allExactMatches.find(([key]) => key !== "integrasi");
+      const childMatch = allExactMatches.find(([key]) => key !== "integration");
       if (childMatch) return childMatch[0];
     }
     return exactMatch[0];
   }
 
   const matches = entries
-    .filter(([, item]) => Boolean(item.pathname && pathname.includes(item.pathname)))
-    .sort(([, a], [, b]) => (b.pathname?.length ?? 0) - (a.pathname?.length ?? 0));
+    .filter(([, item]) =>
+      Boolean(item.pathname && pathname.includes(item.pathname)),
+    )
+    .sort(
+      ([, a], [, b]) => (b.pathname?.length ?? 0) - (a.pathname?.length ?? 0),
+    );
 
   return matches[0]?.[0];
 }
-

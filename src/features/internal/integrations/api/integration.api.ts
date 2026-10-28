@@ -1,4 +1,4 @@
-// src/features/internal/integrasi/api/integration.api.ts
+// src/features/internal/integration/api/integration.api.ts
 
 import type {
   IntegrationConfigResponse,

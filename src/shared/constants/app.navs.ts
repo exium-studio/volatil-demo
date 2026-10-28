@@ -3,7 +3,6 @@
 import type { NavItem } from "@/shared/types/nav.type";
 import {
   BellIcon,
-  CableIcon,
   CheckCircleIcon,
   CreditCardIcon,
   DatabaseIcon,
@@ -15,6 +14,7 @@ import {
   LayersIcon,
   ListChecksIcon,
   MailIcon,
+  PlugIcon,
   ReceiptTextIcon,
   ServerIcon,
   ShoppingCartIcon,
@@ -97,9 +97,9 @@ export const INTERNAL_APP_NAVS_MAP = {
     titleKey: "app.admin_navs.data_management",
     pathname: "/internal/data-management",
   },
-  integrasi: {
-    icon: CableIcon,
-    titleKey: "app.admin_navs.integrasi",
+  integration: {
+    icon: PlugIcon,
+    titleKey: "app.admin_navs.integration",
     pathname: "/internal/integrations/sso",
   },
   sso_keycloak: {

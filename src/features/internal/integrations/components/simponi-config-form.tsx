@@ -1,4 +1,4 @@
-// src/features/internal/integrasi/components/simponi-config-form.tsx
+// src/features/internal/integration/components/simponi-config-form.tsx
 
 import { Button } from "@/design-system/components/button/ui/button";
 import { Skeleton } from "@/design-system/components/feedback/ui/skeleton";
@@ -77,7 +77,12 @@ export const SimponiConfigForm = () => {
         <Skeleton h={"64px"} w={"full"} rounded={theme.radii.component} />
         <Skeleton h={"64px"} w={"full"} rounded={theme.radii.component} />
         <Skeleton h={"64px"} w={"full"} rounded={theme.radii.component} />
-        <Skeleton h={"40px"} w={"140px"} rounded={theme.radii.component} alignSelf={"flex-end"} />
+        <Skeleton
+          h={"40px"}
+          w={"140px"}
+          rounded={theme.radii.component}
+          alignSelf={"flex-end"}
+        />
       </VStack>
     );
   }
@@ -103,14 +108,19 @@ export const SimponiConfigForm = () => {
       >
         <HStack gap={3}>
           <Box p={2} rounded={"full"} bg={"bg.surface"} shadow={"xs"}>
-            <AppIcon icon={LandmarkIcon} color={`${theme.colorPalette}.solid`} />
+            <AppIcon
+              icon={LandmarkIcon}
+              color={`${theme.colorPalette}.solid`}
+            />
           </Box>
 
           <VStack gap={0} align={"start"}>
             <P fontWeight={"semibold"}>{"Gateway SIMPONI (PNBP)"}</P>
 
             <P fontSize={"xs"} color={"fg.muted"}>
-              {"Integrasi penerbitan kode billing pembayaran PNBP langsung ke sistem SIMPONI Kemenkeu."}
+              {
+                "Integrasi penerbitan kode billing pembayaran PNBP langsung ke sistem SIMPONI Kemenkeu."
+              }
             </P>
           </VStack>
         </HStack>
@@ -145,7 +155,9 @@ export const SimponiConfigForm = () => {
                   </P>
 
                   <P fontSize={"xs"} color={"fg.muted"}>
-                    {"Hasilkan kode billing dummy internal tanpa memanggil Web Service Kemenkeu."}
+                    {
+                      "Hasilkan kode billing dummy internal tanpa memanggil Web Service Kemenkeu."
+                    }
                   </P>
                 </VStack>
 
@@ -164,7 +176,9 @@ export const SimponiConfigForm = () => {
 
             <Field
               label={"Base URL Web Service SIMPONI"}
-              helperText={"Endpoint gateway API Kemenkeu (Sandbox atau Production)"}
+              helperText={
+                "Endpoint gateway API Kemenkeu (Sandbox atau Production)"
+              }
               errorText={form.formState.errors.baseUrl?.message}
               w={"full"}
             >
@@ -177,7 +191,9 @@ export const SimponiConfigForm = () => {
 
             <Field
               label={"Token API / Authorization Key"}
-              helperText={"Token kredensial yang diterbitkan oleh Ditjen Anggaran Kemenkeu"}
+              helperText={
+                "Token kredensial yang diterbitkan oleh Ditjen Anggaran Kemenkeu"
+              }
               errorText={form.formState.errors.apiKey?.message}
               w={"full"}
             >
@@ -190,7 +206,10 @@ export const SimponiConfigForm = () => {
           </VStack>
         </Fieldset>
 
-        <Fieldset legend={"Kode Akun Anggaran (Bagan Akun Standar)"} containeredContent={true}>
+        <Fieldset
+          legend={"Kode Akun Anggaran (Bagan Akun Standar)"}
+          containeredContent={true}
+        >
           <VStack gap={4} align={"stretch"} w={"full"}>
             <Field
               label={"Kode K/L (3 digit)"}
@@ -236,7 +255,9 @@ export const SimponiConfigForm = () => {
 
             <Field
               label={"Masa Berlaku Kode Billing (Jam)"}
-              helperText={"Batas waktu pembayaran mitra sebelum kode billing kedaluwarsa (default: 24 jam)"}
+              helperText={
+                "Batas waktu pembayaran mitra sebelum kode billing kedaluwarsa (default: 24 jam)"
+              }
               errorText={form.formState.errors.billingExpiryHours?.message}
               w={"full"}
             >
@@ -245,7 +266,9 @@ export const SimponiConfigForm = () => {
                 name={"billingExpiryHours"}
                 render={({ field }) => (
                   <NumberInput
-                    value={field.value !== undefined ? String(field.value) : "24"}
+                    value={
+                      field.value !== undefined ? String(field.value) : "24"
+                    }
                     onValueChange={(val) => field.onChange(Number(val.value))}
                     placeholder={"24"}
                     w={"full"}

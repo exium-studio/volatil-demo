@@ -23,7 +23,7 @@
       "mitra_registration": "Pendaftaran Mitra",
       "order_statistic": "Statistik Pesanan",
       "jobs": "Antrean Job",
-      "integrasi": "Integrasi Sistem",
+      "integration": "Integrasi Sistem",
       "sso_keycloak": "SSO Keycloak",
       "smtp_email": "Email - SMTP",
       "simponi_pnbp": "Billing SIMPONI",
@@ -279,7 +279,7 @@
     },
     "integration": {
       "title": "Integrasi",
-      "description": "Kelola layanan terhubung dan integrasi pihak ketiga."
+      "description": "Kelola layanan terhubung dan integration pihak ketiga."
     },
     "advanced": {
       "title": "Lanjutan",

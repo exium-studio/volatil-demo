@@ -474,7 +474,7 @@ export const COMPONENTS_REGISTRY: Record<string, ComponentDocSpec> = {
     title: "Input",
     category: "Form Inputs",
     description:
-      "Input teks standar dengan validasi native maxLength dan integrasi toast peringatan.",
+      "Input teks standar dengan validasi native maxLength dan integration toast peringatan.",
     importPath:
       'import { Input } from "@/design-system/components/input/ui/input";',
     component: Input,
@@ -557,14 +557,7 @@ export const COMPONENTS_REGISTRY: Record<string, ComponentDocSpec> = {
         defaultValue: "minute",
         description: "Satuan default saat nilai awal belum ditentukan.",
         controlKind: "select",
-        options: [
-          "millisecond",
-          "second",
-          "minute",
-          "hour",
-          "day",
-          "week",
-        ],
+        options: ["millisecond", "second", "minute", "hour", "day", "week"],
       },
       {
         name: "placeholder",
@@ -821,7 +814,6 @@ export const COMPONENTS_REGISTRY: Record<string, ComponentDocSpec> = {
         defaultValue: false,
         description: "Status gagal memuat opsi, merender StateRetry.",
         controlKind: "boolean",
-
       },
     ],
     renderPlayground: (props) => <FocusSelectPlaygroundDemo {...props} />,
@@ -1687,7 +1679,6 @@ export const COMPONENTS_REGISTRY: Record<string, ComponentDocSpec> = {
         />
       );
     },
-
   },
 
   focus_alert: {
@@ -1885,7 +1876,8 @@ export const COMPONENTS_REGISTRY: Record<string, ComponentDocSpec> = {
         name: "warningThresholdDays",
         type: "number",
         defaultValue: 3,
-        description: "Batas sisa hari sebelum warna berubah menjadi peringatan.",
+        description:
+          "Batas sisa hari sebelum warna berubah menjadi peringatan.",
         controlKind: "number",
       },
       {
@@ -2240,11 +2232,15 @@ export const COMPONENTS_REGISTRY: Record<string, ComponentDocSpec> = {
           <Breadcrumb.Item>
             <Breadcrumb.Link href={"#"}>Beranda</Breadcrumb.Link>
           </Breadcrumb.Item>
-          <Breadcrumb.Separator>{String(props.separator || "/")}</Breadcrumb.Separator>
+          <Breadcrumb.Separator>
+            {String(props.separator || "/")}
+          </Breadcrumb.Separator>
           <Breadcrumb.Item>
             <Breadcrumb.Link href={"#"}>Manajemen Data</Breadcrumb.Link>
           </Breadcrumb.Item>
-          <Breadcrumb.Separator>{String(props.separator || "/")}</Breadcrumb.Separator>
+          <Breadcrumb.Separator>
+            {String(props.separator || "/")}
+          </Breadcrumb.Separator>
           <Breadcrumb.Item>
             <Breadcrumb.CurrentLink>Spasial</Breadcrumb.CurrentLink>
           </Breadcrumb.Item>
@@ -2729,7 +2725,8 @@ export const COMPONENTS_REGISTRY: Record<string, ComponentDocSpec> = {
         name: "direction",
         type: '"horizontal" | "vertical"',
         defaultValue: "horizontal",
-        description: "Arah orientasi stack (HStack horizontal vs VStack vertikal).",
+        description:
+          "Arah orientasi stack (HStack horizontal vs VStack vertikal).",
         controlKind: "select",
         options: ["horizontal", "vertical"],
       },
@@ -2773,14 +2770,38 @@ export const COMPONENTS_REGISTRY: Record<string, ComponentDocSpec> = {
           borderColor={"border.subtle"}
           rounded={"md"}
         >
-          <Box p={3} bg={"blue.subtle"} rounded={"md"} textAlign={"center"} w={isVertical ? "full" : "auto"}>
-            <P fontSize={"xs"} fontWeight={"bold"} color={"blue.fg"}>Item 1</P>
+          <Box
+            p={3}
+            bg={"blue.subtle"}
+            rounded={"md"}
+            textAlign={"center"}
+            w={isVertical ? "full" : "auto"}
+          >
+            <P fontSize={"xs"} fontWeight={"bold"} color={"blue.fg"}>
+              Item 1
+            </P>
           </Box>
-          <Box p={3} bg={"teal.subtle"} rounded={"md"} textAlign={"center"} w={isVertical ? "full" : "auto"}>
-            <P fontSize={"xs"} fontWeight={"bold"} color={"teal.fg"}>Item 2</P>
+          <Box
+            p={3}
+            bg={"teal.subtle"}
+            rounded={"md"}
+            textAlign={"center"}
+            w={isVertical ? "full" : "auto"}
+          >
+            <P fontSize={"xs"} fontWeight={"bold"} color={"teal.fg"}>
+              Item 2
+            </P>
           </Box>
-          <Box p={3} bg={"purple.subtle"} rounded={"md"} textAlign={"center"} w={isVertical ? "full" : "auto"}>
-            <P fontSize={"xs"} fontWeight={"bold"} color={"purple.fg"}>Item 3</P>
+          <Box
+            p={3}
+            bg={"purple.subtle"}
+            rounded={"md"}
+            textAlign={"center"}
+            w={isVertical ? "full" : "auto"}
+          >
+            <P fontSize={"xs"} fontWeight={"bold"} color={"purple.fg"}>
+              Item 3
+            </P>
           </Box>
         </StackComp>
       );
@@ -2873,7 +2894,9 @@ export const COMPONENTS_REGISTRY: Record<string, ComponentDocSpec> = {
     ],
     renderPlayground: (props) => (
       <Card.Root
-        variant={(props.variant as "outline" | "subtle" | "elevated") || "outline"}
+        variant={
+          (props.variant as "outline" | "subtle" | "elevated") || "outline"
+        }
         size={(props.size as "sm" | "md" | "lg") || "md"}
         maxW={"320px"}
         w={"full"}
@@ -2972,19 +2995,44 @@ export const COMPONENTS_REGISTRY: Record<string, ComponentDocSpec> = {
 
       if (isVertical) {
         return (
-          <HStack gap={4} h={"70px"} align={"center"} justify={"center"} p={4} border={"1px dashed"} borderColor={"border.subtle"} rounded={"md"}>
-            <P fontSize={"sm"} fontWeight={"medium"}>Sisi Kiri</P>
+          <HStack
+            gap={4}
+            h={"70px"}
+            align={"center"}
+            justify={"center"}
+            p={4}
+            border={"1px dashed"}
+            borderColor={"border.subtle"}
+            rounded={"md"}
+          >
+            <P fontSize={"sm"} fontWeight={"medium"}>
+              Sisi Kiri
+            </P>
             <Separator orientation={"vertical"} size={size} h={"40px"} />
-            <P fontSize={"sm"} fontWeight={"medium"}>Sisi Kanan</P>
+            <P fontSize={"sm"} fontWeight={"medium"}>
+              Sisi Kanan
+            </P>
           </HStack>
         );
       }
 
       return (
-        <VStack gap={3} w={"full"} maxW={"300px"} p={4} border={"1px dashed"} borderColor={"border.subtle"} rounded={"md"}>
-          <P fontSize={"sm"} fontWeight={"medium"}>Bagian Atas</P>
+        <VStack
+          gap={3}
+          w={"full"}
+          maxW={"300px"}
+          p={4}
+          border={"1px dashed"}
+          borderColor={"border.subtle"}
+          rounded={"md"}
+        >
+          <P fontSize={"sm"} fontWeight={"medium"}>
+            Bagian Atas
+          </P>
           <Separator orientation={"horizontal"} size={size} w={"full"} />
-          <P fontSize={"sm"} fontWeight={"medium"}>Bagian Bawah</P>
+          <P fontSize={"sm"} fontWeight={"medium"}>
+            Bagian Bawah
+          </P>
         </VStack>
       );
     },
@@ -3054,7 +3102,11 @@ export const COMPONENTS_REGISTRY: Record<string, ComponentDocSpec> = {
             collapsedWidth={Number(props.collapsedWidth) || 60}
             expandedWidth={Number(props.expandedWidth) || 240}
           >
-            <Sidebar.Header px={3} py={3} justify={isExpanded ? "space-between" : "center"}>
+            <Sidebar.Header
+              px={3}
+              py={3}
+              justify={isExpanded ? "space-between" : "center"}
+            >
               <HStack gap={2} align={"center"} overflow={"hidden"}>
                 <Box
                   boxSize={7}
@@ -3078,8 +3130,16 @@ export const COMPONENTS_REGISTRY: Record<string, ComponentDocSpec> = {
 
             <Sidebar.Separator mx={-1} />
 
-            <Sidebar.Body p={2} gap={1} align={isExpanded ? "stretch" : "center"}>
-              <Tooltip content={"Beranda"} disabled={isExpanded} positioning={{ placement: "right" }}>
+            <Sidebar.Body
+              p={2}
+              gap={1}
+              align={isExpanded ? "stretch" : "center"}
+            >
+              <Tooltip
+                content={"Beranda"}
+                disabled={isExpanded}
+                positioning={{ placement: "right" }}
+              >
                 <HStack
                   p={2}
                   rounded={"md"}
@@ -3099,7 +3159,11 @@ export const COMPONENTS_REGISTRY: Record<string, ComponentDocSpec> = {
                 </HStack>
               </Tooltip>
 
-              <Tooltip content={"Pengaturan"} disabled={isExpanded} positioning={{ placement: "right" }}>
+              <Tooltip
+                content={"Pengaturan"}
+                disabled={isExpanded}
+                positioning={{ placement: "right" }}
+              >
                 <HStack
                   p={2}
                   rounded={"md"}
@@ -3290,18 +3354,14 @@ export const COMPONENTS_REGISTRY: Record<string, ComponentDocSpec> = {
     ],
     renderPlayground: (props) => (
       <Image
-        src={
-          String(
-            props.src ||
-              "https://images.unsplash.com/photo-1579546929518-9e396f3cc809?w=400&q=80",
-          )
-        }
+        src={String(
+          props.src ||
+            "https://images.unsplash.com/photo-1579546929518-9e396f3cc809?w=400&q=80",
+        )}
         alt={String(props.alt || "Contoh Gambar")}
         aspectRatio={Number(props.aspectRatio) || 1.77}
         withSkeleton={Boolean(props.withSkeleton)}
-        objectFit={
-          (props.objectFit as "cover" | "contain" | "fill") || "cover"
-        }
+        objectFit={(props.objectFit as "cover" | "contain" | "fill") || "cover"}
         w={"260px"}
         rounded={"lg"}
       />
@@ -3373,7 +3433,8 @@ export const COMPONENTS_REGISTRY: Record<string, ComponentDocSpec> = {
         name: "data",
         type: "() => Promise<Blob> | Blob | string",
         defaultValue: undefined,
-        description: "Fungsi async atau data Blob yang akan didownload (wajib).",
+        description:
+          "Fungsi async atau data Blob yang akan didownload (wajib).",
         controlKind: "text",
       },
       {
@@ -3689,8 +3750,10 @@ const DataTablePlaygroundDemo = ({
 };
 
 const DrawerPlaygroundDemo = (props?: Record<string, unknown>) => {
-  const placement = (props?.placement as "start" | "end" | "top" | "bottom") || "end";
-  const size = (props?.size as "xs" | "sm" | "md" | "lg" | "xl" | "full") || "md";
+  const placement =
+    (props?.placement as "start" | "end" | "top" | "bottom") || "end";
+  const size =
+    (props?.size as "xs" | "sm" | "md" | "lg" | "xl" | "full") || "md";
 
   const { modalKey, isOpen, open, close } = usePopModal({
     modalKey: "docs-drawer",
@@ -3729,9 +3792,11 @@ const DrawerPlaygroundDemo = (props?: Record<string, unknown>) => {
 };
 
 const DialogPlaygroundDemo = (props?: Record<string, unknown>) => {
-  const size = (props?.size as "xs" | "sm" | "md" | "lg" | "xl" | "full") || "md";
+  const size =
+    (props?.size as "xs" | "sm" | "md" | "lg" | "xl" | "full") || "md";
   const placement = (props?.placement as "center" | "top") || "center";
-  const scrollBehavior = (props?.scrollBehavior as "inside" | "outside") || "inside";
+  const scrollBehavior =
+    (props?.scrollBehavior as "inside" | "outside") || "inside";
 
   const { modalKey, isOpen, open, close } = usePopModal({
     modalKey: "docs-dialog",

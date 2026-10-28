@@ -1,4 +1,4 @@
-// src/features/internal/integrasi/components/smtp-config-form.tsx
+// src/features/internal/integration/components/smtp-config-form.tsx
 
 import { Button } from "@/design-system/components/button/ui/button";
 import { Skeleton } from "@/design-system/components/feedback/ui/skeleton";
@@ -92,7 +92,12 @@ export const SmtpConfigForm = () => {
         <Skeleton h={"64px"} w={"full"} rounded={theme.radii.component} />
         <Skeleton h={"64px"} w={"full"} rounded={theme.radii.component} />
         <Skeleton h={"64px"} w={"full"} rounded={theme.radii.component} />
-        <Skeleton h={"40px"} w={"200px"} rounded={theme.radii.component} alignSelf={"flex-end"} />
+        <Skeleton
+          h={"40px"}
+          w={"200px"}
+          rounded={theme.radii.component}
+          alignSelf={"flex-end"}
+        />
       </VStack>
     );
   }
@@ -125,7 +130,9 @@ export const SmtpConfigForm = () => {
             <P fontWeight={"semibold"}>{"Pengaturan Email - SMTP"}</P>
 
             <P fontSize={"xs"} color={"fg.muted"}>
-              {"Digunakan untuk pengiriman notifikasi, tagihan billing SIMPONI, bukti pendaftaran mitra, dan link verifikasi."}
+              {
+                "Digunakan untuk pengiriman notifikasi, tagihan billing SIMPONI, bukti pendaftaran mitra, dan link verifikasi."
+              }
             </P>
           </VStack>
         </HStack>
@@ -142,11 +149,16 @@ export const SmtpConfigForm = () => {
 
       {/* Inputs */}
       <VStack gap={6} align={"stretch"}>
-        <Fieldset legend={"Konfigurasi Server & Port"} containeredContent={true}>
+        <Fieldset
+          legend={"Konfigurasi Server & Port"}
+          containeredContent={true}
+        >
           <VStack gap={4} align={"stretch"} w={"full"}>
             <Field
               label={"SMTP Host Server"}
-              helperText={"Contoh: smtp.atrbpn.go.id, smtp.gmail.com, atau mail-relay internal"}
+              helperText={
+                "Contoh: smtp.atrbpn.go.id, smtp.gmail.com, atau mail-relay internal"
+              }
               errorText={form.formState.errors.host?.message}
               w={"full"}
             >
@@ -159,7 +171,9 @@ export const SmtpConfigForm = () => {
 
             <Field
               label={"Port"}
-              helperText={"Port SMTP (misal: 587 untuk STARTTLS, 465 untuk SSL)"}
+              helperText={
+                "Port SMTP (misal: 587 untuk STARTTLS, 465 untuk SSL)"
+              }
               errorText={form.formState.errors.port?.message}
               w={"full"}
             >
@@ -168,7 +182,9 @@ export const SmtpConfigForm = () => {
                 name={"port"}
                 render={({ field }) => (
                   <NumberInput
-                    value={field.value !== undefined ? String(field.value) : "587"}
+                    value={
+                      field.value !== undefined ? String(field.value) : "587"
+                    }
                     onValueChange={(val) => field.onChange(Number(val.value))}
                     placeholder={"587"}
                     w={"full"}
@@ -211,7 +227,9 @@ export const SmtpConfigForm = () => {
                   </P>
 
                   <P fontSize={"xs"} color={"fg.muted"}>
-                    {"Nonaktifkan jika mail server internal dinas memakai sertifikat self-signed atau private CA."}
+                    {
+                      "Nonaktifkan jika mail server internal dinas memakai sertifikat self-signed atau private CA."
+                    }
                   </P>
                 </VStack>
 
@@ -234,7 +252,9 @@ export const SmtpConfigForm = () => {
           <VStack gap={4} align={"stretch"} w={"full"}>
             <Field
               label={"Username / API User"}
-              helperText={"Akun autentikasi pengirim email (bisa berupa alamat email lengkap)"}
+              helperText={
+                "Akun autentikasi pengirim email (bisa berupa alamat email lengkap)"
+              }
               errorText={form.formState.errors.user?.message}
               w={"full"}
             >

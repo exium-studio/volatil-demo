@@ -31,7 +31,7 @@ export const INTERNAL_APP_NAV_GROUPS_LIST: NavGroup<AdminAppNavKey>[] = [
       { key: "user_management" },
       { key: "help" },
       {
-        key: "integrasi",
+        key: "integration",
         children: [
           { key: "master_geoserver" },
           { key: "data_management" },

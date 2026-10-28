@@ -1,4 +1,4 @@
-// src/features/internal/integrasi/components/sso-config-form.tsx
+// src/features/internal/integration/components/sso-config-form.tsx
 
 import { Button } from "@/design-system/components/button/ui/button";
 import {

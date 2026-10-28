@@ -1,4 +1,4 @@
-// src/features/internal/integrasi/types/integration.type.ts
+// src/features/internal/integration/types/integration.type.ts
 
 export type IntegrationType = "sso" | "smtp" | "simponi";
 

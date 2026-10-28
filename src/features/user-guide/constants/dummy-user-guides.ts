@@ -25,9 +25,9 @@ export const DUMMY_USER_GUIDES: UserGuideItem[] = [
   {
     id: "guide-api-wms-wfs",
     title: "Petunjuk Teknis Integrasi API & WMS/WFS Layer",
-    slug: "petunjuk-teknis-integrasi-api-wms-wfs-layer",
+    slug: "petunjuk-teknis-integration-api-wms-wfs-layer",
     description:
-      "Dokumentasi arsitektur dan panduan integrasi layanan Web Map Service (WMS) raster dan Web Feature Service (WFS) vector IGT ATR/BPN pada aplikasi SIG pihak ketiga dan sistem backend mitra.",
+      "Dokumentasi arsitektur dan panduan integration layanan Web Map Service (WMS) raster dan Web Feature Service (WFS) vector IGT ATR/BPN pada aplikasi SIG pihak ketiga dan sistem backend mitra.",
     category: "technical_spec",
     targetRole: "all",
     version: "v1.4.0",

@@ -1,4 +1,4 @@
-// src/features/internal/integrasi/components/smtp-test-modal.tsx
+// src/features/internal/integration/components/smtp-test-modal.tsx
 
 import { Button } from "@/design-system/components/button/ui/button";
 import { AppIcon } from "@/design-system/components/icon/ui/app-icon";
@@ -63,7 +63,9 @@ export const SmtpTestModal = (props: SmtpTestModalProps) => {
               </P>
 
               <P fontSize={"xs"} color={"fg.muted"}>
-                {"Kirim satu email pengujian untuk memverifikasi host, port, dan kredensial SMTP."}
+                {
+                  "Kirim satu email pengujian untuk memverifikasi host, port, dan kredensial SMTP."
+                }
               </P>
             </VStack>
           </HStack>
@@ -79,7 +81,9 @@ export const SmtpTestModal = (props: SmtpTestModalProps) => {
           >
             <Field
               label={"Email Penerima Uji Coba"}
-              helperText={"Masukkan alamat email aktif yang dapat Anda periksa."}
+              helperText={
+                "Masukkan alamat email aktif yang dapat Anda periksa."
+              }
               errorText={form.formState.errors.targetEmail?.message}
               w={"full"}
             >
