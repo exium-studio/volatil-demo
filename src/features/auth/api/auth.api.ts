@@ -26,6 +26,7 @@ import type {
   ResetPasswordVerifyTotpPayload,
   ResetPasswordVerifyTotpResponse,
 } from "@/features/auth/types/reset-password.type";
+import type { PublicSsoStatus } from "@/features/auth/types/sso.type";
 import { apiClient } from "@/shared/libs/api-client/api-client";
 
 import type { ApiResponse, User } from "@/shared/types/common-response.type";
@@ -94,6 +95,14 @@ export const postLogoutApi = async (
   signal?: AbortSignal,
 ): Promise<ApiResponse<null>> => {
   return apiClient.post<ApiResponse<null>>("/api/auth/logout", {}, { signal });
+};
+
+export const fetchPublicSsoStatusApi = async (
+  signal?: AbortSignal,
+): Promise<ApiResponse<PublicSsoStatus>> => {
+  return apiClient.get<ApiResponse<PublicSsoStatus>>("/api/auth/sso/status", {
+    signal,
+  });
 };
 
 export const getSsoInternalUrlApi = async (

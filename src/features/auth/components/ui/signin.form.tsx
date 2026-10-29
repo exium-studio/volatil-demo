@@ -24,7 +24,7 @@ import {
 } from "@/features/auth/hooks/use-internal-auth.mutation";
 import { useSigninMutation } from "@/features/auth/hooks/use-signin.mutation";
 import { useSsoSigninMutation } from "@/features/auth/hooks/use-sso-signin.mutation";
-import { useSsoIntegrationQuery } from "@/features/internal/integrations/hooks/use-integration.query";
+import { usePublicSsoStatusQuery } from "@/features/auth/hooks/use-sso-status.query";
 import {
   createSigninSchema,
   zodResolver,
@@ -54,6 +54,7 @@ export const MitraSignin = (props: StackProps) => {
   const { user, isAuthenticated } = useAuthSession();
   const signinMutation = useSigninMutation();
   const ssoSigninMutation = useSsoSigninMutation();
+  const { data: ssoStatus } = usePublicSsoStatusQuery();
 
   const {
     register,
@@ -69,6 +70,7 @@ export const MitraSignin = (props: StackProps) => {
 
   // Derived Values
   const isDevMode = isDevModeEnabled();
+  const isSsoEnabled = ssoStatus?.mitra?.isEnabled ?? true;
 
   // Handlers
   const handleLogin = (values: SigninFormValues) => {
@@ -122,19 +124,21 @@ export const MitraSignin = (props: StackProps) => {
       </VStack>
 
       {/* SSO Login Action */}
-      <VStack w={"full"} gap={3}>
-        <Button
-          primary={true}
-          type={"button"}
-          w={"full"}
-          size={"lg"}
-          loading={ssoSigninMutation.isPending}
-          onClick={handleSsoClick}
-        >
-          <AppIcon icon={HandshakeIcon} />
-          {"Masuk dengan SSO Mitra"}
-        </Button>
-      </VStack>
+      {isSsoEnabled && (
+        <VStack w={"full"} gap={3}>
+          <Button
+            primary={true}
+            type={"button"}
+            w={"full"}
+            size={"lg"}
+            loading={ssoSigninMutation.isPending}
+            onClick={handleSsoClick}
+          >
+            <AppIcon icon={HandshakeIcon} />
+            {"Masuk dengan SSO Mitra"}
+          </Button>
+        </VStack>
+      )}
 
       {/* Divider Dev / Fallback & Development / Fallback Login Form */}
       {isDevMode && (
@@ -242,7 +246,7 @@ export const InternalSignin = (props: StackProps) => {
   const step1Mutation = useInternalSigninStep1Mutation();
   const setupMutation = useInternalTotpSetupMutation();
   const ssoSigninMutation = useSsoSigninMutation();
-  const { data: ssoConfig } = useSsoIntegrationQuery();
+  const { data: ssoStatus } = usePublicSsoStatusQuery();
   const search = useSearch({ strict: false }) as AdminSigninSearch;
 
   // States
@@ -267,7 +271,7 @@ export const InternalSignin = (props: StackProps) => {
   });
 
   // Derived Values
-  const isSsoEnabled = ssoConfig?.internal?.isEnabled ?? false;
+  const isSsoEnabled = ssoStatus?.internal?.isEnabled ?? true;
 
   const errorMessage =
     search.reason === "session_expired"

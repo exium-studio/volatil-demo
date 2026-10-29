@@ -6,6 +6,7 @@ export const queryKeys = {
   auth: {
     all: ["auth"] as const,
     me: () => [...queryKeys.auth.all, "me"] as const,
+    ssoStatus: () => [...queryKeys.auth.all, "sso-status"] as const,
   },
   mitra: {
     home: {

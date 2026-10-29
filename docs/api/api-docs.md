@@ -73,6 +73,46 @@ Endpoint terbuka yang dapat diakses oleh publik tanpa memerlukan session token /
 
 ## 1.1 Auth & Session
 
+### Status Integrasi SSO Publik (Flagging SSO)
+
+- **Endpoint**: `GET /api/auth/sso/status`
+- **Akses**: `Public` (Unauthenticated)
+- **Tujuan**: Memberikan informasi minimal status aktif/tidaknya fitur Single Sign-On (SSO Keycloak) untuk portal Mitra dan Internal ATR/BPN agar frontend dapat melakukan conditional rendering pada tombol "Masuk dengan SSO".
+- **Request Body**: *None*
+- **Response (200 OK)**:
+
+```typescript
+type PublicSsoStatusResponse = {
+  success: true;
+  message: string;
+  data: {
+    mitra: {
+      isEnabled: boolean;
+    };
+    internal: {
+      isEnabled: boolean;
+    };
+  };
+};
+```
+
+- **Contoh Response Body**:
+
+```json
+{
+  "success": true,
+  "message": "Status SSO berhasil diambil",
+  "data": {
+    "mitra": {
+      "isEnabled": true
+    },
+    "internal": {
+      "isEnabled": true
+    }
+  }
+}
+```
+
 ### Sign In / Login (Step 1)
 
 - **Endpoint**: `POST /api/auth/login`
