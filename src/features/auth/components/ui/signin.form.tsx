@@ -40,10 +40,10 @@ import {
   ArrowRightIcon,
   Code2Icon,
   HandshakeIcon,
-  KeyRoundIcon,
   LockIcon,
   MailIcon,
   ShieldCheckIcon,
+  UsersIcon,
 } from "lucide-react";
 import { useState } from "react";
 import { useForm } from "react-hook-form";
@@ -130,7 +130,7 @@ export const MitraSignin = (props: StackProps) => {
           loading={ssoSigninMutation.isPending}
           onClick={handleSsoClick}
         >
-          <AppIcon icon={KeyRoundIcon} />
+          <AppIcon icon={HandshakeIcon} />
           {"Masuk dengan SSO Mitra"}
         </Button>
       </VStack>
@@ -240,6 +240,7 @@ export const InternalSignin = (props: StackProps) => {
   const navigate = useNavigate();
   const step1Mutation = useInternalSigninStep1Mutation();
   const setupMutation = useInternalTotpSetupMutation();
+  const ssoSigninMutation = useSsoSigninMutation();
   const search = useSearch({ strict: false }) as AdminSigninSearch;
 
   // States
@@ -321,6 +322,10 @@ export const InternalSignin = (props: StackProps) => {
       setupData: null,
       email: "",
     });
+  };
+
+  const handleSsoClick = () => {
+    ssoSigninMutation.mutate();
   };
 
   if (isAuthenticated && user && user.role === "internal") {
@@ -412,6 +417,30 @@ export const InternalSignin = (props: StackProps) => {
           </P>
         </HStack>
       )}
+
+      {/* SSO Login Action */}
+      <VStack w={"full"} gap={3}>
+        <Button
+          primary={true}
+          type={"button"}
+          w={"full"}
+          size={"lg"}
+          loading={ssoSigninMutation.isPending}
+          onClick={handleSsoClick}
+        >
+          <AppIcon icon={UsersIcon} />
+          {"Masuk dengan SSO Pegawai ATR/BPN"}
+        </Button>
+      </VStack>
+
+      {/* Divider */}
+      <HStack w={"full"} align={"center"} my={1}>
+        <Separator flex={1} />
+        <P fontSize={"xs"} color={"fg.muted"} px={2}>
+          {"atau gunakan akun lokal"}
+        </P>
+        <Separator flex={1} />
+      </HStack>
 
       {/* Standard Internal Email/Password Form */}
       <Fieldset>

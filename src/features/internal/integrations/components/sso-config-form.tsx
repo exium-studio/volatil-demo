@@ -131,8 +131,6 @@ export const SsoConfigForm = () => {
           <HStack
             p={3}
             rounded={theme.radii.component}
-            borderWidth={"1px"}
-            borderColor={"border.subtle"}
             bg={"bg.subtle"}
             justify={"space-between"}
             align={"center"}
@@ -162,8 +160,6 @@ export const SsoConfigForm = () => {
                 </P>
               </VStack>
             </HStack>
-
-            <Switch checked={true} disabled={true} />
           </HStack>
 
           <VStack gap={4} align={"stretch"} w={"full"} pt={2}>
@@ -241,8 +237,6 @@ export const SsoConfigForm = () => {
           <HStack
             p={3}
             rounded={theme.radii.component}
-            borderWidth={"1px"}
-            borderColor={"border.subtle"}
             bg={"bg.subtle"}
             justify={"space-between"}
             align={"center"}

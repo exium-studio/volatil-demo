@@ -10,7 +10,6 @@ import { NumberInput } from "@/design-system/components/input/ui/number-input";
 import { PasswordInput } from "@/design-system/components/input/ui/password-input";
 import SelectInput from "@/design-system/components/input/ui/select";
 import { Switch } from "@/design-system/components/input/ui/switch";
-import { Box } from "@/design-system/components/layout/ui/box";
 import { HStack, VStack } from "@/design-system/components/layout/ui/flex-box";
 import { Separator } from "@/design-system/components/layout/ui/separator";
 import { usePopModal } from "@/design-system/components/overlay/hooks/use-pop-modal";
@@ -27,7 +26,7 @@ import type {
   SmtpSecurity,
 } from "@/features/internal/integrations/types/integration.type";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { MailCheckIcon, MailIcon, SaveIcon } from "lucide-react";
+import { MailCheckIcon, SaveIcon } from "lucide-react";
 import { useEffect } from "react";
 import { Controller, useForm } from "react-hook-form";
 
@@ -111,22 +110,18 @@ export const SmtpConfigForm = () => {
       align={"stretch"}
     >
       {/* Banner */}
-      <HStack
+      {/* <HStack
         p={4}
         rounded={theme.radii.component}
-        borderWidth={"1px"}
-        borderColor={"border.subtle"}
         bg={"bg.subtle"}
         justify={"space-between"}
         align={"center"}
         gap={"md"}
       >
         <HStack gap={3}>
-          <Box p={2} rounded={"full"} bg={"bg.surface"} shadow={"xs"}>
-            <AppIcon icon={MailIcon} color={`${theme.colorPalette}.solid`} />
-          </Box>
+          <AppIcon icon={MailIcon} color={`${theme.colorPalette}.solid`} />
 
-          <VStack gap={0} align={"start"}>
+          <VStack gap={"2xs"} align={"start"}>
             <P fontWeight={"semibold"}>{"Pengaturan Email - SMTP"}</P>
 
             <P fontSize={"xs"} color={"fg.muted"}>
@@ -145,7 +140,7 @@ export const SmtpConfigForm = () => {
           <AppIcon icon={MailCheckIcon} />
           {"Uji Coba Kirim"}
         </Button>
-      </HStack>
+      </HStack> */}
 
       {/* Inputs */}
       <VStack gap={6} align={"stretch"}>
@@ -317,6 +312,15 @@ export const SmtpConfigForm = () => {
 
       {/* Actions */}
       <HStack justify={"flex-end"} gap={3}>
+        <Button
+          type={"button"}
+          variant={"outline"}
+          onClick={() => openTestModal()}
+        >
+          <AppIcon icon={MailCheckIcon} />
+          {"Uji Coba Kirim"}
+        </Button>
+
         <Button
           type={"submit"}
           primary={true}
