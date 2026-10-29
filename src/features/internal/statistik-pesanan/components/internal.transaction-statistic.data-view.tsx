@@ -50,7 +50,8 @@ import { useLocale } from "@/shared/libs/i18n/locale-provider";
 import type { OrderStatus } from "@/shared/types/status.type";
 import { isEmptyArray } from "@/shared/utils/data/array";
 import {
-  formatAdaptiveDateTime,
+  formatRelativeTime,
+  formatUtcDateTime,
   getPreferredUserTimezone,
 } from "@/shared/utils/formatter/date.formatter";
 import { formatNumber } from "@/shared/utils/formatter/number.formatter";
@@ -134,12 +135,12 @@ export const InternalTransactionStatisticDataView = () => {
   // Derived Values - DataList headers & items
   const dataList = useMemo(() => {
     const headers: FormattedTableHeader[] = [
-      { th: "Mitra Pemohon", sortable: true, align: "start" },
+      { th: "Tanggal Pengajuan", sortable: true, align: "start" },
       { th: "No. Pesanan", sortable: true, align: "start" },
+      { th: "Mitra Pemohon", sortable: true, align: "start" },
       { th: "Status Pesanan", sortable: true, align: "start" },
       { th: "Status WMS", sortable: true, align: "start" },
       { th: "Kode Billing", sortable: false, align: "start" },
-      { th: "Waktu Transaksi", sortable: true, align: "start" },
       { th: "Sisa Waktu Pembayaran", sortable: true, align: "start" },
       { th: "Metode Pembayaran", sortable: false, align: "start" },
       { th: "TTE & Faktur", sortable: false, align: "start" },
@@ -183,14 +184,18 @@ export const InternalTransactionStatisticDataView = () => {
           data: item,
           columns: [
             {
-              value: item.mitra.name,
+              value: item.createdAt,
               td: (
-                <VStack align={"start"} gap={0} w={"180px"}>
-                  <ClampedP fontSize={"sm"}>{item.mitra.name}</ClampedP>
-                  <ClampedP fontSize={"xs"} color={"fg.subtle"}>
-                    {item.mitra.agencyOrCompany || item.mitra.email}
-                  </ClampedP>
-                </VStack>
+                <HStack gap={2} whiteSpace={"nowrap"}>
+                  <P fontSize={"sm"} color={"fg.muted"}>
+                    {formatUtcDateTime(item.createdAt, preferredTimezone)}
+                  </P>
+                  {item.createdAt && (
+                    <P color={"fg.subtle"} fontSize={"xs"}>
+                      {`(${formatRelativeTime(item.createdAt, locale)})`}
+                    </P>
+                  )}
+                </HStack>
               ),
               align: "start" as const,
             },
@@ -200,6 +205,18 @@ export const InternalTransactionStatisticDataView = () => {
                 <P fontSize={"sm"} color={"fg.muted"}>
                   {item.orderNumber || item.orderId}
                 </P>
+              ),
+              align: "start" as const,
+            },
+            {
+              value: item.mitra.name,
+              td: (
+                <VStack align={"start"} gap={0} w={"180px"}>
+                  <ClampedP fontSize={"sm"}>{item.mitra.name}</ClampedP>
+                  <ClampedP fontSize={"xs"} color={"fg.subtle"}>
+                    {item.mitra.agencyOrCompany || item.mitra.email}
+                  </ClampedP>
+                </VStack>
               ),
               align: "start" as const,
             },
@@ -231,18 +248,6 @@ export const InternalTransactionStatisticDataView = () => {
                 <TNum fontSize={"sm"} color={"fg.muted"}>
                   {item.billingCode || "-"}
                 </TNum>
-              ),
-              align: "start" as const,
-            },
-            {
-              value: item.createdAt,
-              td: (
-                <P fontSize={"sm"} color={"fg.muted"}>
-                  {formatAdaptiveDateTime(item.createdAt, {
-                    timeZone: preferredTimezone,
-                    locale,
-                  })}
-                </P>
               ),
               align: "start" as const,
             },

@@ -31,6 +31,7 @@ import { TransactionDetailTrigger } from "@/features/shared/components/transacti
 import type { OrderStatus } from "@/shared/types/status.type";
 import { isEmptyArray } from "@/shared/utils/data/array";
 import {
+  formatRelativeTime,
   formatUtcDateTime,
   getPreferredUserTimezone,
 } from "@/shared/utils/formatter/date.formatter";
@@ -146,10 +147,10 @@ const MitraHomeLastTransactionDataView = (props: {
   // Derived Values - DataList headers & items
   const dataList = useMemo(() => {
     const headers: FormattedTableHeader[] = [
+      { th: "Tanggal Pengajuan", sortable: false, align: "start" },
       { th: "No. Pesanan", sortable: false, align: "start" },
       { th: "Status Pesanan", sortable: false, align: "start" },
       { th: "Kode Billing", sortable: false, align: "start" },
-      { th: "Waktu Transaksi", sortable: false, align: "start" },
       { th: "Metode Pembayaran", sortable: false, align: "start" },
       { th: "IGT Dibeli", sortable: false, align: "start" },
       { th: "Jumlah Layer", sortable: false, align: "start" },
@@ -174,6 +175,20 @@ const MitraHomeLastTransactionDataView = (props: {
           data: item,
           columns: [
             {
+              value: item.createdAt,
+              td: (
+                <HStack gap={2} whiteSpace={"nowrap"}>
+                  <P>{formatUtcDateTime(item.createdAt, preferredTimezone)}</P>
+                  {item.createdAt && (
+                    <P color={"fg.subtle"} fontSize={"xs"}>
+                      {`(${formatRelativeTime(item.createdAt)})`}
+                    </P>
+                  )}
+                </HStack>
+              ),
+              align: "start" as const,
+            },
+            {
               value: item.orderNumber,
               td: <P>{item.orderNumber}</P>,
               align: "start" as const,
@@ -194,15 +209,6 @@ const MitraHomeLastTransactionDataView = (props: {
               td: (
                 <P>
                   <TNum>{item.billingCode}</TNum>
-                </P>
-              ),
-              align: "start" as const,
-            },
-            {
-              value: item.createdAt,
-              td: (
-                <P whiteSpace={"nowrap"}>
-                  {formatUtcDateTime(item.createdAt, preferredTimezone)}
                 </P>
               ),
               align: "start" as const,

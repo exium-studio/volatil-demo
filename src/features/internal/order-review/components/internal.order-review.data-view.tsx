@@ -39,6 +39,7 @@ import { StatusFilterSelect } from "@/features/shared/components/status-filter.s
 import { TteBadge } from "@/features/shared/components/tte.badge";
 import { isEmptyArray } from "@/shared/utils/data/array";
 import {
+  formatRelativeTime,
   formatUtcDateTime,
   getPreferredUserTimezone,
 } from "@/shared/utils/formatter/date.formatter";
@@ -125,6 +126,7 @@ export const InternalOrderReviewDataView = () => {
   // Derived Values - Headers & Items for DataList
   const dataList = useMemo(() => {
     const headers: FormattedTableHeader[] = [
+      { th: "Tanggal Pengajuan", sortable: true, align: "start" },
       { th: "No. Pesanan", sortable: true, align: "start" },
       { th: "Nama Mitra Pemohon", sortable: true, align: "start" },
       { th: "Metode Pengajuan", sortable: false, align: "start" },
@@ -134,7 +136,6 @@ export const InternalOrderReviewDataView = () => {
       { th: "Status Pesanan", sortable: true, align: "start" },
       { th: "TTE & Faktur", sortable: false, align: "start" },
       { th: "Total Biaya", sortable: true, align: "end" },
-      { th: "Waktu Diajukan", sortable: true, align: "start" },
     ];
 
     const items = orders.map((order) => {
@@ -144,6 +145,22 @@ export const InternalOrderReviewDataView = () => {
         id: order.orderId,
         data: order,
         columns: [
+          {
+            value: order.createdAt,
+            td: (
+              <HStack gap={2} whiteSpace={"nowrap"}>
+                <P fontSize={"sm"} color={"fg.muted"}>
+                  {formatUtcDateTime(order.createdAt, preferredTimezone)}
+                </P>
+                {order.createdAt && (
+                  <P color={"fg.subtle"} fontSize={"xs"}>
+                    {`(${formatRelativeTime(order.createdAt)})`}
+                  </P>
+                )}
+              </HStack>
+            ),
+            align: "start" as const,
+          },
           {
             value: displayOrderNumber,
             td: <P fontSize={"sm"}>{displayOrderNumber}</P>,
@@ -230,15 +247,6 @@ export const InternalOrderReviewDataView = () => {
             value: order.totalPrice,
             td: <P fontSize={"sm"}>{formatCurrency(order.totalPrice)}</P>,
             align: "end" as const,
-          },
-          {
-            value: order.createdAt,
-            td: (
-              <P fontSize={"sm"} color={"fg.muted"}>
-                {formatUtcDateTime(order.createdAt, preferredTimezone)}
-              </P>
-            ),
-            align: "start" as const,
           },
         ],
       };

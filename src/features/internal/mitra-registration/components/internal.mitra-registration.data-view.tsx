@@ -39,6 +39,7 @@ import {
 } from "@/features/shared/constants/volatil.ssot-map";
 import { isEmptyArray } from "@/shared/utils/data/array";
 import {
+  formatRelativeTime,
   formatUtcDateTime,
   getPreferredUserTimezone,
 } from "@/shared/utils/formatter/date.formatter";
@@ -113,13 +114,13 @@ export const InternalMitraRegistrationDataView = () => {
   // Derived Values - Headers, Items, BatchActions, ItemActions in 1 useMemo
   const dataList = useMemo(() => {
     const headers: FormattedTableHeader[] = [
-      { th: "No. Registrasi", sortable: true },
       { th: "Instansi", sortable: true },
+      { th: "Tanggal Pengajuan", sortable: true },
+      { th: "No. Registrasi", sortable: true },
       { th: "Status Pendaftaran", sortable: true },
       { th: "Berkas Kontrak" },
       { th: "Penanggung Jawab", sortable: true },
       { th: "Kontak / Email", sortable: true },
-      { th: "Waktu Pengajuan", sortable: true },
     ];
 
     const items = rawItems.map((reg) => {
@@ -127,10 +128,6 @@ export const InternalMitraRegistrationDataView = () => {
         id: String(reg.id),
         data: reg,
         columns: [
-          {
-            value: reg.registrationNumber,
-            td: <P>{reg.registrationNumber}</P>,
-          },
           {
             value: reg.organizationName ?? reg.namaInstansi,
             td: (
@@ -141,6 +138,26 @@ export const InternalMitraRegistrationDataView = () => {
                 </P>
               </VStack>
             ),
+          },
+          {
+            value: reg.createdAt,
+            td: (
+              <HStack gap={2} whiteSpace={"nowrap"}>
+                <P fontSize={"sm"} color={"fg.muted"}>
+                  {formatUtcDateTime(reg.createdAt, preferredTimezone)}
+                </P>
+                {reg.createdAt && (
+                  <P color={"fg.subtle"} fontSize={"xs"}>
+                    {`(${formatRelativeTime(reg.createdAt)})`}
+                  </P>
+                )}
+              </HStack>
+            ),
+            align: "start" as const,
+          },
+          {
+            value: reg.registrationNumber,
+            td: <P>{reg.registrationNumber}</P>,
           },
           {
             value: reg.status,
@@ -195,16 +212,6 @@ export const InternalMitraRegistrationDataView = () => {
           {
             value: reg.email,
             td: <P>{reg.email}</P>,
-            align: "start" as const,
-          },
-
-          {
-            value: reg.createdAt,
-            td: (
-              <P fontSize={"sm"} color={"fg.muted"} whiteSpace={"nowrap"}>
-                {formatUtcDateTime(reg.createdAt, preferredTimezone)}
-              </P>
-            ),
             align: "start" as const,
           },
         ],
