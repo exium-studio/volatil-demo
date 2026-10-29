@@ -723,21 +723,6 @@ const SplitterResizeTrigger = forwardRef<
         }}
         {...restProps}
       >
-        {/* Expanded touch hit area - minimum 44px on perpendicular axis */}
-        <Box
-          pos={"absolute"}
-          top={isVertical ? "-22px" : 0}
-          bottom={isVertical ? "-22px" : 0}
-          left={isVertical ? 0 : "-22px"}
-          right={isVertical ? 0 : "-22px"}
-          zIndex={0}
-          cursor={isVertical ? "row-resize" : "col-resize"}
-          style={{
-            touchAction: "none",
-            userSelect: "none",
-          }}
-        />
-
         {/* Hover highlight bar - 8px width/height */}
         <Box
           pos={"absolute"}
