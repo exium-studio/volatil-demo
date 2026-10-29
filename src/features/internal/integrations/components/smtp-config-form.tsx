@@ -11,7 +11,6 @@ import { PasswordInput } from "@/design-system/components/input/ui/password-inpu
 import SelectInput from "@/design-system/components/input/ui/select";
 import { Switch } from "@/design-system/components/input/ui/switch";
 import { HStack, VStack } from "@/design-system/components/layout/ui/flex-box";
-import { Separator } from "@/design-system/components/layout/ui/separator";
 import { usePopModal } from "@/design-system/components/overlay/hooks/use-pop-modal";
 import { P } from "@/design-system/components/typography/ui/p";
 import { useThemeStore } from "@/design-system/stores/theme-store";
@@ -312,8 +311,6 @@ export const SmtpConfigForm = () => {
             </VStack>
           </Fieldset>
         </VStack>
-
-        <Separator borderColor={"border.subtle"} />
 
         {/* Actions */}
         <HStack justify={"flex-end"} gap={3}>

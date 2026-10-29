@@ -11,7 +11,6 @@ import { PasswordInput } from "@/design-system/components/input/ui/password-inpu
 import { Switch } from "@/design-system/components/input/ui/switch";
 import { Circle } from "@/design-system/components/layout/ui/box";
 import { HStack, VStack } from "@/design-system/components/layout/ui/flex-box";
-import { Separator } from "@/design-system/components/layout/ui/separator";
 import { P } from "@/design-system/components/typography/ui/p";
 import { useThemeStore } from "@/design-system/stores/theme-store";
 import {
@@ -277,8 +276,6 @@ export const SimponiConfigForm = () => {
           </VStack>
         </Fieldset>
       </VStack>
-
-      <Separator borderColor={"border.subtle"} />
 
       {/* Actions */}
       <HStack justify={"flex-end"} gap={3}>
