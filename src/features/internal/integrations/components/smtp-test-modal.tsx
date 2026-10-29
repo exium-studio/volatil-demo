@@ -6,8 +6,7 @@ import { Field } from "@/design-system/components/input/ui/field";
 import { Input } from "@/design-system/components/input/ui/input";
 import { VStack } from "@/design-system/components/layout/ui/flex-box";
 import { usePopModal } from "@/design-system/components/overlay/hooks/use-pop-modal";
-import { Dialog } from "@/design-system/components/overlay/ui/dialog";
-import { P } from "@/design-system/components/typography/ui/p";
+import { Modal } from "@/design-system/components/overlay/ui/modal";
 import { useTestSmtpMutation } from "@/features/internal/integrations/hooks/use-integration.query";
 import { smtpTestSchema } from "@/features/internal/integrations/schemas/integration.schema";
 import type {
@@ -17,6 +16,8 @@ import type {
 import { zodResolver } from "@hookform/resolvers/zod";
 import { SendIcon } from "lucide-react";
 import { useForm } from "react-hook-form";
+
+const SMTP_TEST_TARGET_EMAIL_KEY = "volatil_smtp_test_target_email";
 
 export const SmtpTestModal = (props: SmtpTestModalProps) => {
   // Props
@@ -30,12 +31,18 @@ export const SmtpTestModal = (props: SmtpTestModalProps) => {
   const form = useForm<SmtpTestFormValues>({
     resolver: zodResolver(smtpTestSchema),
     defaultValues: {
-      targetEmail: "",
+      targetEmail:
+        typeof window !== "undefined"
+          ? (localStorage.getItem(SMTP_TEST_TARGET_EMAIL_KEY) ?? "")
+          : "",
     },
   });
 
   // Handlers
   const onSubmit = (values: SmtpTestFormValues) => {
+    if (typeof window !== "undefined") {
+      localStorage.setItem(SMTP_TEST_TARGET_EMAIL_KEY, values.targetEmail);
+    }
     testMutation.mutate(
       {
         targetEmail: values.targetEmail,
@@ -43,7 +50,6 @@ export const SmtpTestModal = (props: SmtpTestModalProps) => {
       },
       {
         onSuccess: () => {
-          form.reset();
           close();
         },
       },
@@ -51,23 +57,13 @@ export const SmtpTestModal = (props: SmtpTestModalProps) => {
   };
 
   return (
-    <Dialog.Root modalKey={modalKey} opened={isOpen} open={open} close={close}>
-      <Dialog.Content maxW={"480px"}>
-        <Dialog.Header>
-          <VStack gap={"xs"}>
-            <P fontWeight={"semibold"} textAlign={"center"}>
-              {"Uji Coba Kirim Email"}
-            </P>
+    <Modal.Root modalKey={modalKey} opened={isOpen} open={open} close={close}>
+      <Modal.Content>
+        <Modal.Header>
+          <Modal.Title>{"Uji Coba Kirim Email"}</Modal.Title>
+        </Modal.Header>
 
-            <P fontSize={"sm"} color={"fg.muted"} textAlign={"center"}>
-              {
-                "Kirim satu email pengujian untuk memverifikasi host, port, dan kredensial SMTP."
-              }
-            </P>
-          </VStack>
-        </Dialog.Header>
-
-        <Dialog.Body>
+        <Modal.Body>
           <VStack
             as={"form"}
             id={"smtp-test-form"}
@@ -90,9 +86,9 @@ export const SmtpTestModal = (props: SmtpTestModalProps) => {
               />
             </Field>
           </VStack>
-        </Dialog.Body>
+        </Modal.Body>
 
-        <Dialog.Footer>
+        <Modal.Footer>
           <VStack flex={1} gap={"xs"}>
             <Button
               type={"submit"}
@@ -106,8 +102,8 @@ export const SmtpTestModal = (props: SmtpTestModalProps) => {
 
             <Button onClick={close}>{"Batal"}</Button>
           </VStack>
-        </Dialog.Footer>
-      </Dialog.Content>
-    </Dialog.Root>
+        </Modal.Footer>
+      </Modal.Content>
+    </Modal.Root>
   );
 };
