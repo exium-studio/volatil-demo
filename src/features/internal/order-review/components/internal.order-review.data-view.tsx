@@ -349,8 +349,7 @@ export const InternalOrderReviewDataView = () => {
         label: "Buka Peta & Data IGT",
         icon: LayersIcon,
         hidden: (order: InternalOrderItem) =>
-          order.status !== "pending_review" &&
-          order.status !== "pending_manual_payment_verification",
+          order.status !== "pending_review",
         onClick: (order: InternalOrderItem) => {
           void navigate({
             to: "/internal/order-review/$orderId",
@@ -382,8 +381,7 @@ export const InternalOrderReviewDataView = () => {
         icon: CheckCircleIcon,
         colorPalette: "green",
         hidden: (order: InternalOrderItem) =>
-          order.status !== "pending_review" &&
-          order.status !== "pending_manual_payment_verification",
+          order.status !== "pending_review",
         modal: {
           triggerComponent: (order: InternalOrderItem) => (
             <InternalOrderReviewApproveTrigger
@@ -395,7 +393,10 @@ export const InternalOrderReviewDataView = () => {
       },
       {
         key: "reject-order",
-        label: "Tolak Pembayaran",
+        label: (order: InternalOrderItem) =>
+          order.status === "pending_manual_payment_verification"
+            ? "Tolak Pembayaran"
+            : "Tolak Permintaan",
         icon: XCircleIcon,
         colorPalette: "red",
         hidden: (order: InternalOrderItem) =>

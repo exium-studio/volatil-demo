@@ -14,6 +14,7 @@ import { OrderStatusBadge } from "@/features/shared/components/order-status.badg
 import { SelectionTypeBadge } from "@/features/shared/components/selection-type.badge";
 import { TteBadge } from "@/features/shared/components/tte.badge";
 import { InternalOrderReviewInputBillingTrigger } from "@/features/internal/order-review/components/internal.order-review.input-billing-modal";
+import { InternalOrderReviewApproveTrigger } from "@/features/internal/order-review/components/internal.order-review.approve-modal";
 import { InternalOrderReviewRejectTrigger } from "@/features/internal/order-review/components/internal.order-review.reject-modal";
 import {
   useApproveManualPayment,
@@ -80,9 +81,9 @@ const InternalOrderReviewDetailModalContent = (
   const isPaid = order.status === "paid";
   const isProcessing = order.status === "processing";
   const isPendingBillingCode = order.status === "pending_billing_code";
-  const isPending =
-    order.status === "pending_review" ||
+  const isPendingManualVerification =
     order.status === "pending_manual_payment_verification";
+  const isPendingReview = order.status === "pending_review";
 
   return (
     <Modal.Content>
@@ -410,7 +411,7 @@ const InternalOrderReviewDetailModalContent = (
             </InternalOrderReviewInputBillingTrigger>
           )}
 
-          {isPending && (
+          {isPendingManualVerification && (
             <>
               {/* Tolak Pembayaran */}
               <InternalOrderReviewRejectTrigger
@@ -462,6 +463,52 @@ const InternalOrderReviewDetailModalContent = (
                   {"Setujui Pembayaran"}
                 </Button>
               </ConfirmationTrigger>
+            </>
+          )}
+
+          {isPendingReview && (
+            <>
+              {/* Tolak Permintaan */}
+              <InternalOrderReviewRejectTrigger
+                order={order}
+                modalKey={`reject-review-from-detail-${order.orderId}`}
+                onSuccessRedirect={() => {
+                  close();
+                  void navigate({
+                    to: "/internal/order-review",
+                    search: (old: Record<string, unknown>) => {
+                      const { activeModalKey: _, ...rest } = old;
+                      return rest;
+                    },
+                  });
+                }}
+              >
+                <Button variant={"outline"} colorPalette={"red"}>
+                  <AppIcon icon={XCircleIcon} />
+                  {"Tolak Permintaan"}
+                </Button>
+              </InternalOrderReviewRejectTrigger>
+
+              {/* Setujui Permintaan (Input Workspace Interop URL) */}
+              <InternalOrderReviewApproveTrigger
+                order={order}
+                modalKey={`approve-review-from-detail-${order.orderId}`}
+                onSuccessRedirect={() => {
+                  close();
+                  void navigate({
+                    to: "/internal/order-review",
+                    search: (old: Record<string, unknown>) => {
+                      const { activeModalKey: _, ...rest } = old;
+                      return rest;
+                    },
+                  });
+                }}
+              >
+                <Button primary={true} colorPalette={"green"}>
+                  <AppIcon icon={CheckCircleIcon} />
+                  {"Setujui Permintaan"}
+                </Button>
+              </InternalOrderReviewApproveTrigger>
             </>
           )}
         </HStack>

@@ -335,11 +335,16 @@ export const TransactionHistoryDataView = () => {
         label: "Unggah Bukti Bayar",
         icon: UploadCloudIcon,
         colorPalette: "blue",
-        hidden: (transaction: TransactionRecord) =>
-          transaction.orderStatus !== "manual_pending_payment" &&
-          transaction.orderStatus !== "pending_manual_payment_verification" &&
-          transaction.orderStatus !== "pending_review" &&
-          transaction.orderStatus !== "pending_payment",
+        hidden: (transaction: TransactionRecord) => {
+          if (
+            transaction.transactionStatus === "paid" ||
+            Boolean(transaction.paidAt) ||
+            transaction.transactionStatus === "expired"
+          ) {
+            return true;
+          }
+          return transaction.orderStatus !== "manual_pending_payment";
+        },
         modal: {
           triggerComponent: (transaction: TransactionRecord) => (
             <ManualPaymentProofTrigger

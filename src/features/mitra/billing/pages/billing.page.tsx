@@ -73,8 +73,7 @@ const BillingPageBillingCode = () => {
 
   const isPendingManualVerification =
     orderDetail?.status === "pending_manual_payment_verification" ||
-    orderDetail?.orderStatus === "pending_manual_payment_verification" ||
-    orderDetail?.status === "pending_review";
+    orderDetail?.orderStatus === "pending_manual_payment_verification";
 
   const isManualPendingPayment =
     orderDetail?.status === "manual_pending_payment" ||
