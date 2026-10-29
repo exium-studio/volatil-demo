@@ -24,12 +24,6 @@ export const InternalIntegrationsSmtpPage = () => {
           <HeaderContainer justify={"space-between"} pr={"xs"}>
             <VStack align={"start"} gap={1} py={"sm"}>
               <ClampedHeading>{"Integrasi Email - SMTP"}</ClampedHeading>
-
-              <P fontSize={"sm"} color={"fg.muted"}>
-                {
-                  "Pengaturan mail server untuk pengiriman kode billing, kredensial pendaftaran, dan notifikasi sistem."
-                }
-              </P>
             </VStack>
           </HeaderContainer>
 
@@ -37,12 +31,20 @@ export const InternalIntegrationsSmtpPage = () => {
 
           {/* Body Form */}
           <VStack
-            align={"stretch"}
-            w={"full"}
             flex={1}
-            p={["md", "lg"]}
+            align={"stretch"}
+            gap={"xl"}
+            w={"full"}
+            p={"md"}
             pb={16}
+            overflowY={"auto"}
           >
+            <P fontSize={"sm"} color={"fg.muted"}>
+              {
+                "Pengaturan mail server untuk pengiriman kode billing, kredensial pendaftaran, dan notifikasi sistem."
+              }
+            </P>
+
             <SmtpConfigForm />
           </VStack>
         </Container.Body>

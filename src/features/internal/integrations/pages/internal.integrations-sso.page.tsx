@@ -12,7 +12,13 @@ import { SsoConfigForm } from "@/features/internal/integrations/components/sso-c
 export const InternalIntegrationsSsoPage = () => {
   return (
     <AppContentContainer flex={1} minH={0} position={"relative"}>
-      <Container.Root withContext={true} flex={1} w={"full"} minH={0} position={"relative"}>
+      <Container.Root
+        withContext={true}
+        flex={1}
+        w={"full"}
+        minH={0}
+        position={"relative"}
+      >
         <Container.Body overflowY={"auto"}>
           {/* Header */}
           <HeaderContainer justify={"space-between"} pr={"xs"}>
@@ -20,17 +26,26 @@ export const InternalIntegrationsSsoPage = () => {
               <ClampedHeading>
                 {"Integrasi Single Sign-On (SSO) Keycloak"}
               </ClampedHeading>
-
-              <P fontSize={"sm"} color={"fg.muted"}>
-                {"Konfigurasi protokol OpenID Connect (OIDC) Pusdatin ATR/BPN untuk autentikasi pegawai internal."}
-              </P>
             </VStack>
           </HeaderContainer>
 
           <Separator borderColor={"border.subtle"} />
 
           {/* Body Form */}
-          <VStack align={"stretch"} w={"full"} flex={1} p={["md", "lg"]} pb={16}>
+          <VStack
+            flex={1}
+            align={"stretch"}
+            gap={"xl"}
+            w={"full"}
+            p={"md"}
+            pb={16}
+          >
+            <P fontSize={"sm"} color={"fg.muted"}>
+              {
+                "Konfigurasi protokol OpenID Connect (OIDC) Pusdatin ATR/BPN untuk autentikasi pegawai internal."
+              }
+            </P>
+
             <SsoConfigForm />
           </VStack>
         </Container.Body>
