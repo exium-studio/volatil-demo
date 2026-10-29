@@ -97,6 +97,20 @@ export const BaseMap = ({ styleUrl, children }: BaseMapProps) => {
       touchZoomRotate: true,
       pitchWithRotate: true,
       attributionControl: false,
+      transformRequest: (url: string) => {
+        if (url.includes("/api/proxy/")) {
+          const token =
+            typeof window !== "undefined"
+              ? localStorage.getItem("auth_token")
+              : null;
+          return {
+            url,
+            credentials: "include",
+            headers: token ? { Authorization: `Bearer ${token}` } : {},
+          };
+        }
+        return { url };
+      },
     });
 
     appliedStyleRef.current = {

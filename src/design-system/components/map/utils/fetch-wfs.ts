@@ -161,12 +161,21 @@ export const getLayerGeometryColumnName = async (
     url.searchParams.set("typeName", typeName);
     url.searchParams.set("outputFormat", "application/json");
 
+    const authToken =
+      typeof window !== "undefined" ? localStorage.getItem("auth_token") : null;
     const headers: Record<string, string> = {};
     if (apiKey && isWorkspaceEndpoint) {
       headers["X-API-Key"] = apiKey;
     }
+    if (authToken) {
+      headers["Authorization"] = `Bearer ${authToken}`;
+    }
 
-    const res = await fetch(url.toString(), { headers, signal });
+    const res = await fetch(url.toString(), {
+      headers,
+      credentials: "include",
+      signal,
+    });
     if (res.ok) {
       const data = await res.json();
       const element = data?.featureTypes?.[0]?.properties?.find(
@@ -219,11 +228,15 @@ const fetchWfsPost = async (
   }
   const body = url.searchParams.toString();
 
+  const authToken =
+    typeof window !== "undefined" ? localStorage.getItem("auth_token") : null;
+
   const headers: Record<string, string> = {
     "Content-Type": "application/x-www-form-urlencoded",
     ...(params.apiKey && isWorkspaceEndpoint
       ? { "X-API-Key": params.apiKey }
       : {}),
+    ...(authToken ? { Authorization: `Bearer ${authToken}` } : {}),
     ...(params.headers ?? {}),
   };
 
@@ -231,6 +244,7 @@ const fetchWfsPost = async (
     method: "POST",
     headers,
     body,
+    credentials: "include",
     signal: params.signal,
   });
 };
@@ -256,10 +270,14 @@ export const fetchWfs = async (
     url.pathname.includes("/workspace/") ||
     (params.wfsUrl && params.wfsUrl.includes("workspace="));
 
+  const authToken =
+    typeof window !== "undefined" ? localStorage.getItem("auth_token") : null;
+
   const getHeaders: Record<string, string> = {
     ...(params.apiKey && isWorkspaceEndpoint
       ? { "X-API-Key": params.apiKey }
       : {}),
+    ...(authToken ? { Authorization: `Bearer ${authToken}` } : {}),
     ...(params.headers ?? {}),
   };
 
@@ -268,6 +286,7 @@ export const fetchWfs = async (
       ? await fetchWfsPost(params, true)
       : await fetch(url.toString(), {
           headers: Object.keys(getHeaders).length > 0 ? getHeaders : undefined,
+          credentials: "include",
           signal,
         });
   } catch (err: unknown) {
@@ -343,7 +362,12 @@ export const fetchWfs = async (
       res =
         usePost || url.toString().length > 2000
           ? await fetchWfsPost(adaptedParams, true)
-          : await fetch(url.toString(), { signal });
+          : await fetch(url.toString(), {
+              headers:
+                Object.keys(getHeaders).length > 0 ? getHeaders : undefined,
+              credentials: "include",
+              signal,
+            });
     } else {
       // Fallback swap if discovered name is the same as current
       const fallbackFilter = /\bthe_geom\b/i.test(params.cqlFilter)
@@ -354,7 +378,12 @@ export const fetchWfs = async (
       res =
         usePost || url.toString().length > 2000
           ? await fetchWfsPost(fallbackParams, true)
-          : await fetch(url.toString(), { signal });
+          : await fetch(url.toString(), {
+              headers:
+                Object.keys(getHeaders).length > 0 ? getHeaders : undefined,
+              credentials: "include",
+              signal,
+            });
     }
   }
 
@@ -406,7 +435,12 @@ export const fetchWfs = async (
       const retryRes =
         usePost || retryUrl.toString().length > 2000
           ? await fetchWfsPost(retryParams, true)
-          : await fetch(retryUrl.toString(), { signal });
+          : await fetch(retryUrl.toString(), {
+              headers:
+                Object.keys(getHeaders).length > 0 ? getHeaders : undefined,
+              credentials: "include",
+              signal,
+            });
       if (retryRes.ok) {
         text = await retryRes.text();
         trimmedText = text.trim();
