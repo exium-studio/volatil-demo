@@ -4,8 +4,14 @@ dist
 build
 .git
 .gitignore
+.agents
 .agent
 .gemini
 Dockerfile
 .dockerignore
+docker-compose.yml
 README.md
+*.log
+*.txt
+scratch_*.json
+eslint_errors.json
