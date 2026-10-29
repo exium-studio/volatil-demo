@@ -266,6 +266,7 @@ export default function SelectInput(props: SelectProps) {
       <ChakraSelect.HiddenSelect />
 
       <Tooltip
+        disabled={!hasValue && !placeholder}
         content={
           <HStack align={"center"} gap={2}>
             {renderStartElement(
@@ -273,11 +274,9 @@ export default function SelectInput(props: SelectProps) {
               selectedOption?.icon,
               "sm",
             )}
-            <ChakraSelect.ValueText
-              fontSize={"sm"}
-              placeholder={placeholder}
-              whiteSpace={"nowrap"}
-            />
+            <P fontSize={"sm"} whiteSpace={"nowrap"}>
+              {selectedOption?.label ?? placeholder}
+            </P>
             {suffixLabel}
           </HStack>
         }

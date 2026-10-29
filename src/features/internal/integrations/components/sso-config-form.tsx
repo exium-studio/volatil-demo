@@ -122,22 +122,22 @@ export const SsoConfigForm = () => {
       >
         <VStack gap={4} align={"stretch"} w={"full"}>
           <HStack
+            align={"center"}
+            justify={"space-between"}
+            gap={"md"}
             p={3}
             rounded={theme.radii.component}
             bg={"bg.subtle"}
-            justify={"space-between"}
-            align={"center"}
-            gap={"md"}
           >
-            <HStack gap={2} align={"start"}>
-              <Circle p={1}>
+            <HStack align={"start"} gap={"xs"}>
+              <Circle p={"2xs"}>
                 <AppIcon
                   icon={HandshakeIcon}
                   color={`${theme.colorPalette}.solid`}
                 />
               </Circle>
 
-              <VStack gap={1} align={"start"}>
+              <VStack gap={"2xs"} align={"start"}>
                 <P fontWeight={"semibold"}>{"SSO Mitra"}</P>
 
                 <P fontSize={"xs"} color={"fg.muted"}>
@@ -222,15 +222,15 @@ export const SsoConfigForm = () => {
       >
         <VStack gap={4} align={"stretch"} w={"full"}>
           <HStack
+            align={"center"}
+            justify={"space-between"}
+            gap={"md"}
             p={3}
             rounded={theme.radii.component}
             bg={"bg.subtle"}
-            justify={"space-between"}
-            align={"center"}
-            gap={"md"}
           >
-            <HStack align={"start"} gap={2}>
-              <Circle p={1}>
+            <HStack align={"start"} gap={"xs"}>
+              <Circle p={"2xs"}>
                 <AppIcon
                   icon={UsersIcon}
                   color={`${theme.colorPalette}.solid`}

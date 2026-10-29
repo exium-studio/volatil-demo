@@ -4,7 +4,7 @@ import { Button } from "@/design-system/components/button/ui/button";
 import { AppIcon } from "@/design-system/components/icon/ui/app-icon";
 import { Field } from "@/design-system/components/input/ui/field";
 import { Input } from "@/design-system/components/input/ui/input";
-import { HStack, VStack } from "@/design-system/components/layout/ui/flex-box";
+import { VStack } from "@/design-system/components/layout/ui/flex-box";
 import { usePopModal } from "@/design-system/components/overlay/hooks/use-pop-modal";
 import { Dialog } from "@/design-system/components/overlay/ui/dialog";
 import { P } from "@/design-system/components/typography/ui/p";
@@ -15,7 +15,7 @@ import type {
   SmtpTestModalProps,
 } from "@/features/internal/integrations/types/integration.type";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { MailCheckIcon, SendIcon } from "lucide-react";
+import { SendIcon } from "lucide-react";
 import { useForm } from "react-hook-form";
 
 export const SmtpTestModal = (props: SmtpTestModalProps) => {
@@ -54,21 +54,17 @@ export const SmtpTestModal = (props: SmtpTestModalProps) => {
     <Dialog.Root modalKey={modalKey} opened={isOpen} open={open} close={close}>
       <Dialog.Content maxW={"480px"}>
         <Dialog.Header>
-          <HStack gap={3}>
-            <AppIcon icon={MailCheckIcon} size={"md"} />
+          <VStack gap={"xs"}>
+            <P fontWeight={"semibold"} textAlign={"center"}>
+              {"Uji Coba Kirim Email"}
+            </P>
 
-            <VStack align={"start"} gap={0}>
-              <P fontSize={"md"} fontWeight={"semibold"}>
-                {"Uji Coba Kirim Email"}
-              </P>
-
-              <P fontSize={"xs"} color={"fg.muted"}>
-                {
-                  "Kirim satu email pengujian untuk memverifikasi host, port, dan kredensial SMTP."
-                }
-              </P>
-            </VStack>
-          </HStack>
+            <P fontSize={"sm"} color={"fg.muted"} textAlign={"center"}>
+              {
+                "Kirim satu email pengujian untuk memverifikasi host, port, dan kredensial SMTP."
+              }
+            </P>
+          </VStack>
         </Dialog.Header>
 
         <Dialog.Body>
@@ -97,11 +93,7 @@ export const SmtpTestModal = (props: SmtpTestModalProps) => {
         </Dialog.Body>
 
         <Dialog.Footer>
-          <HStack justify={"flex-end"} gap={2}>
-            <Button variant={"outline"} onClick={close}>
-              {"Batal"}
-            </Button>
-
+          <VStack flex={1} gap={"xs"}>
             <Button
               type={"submit"}
               form={"smtp-test-form"}
@@ -111,7 +103,9 @@ export const SmtpTestModal = (props: SmtpTestModalProps) => {
               <AppIcon icon={SendIcon} />
               {"Kirim Email Uji Coba"}
             </Button>
-          </HStack>
+
+            <Button onClick={close}>{"Batal"}</Button>
+          </VStack>
         </Dialog.Footer>
       </Dialog.Content>
     </Dialog.Root>

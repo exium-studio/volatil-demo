@@ -9,7 +9,7 @@ import { Input } from "@/design-system/components/input/ui/input";
 import { NumberInput } from "@/design-system/components/input/ui/number-input";
 import { PasswordInput } from "@/design-system/components/input/ui/password-input";
 import { Switch } from "@/design-system/components/input/ui/switch";
-import { Box } from "@/design-system/components/layout/ui/box";
+import { Circle } from "@/design-system/components/layout/ui/box";
 import { HStack, VStack } from "@/design-system/components/layout/ui/flex-box";
 import { Separator } from "@/design-system/components/layout/ui/separator";
 import { P } from "@/design-system/components/typography/ui/p";
@@ -97,24 +97,24 @@ export const SimponiConfigForm = () => {
     >
       {/* Banner */}
       <HStack
+        align={"center"}
+        justify={"space-between"}
+        gap={"md"}
         p={4}
         rounded={theme.radii.component}
         borderWidth={"1px"}
         borderColor={"border.subtle"}
         bg={"bg.subtle"}
-        justify={"space-between"}
-        align={"center"}
-        gap={"md"}
       >
-        <HStack gap={3}>
-          <Box p={2} rounded={"full"} bg={"bg.surface"} shadow={"xs"}>
+        <HStack align={"start"} gap={"xs"}>
+          <Circle p={"xs"}>
             <AppIcon
               icon={LandmarkIcon}
               color={`${theme.colorPalette}.solid`}
             />
-          </Box>
+          </Circle>
 
-          <VStack gap={0} align={"start"}>
+          <VStack gap={"2xs"} align={"start"}>
             <P fontWeight={"semibold"}>{"Gateway SIMPONI (PNBP)"}</P>
 
             <P fontSize={"xs"} color={"fg.muted"}>
@@ -149,14 +149,14 @@ export const SimponiConfigForm = () => {
                 py={1}
                 gap={"md"}
               >
-                <VStack gap={0} align={"start"}>
+                <VStack gap={"2xs"} align={"start"}>
                   <P fontSize={"sm"} fontWeight={"medium"}>
                     {"Gunakan Simulator / Mock Billing"}
                   </P>
 
-                  <P fontSize={"xs"} color={"fg.muted"}>
+                  <P fontSize={"xs"} color={"fg.subtle"}>
                     {
-                      "Hasilkan kode billing dummy internal tanpa memanggil Web Service Kemenkeu."
+                      "Hasilkan kode billing dummy internal tanpa memanggil Web Service Kemenkeu melalui API Pusdatin ATR/BPN."
                     }
                   </P>
                 </VStack>
