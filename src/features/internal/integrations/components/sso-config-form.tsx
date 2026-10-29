@@ -15,9 +15,8 @@ import { Fieldset } from "@/design-system/components/input/ui/fieldset";
 import { Input } from "@/design-system/components/input/ui/input";
 import { PasswordInput } from "@/design-system/components/input/ui/password-input";
 import { Switch } from "@/design-system/components/input/ui/switch";
-import { Box } from "@/design-system/components/layout/ui/box";
+import { Circle } from "@/design-system/components/layout/ui/box";
 import { HStack, VStack } from "@/design-system/components/layout/ui/flex-box";
-import { Badge } from "@/design-system/components/typography/ui/badge";
 import { P } from "@/design-system/components/typography/ui/p";
 import { useThemeStore } from "@/design-system/stores/theme-store";
 import {
@@ -27,13 +26,7 @@ import {
 import { ssoFormSchema } from "@/features/internal/integrations/schemas/integration.schema";
 import type { SsoFormValues } from "@/features/internal/integrations/types/integration.type";
 import { zodResolver } from "@hookform/resolvers/zod";
-import {
-  HandshakeIcon,
-  InfoIcon,
-  LockIcon,
-  SaveIcon,
-  UsersIcon,
-} from "lucide-react";
+import { HandshakeIcon, InfoIcon, SaveIcon, UsersIcon } from "lucide-react";
 import { useEffect } from "react";
 import { Controller, useForm, useWatch } from "react-hook-form";
 
@@ -56,7 +49,7 @@ export const SsoConfigForm = () => {
         redirectUri: "",
       },
       internal: {
-        isEnabled: true,
+        isEnabled: false,
         issuerUrl: "",
         clientId: "",
         clientSecret: "",
@@ -68,7 +61,7 @@ export const SsoConfigForm = () => {
   const isInternalEnabled = useWatch({
     control: form.control,
     name: "internal.isEnabled",
-    defaultValue: true,
+    defaultValue: false,
   });
 
   // Effects
@@ -82,7 +75,7 @@ export const SsoConfigForm = () => {
           redirectUri: config.mitra?.redirectUri ?? "",
         },
         internal: {
-          isEnabled: config.internal?.isEnabled ?? true,
+          isEnabled: config.internal?.isEnabled ?? false,
           issuerUrl: config.internal?.issuerUrl ?? "",
           clientId: config.internal?.clientId ?? "",
           clientSecret: config.internal?.clientSecret ?? "",
@@ -136,22 +129,16 @@ export const SsoConfigForm = () => {
             align={"center"}
             gap={"md"}
           >
-            <HStack gap={3} align={"start"}>
-              <Box p={2} rounded={"full"} bg={"bg.surface"} shadow={"xs"}>
+            <HStack gap={2} align={"start"}>
+              <Circle p={1}>
                 <AppIcon
                   icon={HandshakeIcon}
                   color={`${theme.colorPalette}.solid`}
                 />
-              </Box>
+              </Circle>
 
               <VStack gap={1} align={"start"}>
-                <HStack gap={2} align={"center"}>
-                  <P fontWeight={"semibold"}>{"Status SSO Mitra"}</P>
-                  <Badge colorPalette={"teal"} variant={"subtle"}>
-                    <AppIcon icon={LockIcon} size={"xs"} />
-                    {"Wajib Aktif"}
-                  </Badge>
-                </HStack>
+                <P fontWeight={"semibold"}>{"SSO Mitra"}</P>
 
                 <P fontSize={"xs"} color={"fg.muted"}>
                   {
@@ -242,16 +229,16 @@ export const SsoConfigForm = () => {
             align={"center"}
             gap={"md"}
           >
-            <HStack gap={3}>
-              <Box p={2} rounded={"full"} bg={"bg.surface"} shadow={"xs"}>
+            <HStack align={"start"} gap={2}>
+              <Circle p={1}>
                 <AppIcon
                   icon={UsersIcon}
                   color={`${theme.colorPalette}.solid`}
                 />
-              </Box>
+              </Circle>
 
               <VStack gap={0} align={"start"}>
-                <P fontWeight={"semibold"}>{"Aktifkan SSO Internal"}</P>
+                <P fontWeight={"semibold"}>{"SSO Internal"}</P>
 
                 <P fontSize={"xs"} color={"fg.muted"}>
                   {
