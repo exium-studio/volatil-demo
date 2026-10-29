@@ -118,23 +118,26 @@ export const queryKeys = {
     systemPolicies: {
       all: ["internal", "system-policies"] as const,
     },
-    dataManagement: {
-      all: ["internal", "data-management"] as const,
+    masterIgtLayer: {
+      all: ["internal", "master-igt-layer"] as const,
       layers: (params?: Record<string, unknown>) =>
-        [...queryKeys.internal.dataManagement.all, "layers", params] as const,
+        [...queryKeys.internal.masterIgtLayer.all, "layers", params] as const,
       workspaces: (geoserverId: string) =>
         [
-          ...queryKeys.internal.dataManagement.all,
+          ...queryKeys.internal.masterIgtLayer.all,
           "workspaces",
           geoserverId,
         ] as const,
       workspaceLayers: (geoserverId: string, workspaceName: string) =>
         [
-          ...queryKeys.internal.dataManagement.all,
+          ...queryKeys.internal.masterIgtLayer.all,
           "workspace-layers",
           geoserverId,
           workspaceName,
         ] as const,
+    },
+    get dataManagement() {
+      return this.masterIgtLayer;
     },
     masterGeoserver: {
       all: ["internal", "master-geoserver"] as const,

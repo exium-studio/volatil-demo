@@ -33,8 +33,8 @@ export const INTERNAL_APP_NAV_GROUPS_LIST: NavGroup<AdminAppNavKey>[] = [
       {
         key: "integration",
         children: [
+          { key: "master_igt_layer" },
           { key: "master_geoserver" },
-          { key: "data_management" },
           { key: "sso_keycloak" },
           { key: "smtp_email" },
           { key: "simponi_pnbp" },

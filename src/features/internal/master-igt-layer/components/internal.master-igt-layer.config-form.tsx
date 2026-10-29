@@ -1,4 +1,4 @@
-// src/features/internal/data-management/components/internal.data-management.config-form.tsx
+// src/features/internal/master-igt-layer/components/internal.master-igt-layer.config-form.tsx
 
 import { Button } from "@/design-system/components/button/ui/button";
 import { AppIcon } from "@/design-system/components/icon/ui/app-icon";
@@ -12,15 +12,15 @@ import { Textarea } from "@/design-system/components/input/ui/textarea";
 import { HStack, VStack } from "@/design-system/components/layout/ui/flex-box";
 import { toast } from "@/design-system/components/toast";
 import { P } from "@/design-system/components/typography/ui/p";
-import { GeoserverCascadeSelect } from "@/features/internal/data-management/components/geoserver-cascade-select";
-import { useUpdateMasterIgtLayer } from "@/features/internal/data-management/hooks/use-data-management";
-import { masterIgtLayerFormSchema } from "@/features/internal/data-management/types/data-management.schema";
+import { GeoserverCascadeSelect } from "@/features/internal/master-igt-layer/components/geoserver-cascade-select";
+import { useUpdateMasterIgtLayer } from "@/features/internal/master-igt-layer/hooks/use-master-igt-layer";
+import { masterIgtLayerFormSchema } from "@/features/internal/master-igt-layer/types/master-igt-layer.schema";
 import type {
   GeoServerWorkspaceLayerOption,
   IgtBasisType,
-  InternalDataManagementConfigFormProps,
+  InternalMasterIgtLayerConfigFormProps,
   MasterIgtLayerFormValues,
-} from "@/features/internal/data-management/types/data-management.type";
+} from "@/features/internal/master-igt-layer/types/master-igt-layer.type";
 import { useMasterGeoserverQuery } from "@/features/internal/master-geoserver/hooks/use-master-geoserver";
 import { IGT_BASIS_OPTIONS } from "@/features/shared/constants/volatil.ssot-map";
 import { t } from "@/shared/libs/i18n";
@@ -28,8 +28,8 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { useMemo } from "react";
 import { Controller, useForm, useWatch } from "react-hook-form";
 
-export const InternalDataManagementConfigForm = (
-  props: InternalDataManagementConfigFormProps,
+export const InternalMasterIgtLayerConfigForm = (
+  props: InternalMasterIgtLayerConfigFormProps,
 ) => {
   // Props
   const { item, onSuccess } = props;
@@ -401,3 +401,5 @@ export const InternalDataManagementConfigForm = (
     </VStack>
   );
 };
+
+export const InternalDataManagementConfigForm = InternalMasterIgtLayerConfigForm;

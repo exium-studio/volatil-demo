@@ -1,17 +1,17 @@
-// src/routes/_private/internal/data-management.index.tsx
+// src/routes/_private/internal/master-igt-layer.index.tsx
 
 import { requireRoleGuard } from "@/features/auth/services/auth-guard.service";
-import { InternalDataManagementPage } from "@/features/internal/data-management/pages/internal.data-management.page";
+import { InternalMasterIgtLayerPage } from "@/features/internal/master-igt-layer/pages/internal.master-igt-layer.page";
 import type {
   IgtBasisType,
-  MasterIgtDataManagementSearch,
-} from "@/features/internal/data-management/types/data-management.type";
+  MasterIgtLayerSearch,
+} from "@/features/internal/master-igt-layer/types/master-igt-layer.type";
 import { createFileRoute } from "@tanstack/react-router";
 
-export const Route = createFileRoute("/_private/internal/data-management/")({
+export const Route = createFileRoute("/_private/internal/master-igt-layer/")({
   validateSearch: (
     search: Record<string, unknown>,
-  ): MasterIgtDataManagementSearch => {
+  ): MasterIgtLayerSearch => {
     const rawBasis = search.basisIgt;
     const isValidBasis =
       rawBasis === "bidang" || rawBasis === "kawasan";
@@ -28,5 +28,5 @@ export const Route = createFileRoute("/_private/internal/data-management/")({
 });
 
 function RouteComponent() {
-  return <InternalDataManagementPage />;
+  return <InternalMasterIgtLayerPage />;
 }

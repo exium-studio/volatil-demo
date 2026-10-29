@@ -1,7 +1,7 @@
 // src/features/internal/home/types/internal.home.leaderboard.type.ts
 
 import type { StackProps } from "@/design-system/components/layout/types/flex-box.type";
-import type { IgtBasisType } from "@/features/internal/data-management/types/data-management.type";
+import type { IgtBasisType } from "@/features/internal/master-igt-layer/types/master-igt-layer.type";
 
 export type InternalHomeLeaderboardProps = StackProps;
 

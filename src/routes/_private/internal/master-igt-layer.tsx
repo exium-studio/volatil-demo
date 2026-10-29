@@ -1,9 +1,9 @@
-// src/routes/_private/internal/data-management.tsx
+// src/routes/_private/internal/master-igt-layer.tsx
 
 import { requireRoleGuard } from "@/features/auth/services/auth-guard.service";
 import { createFileRoute, Outlet } from "@tanstack/react-router";
 
-export const Route = createFileRoute("/_private/internal/data-management")({
+export const Route = createFileRoute("/_private/internal/master-igt-layer")({
   beforeLoad: async () => {
     await requireRoleGuard("internal");
   },

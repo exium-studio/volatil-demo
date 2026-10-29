@@ -1,4 +1,4 @@
-// src/features/internal/data-management/services/data-management.service.ts
+// src/features/internal/master-igt-layer/services/master-igt-layer.service.ts
 
 import {
   createMasterIgtLayerApi,
@@ -9,7 +9,7 @@ import {
   fetchMasterIgtLayersApi,
   updateMasterIgtLayerApi,
   updateMasterIgtLayerAttributesApi,
-} from "@/features/internal/data-management/api/data-management.api";
+} from "@/features/internal/master-igt-layer/api/master-igt-layer.api";
 import type {
   CreateMasterIgtLayerPayload,
   GeoServerWorkspaceLayersResponse,
@@ -19,7 +19,7 @@ import type {
   MasterIgtLayersResponse,
   UpdateMasterIgtLayerAttributesPayload,
   UpdateMasterIgtLayerPayload,
-} from "@/features/internal/data-management/types/data-management.type";
+} from "@/features/internal/master-igt-layer/types/master-igt-layer.type";
 
 export const getMasterIgtLayers = async (
   params?: MasterIgtLayersQueryParams,

@@ -1,4 +1,4 @@
-// src/features/internal/data-management/types/data-management.type.ts
+// src/features/internal/master-igt-layer/types/master-igt-layer.type.ts
 
 import type {
   PaginatedParams,
@@ -9,10 +9,13 @@ export type IgtBasisType = "bidang" | "kawasan";
 
 export type PublishStatusType = "all" | "published" | "draft";
 
-export type MasterIgtDataManagementSearch = {
+export type MasterIgtLayerSearch = {
   basisIgt?: IgtBasisType;
   isActive?: string | number | boolean;
 };
+
+// Deprecated alias for backwards compatibility
+export type MasterIgtDataManagementSearch = MasterIgtLayerSearch;
 
 export type PublishStatusTypeConfig = {
   value: PublishStatusType;
@@ -106,7 +109,7 @@ export type GeoServerWorkspaceLayersResponse = {
   layers: GeoServerWorkspaceLayerOption[];
 };
 
-import { masterIgtLayerFormSchema } from "@/features/internal/data-management/types/data-management.schema";
+import { masterIgtLayerFormSchema } from "@/features/internal/master-igt-layer/types/master-igt-layer.schema";
 import type { ReactNode } from "react";
 import type { z } from "zod";
 export type MasterIgtLayerFormValues = z.infer<typeof masterIgtLayerFormSchema>;
@@ -133,23 +136,23 @@ export type GeoserverCascadeSelectProps = {
   };
 };
 
-export type InternalDataManagementCreateTriggerProps = {
+export type InternalMasterIgtLayerCreateTriggerProps = {
   modalKey?: string;
   children?: ReactNode;
 };
 
-export type InternalDataManagementCreateModalContentProps = {
+export type InternalMasterIgtLayerCreateModalContentProps = {
   modalKey: string;
   close: () => void;
 };
 
-export type InternalDataManagementEditTriggerProps = {
+export type InternalMasterIgtLayerEditTriggerProps = {
   modalKey?: string;
   item: MasterIgtLayerItem;
   children?: ReactNode;
 };
 
-export type InternalDataManagementEditModalContentProps = {
+export type InternalMasterIgtLayerEditModalContentProps = {
   modalKey: string;
   item: MasterIgtLayerItem;
   close: () => void;
@@ -159,7 +162,7 @@ export type MasterIgtLayerDetailSearch = {
   tab?: "config" | "attribute";
 };
 
-export type InternalDataManagementConfigFormProps = {
+export type InternalMasterIgtLayerConfigFormProps = {
   item: MasterIgtLayerItem;
   onSuccess?: () => void;
 };
@@ -169,8 +172,16 @@ export type UpdateMasterIgtLayerAttributesPayload = {
   attributes: MasterIgtLayerAttributeConfig[];
 };
 
-export type InternalDataManagementAttributeListProps = {
+export type InternalMasterIgtLayerAttributeListProps = {
   item: MasterIgtLayerItem;
   onSuccess?: () => void;
 };
+
+// Aliases for compatibility
+export type InternalDataManagementCreateTriggerProps = InternalMasterIgtLayerCreateTriggerProps;
+export type InternalDataManagementCreateModalContentProps = InternalMasterIgtLayerCreateModalContentProps;
+export type InternalDataManagementEditTriggerProps = InternalMasterIgtLayerEditTriggerProps;
+export type InternalDataManagementEditModalContentProps = InternalMasterIgtLayerEditModalContentProps;
+export type InternalDataManagementConfigFormProps = InternalMasterIgtLayerConfigFormProps;
+export type InternalDataManagementAttributeListProps = InternalMasterIgtLayerAttributeListProps;
 

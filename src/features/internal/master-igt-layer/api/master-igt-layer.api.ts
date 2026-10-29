@@ -1,4 +1,4 @@
-// src/features/internal/data-management/api/data-management.api.ts
+// src/features/internal/master-igt-layer/api/master-igt-layer.api.ts
 
 import type {
   CreateMasterIgtLayerPayload,
@@ -10,7 +10,7 @@ import type {
   MasterIgtLayersResponse,
   UpdateMasterIgtLayerAttributesPayload,
   UpdateMasterIgtLayerPayload,
-} from "@/features/internal/data-management/types/data-management.type";
+} from "@/features/internal/master-igt-layer/types/master-igt-layer.type";
 import {
   DUMMY_GEOSERVER_WORKSPACES,
   DUMMY_MASTER_IGT_LAYERS,

@@ -27,7 +27,7 @@ export const InternalHomeIgtBasisSummary = (
   // Handlers
   const handleFilterBasis = (basis: "bidang" | "kawasan") => {
     void navigate({
-      to: "/internal/data-management",
+      to: "/internal/master-igt-layer",
       search: { basisIgt: basis },
     });
   };

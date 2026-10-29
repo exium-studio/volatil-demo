@@ -1,4 +1,4 @@
-// src/features/internal/data-management/components/geoserver-cascade-select.tsx
+// src/features/internal/master-igt-layer/components/geoserver-cascade-select.tsx
 
 import type { FocusSelectOption } from "@/design-system/components/input/types/focus-select.type";
 import { Field } from "@/design-system/components/input/ui/field";
@@ -7,8 +7,8 @@ import { VStack } from "@/design-system/components/layout/ui/flex-box";
 import {
   useGeoServerWorkspaceLayersQuery,
   useGeoServerWorkspacesQuery,
-} from "@/features/internal/data-management/hooks/use-data-management";
-import type { GeoserverCascadeSelectProps } from "@/features/internal/data-management/types/data-management.type";
+} from "@/features/internal/master-igt-layer/hooks/use-master-igt-layer";
+import type { GeoserverCascadeSelectProps } from "@/features/internal/master-igt-layer/types/master-igt-layer.type";
 import { useMasterGeoserverQuery } from "@/features/internal/master-geoserver/hooks/use-master-geoserver";
 import { useMemo } from "react";
 

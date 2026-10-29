@@ -27,7 +27,7 @@ export const InternalHomePublishStatusSummary = (
   // Handlers
   const handleFilterStatus = (isActive: 1 | 0) => {
     void navigate({
-      to: "/internal/data-management",
+      to: "/internal/master-igt-layer",
       search: { isActive },
     });
   };

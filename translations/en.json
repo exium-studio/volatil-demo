@@ -18,6 +18,7 @@
       "home": "Home",
       "user_management": "User Management",
       "master_geoserver": "Master Geoserver",
+      "master_igt_layer": "Master IGT Layer",
       "data_management": "Master IGT Layer",
       "order_review": "Order Review",
       "mitra_registration": "Mitra Registration",

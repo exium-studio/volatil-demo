@@ -1,4 +1,4 @@
-// src/features/internal/data-management/components/internal.data-management.edit-modal.tsx
+// src/features/internal/master-igt-layer/components/internal.master-igt-layer.create-modal.tsx
 
 import { Button } from "@/design-system/components/button/ui/button";
 import { AppIcon } from "@/design-system/components/icon/ui/app-icon";
@@ -12,18 +12,18 @@ import { Textarea } from "@/design-system/components/input/ui/textarea";
 import { HStack, VStack } from "@/design-system/components/layout/ui/flex-box";
 import { usePopModal } from "@/design-system/components/overlay/hooks/use-pop-modal";
 import { Modal } from "@/design-system/components/overlay/ui/modal";
-import { P } from "@/design-system/components/typography/ui/p";
 import { useMountTimeout } from "@/design-system/hooks/use-mount-timeout";
-import { GeoserverCascadeSelect } from "@/features/internal/data-management/components/geoserver-cascade-select";
-import { useUpdateMasterIgtLayer } from "@/features/internal/data-management/hooks/use-data-management";
-import { masterIgtLayerFormSchema } from "@/features/internal/data-management/types/data-management.schema";
+import { P } from "@/design-system/components/typography/ui/p";
+import { GeoserverCascadeSelect } from "@/features/internal/master-igt-layer/components/geoserver-cascade-select";
+import { useCreateMasterIgtLayer } from "@/features/internal/master-igt-layer/hooks/use-master-igt-layer";
+import { masterIgtLayerFormSchema } from "@/features/internal/master-igt-layer/types/master-igt-layer.schema";
 import type {
   GeoServerWorkspaceLayerOption,
   IgtBasisType,
-  InternalDataManagementEditModalContentProps,
-  InternalDataManagementEditTriggerProps,
+  InternalMasterIgtLayerCreateModalContentProps,
+  InternalMasterIgtLayerCreateTriggerProps,
   MasterIgtLayerFormValues,
-} from "@/features/internal/data-management/types/data-management.type";
+} from "@/features/internal/master-igt-layer/types/master-igt-layer.type";
 import { useMasterGeoserverQuery } from "@/features/internal/master-geoserver/hooks/use-master-geoserver";
 import { IGT_BASIS_OPTIONS } from "@/features/shared/constants/volatil.ssot-map";
 import { toast } from "@/design-system/components/toast";
@@ -32,14 +32,10 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { useMemo } from "react";
 import { Controller, useForm, useWatch } from "react-hook-form";
 
-export const InternalDataManagementEditTrigger = (
-  props: InternalDataManagementEditTriggerProps,
+export const InternalMasterIgtLayerCreateTrigger = (
+  props: InternalMasterIgtLayerCreateTriggerProps,
 ) => {
-  const {
-    modalKey: customModalKey = `layer-edit-${props.item.id}`,
-    item,
-    children,
-  } = props;
+  const { modalKey: customModalKey = "create-igt-layer", children } = props;
 
   // Stores & Hooks
   const { modalKey, isOpen, open, close } = usePopModal({
@@ -63,9 +59,8 @@ export const InternalDataManagementEditTrigger = (
       <Modal.Trigger>{children}</Modal.Trigger>
 
       {isMounted && (
-        <InternalDataManagementEditModalContent
+        <InternalMasterIgtLayerCreateModalContent
           modalKey={modalKey}
-          item={item}
           close={close}
         />
       )}
@@ -73,61 +68,42 @@ export const InternalDataManagementEditTrigger = (
   );
 };
 
-const InternalDataManagementEditModalContent = (
-  props: InternalDataManagementEditModalContentProps,
+// Backwards compatibility alias
+export const InternalDataManagementCreateTrigger = InternalMasterIgtLayerCreateTrigger;
+
+const InternalMasterIgtLayerCreateModalContent = (
+  props: InternalMasterIgtLayerCreateModalContentProps,
 ) => {
-  const { modalKey, item, close } = props;
-
-  // Extract initial workspace & layerName from item
-  const initialWorkspace = useMemo(() => {
-    if (item.workspaceName) return item.workspaceName;
-    if (item.typeName && item.typeName.includes(":")) {
-      return item.typeName.split(":")[0];
-    }
-    return "";
-  }, [item]);
-
-  const initialLayerName = useMemo(() => {
-    if (item.layerName !== undefined) return item.layerName;
-    if (item.typeName && item.typeName.includes(":")) {
-      return item.typeName.split(":")[1];
-    }
-    return null;
-  }, [item]);
+  // Props
+  const { modalKey, close } = props;
 
   // Hooks (Queries & Mutations)
   const { items: geoserverList } = useMasterGeoserverQuery();
-  const updateMutation = useUpdateMasterIgtLayer();
-
-  // Derived Values
-  const formValues = useMemo<MasterIgtLayerFormValues>(
-    () => ({
-      id: item.id,
-      title: item.title,
-      description: item.description ?? "",
-      igtBasis: item.igtBasis ?? "kawasan",
-      zIndex: item.zIndex ?? 1,
-      minZoom: item.minZoom ?? 12,
-      geoserverId: item.geoserverId ?? "",
-      workspaceName: initialWorkspace,
-      layerName: initialLayerName,
-      typeName: item.typeName ?? "",
-      isActive: item.isActive,
-      defaultVisible: item.defaultVisible ?? false,
-    }),
-    [item, initialWorkspace, initialLayerName],
-  );
+  const createMutation = useCreateMasterIgtLayer();
 
   // Form (RHF + Zod)
   const {
     control,
     handleSubmit,
     setValue,
+    reset,
     formState: { errors },
   } = useForm<MasterIgtLayerFormValues>({
     resolver: zodResolver(masterIgtLayerFormSchema),
     mode: "onChange",
-    values: formValues,
+    defaultValues: {
+      title: "",
+      description: "",
+      igtBasis: "kawasan",
+      zIndex: 1,
+      minZoom: 12,
+      geoserverId: "",
+      workspaceName: "",
+      layerName: null,
+      typeName: "",
+      isActive: true,
+      defaultVisible: false,
+    },
   });
 
   // Watch Form Values
@@ -135,16 +111,10 @@ const InternalDataManagementEditModalContent = (
   const workspaceName = useWatch({ control, name: "workspaceName" });
   const layerName = useWatch({ control, name: "layerName" });
   const typeName = useWatch({ control, name: "typeName" });
-
   // Derived Values
   const selectedGeoserver = useMemo(
-    () =>
-      geoserverList.find((g) => g.id === geoserverId) ?? {
-        id: item.geoserverId ?? geoserverId,
-        name: item.geoserver?.name ?? "",
-        baseUrl: item.geoserver?.baseUrl ?? "",
-      },
-    [geoserverList, geoserverId, item.geoserverId, item.geoserver],
+    () => geoserverList.find((g) => g.id === geoserverId),
+    [geoserverList, geoserverId],
   );
 
   const handleLayerChange = (
@@ -164,9 +134,15 @@ const InternalDataManagementEditModalContent = (
   };
 
   const onSubmit = (data: MasterIgtLayerFormValues) => {
-    updateMutation.mutate(
+    if (!selectedGeoserver) {
+      toast.error("GeoServer Belum Dipilih", {
+        description: "Silakan pilih master GeoServer terlebih dahulu.",
+      });
+      return;
+    }
+
+    createMutation.mutate(
       {
-        id: item.id,
         title: data.title.trim(),
         description: data.description?.trim(),
         igtBasis: data.igtBasis,
@@ -181,6 +157,7 @@ const InternalDataManagementEditModalContent = (
       },
       {
         onSuccess: () => {
+          reset();
           close();
         },
       },
@@ -192,14 +169,41 @@ const InternalDataManagementEditModalContent = (
       <Modal.Header>
         <Modal.CloseButton />
 
-        <Modal.Title>{"Ubah Konfigurasi Layer IGT"}</Modal.Title>
+        <VStack gap={"2xs"}>
+          <Modal.Title>{"Tambah Master Layer IGT"}</Modal.Title>
+          <P fontSize={"xs"} color={"fg.muted"} textAlign={"center"}>
+            {"Daftarkan layer baru dari katalog GeoServer yang terhubung"}
+          </P>
+        </VStack>
       </Modal.Header>
 
       <Modal.Body>
-        <VStack gap={"xl"}>
+        <VStack align={"stretch"} gap={"xl"}>
           {/* Grup 1: Informasi Dasar */}
           <Fieldset legend={"Informasi Dasar"} containeredContent>
             <VStack align={"stretch"} gap={"md"}>
+              {/* Input ID Layer (Opsional) */}
+              {/* <Controller
+                control={control}
+                name={"id"}
+                render={({ field, fieldState }) => (
+                  <Field
+                    label={"ID Unik Layer (Opsional)"}
+                    optional
+                    errorText={fieldState.error?.message}
+                    invalid={Boolean(fieldState.error)}
+                  >
+                    <Input
+                      value={field.value ?? ""}
+                      onChange={field.onChange}
+                      placeholder={
+                        "Otomatis sama dengan typename jika dikosongkan"
+                      }
+                    />
+                  </Field>
+                )}
+              /> */}
+
               {/* Input Judul Layer */}
               <Controller
                 control={control}
@@ -314,7 +318,7 @@ const InternalDataManagementEditModalContent = (
             </VStack>
           </Fieldset>
 
-          {/* Grup 2: Sumber GeoServer & Layer (Dedicated Component dengan URL Live Preview) */}
+          {/* Grup 2: Sumber GeoServer & Layer */}
           <Fieldset legend={"Konfigurasi GeoServer & Layer"} containeredContent>
             <GeoserverCascadeSelect
               parentModalKey={modalKey}
@@ -396,7 +400,7 @@ const InternalDataManagementEditModalContent = (
                   <Field
                     label={"Urutan Tumpukan Layer (Z-Index)"}
                     helperText={
-                      "Angka lebih kecil = di bawah, angka lebih besar = di atas"
+                       "Angka lebih kecil = di bawah, angka lebih besar = di atas"
                     }
                   >
                     <NumberInput
@@ -442,11 +446,11 @@ const InternalDataManagementEditModalContent = (
         <VStack gap={"xs"} w={"full"}>
           <Button
             primary
-            loading={updateMutation.isPending}
-            disabled={updateMutation.isPending}
+            loading={createMutation.isPending}
+            disabled={createMutation.isPending}
             onClick={handleSubmit(onSubmit, onInvalid)}
           >
-            {"Simpan"}
+            {"Tambah Layer"}
           </Button>
 
           <Button type={"button"} onClick={close}>

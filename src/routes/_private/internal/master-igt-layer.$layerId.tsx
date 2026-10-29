@@ -1,12 +1,12 @@
-// src/routes/_private/internal/data-management.$layerId.tsx
+// src/routes/_private/internal/master-igt-layer.$layerId.tsx
 
 import { requireRoleGuard } from "@/features/auth/services/auth-guard.service";
-import { InternalDataManagementDetailPage } from "@/features/internal/data-management/pages/internal.data-management.detail.page";
-import type { MasterIgtLayerDetailSearch } from "@/features/internal/data-management/types/data-management.type";
+import { InternalMasterIgtLayerDetailPage } from "@/features/internal/master-igt-layer/pages/internal.master-igt-layer.detail.page";
+import type { MasterIgtLayerDetailSearch } from "@/features/internal/master-igt-layer/types/master-igt-layer.type";
 import { createFileRoute } from "@tanstack/react-router";
 
 export const Route = createFileRoute(
-  "/_private/internal/data-management/$layerId",
+  "/_private/internal/master-igt-layer/$layerId",
 )({
   validateSearch: (
     search: Record<string, unknown>,
@@ -25,5 +25,5 @@ export const Route = createFileRoute(
 });
 
 function RouteComponent() {
-  return <InternalDataManagementDetailPage />;
+  return <InternalMasterIgtLayerDetailPage />;
 }

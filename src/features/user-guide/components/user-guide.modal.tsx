@@ -157,7 +157,7 @@ const UserGuideModalContent = (props: {
 
           {/* Loading Skeleton */}
           {isLoading && (
-            <VStack gap={"sm"} align={"stretch"}>
+            <VStack gap={"sm"} align={"stretch"} px={"md"}>
               <Skeleton height={"76px"} rounded={theme.radii.component} />
               <Skeleton height={"76px"} rounded={theme.radii.component} />
               <Skeleton height={"76px"} rounded={theme.radii.component} />

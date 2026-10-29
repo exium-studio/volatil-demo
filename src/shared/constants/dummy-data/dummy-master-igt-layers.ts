@@ -5,7 +5,7 @@ import type {
   GeoServerWorkspacesResponse,
   MasterIgtLayerItem,
   MasterIgtLayersResponse,
-} from "@/features/internal/data-management/types/data-management.type";
+} from "@/features/internal/master-igt-layer/types/master-igt-layer.type";
 import { createPaginationMeta } from "@/shared/types/common-response.type";
 
 export const DUMMY_MASTER_IGT_LAYERS: MasterIgtLayerItem[] = [

@@ -1,4 +1,4 @@
-// src/features/internal/data-management/components/internal.data-management.attribute-list.tsx
+// src/features/internal/master-igt-layer/components/internal.master-igt-layer.attribute-list.tsx
 
 import {
   Button,
@@ -20,11 +20,12 @@ import { Center } from "@/design-system/components/layout/ui/center";
 import { HStack, VStack } from "@/design-system/components/layout/ui/flex-box";
 import { Badge } from "@/design-system/components/typography/ui/badge";
 import { P } from "@/design-system/components/typography/ui/p";
-import { useUpdateMasterIgtLayerAttributes } from "@/features/internal/data-management/hooks/use-data-management";
+import { useUpdateMasterIgtLayerAttributes } from "@/features/internal/master-igt-layer/hooks/use-master-igt-layer";
+import { queryKeys } from "@/shared/libs/tanstack-query/query.keys";
 import type {
-  InternalDataManagementAttributeListProps,
+  InternalMasterIgtLayerAttributeListProps,
   MasterIgtLayerAttributeConfig,
-} from "@/features/internal/data-management/types/data-management.type";
+} from "@/features/internal/master-igt-layer/types/master-igt-layer.type";
 import { fetchWfs } from "@/design-system/components/map/utils/fetch-wfs";
 import { normalizeApiUrl } from "@/shared/utils/url/url.utils";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
@@ -34,8 +35,8 @@ import { Box } from "@/design-system/components/layout/ui/box";
 import { useThemeStore } from "@/design-system/stores/theme-store";
 import { Tooltip } from "@/design-system/components/overlay/ui/tooltip";
 
-export const InternalDataManagementAttributeList = (
-  props: InternalDataManagementAttributeListProps,
+export const InternalMasterIgtLayerAttributeList = (
+  props: InternalMasterIgtLayerAttributeListProps,
 ) => {
   // Props
   const { item, onSuccess } = props;
@@ -58,7 +59,7 @@ export const InternalDataManagementAttributeList = (
   const queryKey = useMemo(
     () => [
       "internal",
-      "data-management",
+      "master-igt-layer",
       "layer-attributes",
       item.id,
       item.typeName,
@@ -249,7 +250,7 @@ export const InternalDataManagementAttributeList = (
       {
         onSuccess: () => {
           void queryClient.invalidateQueries({
-            queryKey: ["internal-data-management", "master-igt-layers"],
+            queryKey: queryKeys.internal.masterIgtLayer.all,
           });
           onSuccess?.();
         },
@@ -459,3 +460,5 @@ export const InternalDataManagementAttributeList = (
     </VStack>
   );
 };
+
+export const InternalDataManagementAttributeList = InternalMasterIgtLayerAttributeList;

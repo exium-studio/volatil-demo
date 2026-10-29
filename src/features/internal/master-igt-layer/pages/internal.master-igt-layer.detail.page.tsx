@@ -1,4 +1,4 @@
-// src/features/internal/data-management/pages/internal.data-management.detail.page.tsx
+// src/features/internal/master-igt-layer/pages/internal.master-igt-layer.detail.page.tsx
 
 import { BackButton } from "@/design-system/components/button/ui/back-button";
 import { IconButton } from "@/design-system/components/button/ui/button";
@@ -21,9 +21,9 @@ import { ClampedHeading } from "@/design-system/components/typography/ui/heading
 import { P } from "@/design-system/components/typography/ui/p";
 import { Url } from "@/design-system/components/typography/ui/url";
 import { useThemeStore } from "@/design-system/stores/theme-store";
-import { InternalDataManagementAttributeList } from "@/features/internal/data-management/components/internal.data-management.attribute-list";
-import { InternalDataManagementConfigForm } from "@/features/internal/data-management/components/internal.data-management.config-form";
-import { useMasterIgtLayerDetailQuery } from "@/features/internal/data-management/hooks/use-data-management";
+import { InternalMasterIgtLayerAttributeList } from "@/features/internal/master-igt-layer/components/internal.master-igt-layer.attribute-list";
+import { InternalMasterIgtLayerConfigForm } from "@/features/internal/master-igt-layer/components/internal.master-igt-layer.config-form";
+import { useMasterIgtLayerDetailQuery } from "@/features/internal/master-igt-layer/hooks/use-master-igt-layer";
 import { useFlyToLayer } from "@/features/mitra/data-request/hooks/use-fly-to-layer";
 import { IgtBasisBadge } from "@/features/shared/components/igt-basis.badge";
 import { normalizeApiUrl } from "@/shared/utils/url/url.utils";
@@ -37,14 +37,14 @@ import {
 } from "lucide-react";
 import { useCallback } from "react";
 
-export const InternalDataManagementDetailPage = () => {
+export const InternalMasterIgtLayerDetailPage = () => {
   // Navigation & Params
   const { layerId } = useParams({
-    from: "/_private/internal/data-management/$layerId",
+    from: "/_private/internal/master-igt-layer/$layerId",
   });
   const navigate = useNavigate();
   const search = useSearch({
-    from: "/_private/internal/data-management/$layerId",
+    from: "/_private/internal/master-igt-layer/$layerId",
   });
 
   // Stores
@@ -70,7 +70,7 @@ export const InternalDataManagementDetailPage = () => {
   // Handlers
   const handleTabChange = (nextTab: string) => {
     void navigate({
-      to: "/internal/data-management/$layerId",
+      to: "/internal/master-igt-layer/$layerId",
       params: { layerId },
       search: { tab: nextTab as "config" | "attribute" },
       replace: true,
@@ -191,7 +191,7 @@ export const InternalDataManagementDetailPage = () => {
             >
               <HStack align={"center"} gap={"sm"}>
                 <BackButton
-                  onClick={() => navigate({ to: "/internal/data-management" })}
+                  onClick={() => navigate({ to: "/internal/master-igt-layer" })}
                 />
 
                 <ClampedHeading>{layer.title}</ClampedHeading>
@@ -346,7 +346,7 @@ export const InternalDataManagementDetailPage = () => {
 
               {/* Tab 1: Form Edit Konfigurasi */}
               <Tabs.Content value={"config"} p={"md"}>
-                <InternalDataManagementConfigForm
+                <InternalMasterIgtLayerConfigForm
                   item={layer}
                   onSuccess={() => void refetch()}
                 />
@@ -354,7 +354,7 @@ export const InternalDataManagementDetailPage = () => {
 
               {/* Tab 2: Whitelist Atribut Layer */}
               <Tabs.Content value={"attribute"} pt={"md"}>
-                <InternalDataManagementAttributeList
+                <InternalMasterIgtLayerAttributeList
                   item={layer}
                   onSuccess={() => void refetch()}
                 />
@@ -366,3 +366,5 @@ export const InternalDataManagementDetailPage = () => {
     </AppContentContainer>
   );
 };
+
+export const InternalDataManagementDetailPage = InternalMasterIgtLayerDetailPage;

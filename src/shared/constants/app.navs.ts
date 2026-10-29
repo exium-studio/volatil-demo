@@ -3,6 +3,7 @@
 import type { NavItem } from "@/shared/types/nav.type";
 import {
   BellIcon,
+  BlocksIcon,
   CheckCircleIcon,
   CreditCardIcon,
   DatabaseIcon,
@@ -14,7 +15,6 @@ import {
   LayersIcon,
   ListChecksIcon,
   MailIcon,
-  PlugIcon,
   ReceiptTextIcon,
   ServerIcon,
   ShoppingCartIcon,
@@ -92,13 +92,13 @@ export const INTERNAL_APP_NAVS_MAP = {
     titleKey: "app.admin_navs.master_geoserver",
     pathname: "/internal/master-geoserver",
   },
-  data_management: {
+  master_igt_layer: {
     icon: LayersIcon,
-    titleKey: "app.admin_navs.data_management",
-    pathname: "/internal/data-management",
+    titleKey: "app.admin_navs.master_igt_layer",
+    pathname: "/internal/master-igt-layer",
   },
   integration: {
-    icon: PlugIcon,
+    icon: BlocksIcon,
     titleKey: "app.admin_navs.integration",
     pathname: "/internal/integrations/sso",
   },

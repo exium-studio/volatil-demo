@@ -1,6 +1,6 @@
-// src/features/internal/data-management/constants/data-management.config.ts
+// src/features/internal/master-igt-layer/constants/master-igt-layer.config.ts
 
-import type { PublishStatusType, PublishStatusTypeConfig } from "@/features/internal/data-management/types/data-management.type";
+import type { PublishStatusType, PublishStatusTypeConfig } from "@/features/internal/master-igt-layer/types/master-igt-layer.type";
 
 /**
  * SSOT Configuration Map for Master IGT Layer Publish Status

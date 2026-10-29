@@ -1,4 +1,4 @@
-// src/features/internal/data-management/hooks/use-data-management.ts
+// src/features/internal/master-igt-layer/hooks/use-master-igt-layer.ts
 
 import {
   createMasterIgtLayer,
@@ -9,13 +9,13 @@ import {
   getMasterIgtLayers,
   updateMasterIgtLayer,
   updateMasterIgtLayerAttributes,
-} from "@/features/internal/data-management/services/data-management.service";
+} from "@/features/internal/master-igt-layer/services/master-igt-layer.service";
 import type {
   CreateMasterIgtLayerPayload,
   MasterIgtLayersQueryParams,
   UpdateMasterIgtLayerAttributesPayload,
   UpdateMasterIgtLayerPayload,
-} from "@/features/internal/data-management/types/data-management.type";
+} from "@/features/internal/master-igt-layer/types/master-igt-layer.type";
 import { queryKeys } from "@/shared/libs/tanstack-query/query.keys";
 import { mutationToastHandlers } from "@/shared/libs/toast/toast.handler";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
@@ -24,7 +24,7 @@ export const useMasterIgtLayersQuery = (
   params?: MasterIgtLayersQueryParams,
 ) => {
   const query = useQuery({
-    queryKey: queryKeys.internal.dataManagement.layers(
+    queryKey: queryKeys.internal.masterIgtLayer.layers(
       params as Record<string, unknown>,
     ),
     queryFn: ({ signal }) => getMasterIgtLayers(params, signal),
@@ -39,7 +39,7 @@ export const useMasterIgtLayersQuery = (
 
 export const useMasterIgtLayerDetailQuery = (layerId?: string) => {
   const query = useQuery({
-    queryKey: queryKeys.internal.dataManagement.layers({ id: layerId }),
+    queryKey: queryKeys.internal.masterIgtLayer.layers({ id: layerId }),
     queryFn: async ({ signal }) => {
       if (!layerId) return null;
       return getMasterIgtLayerById(layerId, signal);
@@ -55,7 +55,7 @@ export const useMasterIgtLayerDetailQuery = (layerId?: string) => {
 
 export const useGeoServerWorkspacesQuery = (geoserverId?: string) => {
   const query = useQuery({
-    queryKey: queryKeys.internal.dataManagement.workspaces(geoserverId || ""),
+    queryKey: queryKeys.internal.masterIgtLayer.workspaces(geoserverId || ""),
     queryFn: ({ signal }) => getGeoServerWorkspaces(geoserverId || "", signal),
     enabled: Boolean(geoserverId),
     staleTime: 60 * 1000,
@@ -72,7 +72,7 @@ export const useGeoServerWorkspaceLayersQuery = (
   workspaceName?: string,
 ) => {
   const query = useQuery({
-    queryKey: queryKeys.internal.dataManagement.workspaceLayers(
+    queryKey: queryKeys.internal.masterIgtLayer.workspaceLayers(
       geoserverId || "",
       workspaceName || "",
     ),
@@ -114,7 +114,7 @@ export const useUpdateMasterIgtLayer = () => {
     onSuccess: () => {
       toastHandlers.onSuccess();
       void queryClient.invalidateQueries({
-        queryKey: queryKeys.internal.dataManagement.all,
+        queryKey: queryKeys.internal.masterIgtLayer.all,
       });
       void queryClient.invalidateQueries({
         queryKey: queryKeys.map.all,
@@ -146,7 +146,7 @@ export const useUpdateMasterIgtLayerAttributes = () => {
     onSuccess: () => {
       toastHandlers.onSuccess();
       void queryClient.invalidateQueries({
-        queryKey: queryKeys.internal.dataManagement.all,
+        queryKey: queryKeys.internal.masterIgtLayer.all,
       });
       void queryClient.invalidateQueries({
         queryKey: queryKeys.map.all,
@@ -178,7 +178,7 @@ export const useCreateMasterIgtLayer = () => {
     onSuccess: () => {
       toastHandlers.onSuccess();
       void queryClient.invalidateQueries({
-        queryKey: queryKeys.internal.dataManagement.all,
+        queryKey: queryKeys.internal.masterIgtLayer.all,
       });
       void queryClient.invalidateQueries({
         queryKey: queryKeys.map.all,
@@ -209,7 +209,7 @@ export const useDeleteMasterIgtLayer = () => {
     onSuccess: () => {
       toastHandlers.onSuccess();
       void queryClient.invalidateQueries({
-        queryKey: queryKeys.internal.dataManagement.all,
+        queryKey: queryKeys.internal.masterIgtLayer.all,
       });
       void queryClient.invalidateQueries({
         queryKey: queryKeys.map.all,

@@ -1,4 +1,4 @@
-// src/features/internal/data-management/components/internal.data-management.data-view.tsx
+// src/features/internal/master-igt-layer/components/internal.master-igt-layer.data-view.tsx
 
 import { Button } from "@/design-system/components/button/ui/button";
 import type { FormattedTableHeader } from "@/design-system/components/data-display/types/data-view-table.type";
@@ -29,20 +29,20 @@ import { HeaderContainer } from "@/design-system/components/shell/ui/header-cont
 import { Badge } from "@/design-system/components/typography/ui/badge";
 import { ClampedHeading } from "@/design-system/components/typography/ui/heading";
 import { ClampedP, P } from "@/design-system/components/typography/ui/p";
-import { InternalDataManagementCreateTrigger } from "@/features/internal/data-management/components/internal.data-management.create-modal";
+import { InternalMasterIgtLayerCreateTrigger } from "@/features/internal/master-igt-layer/components/internal.master-igt-layer.create-modal";
 import {
   PUBLISH_STATUS_CONFIG_MAP,
   PUBLISH_STATUS_OPTIONS,
-} from "@/features/internal/data-management/constants/data-management.config";
+} from "@/features/internal/master-igt-layer/constants/master-igt-layer.config";
 import {
   useDeleteMasterIgtLayer,
   useMasterIgtLayersQuery,
-} from "@/features/internal/data-management/hooks/use-data-management";
+} from "@/features/internal/master-igt-layer/hooks/use-master-igt-layer";
 import type {
   IgtBasisType,
   MasterIgtLayerItem,
   PublishStatusType,
-} from "@/features/internal/data-management/types/data-management.type";
+} from "@/features/internal/master-igt-layer/types/master-igt-layer.type";
 import { useTriggerMitraLayerSyncMutation } from "@/features/internal/mitra-layer-sync-jobs/hooks/use-mitra-layer-sync-jobs.query";
 import { useFlyToLayer } from "@/features/mitra/data-request/hooks/use-fly-to-layer";
 import { IgtBasisFilterSelect } from "@/features/shared/components/igt-basis-filter.select";
@@ -68,13 +68,13 @@ import {
 } from "lucide-react";
 import { useCallback, useMemo, useState, useTransition } from "react";
 
-export const InternalDataManagementDataView = () => {
+export const InternalMasterIgtLayerDataView = () => {
   // Navigation
   const navigate = useNavigate();
 
   // Route Search Params
   const searchParams = useSearch({
-    from: "/_private/internal/data-management/",
+    from: "/_private/internal/master-igt-layer/",
   });
 
   // Transitions
@@ -248,7 +248,7 @@ export const InternalDataManagementDataView = () => {
             value: item.title,
             td: (
               <NavLink
-                to={"/internal/data-management/$layerId"}
+                to={"/internal/master-igt-layer/$layerId"}
                 params={{ layerId: item.id }}
               >
                 <ClampedP
@@ -439,7 +439,7 @@ export const InternalDataManagementDataView = () => {
         icon: PencilIcon,
         onClick: (layer: MasterIgtLayerItem) => {
           void navigate({
-            to: "/internal/data-management/$layerId",
+            to: "/internal/master-igt-layer/$layerId",
             params: { layerId: layer.id },
           });
         },
@@ -529,12 +529,12 @@ export const InternalDataManagementDataView = () => {
             </InfoTip>
           </HStack>
 
-          <InternalDataManagementCreateTrigger>
+          <InternalMasterIgtLayerCreateTrigger>
             <Button primary variant={"ghost"} pl={3}>
               <AppIcon icon={PlusIcon} />
               {"Tambah Layer"}
             </Button>
-          </InternalDataManagementCreateTrigger>
+          </InternalMasterIgtLayerCreateTrigger>
         </HStack>
       </HeaderContainer>
 
@@ -553,14 +553,14 @@ export const InternalDataManagementDataView = () => {
         />
 
         <IgtBasisFilterSelect
-          modalKey={"data-management-igt-basis-filter"}
+          modalKey={"master-igt-layer-basis-filter"}
           value={params.igtBasis}
           onValueChange={(val) => {
             startTransition(() => {
               setParams((prev) => ({ ...prev, igtBasis: val, page: 1 }));
             });
             void navigate({
-              to: "/internal/data-management",
+              to: "/internal/master-igt-layer",
               replace: true,
               search: (prev: Record<string, unknown>) => {
                 const next = { ...prev };
@@ -573,7 +573,7 @@ export const InternalDataManagementDataView = () => {
         />
 
         <StatusFilterSelect
-          modalKey={"data-management-publish-status-filter"}
+          modalKey={"master-igt-layer-publish-status-filter"}
           options={PUBLISH_STATUS_OPTIONS}
           placeholder={"Semua Status"}
           value={params.publishStatus}
@@ -586,7 +586,7 @@ export const InternalDataManagementDataView = () => {
               }));
             });
             void navigate({
-              to: "/internal/data-management",
+              to: "/internal/master-igt-layer",
               replace: true,
               search: (prev: Record<string, unknown>) => {
                 const next = { ...prev };
@@ -684,3 +684,5 @@ export const InternalDataManagementDataView = () => {
     </>
   );
 };
+
+export const InternalDataManagementDataView = InternalMasterIgtLayerDataView;

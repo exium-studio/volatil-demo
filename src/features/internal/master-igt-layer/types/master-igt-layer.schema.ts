@@ -1,4 +1,4 @@
-// src/features/internal/data-management/types/data-management.schema.ts
+// src/features/internal/master-igt-layer/types/master-igt-layer.schema.ts
 
 import { z } from "zod";
 
