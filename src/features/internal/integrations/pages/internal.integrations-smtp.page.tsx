@@ -36,7 +36,6 @@ export const InternalIntegrationsSmtpPage = () => {
             gap={"xl"}
             w={"full"}
             p={"md"}
-            pb={16}
             overflowY={"auto"}
           >
             <P fontSize={"sm"} color={"fg.muted"}>

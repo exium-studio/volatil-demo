@@ -12,7 +12,13 @@ import { SimponiConfigForm } from "@/features/internal/integrations/components/s
 export const InternalIntegrationsSimponiPage = () => {
   return (
     <AppContentContainer flex={1} minH={0} position={"relative"}>
-      <Container.Root withContext={true} flex={1} w={"full"} minH={0} position={"relative"}>
+      <Container.Root
+        withContext={true}
+        flex={1}
+        w={"full"}
+        minH={0}
+        position={"relative"}
+      >
         <Container.Body overflowY={"auto"}>
           {/* Header */}
           <HeaderContainer justify={"space-between"} pr={"xs"}>
@@ -20,17 +26,26 @@ export const InternalIntegrationsSimponiPage = () => {
               <ClampedHeading>
                 {"Integrasi Billing SIMPONI (PNBP)"}
               </ClampedHeading>
-
-              <P fontSize={"sm"} color={"fg.muted"}>
-                {"Konfigurasi gateway SIMPONI Kementerian Keuangan untuk otomatisasi penerbitan kode bayar PNBP."}
-              </P>
             </VStack>
           </HeaderContainer>
 
           <Separator borderColor={"border.subtle"} />
 
           {/* Body Form */}
-          <VStack align={"stretch"} w={"full"} flex={1} p={["md", "lg"]} pb={16}>
+          <VStack
+            flex={1}
+            align={"stretch"}
+            gap={"xl"}
+            w={"full"}
+            p={"md"}
+            overflowY={"auto"}
+          >
+            <P fontSize={"sm"} color={"fg.muted"}>
+              {
+                "Konfigurasi gateway SIMPONI Kementerian Keuangan untuk otomatisasi penerbitan kode bayar PNBP."
+              }
+            </P>
+
             <SimponiConfigForm />
           </VStack>
         </Container.Body>

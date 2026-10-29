@@ -102,8 +102,6 @@ export const SimponiConfigForm = () => {
         gap={"md"}
         p={4}
         rounded={theme.radii.component}
-        borderWidth={"1px"}
-        borderColor={"border.subtle"}
         bg={"bg.subtle"}
       >
         <HStack align={"start"} gap={"xs"}>
