@@ -547,7 +547,7 @@ const DataListTableRow = memo(
                 (!("showInRow" in action) || action.showInRow !== false),
             ) && (
               <HStack
-                justify={"center"}
+                justify={"end"}
                 align={"center"}
                 w={"full"}
                 h={"full"}

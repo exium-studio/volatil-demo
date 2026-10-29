@@ -64,7 +64,10 @@ import { useMemo, useState, useTransition } from "react";
 const ORDER_STATUS_OPTIONS = [
   { value: "all", label: "Semua Status" },
   { value: "pending_billing_code", label: "Perlu Input Kode Billing" },
-  { value: "pending_manual_payment_verification", label: "Perlu Verifikasi Pembayaran" },
+  {
+    value: "pending_manual_payment_verification",
+    label: "Perlu Verifikasi Pembayaran",
+  },
   { value: "manual_pending_payment", label: "Menunggu Pembayaran Mitra" },
   { value: "paid", label: "Terbayar" },
   { value: "processing", label: "Menyiapkan Layanan WMS" },
@@ -333,8 +336,8 @@ export const InternalOrderReviewDataView = () => {
         key: "open-detail-order",
         label: "Buka Peta & Data IGT",
         icon: LayersIcon,
-        hidden: (order: InternalOrderItem) =>
-          order.status !== "pending_review",
+        colorPalette: "blue",
+        hidden: (order: InternalOrderItem) => order.status !== "pending_review",
         onClick: (order: InternalOrderItem) => {
           void navigate({
             to: "/internal/order-review/$orderId",

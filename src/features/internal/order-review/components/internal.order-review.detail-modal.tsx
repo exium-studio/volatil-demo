@@ -102,7 +102,11 @@ const InternalOrderReviewDetailModalContent = (
         <VStack align={"stretch"} gap={"md"}>
           {/* Rejection Alert if present */}
           {order.rejectionReason && (
-            <Alert.Root status={"warning"} colorPalette={"red"} variant={"subtle"}>
+            <Alert.Root
+              status={"warning"}
+              colorPalette={"red"}
+              variant={"subtle"}
+            >
               <AppIcon icon={XCircleIcon} />
               <Alert.Content>
                 <Alert.Title fontWeight={"semibold"}>
@@ -164,7 +168,9 @@ const InternalOrderReviewDetailModalContent = (
           </VStack>
 
           {/* Bukti Pembayaran Manual (SIMPONI Off / Verifikasi Manual) */}
-          {Boolean(order.isManualPayment || order.ntpn || order.paymentProofUrl) && (
+          {Boolean(
+            order.isManualPayment || order.ntpn || order.paymentProofUrl,
+          ) && (
             <VStack
               align={"stretch"}
               gap={"xs"}
@@ -218,7 +224,11 @@ const InternalOrderReviewDetailModalContent = (
                     {order.ntpn || "-"}
                   </P>
                   {order.ntpn && (
-                    <ClipboardButton value={order.ntpn} size={"2xs"} variant={"ghost"} />
+                    <ClipboardButton
+                      value={order.ntpn}
+                      size={"2xs"}
+                      variant={"ghost"}
+                    />
                   )}
                 </HStack>
               </HStack>
@@ -227,7 +237,11 @@ const InternalOrderReviewDetailModalContent = (
               {order.paidAt && (
                 <HStack justify={"space-between"} align={"center"}>
                   <HStack gap={1} align={"center"}>
-                    <AppIcon icon={CalendarIcon} size={"xs"} color={"fg.muted"} />
+                    <AppIcon
+                      icon={CalendarIcon}
+                      size={"xs"}
+                      color={"fg.muted"}
+                    />
                     <P fontSize={"xs"} color={"fg.muted"}>
                       {"Tanggal Setor:"}
                     </P>
@@ -250,7 +264,11 @@ const InternalOrderReviewDetailModalContent = (
                   borderColor={"border.subtle"}
                 >
                   <HStack gap={"xs"} align={"center"}>
-                    <AppIcon icon={FileTextIcon} size={"xs"} color={"teal.fg"} />
+                    <AppIcon
+                      icon={FileTextIcon}
+                      size={"xs"}
+                      color={"teal.fg"}
+                    />
                     <P fontSize={"xs"} truncate maxW={"220px"}>
                       {order.paymentProofName || "Berkas_Bukti_Bayar.pdf"}
                     </P>
@@ -487,4 +505,3 @@ const InternalOrderReviewDetailModalContent = (
     </Modal.Content>
   );
 };
-

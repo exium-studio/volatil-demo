@@ -28,6 +28,11 @@ export const queryKeys = {
       items: (params: { page: number; pageSize: number; search?: string }) =>
         [...queryKeys.mitra.cart.all, "items", params] as const,
     },
+    billing: {
+      all: ["mitra", "billing"] as const,
+      simponiStatus: () =>
+        [...queryKeys.mitra.billing.all, "simponi-status"] as const,
+    },
     myData: {
       all: ["mitra", "my-data"] as const,
       list: (params?: Record<string, unknown>) =>

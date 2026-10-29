@@ -306,9 +306,10 @@ export const DataViewSpreadActions = <
     <HStack
       gap={"2xs"}
       align={"center"}
-      justify={"center"}
+      justify={"end"}
       wrap={"nowrap"}
       flexShrink={0}
+      w={"full"}
       onClick={(e) => e.stopPropagation()}
     >
       {visibleRowActions.map((action, index) => {

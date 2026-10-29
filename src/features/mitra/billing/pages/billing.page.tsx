@@ -30,7 +30,7 @@ import {
 } from "lucide-react";
 import { useCallback, useEffect } from "react";
 
-import { useSimponiIntegrationQuery } from "@/features/internal/integrations/hooks/use-integration.query";
+import { usePublicSimponiStatusQuery } from "@/features/mitra/billing/hooks/use-simponi-status.query";
 import { ManualPaymentProofTrigger } from "@/features/mitra/billing/components/manual-payment-proof-modal";
 import {
   useCartOrderDetailQuery,
@@ -57,7 +57,7 @@ const BillingPageBillingCode = () => {
   const navigate = useNavigate();
 
   // Queries
-  const { data: simponiConfig } = useSimponiIntegrationQuery();
+  const { data: simponiConfig } = usePublicSimponiStatusQuery();
   const targetOrderId = search?.orderId || billingCode;
   const { orderDetail, refetch: refetchOrderDetail } =
     useCartOrderDetailQuery(targetOrderId);
