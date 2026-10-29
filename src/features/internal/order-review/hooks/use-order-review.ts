@@ -1,6 +1,7 @@
 // src/features/internal/order-review/hooks/use-order-review.ts
 
 import {
+  approveManualPaymentApi,
   approveOrderApi,
   createInternalOrdersEventSource,
   createOrderProvisionEventSource,
@@ -115,6 +116,42 @@ export const useApproveOrder = () => {
     onError: toastHandlers.onError,
   });
 };
+
+export const useApproveManualPayment = () => {
+  const queryClient = useQueryClient();
+  const toastHandlers = mutationToastHandlers("approve-manual-payment", {
+    group: "Verifikasi Pembayaran",
+    loadingMessage: {
+      title: "Memverifikasi pembayaran manual...",
+    },
+    successMessage: {
+      title: "Pembayaran berhasil diverifikasi",
+      description: "Status transaksi telah diperbarui menjadi 'paid' dan memicu proses pemotongan data spasial.",
+    },
+    errorMessage: {
+      title: "Gagal memverifikasi pembayaran",
+    },
+  });
+
+  return useMutation({
+    mutationFn: (orderId: string) => approveManualPaymentApi(orderId),
+    onMutate: toastHandlers.onLoading,
+    onSuccess: () => {
+      toastHandlers.onSuccess();
+      void queryClient.invalidateQueries({
+        queryKey: ["internal", "orders"],
+      });
+      void queryClient.invalidateQueries({
+        queryKey: ["internal", "order"],
+      });
+      void queryClient.invalidateQueries({
+        queryKey: queryKeys.internal.home.all,
+      });
+    },
+    onError: toastHandlers.onError,
+  });
+};
+
 
 export const useRejectOrder = () => {
   const queryClient = useQueryClient();

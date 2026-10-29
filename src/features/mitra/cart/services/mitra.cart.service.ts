@@ -225,7 +225,10 @@ import {
   postCheckoutOrderApi,
   postCreateCartOrderApi,
   postReorderCartOrderApi,
+  postSubmitManualPaymentProofApi,
 } from "@/features/mitra/cart/api/mitra.cart.api";
+import type { SubmitManualPaymentProofPayload } from "@/features/mitra/billing/types/manual-payment.type";
+
 import type {
   ActiveCartOrder,
   AddToCartOrderRequest,
@@ -243,6 +246,8 @@ import {
 import { isDummyDataEnabled } from "@/shared/utils/env/env.utils";
 
 let localDummyOrders = [...DUMMY_CART_ORDERS];
+
+export const getLocalDummyOrders = () => localDummyOrders;
 
 export async function createCartOrder(
   payload: AddToCartOrderRequest,
@@ -625,6 +630,49 @@ export async function checkOrderPaymentStatus(
         transactionStatus: "paid",
         paidAt: new Date().toISOString(),
       };
+    }
+    throw error;
+  }
+}
+
+export async function submitManualPaymentProof(
+  payload: SubmitManualPaymentProofPayload,
+  signal?: AbortSignal,
+): Promise<{ orderId: string; status: "pending_review" }> {
+  const { orderId, ntpn, paidAt, paymentProofFile } = payload;
+  const formData = new FormData();
+  formData.append("ntpn", ntpn);
+  formData.append("paidAt", paidAt);
+  formData.append("paymentProof", paymentProofFile);
+
+  try {
+    const res = await postSubmitManualPaymentProofApi(orderId, formData, signal);
+    if (res.data) return res.data;
+    if (isDummyDataEnabled()) {
+      const target = localDummyOrders.find((o) => o.orderId === orderId);
+      if (target) {
+        target.status = "pending_review";
+        target.ntpn = ntpn;
+        target.paymentProofName = paymentProofFile.name;
+        target.paymentProofUrl = URL.createObjectURL(paymentProofFile);
+        target.isManualPayment = true;
+        target.paymentVerificationStatus = "pending";
+      }
+      return { orderId, status: "pending_review" };
+    }
+    return { orderId, status: "pending_review" };
+  } catch (error) {
+    if (isDummyDataEnabled()) {
+      const target = localDummyOrders.find((o) => o.orderId === orderId);
+      if (target) {
+        target.status = "pending_review";
+        target.ntpn = ntpn;
+        target.paymentProofName = paymentProofFile.name;
+        target.paymentProofUrl = URL.createObjectURL(paymentProofFile);
+        target.isManualPayment = true;
+        target.paymentVerificationStatus = "pending";
+      }
+      return { orderId, status: "pending_review" };
     }
     throw error;
   }

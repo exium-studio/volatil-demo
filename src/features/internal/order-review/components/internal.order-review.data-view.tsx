@@ -20,8 +20,11 @@ import { HStack, VStack } from "@/design-system/components/layout/ui/flex-box";
 import { Separator } from "@/design-system/components/layout/ui/separator";
 import { HeaderContainer } from "@/design-system/components/shell/ui/header-container";
 import { Heading } from "@/design-system/components/typography/ui/heading";
+import { Badge } from "@/design-system/components/typography/ui/badge";
 import { P, TNum } from "@/design-system/components/typography/ui/p";
 import { InternalOrderReviewApproveTrigger } from "@/features/internal/order-review/components/internal.order-review.approve-modal";
+import { InternalOrderReviewDetailTrigger } from "@/features/internal/order-review/components/internal.order-review.detail-modal";
+import { InternalOrderReviewRejectTrigger } from "@/features/internal/order-review/components/internal.order-review.reject-modal";
 import {
   useInternalOrdersQuery,
   useInternalOrdersStream,
@@ -50,19 +53,21 @@ import {
 import { useNavigate } from "@tanstack/react-router";
 import {
   CheckCircleIcon,
+  EyeIcon,
   FileCheckIcon,
   LayersIcon,
   MapPlusIcon,
   ReceiptTextIcon,
   RefreshCwIcon,
+  XCircleIcon,
 } from "lucide-react";
 import { useMemo, useState, useTransition } from "react";
 
 const ORDER_STATUS_OPTIONS = [
   { value: "all", label: "Semua Status" },
+  { value: "pending_review", label: "Perlu Verifikasi Pembayaran" },
   { value: "paid", label: "Terbayar" },
   { value: "processing", label: "Menyiapkan Layanan WMS" },
-  { value: "pending_review", label: "Menunggu Review" },
 ];
 
 export const InternalOrderReviewDataView = () => {
@@ -128,12 +133,12 @@ export const InternalOrderReviewDataView = () => {
     const headers: FormattedTableHeader[] = [
       { th: "Tanggal Pengajuan", sortable: true, align: "start" },
       { th: "No. Pesanan", sortable: true, align: "start" },
-      { th: "Nama Mitra Pemohon", sortable: true, align: "start" },
+      { th: "Status Pesanan", sortable: true, align: "start" },
+      { th: "Mitra", sortable: true, align: "start" },
       { th: "Metode Pengajuan", sortable: false, align: "start" },
       { th: "Jumlah Layer", sortable: false, align: "start" },
       { th: "Cakupan Bidang", sortable: true },
       { th: "Cakupan Kawasan", sortable: true },
-      { th: "Status Pesanan", sortable: true, align: "start" },
       { th: "TTE & Faktur", sortable: false, align: "start" },
       { th: "Total Biaya", sortable: true, align: "end" },
     ];
@@ -164,6 +169,24 @@ export const InternalOrderReviewDataView = () => {
           {
             value: displayOrderNumber,
             td: <P fontSize={"sm"}>{displayOrderNumber}</P>,
+            align: "start" as const,
+          },
+          {
+            value: order.status,
+            td: (
+              <VStack align={"start"} gap={1}>
+                <OrderStatusBadge showIcon={true}>
+                  {order.status}
+                </OrderStatusBadge>
+                {Boolean(
+                  order.isManualPayment || order.ntpn || order.paymentProofUrl,
+                ) && (
+                  <Badge colorPalette={"teal"} variant={"subtle"}>
+                    {"Verifikasi Manual"}
+                  </Badge>
+                )}
+              </VStack>
+            ),
             align: "start" as const,
           },
           {
@@ -222,15 +245,6 @@ export const InternalOrderReviewDataView = () => {
                 )}
               </P>
             ),
-          },
-          {
-            value: order.status,
-            td: (
-              <OrderStatusBadge showIcon={true}>
-                {order.status}
-              </OrderStatusBadge>
-            ),
-            align: "start" as const,
           },
           {
             value: order.tte ? "TTE" : "Belum TTE",
@@ -299,8 +313,21 @@ export const InternalOrderReviewDataView = () => {
         },
       },
       {
+        key: "view-detail-modal",
+        label: "Detail Pesanan",
+        icon: EyeIcon,
+        modal: {
+          triggerComponent: (order: InternalOrderItem) => (
+            <InternalOrderReviewDetailTrigger
+              modalKey={`detail-order-${order.orderId}`}
+              order={order}
+            />
+          ),
+        },
+      },
+      {
         key: "open-detail-order",
-        label: "Buka detail IGT",
+        label: "Buka Peta & Data IGT",
         icon: LayersIcon,
         hidden: (order: InternalOrderItem) => order.status !== "pending_review",
         onClick: (order: InternalOrderItem) => {
@@ -338,6 +365,21 @@ export const InternalOrderReviewDataView = () => {
           triggerComponent: (order: InternalOrderItem) => (
             <InternalOrderReviewApproveTrigger
               modalKey={`approve-order-${order.orderId}`}
+              order={order}
+            />
+          ),
+        },
+      },
+      {
+        key: "reject-order",
+        label: "Tolak Pembayaran",
+        icon: XCircleIcon,
+        colorPalette: "red",
+        hidden: (order: InternalOrderItem) => order.status !== "pending_review",
+        modal: {
+          triggerComponent: (order: InternalOrderItem) => (
+            <InternalOrderReviewRejectTrigger
+              modalKey={`reject-order-${order.orderId}`}
               order={order}
             />
           ),

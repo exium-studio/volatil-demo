@@ -137,8 +137,8 @@ export const InternalTransactionStatisticDataView = () => {
     const headers: FormattedTableHeader[] = [
       { th: "Tanggal Pengajuan", sortable: true, align: "start" },
       { th: "No. Pesanan", sortable: true, align: "start" },
-      { th: "Mitra Pemohon", sortable: true, align: "start" },
       { th: "Status Pesanan", sortable: true, align: "start" },
+      { th: "Mitra Pemohon", sortable: true, align: "start" },
       { th: "Status WMS", sortable: true, align: "start" },
       { th: "Kode Billing", sortable: false, align: "start" },
       { th: "Sisa Waktu Pembayaran", sortable: true, align: "start" },
@@ -209,18 +209,6 @@ export const InternalTransactionStatisticDataView = () => {
               align: "start" as const,
             },
             {
-              value: item.mitra.name,
-              td: (
-                <VStack align={"start"} gap={0} w={"180px"}>
-                  <ClampedP fontSize={"sm"}>{item.mitra.name}</ClampedP>
-                  <ClampedP fontSize={"xs"} color={"fg.subtle"}>
-                    {item.mitra.agencyOrCompany || item.mitra.email}
-                  </ClampedP>
-                </VStack>
-              ),
-              align: "start" as const,
-            },
-            {
               value: effectiveOrderStatus ?? "",
               td: effectiveOrderStatus ? (
                 <OrderStatusBadge showIcon={true} size={"xs"}>
@@ -230,6 +218,18 @@ export const InternalTransactionStatisticDataView = () => {
                 <P fontSize={"sm"} color={"fg.subtle"}>
                   {"-"}
                 </P>
+              ),
+              align: "start" as const,
+            },
+            {
+              value: item.mitra.name,
+              td: (
+                <VStack align={"start"} gap={0} w={"180px"}>
+                  <ClampedP fontSize={"sm"}>{item.mitra.name}</ClampedP>
+                  <ClampedP fontSize={"xs"} color={"fg.subtle"}>
+                    {item.mitra.agencyOrCompany || item.mitra.email}
+                  </ClampedP>
+                </VStack>
               ),
               align: "start" as const,
             },

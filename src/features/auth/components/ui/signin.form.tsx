@@ -24,6 +24,7 @@ import {
 } from "@/features/auth/hooks/use-internal-auth.mutation";
 import { useSigninMutation } from "@/features/auth/hooks/use-signin.mutation";
 import { useSsoSigninMutation } from "@/features/auth/hooks/use-sso-signin.mutation";
+import { useSsoIntegrationQuery } from "@/features/internal/integrations/hooks/use-integration.query";
 import {
   createSigninSchema,
   zodResolver,
@@ -241,6 +242,7 @@ export const InternalSignin = (props: StackProps) => {
   const step1Mutation = useInternalSigninStep1Mutation();
   const setupMutation = useInternalTotpSetupMutation();
   const ssoSigninMutation = useSsoSigninMutation();
+  const { data: ssoConfig } = useSsoIntegrationQuery();
   const search = useSearch({ strict: false }) as AdminSigninSearch;
 
   // States
@@ -265,6 +267,8 @@ export const InternalSignin = (props: StackProps) => {
   });
 
   // Derived Values
+  const isSsoEnabled = ssoConfig?.internal?.isEnabled ?? false;
+
   const errorMessage =
     search.reason === "session_expired"
       ? "Sesi Anda telah berakhir. Silakan masuk kembali."
@@ -419,28 +423,30 @@ export const InternalSignin = (props: StackProps) => {
       )}
 
       {/* SSO Login Action */}
-      <VStack w={"full"} gap={3}>
-        <Button
-          primary={true}
-          type={"button"}
-          w={"full"}
-          size={"lg"}
-          loading={ssoSigninMutation.isPending}
-          onClick={handleSsoClick}
-        >
-          <AppIcon icon={UsersIcon} />
-          {"Masuk dengan SSO Pegawai ATR/BPN"}
-        </Button>
-      </VStack>
+      {isSsoEnabled && (
+        <VStack w={"full"} gap={3}>
+          <Button
+            primary={true}
+            type={"button"}
+            w={"full"}
+            size={"lg"}
+            loading={ssoSigninMutation.isPending}
+            onClick={handleSsoClick}
+          >
+            <AppIcon icon={UsersIcon} />
+            {"Masuk dengan SSO Pegawai ATR/BPN"}
+          </Button>
 
-      {/* Divider */}
-      <HStack w={"full"} align={"center"} my={1}>
-        <Separator flex={1} />
-        <P fontSize={"xs"} color={"fg.muted"} px={2}>
-          {"atau gunakan akun lokal"}
-        </P>
-        <Separator flex={1} />
-      </HStack>
+          {/* Divider */}
+          <HStack w={"full"} align={"center"} my={1}>
+            <Separator flex={1} />
+            <P fontSize={"xs"} color={"fg.muted"} px={2}>
+              {"atau gunakan akun lokal"}
+            </P>
+            <Separator flex={1} />
+          </HStack>
+        </VStack>
+      )}
 
       {/* Standard Internal Email/Password Form */}
       <Fieldset>

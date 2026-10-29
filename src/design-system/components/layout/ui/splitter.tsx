@@ -713,6 +713,19 @@ const SplitterResizeTrigger = forwardRef<
           userSelect: "none",
           WebkitUserSelect: "none",
         }}
+        css={{
+          "&:hover [data-part='highlight-bar'], &[data-separator='hover'] [data-part='highlight-bar'], &[data-separator='active'] [data-part='highlight-bar']":
+            {
+              backgroundColor:
+                isPlain || transparentTrigger
+                  ? "transparent"
+                  : "var(--chakra-colors-border-subtle)",
+            },
+          "&:hover [data-part='indicator'], &[data-separator='hover'] [data-part='indicator'], &[data-separator='active'] [data-part='indicator']":
+            {
+              opacity: 1,
+            },
+        }}
         onPointerDown={handleTriggerPointerDown}
         onPointerMove={handleTriggerPointerMove}
         onPointerUp={handleTriggerPointerUp}
@@ -723,8 +736,9 @@ const SplitterResizeTrigger = forwardRef<
         }}
         {...restProps}
       >
-        {/* Hover highlight bar - 8px width/height */}
+        {/* Hover highlight bar - 8px width/height hit target */}
         <Box
+          data-part={"highlight-bar"}
           pos={"absolute"}
           top={isVertical ? "-3.5px" : 0}
           bottom={isVertical ? "-3.5px" : 0}
@@ -737,9 +751,9 @@ const SplitterResizeTrigger = forwardRef<
             bg: isPlain || transparentTrigger ? "transparent" : "border.subtle",
           }}
         />
-
         {children ?? (
           <SplitterResizeTriggerIndicator
+            data-part={"indicator"}
             display={"flex"}
             alignItems={"center"}
             justifyContent={"center"}

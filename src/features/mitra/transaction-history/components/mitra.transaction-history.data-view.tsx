@@ -55,10 +55,12 @@ import {
   HistoryIcon,
   ReceiptTextIcon,
   SquarePen,
+  UploadCloudIcon,
 } from "lucide-react";
 import { useMemo, useState, useTransition } from "react";
 
 import { Countdown } from "@/design-system/components/data-display/ui/countdown";
+import { ManualPaymentProofTrigger } from "@/features/mitra/billing/components/manual-payment-proof-modal";
 
 const ITEMS_PER_PAGE_DEFAULT = DEFAULT_PAGE_SIZE_OPTIONS[0];
 
@@ -319,6 +321,24 @@ export const TransactionHistoryDataView = () => {
               search: { orderId: transaction.orderId || transaction.id },
             });
           }
+        },
+      },
+      {
+        key: "upload-payment-proof",
+        label: "Unggah Bukti Bayar",
+        icon: UploadCloudIcon,
+        colorPalette: "blue",
+        hidden: (transaction: TransactionRecord) =>
+          transaction.orderStatus !== "pending_payment" &&
+          transaction.orderStatus !== "pending_review",
+        modal: {
+          triggerComponent: (transaction: TransactionRecord) => (
+            <ManualPaymentProofTrigger
+              modalKey={`upload-proof-${transaction.orderId || transaction.id}`}
+              orderId={transaction.orderId || transaction.id}
+              billingCode={transaction.billingCode}
+            />
+          ),
         },
       },
 

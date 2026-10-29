@@ -175,6 +175,19 @@ const normalizeInternalOrderItem = (raw: any): InternalOrderItem => {
           }),
         )
       : undefined,
+    ntpn: raw.ntpn ?? null,
+    paymentProofUrl: raw.paymentProofUrl ?? raw.payment_proof_url ?? null,
+    paymentProofName: raw.paymentProofName ?? raw.payment_proof_name ?? null,
+    isManualPayment: Boolean(
+      raw.isManualPayment ??
+      raw.is_manual_payment ??
+      raw.ntpn ??
+      raw.paymentProofUrl ??
+      raw.payment_proof_url,
+    ),
+    paymentVerificationStatus:
+      raw.paymentVerificationStatus ?? raw.payment_verification_status ?? undefined,
+    rejectionReason: raw.rejectionReason ?? raw.rejection_reason ?? null,
   };
 };
 
@@ -375,11 +388,57 @@ export const approveOrderApi = async (
   signal?: AbortSignal,
 ): Promise<ApiResponse<void>> => {
   const { orderId, workspaceInteropUrl } = payload;
-  return apiClient.put<ApiResponse<void>>(
-    `/api/internal/interop/orders/${orderId}/approve`,
-    { workspaceInteropUrl },
-    { signal },
-  );
+  try {
+    return await apiClient.put<ApiResponse<void>>(
+      `/api/internal/interop/orders/${orderId}/approve`,
+      { workspaceInteropUrl },
+      { signal },
+    );
+  } catch (error) {
+    if (isDummyDataEnabled()) {
+      const target = DUMMY_INTERNAL_ORDERS.find((b) => b.orderId === orderId);
+      if (target) {
+        target.status = "paid";
+        target.workspaceInteropUrl = workspaceInteropUrl;
+        target.paymentVerificationStatus = "approved";
+      }
+      return {
+        success: true,
+        data: undefined,
+        message: "Pesanan berhasil disetujui.",
+        timestamp: new Date().toISOString(),
+      };
+    }
+    throw error;
+  }
+};
+
+export const approveManualPaymentApi = async (
+  orderId: string,
+  signal?: AbortSignal,
+): Promise<ApiResponse<void>> => {
+  try {
+    return await apiClient.post<ApiResponse<void>>(
+      `/api/internal/orders/${orderId}/approve-payment`,
+      {},
+      { signal },
+    );
+  } catch (error) {
+    if (isDummyDataEnabled()) {
+      const target = DUMMY_INTERNAL_ORDERS.find((b) => b.orderId === orderId);
+      if (target) {
+        target.status = "paid";
+        target.paymentVerificationStatus = "approved";
+      }
+      return {
+        success: true,
+        data: undefined,
+        message: "Pembayaran manual berhasil disetujui.",
+        timestamp: new Date().toISOString(),
+      };
+    }
+    throw error;
+  }
 };
 
 export const rejectOrderApi = async (
@@ -387,11 +446,29 @@ export const rejectOrderApi = async (
   signal?: AbortSignal,
 ): Promise<ApiResponse<void>> => {
   const { orderId, reason } = payload;
-  return apiClient.put<ApiResponse<void>>(
-    `/api/internal/interop/orders/${orderId}/reject`,
-    { reason },
-    { signal },
-  );
+  try {
+    return await apiClient.put<ApiResponse<void>>(
+      `/api/internal/interop/orders/${orderId}/reject`,
+      { reason },
+      { signal },
+    );
+  } catch (error) {
+    if (isDummyDataEnabled()) {
+      const target = DUMMY_INTERNAL_ORDERS.find((b) => b.orderId === orderId);
+      if (target) {
+        target.status = "rejected";
+        target.rejectionReason = reason;
+        target.paymentVerificationStatus = "rejected";
+      }
+      return {
+        success: true,
+        data: undefined,
+        message: "Pesanan berhasil ditolak.",
+        timestamp: new Date().toISOString(),
+      };
+    }
+    throw error;
+  }
 };
 
 export const uploadOrderTteInvoiceApi = async (

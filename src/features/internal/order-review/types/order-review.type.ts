@@ -107,6 +107,12 @@ export type InternalOrderItem = {
   workspaceInteropUrl?: string | null;
   workspaceName?: string | null;
   updatePeriods?: UpdatePeriodItem[];
+  ntpn?: string | null;
+  paymentProofUrl?: string | null;
+  paymentProofName?: string | null;
+  isManualPayment?: boolean;
+  paymentVerificationStatus?: "pending" | "approved" | "rejected";
+  rejectionReason?: string | null;
 };
 
 export type InternalOrderListQueryParams = PaginatedParams & {

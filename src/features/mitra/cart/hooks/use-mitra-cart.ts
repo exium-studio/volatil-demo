@@ -20,7 +20,10 @@ import {
   removeFromCart,
   reorderCartOrder,
   simulateCalculationComplete,
+  submitManualPaymentProof,
 } from "@/features/mitra/cart/services/mitra.cart.service";
+import type { SubmitManualPaymentProofPayload } from "@/features/mitra/billing/types/manual-payment.type";
+
 import type { CartSummaryResponse } from "@/features/mitra/cart/types/cart.type";
 import type { CartItemsQueryParams } from "@/features/mitra/cart/types/mitra.cart.order.type";
 import { CART_CONFIG } from "@/features/mitra/home/constants/cart.config";
@@ -459,6 +462,51 @@ export const useCheckOrderPaymentStatus = () => {
 };
 
 export const useCheckBillingPaymentStatus = useCheckOrderPaymentStatus;
+
+export const useSubmitManualPaymentProof = () => {
+  const queryClient = useQueryClient();
+  const toastHandlers = mutationToastHandlers("submit-manual-payment-proof", {
+    group: "Konfirmasi Pembayaran",
+    loadingMessage: {
+      title: "Mengirim bukti pembayaran...",
+      description: "Menyimpan data NTPN dan bukti pembayaran...",
+    },
+    successMessage: {
+      title: "Konfirmasi pembayaran berhasil dikirim",
+      description:
+        "Bukti pembayaran telah diterima dan sedang diverifikasi oleh Bendahara/Petugas ATR/BPN.",
+    },
+    errorMessage: {
+      title: "Gagal mengirim konfirmasi pembayaran",
+    },
+  });
+
+  return useMutation({
+    mutationFn: (payload: SubmitManualPaymentProofPayload) =>
+      submitManualPaymentProof(payload),
+    onMutate: toastHandlers.onLoading,
+    onSuccess: (data) => {
+      toastHandlers.onSuccess();
+      void queryClient.invalidateQueries({
+        queryKey: ["mitra", "cart"],
+      });
+      void queryClient.invalidateQueries({
+        queryKey: ["mitra", "cart", "orders"],
+      });
+      void queryClient.invalidateQueries({
+        queryKey: ["mitra", "cart", "order-detail", data.orderId],
+      });
+      void queryClient.invalidateQueries({
+        queryKey: ["mitra", "transaction-history"],
+      });
+      void queryClient.invalidateQueries({
+        queryKey: ["internal", "orders"],
+      });
+      return data;
+    },
+    onError: toastHandlers.onError,
+  });
+};
 
 /**
  * SSE Real-time stream subscriber hook for Cart Orders.

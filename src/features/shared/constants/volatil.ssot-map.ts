@@ -290,11 +290,12 @@ export const ORDER_STATUS_MAP: Record<OrderStatus, OrderStatusConfig> = {
     noticeDescription: "Menunggu pemasangan Tanda Tangan Elektronik...",
   },
   pending_review: {
-    label: "Menunggu Validasi Admin",
+    label: "Menunggu Verifikasi Pembayaran",
     colorPalette: "orange",
     icon: LoaderIcon,
     iconColor: "orange.fg",
-    noticeDescription: "Menunggu validasi Admin Internal...",
+    noticeDescription:
+      "Bukti pembayaran sedang diverifikasi oleh Bendahara/Petugas ATR/BPN.",
   },
   ready: {
     label: "Siap Digunakan",

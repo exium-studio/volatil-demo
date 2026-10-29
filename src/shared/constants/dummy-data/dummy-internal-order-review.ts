@@ -295,6 +295,11 @@ export const DUMMY_INTERNAL_ORDERS: InternalOrderItem[] = [
     status: "pending_review",
     transactionStatus: "paid",
     selectionType: "draw_aoi",
+    isManualPayment: true,
+    ntpn: "8B4F19E3A7029CD1",
+    paymentProofUrl: "https://volatil-be.exium.web.id/uploads/invoices/invoice-7110fa9b-2577-4f07-b6b4-6fe6eff9aa6e.pdf",
+    paymentProofName: "bukti_setor_pnbp_2026.pdf",
+    paymentVerificationStatus: "pending",
     invoiceUrl:
       "https://volatil-be.exium.web.id/uploads/invoices/invoice-7110fa9b-2577-4f07-b6b4-6fe6eff9aa6e.pdf",
     tteInvoiceUrl: null,

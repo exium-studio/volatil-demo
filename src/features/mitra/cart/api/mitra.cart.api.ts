@@ -262,6 +262,23 @@ export async function postCheckoutOrderApi(
   );
 }
 
+export async function postSubmitManualPaymentProofApi(
+  orderId: string,
+  formData: FormData,
+  signal?: AbortSignal,
+): Promise<ApiResponse<{ orderId: string; status: "pending_review" }>> {
+  return apiClient.post<ApiResponse<{ orderId: string; status: "pending_review" }>>(
+    `/api/mitra/orders/${orderId}/manual-payment-proof`,
+    formData,
+    {
+      signal,
+      headers: {
+        "Content-Type": "multipart/form-data",
+      },
+    },
+  );
+}
+
 /**
  * Creates an EventSource stream connection for real-time Cart Orders updates (SSE).
  * Backend pushes status transitions (e.g. requesting -> pending_payment, spatial calculations).

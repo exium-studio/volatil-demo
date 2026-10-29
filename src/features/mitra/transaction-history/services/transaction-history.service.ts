@@ -10,6 +10,7 @@ import { DUMMY_TRANSACTION_HISTORY } from "@/shared/constants/dummy-data/dummy-t
 import { createPaginationMeta } from "@/shared/types/common-response.type";
 import type { OrderStatus } from "@/shared/types/status.type";
 import { isDummyDataEnabled } from "@/shared/utils/env/env.utils";
+import { getLocalDummyOrders } from "@/features/mitra/cart/services/mitra.cart.service";
 
 const matchesSearch = (item: TransactionRecord, search: string) =>
   [
@@ -74,7 +75,27 @@ export const getTransactionHistory = async (
         "getTransactionHistory API error, falling back to dummy data:",
         error,
       );
-      return getPaginatedTransactionHistory(DUMMY_TRANSACTION_HISTORY, params);
+      // Synchronize dummy transaction history with any localDummyOrders status updates
+      const localOrders = getLocalDummyOrders();
+      const updatedDummy = DUMMY_TRANSACTION_HISTORY.map((item) => {
+        const matchingLocal = localOrders.find(
+          (o) => o.orderId === item.orderId || o.orderId === item.id,
+        );
+        if (matchingLocal) {
+          return {
+            ...item,
+            orderStatus: matchingLocal.status,
+            ntpn: matchingLocal.ntpn ?? item.ntpn,
+            paymentProofUrl: matchingLocal.paymentProofUrl ?? item.paymentProofUrl,
+            paymentProofName: matchingLocal.paymentProofName ?? item.paymentProofName,
+            isManualPayment: matchingLocal.isManualPayment ?? item.isManualPayment,
+            paymentVerificationStatus:
+              matchingLocal.paymentVerificationStatus ?? item.paymentVerificationStatus,
+          };
+        }
+        return item;
+      });
+      return getPaginatedTransactionHistory(updatedDummy, params);
     }
     throw error;
   }

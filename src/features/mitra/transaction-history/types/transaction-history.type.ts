@@ -50,6 +50,11 @@ export type TransactionRecord = {
   invoiceUrl?: string | null;
   tteInvoiceUrl?: string | null;
   tte?: boolean;
+  ntpn?: string | null;
+  paymentProofUrl?: string | null;
+  paymentProofName?: string | null;
+  isManualPayment?: boolean;
+  paymentVerificationStatus?: "pending" | "approved" | "rejected";
   items: TransactionOrderItem[];
 };
 

@@ -9,12 +9,16 @@ import { usePopModal } from "@/design-system/components/overlay/hooks/use-pop-mo
 import { Modal } from "@/design-system/components/overlay/ui/modal";
 import { P } from "@/design-system/components/typography/ui/p";
 import { Separator } from "@/design-system/components/layout/ui/separator";
+import { Badge } from "@/design-system/components/typography/ui/badge";
 import { IgtBasisBadge } from "@/features/shared/components/igt-basis.badge";
 import { OrderStatusBadge } from "@/features/shared/components/order-status.badge";
 import { SelectionTypeBadge } from "@/features/shared/components/selection-type.badge";
 import { TteBadge } from "@/features/shared/components/tte.badge";
-import { InternalOrderReviewApproveTrigger } from "@/features/internal/order-review/components/internal.order-review.approve-modal";
-import { useProvisionOrder } from "@/features/internal/order-review/hooks/use-order-review";
+import { InternalOrderReviewRejectTrigger } from "@/features/internal/order-review/components/internal.order-review.reject-modal";
+import {
+  useApproveManualPayment,
+  useProvisionOrder,
+} from "@/features/internal/order-review/hooks/use-order-review";
 import type {
   InternalOrderReviewDetailModalContentProps,
   InternalOrderReviewDetailTriggerProps,
@@ -25,7 +29,16 @@ import {
 } from "@/shared/utils/formatter/date.formatter";
 import { formatCurrency } from "@/shared/utils/formatter/number.formatter";
 import { useNavigate } from "@tanstack/react-router";
-import { CheckCircleIcon, LoaderIcon, MapPlusIcon } from "lucide-react";
+import {
+  CalendarIcon,
+  CheckCircleIcon,
+  ExternalLinkIcon,
+  FileTextIcon,
+  HashIcon,
+  LoaderIcon,
+  MapPlusIcon,
+  XCircleIcon,
+} from "lucide-react";
 import { useMemo } from "react";
 
 export const InternalOrderReviewDetailTrigger = (
@@ -59,6 +72,7 @@ const InternalOrderReviewDetailModalContent = (
   const { order, close } = props;
   const preferredTimezone = useMemo(() => getPreferredUserTimezone(), []);
   const provisionOrderMutation = useProvisionOrder();
+  const approveManualPaymentMutation = useApproveManualPayment();
 
   const navigate = useNavigate();
 
@@ -130,6 +144,118 @@ const InternalOrderReviewDetailModalContent = (
               />
             </HStack>
           </VStack>
+
+          {/* Bukti Pembayaran Manual (SIMPONI Off / Verifikasi Manual) */}
+          {Boolean(order.isManualPayment || order.ntpn || order.paymentProofUrl) && (
+            <VStack
+              align={"stretch"}
+              gap={"xs"}
+              p={"sm"}
+              bg={"bg.subtle"}
+              rounded={"md"}
+              border={"1px solid"}
+              borderColor={"teal.500/30"}
+            >
+              <HStack justify={"space-between"} align={"center"}>
+                <HStack gap={"xs"}>
+                  <Badge colorPalette={"teal"} variant={"subtle"}>
+                    {"Verifikasi Manual"}
+                  </Badge>
+                  <P fontSize={"xs"} fontWeight={"semibold"}>
+                    {"Bukti Pembayaran PNBP"}
+                  </P>
+                </HStack>
+
+                {order.paymentVerificationStatus && (
+                  <Badge
+                    colorPalette={
+                      order.paymentVerificationStatus === "approved"
+                        ? "green"
+                        : order.paymentVerificationStatus === "rejected"
+                          ? "red"
+                          : "orange"
+                    }
+                    variant={"subtle"}
+                  >
+                    {order.paymentVerificationStatus === "approved"
+                      ? "Disetujui"
+                      : order.paymentVerificationStatus === "rejected"
+                        ? "Ditolak"
+                        : "Menunggu Verifikasi"}
+                  </Badge>
+                )}
+              </HStack>
+
+              {/* Nomor NTPN */}
+              <HStack justify={"space-between"} align={"center"}>
+                <HStack gap={1} align={"center"}>
+                  <AppIcon icon={HashIcon} size={"xs"} color={"fg.muted"} />
+                  <P fontSize={"xs"} color={"fg.muted"}>
+                    {"Nomor NTPN:"}
+                  </P>
+                </HStack>
+
+                <HStack align={"center"} gap={"xs"}>
+                  <P fontSize={"xs"} fontFamily={"mono"} fontWeight={"bold"}>
+                    {order.ntpn || "-"}
+                  </P>
+                  {order.ntpn && (
+                    <ClipboardButton value={order.ntpn} size={"2xs"} variant={"ghost"} />
+                  )}
+                </HStack>
+              </HStack>
+
+              {/* Tanggal Penyetoran */}
+              {order.paidAt && (
+                <HStack justify={"space-between"} align={"center"}>
+                  <HStack gap={1} align={"center"}>
+                    <AppIcon icon={CalendarIcon} size={"xs"} color={"fg.muted"} />
+                    <P fontSize={"xs"} color={"fg.muted"}>
+                      {"Tanggal Setor:"}
+                    </P>
+                  </HStack>
+                  <P fontSize={"xs"}>
+                    {formatUtcDateTime(order.paidAt, preferredTimezone)}
+                  </P>
+                </HStack>
+              )}
+
+              {/* Preview & Link Berkas Bukti Pembayaran */}
+              {order.paymentProofUrl && (
+                <HStack
+                  justify={"space-between"}
+                  align={"center"}
+                  p={"2xs"}
+                  bg={"bg.canvas"}
+                  rounded={"sm"}
+                  border={"1px solid"}
+                  borderColor={"border.subtle"}
+                >
+                  <HStack gap={"xs"} align={"center"}>
+                    <AppIcon icon={FileTextIcon} size={"xs"} color={"teal.fg"} />
+                    <P fontSize={"xs"} truncate maxW={"220px"}>
+                      {order.paymentProofName || "Berkas_Bukti_Bayar.pdf"}
+                    </P>
+                  </HStack>
+
+                  <Button
+                    asChild={true}
+                    variant={"ghost"}
+                    colorPalette={"teal"}
+                  >
+                    <a
+                      href={order.paymentProofUrl}
+                      target={"_blank"}
+                      rel={"noopener noreferrer"}
+                    >
+                      <AppIcon icon={ExternalLinkIcon} />
+                      {"Lihat Berkas"}
+                    </a>
+                  </Button>
+                </HStack>
+              )}
+            </VStack>
+          )}
 
           {/* Layer List */}
           <VStack align={"stretch"} gap={"xs"}>
@@ -255,27 +381,62 @@ const InternalOrderReviewDetailModalContent = (
           )}
 
           {isPending && (
-            <InternalOrderReviewApproveTrigger
-              order={order}
-              modalKey={`approve-from-detail-${order.orderId}`}
-              onSuccessRedirect={() => {
-                void navigate({
-                  to: "/internal/order-review",
-                  search: (old: Record<string, unknown>) => {
-                    const { activeModalKey: _, ...rest } = old;
-                    return rest;
-                  },
-                });
-              }}
-            >
-              <Button colorPalette={"green"}>
-                <AppIcon icon={CheckCircleIcon} />
-                {"Setujui Permintaan"}
-              </Button>
-            </InternalOrderReviewApproveTrigger>
+            <>
+              {/* Tolak Pembayaran */}
+              <InternalOrderReviewRejectTrigger
+                order={order}
+                modalKey={`reject-from-detail-${order.orderId}`}
+                onSuccessRedirect={() => {
+                  close();
+                  void navigate({
+                    to: "/internal/order-review",
+                    search: (old: Record<string, unknown>) => {
+                      const { activeModalKey: _, ...rest } = old;
+                      return rest;
+                    },
+                  });
+                }}
+              >
+                <Button variant={"outline"} colorPalette={"red"}>
+                  <AppIcon icon={XCircleIcon} />
+                  {"Tolak Pembayaran"}
+                </Button>
+              </InternalOrderReviewRejectTrigger>
+
+              {/* Setujui Pembayaran (Konfirmasi: Ubah status menjadi 'paid' & trigger provision GeoServer) */}
+              <ConfirmationTrigger
+                modalKey={`approve-payment-confirm-${order.orderId}`}
+                icon={CheckCircleIcon}
+                colorPalette={"green"}
+                title={"Setujui Pembayaran Manual"}
+                description={`Apakah Anda yakin ingin menyetujui pembayaran manual untuk pesanan "${order.orderNumber || order.orderId}" (Mitra: ${order.mitraName}, NTPN: ${order.ntpn || "-"})? Tindakan ini akan mengonfirmasi status menjadi 'paid' dan memicu otomatis pemotongan data spasial GeoServer.`}
+                confirmLabel={"Setujui Pembayaran"}
+                onConfirm={() => {
+                  approveManualPaymentMutation.mutate(order.orderId, {
+                    onSuccess: () => {
+                      provisionOrderMutation.mutate({ orderId: order.orderId });
+                      close();
+                    },
+                  });
+                }}
+              >
+                <Button
+                  primary={true}
+                  colorPalette={"green"}
+                  loading={
+                    approveManualPaymentMutation.isPending ||
+                    provisionOrderMutation.isPending
+                  }
+                >
+                  <AppIcon icon={CheckCircleIcon} />
+                  {"Setujui Pembayaran"}
+                </Button>
+              </ConfirmationTrigger>
+            </>
           )}
         </HStack>
       </Modal.Footer>
     </Modal.Content>
   );
 };
+
