@@ -27,7 +27,8 @@ export const updateSsoIntegrationConfig = async (
 ): Promise<IntegrationConfigResponse<SsoIntegrationConfig>> => {
   return apiClient.put<IntegrationConfigResponse<SsoIntegrationConfig>>(
     "/api/internal/integrations/sso",
-    { body: payload, signal },
+    payload,
+    { signal },
   );
 };
 
@@ -46,7 +47,8 @@ export const updateSmtpIntegrationConfig = async (
 ): Promise<IntegrationConfigResponse<SmtpIntegrationConfig>> => {
   return apiClient.put<IntegrationConfigResponse<SmtpIntegrationConfig>>(
     "/api/internal/integrations/smtp",
-    { body: payload, signal },
+    payload,
+    { signal },
   );
 };
 
@@ -56,7 +58,8 @@ export const testSmtpConnection = async (
 ): Promise<{ success: boolean; message: string }> => {
   return apiClient.post<{ success: boolean; message: string }>(
     "/api/internal/integrations/smtp/test",
-    { body: payload, signal },
+    payload,
+    { signal },
   );
 };
 
@@ -75,6 +78,7 @@ export const updateSimponiIntegrationConfig = async (
 ): Promise<IntegrationConfigResponse<SimponiIntegrationConfig>> => {
   return apiClient.put<IntegrationConfigResponse<SimponiIntegrationConfig>>(
     "/api/internal/integrations/simponi",
-    { body: payload, signal },
+    payload,
+    { signal },
   );
 };
