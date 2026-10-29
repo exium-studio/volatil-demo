@@ -26,7 +26,6 @@ import { ClampedHeading } from "@/design-system/components/typography/ui/heading
 import { P } from "@/design-system/components/typography/ui/p";
 import { Url } from "@/design-system/components/typography/ui/url";
 import { InternalOrderReviewApproveTrigger } from "@/features/internal/order-review/components/internal.order-review.approve-modal";
-import { InternalOrderReviewRejectTrigger } from "@/features/internal/order-review/components/internal.order-review.reject-modal";
 import {
   useInternalOrderDetailQuery,
   useOrdersProvisionStream,
@@ -38,6 +37,7 @@ import type {
   OrderSummaryProps,
 } from "@/features/internal/order-review/types/order-review.type";
 import type { CartOrderItem } from "@/features/mitra/cart/types/mitra.cart.order.type";
+import { getIgtLayers } from "@/features/mitra/data-request/api/mitra.data-request-igt-layers.api";
 import { useFlyToLayer } from "@/features/mitra/data-request/hooks/use-fly-to-layer";
 import { normalizePolygonFeature } from "@/features/mitra/data-request/utils/clip-and-union-kawasan";
 import {
@@ -48,12 +48,11 @@ import { IgtBasisBadge } from "@/features/shared/components/igt-basis.badge";
 import { OrderStatusBadge } from "@/features/shared/components/order-status.badge";
 import { SelectionTypeBadge } from "@/features/shared/components/selection-type.badge";
 import { TteBadge } from "@/features/shared/components/tte.badge";
+import { queryKeys } from "@/shared/libs/tanstack-query/query.keys";
 import {
   formatCurrency,
   formatNumber,
 } from "@/shared/utils/formatter/number.formatter";
-import { getIgtLayers } from "@/features/mitra/data-request/api/mitra.data-request-igt-layers.api";
-import { queryKeys } from "@/shared/libs/tanstack-query/query.keys";
 import { useQuery } from "@tanstack/react-query";
 import { useNavigate, useParams } from "@tanstack/react-router";
 import {
@@ -64,7 +63,6 @@ import {
   HandshakeIcon,
   MapPlusIcon,
   RefreshCwIcon,
-  XCircleIcon,
 } from "lucide-react";
 import { useCallback, useEffect, useMemo, useRef } from "react";
 
@@ -438,7 +436,7 @@ export const InternalOrderReviewDetailPage = () => {
 
                 {order.status === "pending_review" && (
                   <>
-                    <InternalOrderReviewRejectTrigger
+                    {/* <InternalOrderReviewRejectTrigger
                       order={order}
                       modalKey={`reject-detail-${order.orderId}`}
                       onSuccessRedirect={() => {
@@ -455,7 +453,7 @@ export const InternalOrderReviewDetailPage = () => {
                         <AppIcon icon={XCircleIcon} />
                         {"Tolak Permintaan"}
                       </Button>
-                    </InternalOrderReviewRejectTrigger>
+                    </InternalOrderReviewRejectTrigger> */}
 
                     <InternalOrderReviewApproveTrigger
                       order={order}
