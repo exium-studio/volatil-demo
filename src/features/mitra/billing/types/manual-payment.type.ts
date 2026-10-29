@@ -42,14 +42,14 @@ export type SubmitManualPaymentProofResponse = {
 export type ManualPaymentProofTriggerProps = {
   modalKey?: string;
   orderId: string;
-  billingCode: string;
+  billingCode?: string | null;
   children?: import("react").ReactNode;
   onSuccess?: () => void;
 };
 
 export type ManualPaymentProofModalContentProps = {
   orderId: string;
-  billingCode: string;
+  billingCode?: string | null;
   close: () => void;
   onSuccess?: () => void;
 };

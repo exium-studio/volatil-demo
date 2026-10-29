@@ -5,7 +5,7 @@ import type { OrderStatus } from "@/features/mitra/cart/types/mitra.cart.api.typ
 export type MitraTransactionItem = {
   id: string;
   orderNumber: string;
-  billingCode?: string;
+  billingCode?: string | null;
   status: OrderStatus;
   totalPrice: number;
   orderedAt: string;

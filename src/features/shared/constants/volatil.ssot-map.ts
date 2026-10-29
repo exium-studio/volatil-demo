@@ -241,6 +241,29 @@ export const ORDER_STATUS_MAP: Record<OrderStatus, OrderStatusConfig> = {
     noticeDescription:
       "Sedang mengkalkulasi clipping, luas kawasan & estimasi harga di server...",
   },
+  pending_billing_code: {
+    label: "Menunggu Kode Billing",
+    colorPalette: "yellow",
+    icon: ClockIcon,
+    iconColor: "yellow.fg",
+    noticeDescription: "Menunggu penerbitan Kode Billing oleh Petugas ATR/BPN...",
+  },
+  manual_pending_payment: {
+    label: "Menunggu Pembayaran",
+    colorPalette: "orange",
+    icon: LandmarkIcon,
+    iconColor: "orange.fg",
+    noticeDescription:
+      "Silakan lakukan pembayaran dengan Kode Billing dan unggah bukti bayar.",
+  },
+  pending_manual_payment_verification: {
+    label: "Menunggu Verifikasi Pembayaran",
+    colorPalette: "purple",
+    icon: HourglassIcon,
+    iconColor: "purple.fg",
+    noticeDescription:
+      "Bukti pembayaran sedang diverifikasi oleh Bendahara/Petugas ATR/BPN.",
+  },
   pending_payment: {
     label: "Menunggu Pembayaran",
     colorPalette: "orange",

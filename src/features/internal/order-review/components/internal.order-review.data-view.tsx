@@ -24,6 +24,7 @@ import { Badge } from "@/design-system/components/typography/ui/badge";
 import { P, TNum } from "@/design-system/components/typography/ui/p";
 import { InternalOrderReviewApproveTrigger } from "@/features/internal/order-review/components/internal.order-review.approve-modal";
 import { InternalOrderReviewDetailTrigger } from "@/features/internal/order-review/components/internal.order-review.detail-modal";
+import { InternalOrderReviewInputBillingTrigger } from "@/features/internal/order-review/components/internal.order-review.input-billing-modal";
 import { InternalOrderReviewRejectTrigger } from "@/features/internal/order-review/components/internal.order-review.reject-modal";
 import {
   useInternalOrdersQuery,
@@ -65,7 +66,9 @@ import { useMemo, useState, useTransition } from "react";
 
 const ORDER_STATUS_OPTIONS = [
   { value: "all", label: "Semua Status" },
-  { value: "pending_review", label: "Perlu Verifikasi Pembayaran" },
+  { value: "pending_billing_code", label: "Perlu Input Kode Billing" },
+  { value: "pending_manual_payment_verification", label: "Perlu Verifikasi Pembayaran" },
+  { value: "manual_pending_payment", label: "Menunggu Pembayaran Mitra" },
   { value: "paid", label: "Terbayar" },
   { value: "processing", label: "Menyiapkan Layanan WMS" },
 ];
@@ -313,6 +316,22 @@ export const InternalOrderReviewDataView = () => {
         },
       },
       {
+        key: "input-billing-code",
+        label: "Input Kode Billing",
+        icon: ReceiptTextIcon,
+        colorPalette: "blue",
+        hidden: (order: InternalOrderItem) =>
+          order.status !== "pending_billing_code",
+        modal: {
+          triggerComponent: (order: InternalOrderItem) => (
+            <InternalOrderReviewInputBillingTrigger
+              modalKey={`input-billing-${order.orderId}`}
+              order={order}
+            />
+          ),
+        },
+      },
+      {
         key: "view-detail-modal",
         label: "Detail Pesanan",
         icon: EyeIcon,
@@ -329,7 +348,9 @@ export const InternalOrderReviewDataView = () => {
         key: "open-detail-order",
         label: "Buka Peta & Data IGT",
         icon: LayersIcon,
-        hidden: (order: InternalOrderItem) => order.status !== "pending_review",
+        hidden: (order: InternalOrderItem) =>
+          order.status !== "pending_review" &&
+          order.status !== "pending_manual_payment_verification",
         onClick: (order: InternalOrderItem) => {
           void navigate({
             to: "/internal/order-review/$orderId",
@@ -360,7 +381,9 @@ export const InternalOrderReviewDataView = () => {
         label: "Setujui Permintaan",
         icon: CheckCircleIcon,
         colorPalette: "green",
-        hidden: (order: InternalOrderItem) => order.status !== "pending_review",
+        hidden: (order: InternalOrderItem) =>
+          order.status !== "pending_review" &&
+          order.status !== "pending_manual_payment_verification",
         modal: {
           triggerComponent: (order: InternalOrderItem) => (
             <InternalOrderReviewApproveTrigger
@@ -375,7 +398,9 @@ export const InternalOrderReviewDataView = () => {
         label: "Tolak Pembayaran",
         icon: XCircleIcon,
         colorPalette: "red",
-        hidden: (order: InternalOrderItem) => order.status !== "pending_review",
+        hidden: (order: InternalOrderItem) =>
+          order.status !== "pending_review" &&
+          order.status !== "pending_manual_payment_verification",
         modal: {
           triggerComponent: (order: InternalOrderItem) => (
             <InternalOrderReviewRejectTrigger

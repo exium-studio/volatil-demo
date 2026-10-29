@@ -20,10 +20,12 @@ import { useThemeStore } from "@/design-system/stores/theme-store";
 import { BillingRoute } from "@/shared/libs/tanstack-router/routes";
 import { useNavigate } from "@tanstack/react-router";
 import {
+  AlertCircleIcon,
   ClockIcon,
   CreditCardIcon,
   FileCheck2Icon,
   InfoIcon,
+  RefreshCwIcon,
   UploadCloudIcon,
 } from "lucide-react";
 import { useCallback, useEffect } from "react";
@@ -57,20 +59,40 @@ const BillingPageBillingCode = () => {
   // Queries
   const { data: simponiConfig } = useSimponiIntegrationQuery();
   const targetOrderId = search?.orderId || billingCode;
-  const { orderDetail } = useCartOrderDetailQuery(targetOrderId);
+  const { orderDetail, refetch: refetchOrderDetail } =
+    useCartOrderDetailQuery(targetOrderId);
 
   // Derived Values
   const isRenewal =
     targetOrderId.startsWith("ord-renew-") ||
     targetOrderId.startsWith("renew-");
 
-  // Mode manual active if SIMPONI integration is disabled, or order is flagged manual / pending_review
+  const isPendingBillingCode =
+    orderDetail?.status === "pending_billing_code" ||
+    orderDetail?.orderStatus === "pending_billing_code";
+
+  const isPendingManualVerification =
+    orderDetail?.status === "pending_manual_payment_verification" ||
+    orderDetail?.orderStatus === "pending_manual_payment_verification" ||
+    orderDetail?.status === "pending_review";
+
+  const isManualPendingPayment =
+    orderDetail?.status === "manual_pending_payment" ||
+    orderDetail?.orderStatus === "manual_pending_payment";
+
+  // Mode manual active if SIMPONI integration is disabled, or order is in manual flow
   const isSimponiDisabled = simponiConfig?.isEnabled === false;
-  const isOrderPendingReview = orderDetail?.status === "pending_review";
   const isManualVerificationMode =
     isSimponiDisabled ||
-    isOrderPendingReview ||
+    isPendingBillingCode ||
+    isManualPendingPayment ||
+    isPendingManualVerification ||
     Boolean(orderDetail?.isManualPayment);
+
+  // Effective billing code string: only show if not equal to orderId
+  const effectiveBillingCode =
+    orderDetail?.billingCode ||
+    (billingCode && billingCode !== targetOrderId ? billingCode : "");
 
   // Mutations
   const checkPaymentMutation = useCheckOrderPaymentStatus();
@@ -133,8 +155,48 @@ const BillingPageBillingCode = () => {
 
   return (
     <VStack align={"stretch"} gap={"md"}>
-      {/* 1. Conditional Banner Alert: Verifikasi Manual Bukti Setor PNBP */}
-      {isManualVerificationMode && (
+      {/* 1. Alert: Menunggu Penerbitan Kode Billing oleh Internal ATR/BPN */}
+      {isPendingBillingCode && (
+        <Alert.Root
+          status={"warning"}
+          colorPalette={"yellow"}
+          variant={"subtle"}
+        >
+          <AppIcon icon={ClockIcon} />
+          <Alert.Content>
+            <Alert.Title fontWeight={"semibold"}>
+              {"Menunggu Penerbitan Kode Billing"}
+            </Alert.Title>
+            <Alert.Description>
+              {
+                "Layanan inkuiri otomatis SIMPONI sedang dalam mode manual. Petugas Internal ATR/BPN sedang menerbitkan Kode Billing pembayaran PNBP resmi melalui portal SIMPONI Kemenkeu. Kode billing akan tampil otomatis di sini setelah diterbitkan."
+              }
+            </Alert.Description>
+          </Alert.Content>
+        </Alert.Root>
+      )}
+
+      {/* 2. Alert: Penolakan Bukti Pembayaran Sebelumnya (Mitra dapat mengunggah ulang) */}
+      {orderDetail?.rejectionReason && (
+        <Alert.Root
+          status={"warning"}
+          colorPalette={"red"}
+          variant={"subtle"}
+        >
+          <AppIcon icon={AlertCircleIcon} />
+          <Alert.Content>
+            <Alert.Title fontWeight={"semibold"}>
+              {"Bukti Pembayaran Ditolak Petugas"}
+            </Alert.Title>
+            <Alert.Description>
+              {`Alasan penolakan: "${orderDetail.rejectionReason}". Silakan periksa kembali berkas transfer atau nomor NTPN Anda, lalu unggah ulang bukti pembayaran yang sah.`}
+            </Alert.Description>
+          </Alert.Content>
+        </Alert.Root>
+      )}
+
+      {/* 3. Conditional Banner Alert: Verifikasi Manual Bukti Setor PNBP */}
+      {isManualVerificationMode && !isPendingBillingCode && (
         <Alert.Root
           status={"warning"}
           colorPalette={"orange"}
@@ -147,15 +209,15 @@ const BillingPageBillingCode = () => {
             </Alert.Title>
             <Alert.Description>
               {
-                "Layanan inkuiri otomatis SIMPONI sedang dalam mode manual. Silakan lakukan pembayaran dan unggah bukti transfer/struk setor PNBP beserta Nomor Transaksi Penerimaan Negara (NTPN)."
+                "Layanan inkuiri otomatis SIMPONI sedang dalam mode manual. Silakan lakukan pembayaran di bank/teller/ATM menggunakan Kode Billing di bawah, kemudian unggah bukti transfer beserta Nomor Transaksi Penerimaan Negara (NTPN)."
               }
             </Alert.Description>
           </Alert.Content>
         </Alert.Root>
       )}
 
-      {/* 2. Status Alert jika sudah pending_review */}
-      {isOrderPendingReview && (
+      {/* 4. Status Alert jika bukti bayar sedang diverifikasi petugas */}
+      {isPendingManualVerification && (
         <Alert.Root
           status={"info"}
           colorPalette={"blue"}
@@ -175,7 +237,7 @@ const BillingPageBillingCode = () => {
         </Alert.Root>
       )}
 
-      {/* 3. Container Billing Code & Actions */}
+      {/* 5. Container Billing Code & Actions */}
       <Container.Root>
         <Container.Body>
           <HStack
@@ -189,46 +251,76 @@ const BillingPageBillingCode = () => {
               <HStack align={"center"} gap={"sm"}>
                 <Heading>{"Kode Billing"}</Heading>
 
-                {isOrderPendingReview && (
-                  <Badge colorPalette={"orange"} variant={"subtle"}>
+                {isPendingBillingCode && (
+                  <Badge colorPalette={"yellow"} variant={"subtle"}>
                     <AppIcon icon={ClockIcon} size={"xs"} />
-                    {"Menunggu Verifikasi Petugas"}
+                    {"Menunggu Diterbitkan"}
+                  </Badge>
+                )}
+
+                {isPendingManualVerification && (
+                  <Badge colorPalette={"blue"} variant={"subtle"}>
+                    <AppIcon icon={ClockIcon} size={"xs"} />
+                    {"Menunggu Verifikasi"}
                   </Badge>
                 )}
               </HStack>
 
               <HStack align={"center"} gap={"sm"}>
-                <Heading fontSize={"xl"} color={`${theme.colorPalette}.fg`}>
-                  <TNum>{billingCode}</TNum>
-                </Heading>
+                {effectiveBillingCode ? (
+                  <>
+                    <Heading fontSize={"xl"} color={`${theme.colorPalette}.fg`}>
+                      <TNum>{effectiveBillingCode}</TNum>
+                    </Heading>
 
-                <ClipboardButton value={billingCode} size={"xs"} />
+                    <ClipboardButton value={effectiveBillingCode} size={"xs"} />
+                  </>
+                ) : (
+                  <P fontSize={"sm"} color={"fg.muted"} fontStyle={"italic"}>
+                    {"Sedang disiapkan oleh Petugas ATR/BPN..."}
+                  </P>
+                )}
               </HStack>
             </VStack>
 
             <HStack align={"center"} gap={"sm"} wrap={"wrap"}>
-              {/* Jika mode manual dan belum upload bukti, tampilkan tombol upload bukti bayar */}
-              {isManualVerificationMode && !isOrderPendingReview && (
-                <ManualPaymentProofTrigger
-                  orderId={targetOrderId}
-                  billingCode={billingCode}
-                  modalKey={`upload-proof-${targetOrderId}`}
+              {/* Tombol Segarkan saat status pending_billing_code */}
+              {isPendingBillingCode && (
+                <Button
+                  variant={"outline"}
+                  onClick={() => {
+                    void refetchOrderDetail();
+                  }}
                 >
-                  <Button
-                    colorPalette={"blue"}
-                    variant={"outline"}
-                  >
-                    <AppIcon icon={UploadCloudIcon} />
-                    {"Konfirmasi & Unggah Bukti Pembayaran"}
-                  </Button>
-                </ManualPaymentProofTrigger>
+                  <AppIcon icon={RefreshCwIcon} />
+                  {"Segarkan Status"}
+                </Button>
               )}
 
-              {/* Jika sudah upload bukti, sediakan opsi unggah ulang bukti bayar jika dibutuhkan */}
-              {isManualVerificationMode && isOrderPendingReview && (
+              {/* Jika kode billing sudah ada dan belum upload bukti, tampilkan tombol upload bukti bayar */}
+              {isManualVerificationMode &&
+                !isPendingBillingCode &&
+                !isPendingManualVerification && (
+                  <ManualPaymentProofTrigger
+                    orderId={targetOrderId}
+                    billingCode={effectiveBillingCode}
+                    modalKey={`upload-proof-${targetOrderId}`}
+                  >
+                    <Button
+                      colorPalette={"blue"}
+                      variant={"outline"}
+                    >
+                      <AppIcon icon={UploadCloudIcon} />
+                      {"Konfirmasi & Unggah Bukti Pembayaran"}
+                    </Button>
+                  </ManualPaymentProofTrigger>
+                )}
+
+              {/* Jika sudah upload bukti, sediakan opsi perbarui bukti bayar */}
+              {isManualVerificationMode && isPendingManualVerification && (
                 <ManualPaymentProofTrigger
                   orderId={targetOrderId}
-                  billingCode={billingCode}
+                  billingCode={effectiveBillingCode}
                   modalKey={`upload-proof-${targetOrderId}`}
                 >
                   <Button
@@ -241,15 +333,17 @@ const BillingPageBillingCode = () => {
                 </ManualPaymentProofTrigger>
               )}
 
-              {/* Cek Status Pembayaran button */}
-              <Button
-                primary={true}
-                loading={checkPaymentMutation.isPending}
-                onClick={handleCheckStatus}
-              >
-                <AppIcon icon={CreditCardIcon} />
-                {"Cek status pembayaran"}
-              </Button>
+              {/* Cek Status Pembayaran button (untuk SIMPONI otomatis / settled check) */}
+              {!isPendingBillingCode && (
+                <Button
+                  primary={true}
+                  loading={checkPaymentMutation.isPending}
+                  onClick={handleCheckStatus}
+                >
+                  <AppIcon icon={CreditCardIcon} />
+                  {"Cek status pembayaran"}
+                </Button>
+              )}
             </HStack>
           </HStack>
         </Container.Body>

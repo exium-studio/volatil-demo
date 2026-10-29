@@ -47,29 +47,63 @@ export const smtpTestSchema = z.object({
     .email("Format email tidak valid"),
 });
 
-export const simponiFormSchema = z.object({
-  baseUrl: z
-    .string()
-    .min(1, "Endpoint Base URL SIMPONI wajib diisi")
-    .url("Format URL tidak valid"),
-  kodeKl: z
-    .string()
-    .min(1, "Kode K/L wajib diisi")
-    .length(3, "Kode K/L harus tepat 3 digit"),
-  kodeSatker: z
-    .string()
-    .min(1, "Kode Satker wajib diisi")
-    .length(6, "Kode Satker harus tepat 6 digit"),
-  kodeAkun: z
-    .string()
-    .min(1, "Kode Akun/Mata Anggaran wajib diisi")
-    .length(6, "Kode Akun harus tepat 6 digit"),
-  apiKey: z.string().optional(),
-  billingExpiryHours: z
-    .number()
-    .int("Masa berlaku harus berupa angka bulat")
-    .min(1, "Masa berlaku minimal 1 jam")
-    .max(720, "Masa berlaku maksimal 720 jam (30 hari)"),
-  isSimulator: z.boolean(),
-  isEnabled: z.boolean(),
-});
+export const simponiFormSchema = z
+  .object({
+    baseUrl: z.string(),
+    kodeKl: z.string(),
+    kodeSatker: z.string(),
+    kodeAkun: z.string(),
+    apiKey: z.string().optional(),
+    billingExpiryHours: z
+      .number()
+      .int("Masa berlaku harus berupa angka bulat")
+      .min(1, "Masa berlaku minimal 1 jam")
+      .max(720, "Masa berlaku maksimal 720 jam (30 hari)"),
+    isSimulator: z.boolean(),
+    isEnabled: z.boolean(),
+  })
+  .superRefine((data, ctx) => {
+    if (data.isEnabled) {
+      if (!data.baseUrl || !data.baseUrl.trim()) {
+        ctx.addIssue({
+          code: z.ZodIssueCode.custom,
+          path: ["baseUrl"],
+          message: "Endpoint Base URL SIMPONI wajib diisi",
+        });
+      } else {
+        try {
+          new URL(data.baseUrl);
+        } catch {
+          ctx.addIssue({
+            code: z.ZodIssueCode.custom,
+            path: ["baseUrl"],
+            message: "Format URL tidak valid",
+          });
+        }
+      }
+
+      if (!data.kodeKl || data.kodeKl.length !== 3) {
+        ctx.addIssue({
+          code: z.ZodIssueCode.custom,
+          path: ["kodeKl"],
+          message: "Kode K/L harus tepat 3 digit",
+        });
+      }
+
+      if (!data.kodeSatker || data.kodeSatker.length !== 6) {
+        ctx.addIssue({
+          code: z.ZodIssueCode.custom,
+          path: ["kodeSatker"],
+          message: "Kode Satker harus tepat 6 digit",
+        });
+      }
+
+      if (!data.kodeAkun || data.kodeAkun.length !== 6) {
+        ctx.addIssue({
+          code: z.ZodIssueCode.custom,
+          path: ["kodeAkun"],
+          message: "Kode Akun harus tepat 6 digit",
+        });
+      }
+    }
+  });

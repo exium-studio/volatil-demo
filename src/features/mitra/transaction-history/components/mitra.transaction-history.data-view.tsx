@@ -185,10 +185,10 @@ export const TransactionHistoryDataView = () => {
               align: "start" as const,
             },
             {
-              value: item.billingCode,
+              value: item.billingCode ?? "",
               td: (
                 <P>
-                  <TNum>{item.billingCode}</TNum>
+                  <TNum>{item.billingCode || "-"}</TNum>
                 </P>
               ),
               align: "start" as const,
@@ -196,7 +196,9 @@ export const TransactionHistoryDataView = () => {
             {
               value: targetExpiry ?? "",
               td:
-                effectiveOrderStatus === "pending_payment" && targetExpiry ? (
+                (effectiveOrderStatus === "pending_payment" ||
+                  effectiveOrderStatus === "manual_pending_payment") &&
+                targetExpiry ? (
                   <Countdown
                     finishedAt={targetExpiry}
                     warningThresholdHours={1}
@@ -307,20 +309,25 @@ export const TransactionHistoryDataView = () => {
     const itemActions: DataViewItemActionsGenerator<TransactionRecord>[] = [
       {
         key: "pay-billing",
-        label: "Bayar",
+        label: (transaction: TransactionRecord) =>
+          transaction.orderStatus === "pending_billing_code"
+            ? "Lihat Status"
+            : "Bayar",
         icon: CreditCardIcon,
         colorPalette: "blue",
         hidden: (transaction: TransactionRecord) =>
-          transaction.orderStatus !== "pending_payment" ||
+          (transaction.orderStatus !== "pending_payment" &&
+            transaction.orderStatus !== "manual_pending_payment" &&
+            transaction.orderStatus !== "pending_billing_code") ||
           transaction.transactionStatus === "expired",
         onClick: (transaction: TransactionRecord) => {
-          if (transaction.billingCode) {
-            void navigate({
-              to: "/mitra/billing/$billingCode",
-              params: { billingCode: transaction.billingCode },
-              search: { orderId: transaction.orderId || transaction.id },
-            });
-          }
+          const billingCodeParam =
+            transaction.billingCode || transaction.orderId || transaction.id;
+          void navigate({
+            to: "/mitra/billing/$billingCode",
+            params: { billingCode: billingCodeParam },
+            search: { orderId: transaction.orderId || transaction.id },
+          });
         },
       },
       {
@@ -329,8 +336,10 @@ export const TransactionHistoryDataView = () => {
         icon: UploadCloudIcon,
         colorPalette: "blue",
         hidden: (transaction: TransactionRecord) =>
-          transaction.orderStatus !== "pending_payment" &&
-          transaction.orderStatus !== "pending_review",
+          transaction.orderStatus !== "manual_pending_payment" &&
+          transaction.orderStatus !== "pending_manual_payment_verification" &&
+          transaction.orderStatus !== "pending_review" &&
+          transaction.orderStatus !== "pending_payment",
         modal: {
           triggerComponent: (transaction: TransactionRecord) => (
             <ManualPaymentProofTrigger

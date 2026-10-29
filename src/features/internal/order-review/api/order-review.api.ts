@@ -2,6 +2,7 @@
 
 import type {
   ApproveOrderPayload,
+  InputBillingCodePayload,
   InternalOrderItem,
   InternalOrderListQueryParams,
   InternalOrderListResponse,
@@ -175,6 +176,11 @@ const normalizeInternalOrderItem = (raw: any): InternalOrderItem => {
           }),
         )
       : undefined,
+    billingCode: raw.billingCode ?? raw.billing_code ?? null,
+    billingExpiredAt: raw.billingExpiredAt ?? raw.billing_expired_at ?? null,
+    billingIssuedAt: raw.billingIssuedAt ?? raw.billing_issued_at ?? null,
+    paymentSubmittedAt: raw.paymentSubmittedAt ?? raw.payment_submitted_at ?? null,
+    paymentNotes: raw.paymentNotes ?? raw.payment_notes ?? null,
     ntpn: raw.ntpn ?? null,
     paymentProofUrl: raw.paymentProofUrl ?? raw.payment_proof_url ?? null,
     paymentProofName: raw.paymentProofName ?? raw.payment_proof_name ?? null,
@@ -441,6 +447,35 @@ export const approveManualPaymentApi = async (
   }
 };
 
+export const inputBillingCodeApi = async (
+  payload: InputBillingCodePayload,
+  signal?: AbortSignal,
+): Promise<ApiResponse<void>> => {
+  const { orderId, billingCode, billingExpiredAt } = payload;
+  try {
+    return await apiClient.patch<ApiResponse<void>>(
+      `/api/internal/orders/${orderId}/billing-code`,
+      { billingCode, billingExpiredAt },
+      { signal },
+    );
+  } catch (error) {
+    if (isDummyDataEnabled()) {
+      const target = DUMMY_INTERNAL_ORDERS.find((b) => b.orderId === orderId);
+      if (target) {
+        target.billingCode = billingCode;
+        target.status = "manual_pending_payment";
+      }
+      return {
+        success: true,
+        data: undefined,
+        message: "Kode billing berhasil diinput.",
+        timestamp: new Date().toISOString(),
+      };
+    }
+    throw error;
+  }
+};
+
 export const rejectOrderApi = async (
   payload: RejectOrderPayload,
   signal?: AbortSignal,
@@ -517,12 +552,15 @@ const getDummyOrderList = (
   if (params?.status && params.status !== "all") {
     filtered = filtered.filter((b) => b.status === params.status);
   } else {
-    // Default: review permintaan menampilkan status paid, processing, dan pending_review
+    // Default: review permintaan menampilkan status paid, processing, pending_review, dan manual flow
     filtered = filtered.filter(
       (b) =>
         b.status === "paid" ||
         b.status === "processing" ||
-        b.status === "pending_review",
+        b.status === "pending_review" ||
+        b.status === "pending_billing_code" ||
+        b.status === "manual_pending_payment" ||
+        b.status === "pending_manual_payment_verification",
     );
   }
   if (params?.search) {

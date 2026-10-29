@@ -20,7 +20,10 @@ export type TransactionStatusConfig = {
  */
 export type OrderStatus =
   | "requesting"
+  | "pending_billing_code"
+  | "manual_pending_payment"
   | "pending_payment"
+  | "pending_manual_payment_verification"
   | "paid"
   | "processing"
   | "wms_failed"

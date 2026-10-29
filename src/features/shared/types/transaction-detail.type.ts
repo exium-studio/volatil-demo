@@ -39,7 +39,7 @@ export type SharedTransactionRecord = {
   orderId?: string;
   transactionNumber: string;
   orderNumber?: string;
-  billingCode?: string;
+  billingCode?: string | null;
   paymentMethod?: string;
   transactionStatus: TransactionStatus;
   orderStatus?: OrderStatus;

@@ -1,6 +1,7 @@
 // src/features/internal/integration/components/simponi-config-form.tsx
 
 import { Button } from "@/design-system/components/button/ui/button";
+import { Alert } from "@/design-system/components/feedback/ui/alert";
 import { Skeleton } from "@/design-system/components/feedback/ui/skeleton";
 import { AppIcon } from "@/design-system/components/icon/ui/app-icon";
 import { Field } from "@/design-system/components/input/ui/field";
@@ -20,9 +21,9 @@ import {
 import { simponiFormSchema } from "@/features/internal/integrations/schemas/integration.schema";
 import type { SimponiFormValues } from "@/features/internal/integrations/types/integration.type";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { LandmarkIcon, SaveIcon } from "lucide-react";
+import { InfoIcon, LandmarkIcon, SaveIcon } from "lucide-react";
 import { useEffect } from "react";
-import { Controller, useForm } from "react-hook-form";
+import { Controller, useForm, useWatch } from "react-hook-form";
 
 export const SimponiConfigForm = () => {
   // Stores
@@ -45,6 +46,12 @@ export const SimponiConfigForm = () => {
       isSimulator: false,
       isEnabled: true,
     },
+  });
+
+  // Derived Values
+  const isEnabled = useWatch({
+    control: form.control,
+    name: "isEnabled",
   });
 
   // Effects
@@ -134,8 +141,30 @@ export const SimponiConfigForm = () => {
         />
       </HStack>
 
-      {/* Inputs */}
-      <VStack gap={6} align={"stretch"}>
+      {/* Manual Mode Info Alert */}
+      {!isEnabled && (
+        <Alert.Root
+          status={"info"}
+          colorPalette={"blue"}
+          variant={"subtle"}
+        >
+          <AppIcon icon={InfoIcon} />
+          <Alert.Content>
+            <Alert.Title fontWeight={"semibold"}>
+              {"Mode Manual Pembayaran SIMPONI Aktif"}
+            </Alert.Title>
+            <Alert.Description>
+              {
+                "Saat gateway SIMPONI dinonaktifkan, pembuatan kode billing beralih ke alur manual. Petugas Internal menerbitkan kode billing melalui portal resmi SIMPONI Kemenkeu dan menginputkannya ke sistem, kemudian memverifikasi bukti setor PNBP (NTPN) yang diunggah oleh Mitra."
+              }
+            </Alert.Description>
+          </Alert.Content>
+        </Alert.Root>
+      )}
+
+      {/* Inputs (Tampil jika Gateway SIMPONI aktif) */}
+      {isEnabled && (
+        <VStack gap={6} align={"stretch"}>
         <Fieldset legend={"Mode & Endpoint Gateway"} containeredContent={true}>
           <VStack gap={4} align={"stretch"} w={"full"}>
             <Field label={"Simulasi Billing Internal"}>
@@ -276,6 +305,7 @@ export const SimponiConfigForm = () => {
           </VStack>
         </Fieldset>
       </VStack>
+      )}
 
       {/* Actions */}
       <HStack justify={"flex-end"} gap={3}>

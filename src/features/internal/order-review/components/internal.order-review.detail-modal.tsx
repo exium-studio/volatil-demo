@@ -1,7 +1,6 @@
-// src/features/internal/order-review/components/internal.order-review.detail-modal.tsx
-
 import { Button } from "@/design-system/components/button/ui/button";
 import { ClipboardButton } from "@/design-system/components/data-display/ui/clipboard-button";
+import { Alert } from "@/design-system/components/feedback/ui/alert";
 import { AppIcon } from "@/design-system/components/icon/ui/app-icon";
 import { ConfirmationTrigger } from "@/design-system/components/feedback/ui/confirmation-trigger";
 import { HStack, VStack } from "@/design-system/components/layout/ui/flex-box";
@@ -14,6 +13,7 @@ import { IgtBasisBadge } from "@/features/shared/components/igt-basis.badge";
 import { OrderStatusBadge } from "@/features/shared/components/order-status.badge";
 import { SelectionTypeBadge } from "@/features/shared/components/selection-type.badge";
 import { TteBadge } from "@/features/shared/components/tte.badge";
+import { InternalOrderReviewInputBillingTrigger } from "@/features/internal/order-review/components/internal.order-review.input-billing-modal";
 import { InternalOrderReviewRejectTrigger } from "@/features/internal/order-review/components/internal.order-review.reject-modal";
 import {
   useApproveManualPayment,
@@ -37,6 +37,7 @@ import {
   HashIcon,
   LoaderIcon,
   MapPlusIcon,
+  ReceiptTextIcon,
   XCircleIcon,
 } from "lucide-react";
 import { useMemo } from "react";
@@ -78,7 +79,10 @@ const InternalOrderReviewDetailModalContent = (
 
   const isPaid = order.status === "paid";
   const isProcessing = order.status === "processing";
-  const isPending = order.status === "pending_review";
+  const isPendingBillingCode = order.status === "pending_billing_code";
+  const isPending =
+    order.status === "pending_review" ||
+    order.status === "pending_manual_payment_verification";
 
   return (
     <Modal.Content>
@@ -95,6 +99,19 @@ const InternalOrderReviewDetailModalContent = (
 
       <Modal.Body>
         <VStack align={"stretch"} gap={"md"}>
+          {/* Rejection Alert if present */}
+          {order.rejectionReason && (
+            <Alert.Root status={"warning"} colorPalette={"red"} variant={"subtle"}>
+              <AppIcon icon={XCircleIcon} />
+              <Alert.Content>
+                <Alert.Title fontWeight={"semibold"}>
+                  {"Catatan Penolakan Sebelumnya"}
+                </Alert.Title>
+                <Alert.Description>{order.rejectionReason}</Alert.Description>
+              </Alert.Content>
+            </Alert.Root>
+          )}
+
           {/* Metadata */}
           <VStack
             align={"stretch"}
@@ -378,6 +395,19 @@ const InternalOrderReviewDetailModalContent = (
               <AppIcon icon={LoaderIcon} className={"animate-spin"} />
               {"Menyiapkan Layanan WMS..."}
             </Button>
+          )}
+
+          {isPendingBillingCode && (
+            <InternalOrderReviewInputBillingTrigger
+              order={order}
+              modalKey={`input-billing-detail-${order.orderId}`}
+              onSuccess={close}
+            >
+              <Button primary={true} colorPalette={"blue"}>
+                <AppIcon icon={ReceiptTextIcon} />
+                {"Input Kode Billing"}
+              </Button>
+            </InternalOrderReviewInputBillingTrigger>
           )}
 
           {isPending && (

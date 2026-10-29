@@ -206,7 +206,11 @@ export type CartOrderItem = {
 
 export type CartOrder = {
   orderId: string;
+  orderNumber?: string;
+  billingCode?: string | null;
+  billingExpiredAt?: string | null;
   status: CartOrderStatus;
+  orderStatus?: CartOrderStatus;
   selectionType: SelectionType;
   aoiPolygon?: GeoJSON.MultiPolygon | GeoJSON.Polygon;
   kawasanCoveragePolygon?: GeoJSON.MultiPolygon | GeoJSON.Polygon;

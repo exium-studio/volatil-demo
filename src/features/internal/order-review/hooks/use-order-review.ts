@@ -7,12 +7,14 @@ import {
   createOrderProvisionEventSource,
   fetchInternalOrderDetailApi,
   fetchInternalOrdersApi,
+  inputBillingCodeApi,
   provisionOrderApi,
   rejectOrderApi,
   uploadOrderTteInvoiceApi,
 } from "@/features/internal/order-review/api/order-review.api";
 import type {
   ApproveOrderPayload,
+  InputBillingCodePayload,
   InternalOrderListQueryParams,
   ProvisionOrderPayload,
   ProvisionStreamHookResult,
@@ -135,6 +137,41 @@ export const useApproveManualPayment = () => {
 
   return useMutation({
     mutationFn: (orderId: string) => approveManualPaymentApi(orderId),
+    onMutate: toastHandlers.onLoading,
+    onSuccess: () => {
+      toastHandlers.onSuccess();
+      void queryClient.invalidateQueries({
+        queryKey: ["internal", "orders"],
+      });
+      void queryClient.invalidateQueries({
+        queryKey: ["internal", "order"],
+      });
+      void queryClient.invalidateQueries({
+        queryKey: queryKeys.internal.home.all,
+      });
+    },
+    onError: toastHandlers.onError,
+  });
+};
+
+export const useInputBillingCode = () => {
+  const queryClient = useQueryClient();
+  const toastHandlers = mutationToastHandlers("input-billing-code", {
+    group: "Penerbitan Kode Billing",
+    loadingMessage: {
+      title: "Menyimpan kode billing...",
+    },
+    successMessage: {
+      title: "Kode billing berhasil diterbitkan",
+      description: "Kode billing telah disimpan dan notifikasi telah dikirimkan ke Mitra.",
+    },
+    errorMessage: {
+      title: "Gagal menyimpan kode billing",
+    },
+  });
+
+  return useMutation({
+    mutationFn: (payload: InputBillingCodePayload) => inputBillingCodeApi(payload),
     onMutate: toastHandlers.onLoading,
     onSuccess: () => {
       toastHandlers.onSuccess();

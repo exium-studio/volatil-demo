@@ -13,6 +13,7 @@ import type {
 import type GeoJSON from "geojson";
 
 import type { ReactNode } from "react";
+import { z } from "zod";
 
 export type InternalOrderReviewRejectTriggerProps = {
   modalKey?: string;
@@ -107,12 +108,46 @@ export type InternalOrderItem = {
   workspaceInteropUrl?: string | null;
   workspaceName?: string | null;
   updatePeriods?: UpdatePeriodItem[];
+  billingCode?: string | null;
+  billingExpiredAt?: string | null;
+  billingIssuedAt?: string | null;
+  paymentSubmittedAt?: string | null;
+  paymentNotes?: string | null;
   ntpn?: string | null;
   paymentProofUrl?: string | null;
   paymentProofName?: string | null;
   isManualPayment?: boolean;
   paymentVerificationStatus?: "pending" | "approved" | "rejected";
   rejectionReason?: string | null;
+};
+
+export type InputBillingCodePayload = {
+  orderId: string;
+  billingCode: string;
+  billingExpiredAt?: string;
+};
+
+export type InternalOrderReviewInputBillingTriggerProps = {
+  modalKey?: string;
+  order: InternalOrderItem;
+  children?: ReactNode;
+  onSuccess?: () => void;
+};
+
+export const inputBillingCodeSchema = z.object({
+  billingCode: z
+    .string()
+    .min(1, "Kode billing wajib diisi")
+    .regex(/^\d{15}$/, "Kode billing SIMPONI harus terdiri dari tepat 15 digit angka"),
+  billingExpiredAt: z.string().min(1, "Batas waktu pembayaran wajib diisi"),
+});
+
+export type InputBillingCodeFormValues = z.infer<typeof inputBillingCodeSchema>;
+
+export type InternalOrderReviewInputBillingModalContentProps = {
+  order: InternalOrderItem;
+  close: () => void;
+  onSuccess?: () => void;
 };
 
 export type InternalOrderListQueryParams = PaginatedParams & {
@@ -173,8 +208,6 @@ export type ProvisionStreamHookResult = ProvisionStreamState & {
   stopListening: () => void;
   resetState: () => void;
 };
-
-import { z } from "zod";
 
 export const approveOrderSchema = z.object({
   workspaceInteropUrl: z
