@@ -134,17 +134,12 @@ export const MitraCartOrderSummary = (props: MitraCartOrderSummaryProps) => {
       },
       {
         onSuccess: (data) => {
-          if (data?.billingCode) {
-            void navigate({
-              to: "/mitra/billing/$billingCode",
-              params: { billingCode: data.billingCode },
-              search: { orderId: data.orderId },
-            });
-          } else {
-            void navigate({
-              to: "/mitra/transaction-history",
-            });
-          }
+          const billingCodeParam = data?.billingCode || "pending";
+          void navigate({
+            to: "/mitra/billing/$billingCode",
+            params: { billingCode: billingCodeParam },
+            search: data?.orderId ? { orderId: data.orderId } : undefined,
+          });
         },
       },
     );

@@ -26,6 +26,7 @@ import { ClampedHeading } from "@/design-system/components/typography/ui/heading
 import { P } from "@/design-system/components/typography/ui/p";
 import { Url } from "@/design-system/components/typography/ui/url";
 import { InternalOrderReviewApproveTrigger } from "@/features/internal/order-review/components/internal.order-review.approve-modal";
+import { InternalOrderReviewRejectTrigger } from "@/features/internal/order-review/components/internal.order-review.reject-modal";
 import {
   useInternalOrderDetailQuery,
   useOrdersProvisionStream,
@@ -63,6 +64,7 @@ import {
   HandshakeIcon,
   MapPlusIcon,
   RefreshCwIcon,
+  XCircleIcon,
 } from "lucide-react";
 import { useCallback, useEffect, useMemo, useRef } from "react";
 
@@ -435,24 +437,45 @@ export const InternalOrderReviewDetailPage = () => {
                 )}
 
                 {order.status === "pending_review" && (
-                  <InternalOrderReviewApproveTrigger
-                    order={order}
-                    modalKey={`approve-detail-${order.orderId}`}
-                    onSuccessRedirect={() => {
-                      void navigate({
-                        to: "/internal/order-review",
-                        search: (old: Record<string, unknown>) => {
-                          const { activeModalKey: _, ...rest } = old;
-                          return rest;
-                        },
-                      });
-                    }}
-                  >
-                    <Button primary={true} colorPalette={"green"}>
-                      <AppIcon icon={CheckCircleIcon} />
-                      {"Setujui Permintaan"}
-                    </Button>
-                  </InternalOrderReviewApproveTrigger>
+                  <>
+                    <InternalOrderReviewRejectTrigger
+                      order={order}
+                      modalKey={`reject-detail-${order.orderId}`}
+                      onSuccessRedirect={() => {
+                        void navigate({
+                          to: "/internal/order-review",
+                          search: (old: Record<string, unknown>) => {
+                            const { activeModalKey: _, ...rest } = old;
+                            return rest;
+                          },
+                        });
+                      }}
+                    >
+                      <Button variant={"outline"} colorPalette={"red"}>
+                        <AppIcon icon={XCircleIcon} />
+                        {"Tolak Permintaan"}
+                      </Button>
+                    </InternalOrderReviewRejectTrigger>
+
+                    <InternalOrderReviewApproveTrigger
+                      order={order}
+                      modalKey={`approve-detail-${order.orderId}`}
+                      onSuccessRedirect={() => {
+                        void navigate({
+                          to: "/internal/order-review",
+                          search: (old: Record<string, unknown>) => {
+                            const { activeModalKey: _, ...rest } = old;
+                            return rest;
+                          },
+                        });
+                      }}
+                    >
+                      <Button primary={true} colorPalette={"green"}>
+                        <AppIcon icon={CheckCircleIcon} />
+                        {"Setujui Permintaan"}
+                      </Button>
+                    </InternalOrderReviewApproveTrigger>
+                  </>
                 )}
               </HStack>
             </HStack>

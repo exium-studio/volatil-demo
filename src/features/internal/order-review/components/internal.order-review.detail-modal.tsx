@@ -14,7 +14,6 @@ import { OrderStatusBadge } from "@/features/shared/components/order-status.badg
 import { SelectionTypeBadge } from "@/features/shared/components/selection-type.badge";
 import { TteBadge } from "@/features/shared/components/tte.badge";
 import { InternalOrderReviewInputBillingTrigger } from "@/features/internal/order-review/components/internal.order-review.input-billing-modal";
-import { InternalOrderReviewApproveTrigger } from "@/features/internal/order-review/components/internal.order-review.approve-modal";
 import { InternalOrderReviewRejectTrigger } from "@/features/internal/order-review/components/internal.order-review.reject-modal";
 import {
   useApproveManualPayment,
@@ -36,6 +35,7 @@ import {
   ExternalLinkIcon,
   FileTextIcon,
   HashIcon,
+  LayersIcon,
   LoaderIcon,
   MapPlusIcon,
   ReceiptTextIcon,
@@ -467,49 +467,20 @@ const InternalOrderReviewDetailModalContent = (
           )}
 
           {isPendingReview && (
-            <>
-              {/* Tolak Permintaan */}
-              <InternalOrderReviewRejectTrigger
-                order={order}
-                modalKey={`reject-review-from-detail-${order.orderId}`}
-                onSuccessRedirect={() => {
-                  close();
-                  void navigate({
-                    to: "/internal/order-review",
-                    search: (old: Record<string, unknown>) => {
-                      const { activeModalKey: _, ...rest } = old;
-                      return rest;
-                    },
-                  });
-                }}
-              >
-                <Button variant={"outline"} colorPalette={"red"}>
-                  <AppIcon icon={XCircleIcon} />
-                  {"Tolak Permintaan"}
-                </Button>
-              </InternalOrderReviewRejectTrigger>
-
-              {/* Setujui Permintaan (Input Workspace Interop URL) */}
-              <InternalOrderReviewApproveTrigger
-                order={order}
-                modalKey={`approve-review-from-detail-${order.orderId}`}
-                onSuccessRedirect={() => {
-                  close();
-                  void navigate({
-                    to: "/internal/order-review",
-                    search: (old: Record<string, unknown>) => {
-                      const { activeModalKey: _, ...rest } = old;
-                      return rest;
-                    },
-                  });
-                }}
-              >
-                <Button primary={true} colorPalette={"green"}>
-                  <AppIcon icon={CheckCircleIcon} />
-                  {"Setujui Permintaan"}
-                </Button>
-              </InternalOrderReviewApproveTrigger>
-            </>
+            <Button
+              primary={true}
+              colorPalette={"blue"}
+              onClick={() => {
+                close();
+                void navigate({
+                  to: "/internal/order-review/$orderId",
+                  params: { orderId: order.orderId },
+                });
+              }}
+            >
+              <AppIcon icon={LayersIcon} />
+              {"Buka Peta & Data IGT"}
+            </Button>
           )}
         </HStack>
       </Modal.Footer>

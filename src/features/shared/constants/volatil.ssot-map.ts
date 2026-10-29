@@ -249,7 +249,7 @@ export const ORDER_STATUS_MAP: Record<OrderStatus, OrderStatusConfig> = {
     noticeDescription: "Menunggu penerbitan Kode Billing oleh Petugas ATR/BPN...",
   },
   manual_pending_payment: {
-    label: "Menunggu Pembayaran",
+    label: "Menunggu Pembayaran (Manual)",
     colorPalette: "orange",
     icon: LandmarkIcon,
     iconColor: "orange.fg",
@@ -257,7 +257,7 @@ export const ORDER_STATUS_MAP: Record<OrderStatus, OrderStatusConfig> = {
       "Silakan lakukan pembayaran dengan Kode Billing dan unggah bukti bayar.",
   },
   pending_manual_payment_verification: {
-    label: "Menunggu Verifikasi Pembayaran",
+    label: "Menunggu Verifikasi Manual",
     colorPalette: "purple",
     icon: HourglassIcon,
     iconColor: "purple.fg",
