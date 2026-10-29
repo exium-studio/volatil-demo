@@ -30,7 +30,7 @@ export const Fieldset = forwardRef<HTMLFieldSetElement, FieldsetProps>(
                 p={"md"}
                 border={"1px solid"}
                 borderColor={"border"}
-                rounded={theme.radii.component}
+                rounded={theme.radii.container}
               >
                 {children}
               </VStack>

@@ -106,12 +106,12 @@ export const SmtpConfigForm = () => {
       <VStack
         as={"form"}
         onSubmit={form.handleSubmit(onSubmit)}
-      gap={6}
-      w={"full"}
-      align={"stretch"}
-    >
-      {/* Banner */}
-      {/* <HStack
+        gap={6}
+        w={"full"}
+        align={"stretch"}
+      >
+        {/* Banner */}
+        {/* <HStack
         p={4}
         rounded={theme.radii.component}
         bg={"bg.subtle"}
@@ -143,201 +143,205 @@ export const SmtpConfigForm = () => {
         </Button>
       </HStack> */}
 
-      {/* Inputs */}
-      <VStack gap={6} align={"stretch"}>
-        <Fieldset
-          legend={"Konfigurasi Server & Port"}
-          containeredContent={true}
-        >
-          <VStack gap={4} align={"stretch"} w={"full"}>
-            <Field
-              label={"SMTP Host Server"}
-              helperText={
-                "Contoh: smtp.atrbpn.go.id, smtp.gmail.com, atau mail-relay internal"
-              }
-              errorText={form.formState.errors.host?.message}
-              w={"full"}
-            >
-              <Input
-                placeholder={"smtp.atrbpn.go.id"}
-                {...form.register("host")}
+        {/* Inputs */}
+        <VStack gap={6} align={"stretch"}>
+          <Fieldset
+            legend={"Konfigurasi Server & Port"}
+            containeredContent={true}
+          >
+            <VStack gap={4} align={"stretch"} w={"full"}>
+              <Field
+                label={"SMTP Host Server"}
+                helperText={
+                  "Contoh: smtp.atrbpn.go.id, smtp.gmail.com, atau mail-relay internal"
+                }
+                errorText={form.formState.errors.host?.message}
                 w={"full"}
-              />
-            </Field>
-
-            <Field
-              label={"Port"}
-              helperText={
-                "Port SMTP (misal: 587 untuk STARTTLS, 465 untuk SSL)"
-              }
-              errorText={form.formState.errors.port?.message}
-              w={"full"}
-            >
-              <Controller
-                control={form.control}
-                name={"port"}
-                render={({ field }) => (
-                  <NumberInput
-                    value={
-                      field.value !== undefined ? String(field.value) : "587"
-                    }
-                    onValueChange={(val) => field.onChange(Number(val.value))}
-                    placeholder={"587"}
-                    w={"full"}
-                  />
-                )}
-              />
-            </Field>
-
-            <Field
-              label={"Protokol Keamanan (Encryption)"}
-              helperText={"Metode enkripsi sambungan"}
-              errorText={form.formState.errors.security?.message}
-              w={"full"}
-            >
-              <Controller
-                control={form.control}
-                name={"security"}
-                render={({ field }) => (
-                  <SelectInput
-                    value={field.value}
-                    onValueChange={(val) => field.onChange(val as SmtpSecurity)}
-                    options={SECURITY_OPTIONS}
-                    clearable={false}
-                  />
-                )}
-              />
-            </Field>
-
-            <Field label={"Verifikasi Sertifikat SSL"}>
-              <HStack
-                justify={"space-between"}
-                align={"center"}
-                w={"full"}
-                py={1}
-                gap={"md"}
               >
-                <VStack gap={0} align={"start"}>
-                  <P fontSize={"sm"} fontWeight={"medium"}>
-                    {"Reject Unauthorized Certificate"}
-                  </P>
+                <Input
+                  placeholder={"smtp.atrbpn.go.id"}
+                  {...form.register("host")}
+                  w={"full"}
+                />
+              </Field>
 
-                  <P fontSize={"xs"} color={"fg.muted"}>
-                    {
-                      "Nonaktifkan jika mail server internal dinas memakai sertifikat self-signed atau private CA."
-                    }
-                  </P>
-                </VStack>
-
+              <Field
+                label={"Port"}
+                helperText={
+                  "Port SMTP (misal: 587 untuk STARTTLS, 465 untuk SSL)"
+                }
+                errorText={form.formState.errors.port?.message}
+                w={"full"}
+              >
                 <Controller
                   control={form.control}
-                  name={"rejectUnauthorized"}
+                  name={"port"}
                   render={({ field }) => (
-                    <Switch
-                      checked={field.value}
-                      onCheckedChange={({ checked }) => field.onChange(checked)}
+                    <NumberInput
+                      value={
+                        field.value !== undefined ? String(field.value) : "587"
+                      }
+                      onValueChange={(val) => field.onChange(Number(val.value))}
+                      placeholder={"587"}
+                      w={"full"}
                     />
                   )}
                 />
-              </HStack>
-            </Field>
-          </VStack>
-        </Fieldset>
+              </Field>
 
-        <Fieldset legend={"Autentikasi Kredensial"} containeredContent={true}>
-          <VStack gap={4} align={"stretch"} w={"full"}>
-            <Field
-              label={"Username / API User"}
-              helperText={
-                "Akun autentikasi pengirim email (bisa berupa alamat email lengkap)"
-              }
-              errorText={form.formState.errors.user?.message}
-              w={"full"}
-            >
-              <Input
-                placeholder={"noreply@atrbpn.go.id"}
-                {...form.register("user")}
+              <Field
+                label={"Protokol Keamanan (Encryption)"}
+                helperText={"Metode enkripsi sambungan"}
+                errorText={form.formState.errors.security?.message}
                 w={"full"}
-              />
-            </Field>
+              >
+                <Controller
+                  control={form.control}
+                  name={"security"}
+                  render={({ field }) => (
+                    <SelectInput
+                      value={field.value}
+                      onValueChange={(val) =>
+                        field.onChange(val as SmtpSecurity)
+                      }
+                      options={SECURITY_OPTIONS}
+                      clearable={false}
+                    />
+                  )}
+                />
+              </Field>
 
-            <Field
-              label={"Password / App Password"}
-              helperText={"Kata sandi akun email atau App Password/API Token"}
-              errorText={form.formState.errors.password?.message}
-              w={"full"}
-            >
-              <PasswordInput
-                placeholder={"••••••••••••••••••••••••"}
-                {...form.register("password")}
-                w={"full"}
-              />
-            </Field>
-          </VStack>
-        </Fieldset>
+              <Field label={"Verifikasi Sertifikat SSL"}>
+                <HStack
+                  justify={"space-between"}
+                  align={"center"}
+                  w={"full"}
+                  py={1}
+                  gap={"md"}
+                >
+                  <VStack gap={0} align={"start"}>
+                    <P fontSize={"sm"} fontWeight={"medium"}>
+                      {"Reject Unauthorized Certificate"}
+                    </P>
 
-        <Fieldset legend={"Identitas Pengirim"} containeredContent={true}>
-          <VStack gap={4} align={"stretch"} w={"full"}>
-            <Field
-              label={"Email Pengirim (From Email)"}
-              helperText={
-                "Gunakan email kedinasan atau domain yang terverifikasi SPF/DKIM di provider SMTP. Jika menggunakan relay seperti Brevo dengan domain publik (@gmail.com), provider otomatis me-rewrite sender domain untuk menghindari penolakan DMARC."
-              }
-              errorText={form.formState.errors.fromEmail?.message}
-              w={"full"}
-            >
-              <Input
-                placeholder={"noreply@atrbpn.go.id"}
-                {...form.register("fromEmail")}
-                w={"full"}
-              />
-            </Field>
+                    <P fontSize={"xs"} color={"fg.muted"}>
+                      {
+                        "Nonaktifkan jika mail server internal dinas memakai sertifikat self-signed atau private CA."
+                      }
+                    </P>
+                  </VStack>
 
-            <Field
-              label={"Nama Pengirim (From Name)"}
-              helperText={"Label nama tampilan"}
-              errorText={form.formState.errors.fromName?.message}
-              w={"full"}
-            >
-              <Input
-                placeholder={"Volatil ATR/BPN"}
-                {...form.register("fromName")}
+                  <Controller
+                    control={form.control}
+                    name={"rejectUnauthorized"}
+                    render={({ field }) => (
+                      <Switch
+                        checked={field.value}
+                        onCheckedChange={({ checked }) =>
+                          field.onChange(checked)
+                        }
+                      />
+                    )}
+                  />
+                </HStack>
+              </Field>
+            </VStack>
+          </Fieldset>
+
+          <Fieldset legend={"Autentikasi Kredensial"} containeredContent={true}>
+            <VStack gap={4} align={"stretch"} w={"full"}>
+              <Field
+                label={"Username / API User"}
+                helperText={
+                  "Akun autentikasi pengirim email (bisa berupa alamat email lengkap)"
+                }
+                errorText={form.formState.errors.user?.message}
                 w={"full"}
-              />
-            </Field>
-          </VStack>
-        </Fieldset>
+              >
+                <Input
+                  placeholder={"noreply@atrbpn.go.id"}
+                  {...form.register("user")}
+                  w={"full"}
+                />
+              </Field>
+
+              <Field
+                label={"Password / App Password"}
+                helperText={"Kata sandi akun email atau App Password/API Token"}
+                errorText={form.formState.errors.password?.message}
+                w={"full"}
+              >
+                <PasswordInput
+                  placeholder={"••••••••••••••••••••••••"}
+                  {...form.register("password")}
+                  w={"full"}
+                />
+              </Field>
+            </VStack>
+          </Fieldset>
+
+          <Fieldset legend={"Identitas Pengirim"} containeredContent={true}>
+            <VStack gap={4} align={"stretch"} w={"full"}>
+              <Field
+                label={"Email Pengirim (From Email)"}
+                helperText={
+                  "Gunakan email kedinasan atau domain yang terverifikasi SPF/DKIM di provider SMTP. Jika menggunakan relay seperti Brevo dengan domain publik (@gmail.com), provider otomatis me-rewrite sender domain untuk menghindari penolakan DMARC."
+                }
+                errorText={form.formState.errors.fromEmail?.message}
+                w={"full"}
+              >
+                <Input
+                  placeholder={"noreply@atrbpn.go.id"}
+                  {...form.register("fromEmail")}
+                  w={"full"}
+                />
+              </Field>
+
+              <Field
+                label={"Nama Pengirim (From Name)"}
+                helperText={"Label nama tampilan"}
+                errorText={form.formState.errors.fromName?.message}
+                w={"full"}
+              >
+                <Input
+                  placeholder={"Volatil ATR/BPN"}
+                  {...form.register("fromName")}
+                  w={"full"}
+                />
+              </Field>
+            </VStack>
+          </Fieldset>
+        </VStack>
+
+        <Separator borderColor={"border.subtle"} />
+
+        {/* Actions */}
+        <HStack justify={"flex-end"} gap={3}>
+          <Button
+            type={"button"}
+            variant={"outline"}
+            onClick={() => openTestModal()}
+          >
+            <AppIcon icon={MailCheckIcon} />
+            {"Uji Coba Kirim"}
+          </Button>
+
+          <Button
+            type={"submit"}
+            primary={true}
+            loading={updateMutation.isPending || isLoading}
+          >
+            <AppIcon icon={SaveIcon} />
+            {"Simpan Konfigurasi"}
+          </Button>
+        </HStack>
       </VStack>
 
-      <Separator borderColor={"border.subtle"} />
-
-      {/* Actions */}
-      <HStack justify={"flex-end"} gap={3}>
-        <Button
-          type={"button"}
-          variant={"outline"}
-          onClick={() => openTestModal()}
-        >
-          <AppIcon icon={MailCheckIcon} />
-          {"Uji Coba Kirim"}
-        </Button>
-
-        <Button
-          type={"submit"}
-          primary={true}
-          loading={updateMutation.isPending || isLoading}
-        >
-          <AppIcon icon={SaveIcon} />
-          {"Simpan Konfigurasi"}
-        </Button>
-      </HStack>
-    </VStack>
-
-    {/* Test Email Modal */}
-    <SmtpTestModal
-      modalKey={TEST_MODAL_KEY}
-      currentConfig={form.getValues()}
-    />
-  </>
-);
+      {/* Test Email Modal */}
+      <SmtpTestModal
+        modalKey={TEST_MODAL_KEY}
+        currentConfig={form.getValues()}
+      />
+    </>
+  );
 };
