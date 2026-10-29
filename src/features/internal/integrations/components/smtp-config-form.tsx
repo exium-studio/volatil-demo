@@ -102,9 +102,10 @@ export const SmtpConfigForm = () => {
   }
 
   return (
-    <VStack
-      as={"form"}
-      onSubmit={form.handleSubmit(onSubmit)}
+    <>
+      <VStack
+        as={"form"}
+        onSubmit={form.handleSubmit(onSubmit)}
       gap={6}
       w={"full"}
       align={"stretch"}
@@ -330,12 +331,13 @@ export const SmtpConfigForm = () => {
           {"Simpan Konfigurasi"}
         </Button>
       </HStack>
-
-      {/* Test Email Modal */}
-      <SmtpTestModal
-        modalKey={TEST_MODAL_KEY}
-        currentConfig={form.getValues()}
-      />
     </VStack>
-  );
+
+    {/* Test Email Modal */}
+    <SmtpTestModal
+      modalKey={TEST_MODAL_KEY}
+      currentConfig={form.getValues()}
+    />
+  </>
+);
 };
