@@ -463,7 +463,7 @@ export const DateInput = memo(
           cursor={"text"}
           {...(isFloatingVariant &&
             floatingLabel && {
-              pt: "16px",
+              pt: "22px",
             })}
         >
           {fieldOrder.map((field, idx) => (
