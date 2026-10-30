@@ -14,7 +14,11 @@ import {
   useModalContext,
 } from "@/design-system/components/overlay/ui/modal";
 import { P, TNum } from "@/design-system/components/typography/ui/p";
-import { useInputBillingCode } from "@/features/internal/order-review/hooks/use-order-review";
+import {
+  useInputBillingCode,
+  useSyncSimponiOrder,
+} from "@/features/internal/order-review/hooks/use-order-review";
+import { useSimponiIntegrationQuery } from "@/features/internal/integrations/hooks/use-integration.query";
 import {
   inputBillingCodeSchema,
   type InputBillingCodeFormValues,
@@ -23,7 +27,7 @@ import {
 } from "@/features/internal/order-review/types/order-review.type";
 import { formatCurrency } from "@/shared/utils/formatter/number.formatter";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { InfoIcon } from "lucide-react";
+import { InfoIcon, SparklesIcon } from "lucide-react";
 import { useState } from "react";
 import { Controller, useForm } from "react-hook-form";
 
@@ -67,8 +71,15 @@ export const InternalOrderReviewInputBillingModalContent = (
   // Props
   const { order, close, onSuccess } = props;
 
+  // Hooks
+  const { data: simponiConfig } = useSimponiIntegrationQuery();
+
   // Mutations
   const inputBillingMutation = useInputBillingCode();
+  const syncSimponiMutation = useSyncSimponiOrder();
+
+  // Derived Values
+  const isSimponiEnabled = Boolean(simponiConfig?.isEnabled);
 
   // States
   const [initialBillingExpiredAt] = useState(() => {
@@ -96,6 +107,15 @@ export const InternalOrderReviewInputBillingModalContent = (
   });
 
   // Handlers
+  const handleSyncSimponi = () => {
+    syncSimponiMutation.mutate(order.orderId, {
+      onSuccess: () => {
+        close();
+        onSuccess?.();
+      },
+    });
+  };
+
   const onSubmit = (values: InputBillingCodeFormValues) => {
     inputBillingMutation.mutate(
       {
@@ -134,6 +154,45 @@ export const InternalOrderReviewInputBillingModalContent = (
       >
         <Modal.Body>
           <VStack align={"stretch"} gap={"md"}>
+            {/* Sync SIMPONI Option (Jika Integrasi Aktif) */}
+            {isSimponiEnabled && (
+              <VStack
+                align={"stretch"}
+                gap={"xs"}
+                p={"sm"}
+                bg={"blue.subtle"}
+                rounded={"md"}
+                borderWidth={"1px"}
+                borderColor={"blue.muted"}
+              >
+                <HStack
+                  justify={"space-between"}
+                  align={"center"}
+                  flexWrap={"wrap"}
+                  gap={"xs"}
+                >
+                  <VStack align={"start"} gap={0}>
+                    <P fontWeight={"semibold"} fontSize={"xs"} color={"blue.fg"}>
+                      {"Integrasi SIMPONI Aktif"}
+                    </P>
+                    <P fontSize={"2xs"} color={"fg.muted"}>
+                      {"Dapat diterbitkan otomatis langsung via API Kemenkeu"}
+                    </P>
+                  </VStack>
+
+                  <Button
+                    size={"sm"}
+                    colorPalette={"blue"}
+                    loading={syncSimponiMutation.isPending}
+                    onClick={handleSyncSimponi}
+                  >
+                    <AppIcon icon={SparklesIcon} />
+                    {"Generate via SIMPONI"}
+                  </Button>
+                </HStack>
+              </VStack>
+            )}
+
             {/* Instruction Alert */}
             <Alert.Root
               status={"info"}

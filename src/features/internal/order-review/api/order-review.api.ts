@@ -476,6 +476,39 @@ export const inputBillingCodeApi = async (
   }
 };
 
+export const syncSimponiApi = async (
+  orderId: string,
+  signal?: AbortSignal,
+): Promise<ApiResponse<{ billingCode: string; billingExpiredAt: string }>> => {
+  try {
+    return await apiClient.post<
+      ApiResponse<{ billingCode: string; billingExpiredAt: string }>
+    >(`/api/internal/orders/${orderId}/sync-simponi`, {}, { signal });
+  } catch (error) {
+    if (isDummyDataEnabled()) {
+      const target = DUMMY_INTERNAL_ORDERS.find((b) => b.orderId === orderId);
+      const generatedCode = `8${new Date().toISOString().slice(0, 10).replace(/-/g, "")}${Math.floor(100000 + Math.random() * 900000)}`;
+      const expDate = new Date();
+      expDate.setDate(expDate.getDate() + 7);
+      if (target) {
+        target.billingCode = generatedCode;
+        target.billingExpiredAt = expDate.toISOString();
+        target.status = "pending_payment";
+      }
+      return {
+        success: true,
+        data: {
+          billingCode: generatedCode,
+          billingExpiredAt: expDate.toISOString(),
+        },
+        message: "Kode billing berhasil di-sync dari SIMPONI.",
+        timestamp: new Date().toISOString(),
+      };
+    }
+    throw error;
+  }
+};
+
 export const rejectOrderApi = async (
   payload: RejectOrderPayload,
   signal?: AbortSignal,

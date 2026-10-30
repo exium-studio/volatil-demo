@@ -10,6 +10,7 @@ import {
   inputBillingCodeApi,
   provisionOrderApi,
   rejectOrderApi,
+  syncSimponiApi,
   uploadOrderTteInvoiceApi,
 } from "@/features/internal/order-review/api/order-review.api";
 import type {
@@ -172,6 +173,41 @@ export const useInputBillingCode = () => {
 
   return useMutation({
     mutationFn: (payload: InputBillingCodePayload) => inputBillingCodeApi(payload),
+    onMutate: toastHandlers.onLoading,
+    onSuccess: () => {
+      toastHandlers.onSuccess();
+      void queryClient.invalidateQueries({
+        queryKey: ["internal", "orders"],
+      });
+      void queryClient.invalidateQueries({
+        queryKey: ["internal", "order"],
+      });
+      void queryClient.invalidateQueries({
+        queryKey: queryKeys.internal.home.all,
+      });
+    },
+    onError: toastHandlers.onError,
+  });
+};
+
+export const useSyncSimponiOrder = () => {
+  const queryClient = useQueryClient();
+  const toastHandlers = mutationToastHandlers("sync-simponi-order", {
+    group: "Sinkronisasi SIMPONI",
+    loadingMessage: {
+      title: "Menghubungkan ke SIMPONI Kemenkeu...",
+    },
+    successMessage: {
+      title: "Kode billing berhasil diterbitkan",
+      description: "Kode billing telah diterbitkan otomatis via SIMPONI Kemenkeu.",
+    },
+    errorMessage: {
+      title: "Gagal melakukan sinkronisasi SIMPONI",
+    },
+  });
+
+  return useMutation({
+    mutationFn: (orderId: string) => syncSimponiApi(orderId),
     onMutate: toastHandlers.onLoading,
     onSuccess: () => {
       toastHandlers.onSuccess();
