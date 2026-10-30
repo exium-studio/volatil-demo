@@ -138,7 +138,7 @@ export const inputBillingCodeSchema = z.object({
   billingCode: z
     .string()
     .min(1, "Kode billing wajib diisi")
-    .regex(/^\d{15}$/, "Kode billing SIMPONI harus terdiri dari tepat 15 digit angka"),
+    .max(50, "Kode billing maksimal 50 karakter"),
   billingExpiredAt: z.string().min(1, "Batas waktu pembayaran wajib diisi"),
 });
 

@@ -3,11 +3,7 @@
 import { z } from "zod";
 
 export const manualPaymentProofSchema = z.object({
-  ntpn: z
-    .string()
-    .min(1, "NTPN wajib diisi")
-    .length(16, "NTPN harus tepat 16 karakter alfanumerik")
-    .regex(/^[A-Z0-9]{16}$/, "NTPN harus berupa 16 karakter alfanumerik huruf kapital dan angka"),
+  ntpn: z.string().optional(),
   paidAt: z.string().min(1, "Tanggal bayar wajib diisi"),
   paymentProof: z
     .custom<File>((val) => val instanceof File, "Bukti pembayaran wajib diunggah")

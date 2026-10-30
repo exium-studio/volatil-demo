@@ -9,15 +9,18 @@ import { FileInput } from "@/design-system/components/input/ui/file-input";
 import { Input } from "@/design-system/components/input/ui/input";
 import { HStack, VStack } from "@/design-system/components/layout/ui/flex-box";
 import { usePopModal } from "@/design-system/components/overlay/hooks/use-pop-modal";
-import { Modal, useModalContext } from "@/design-system/components/overlay/ui/modal";
+import {
+  Modal,
+  useModalContext,
+} from "@/design-system/components/overlay/ui/modal";
 import { P } from "@/design-system/components/typography/ui/p";
-import { useSubmitManualPaymentProof } from "@/features/mitra/cart/hooks/use-mitra-cart";
 import {
   manualPaymentProofSchema,
   type ManualPaymentProofFormValues,
   type ManualPaymentProofModalContentProps,
   type ManualPaymentProofTriggerProps,
 } from "@/features/mitra/billing/types/manual-payment.type";
+import { useSubmitManualPaymentProof } from "@/features/mitra/cart/hooks/use-mitra-cart";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { InfoIcon, UploadCloudIcon } from "lucide-react";
 import { Controller, useForm } from "react-hook-form";
@@ -77,7 +80,6 @@ export const ManualPaymentProofModalContent = (
     control,
     handleSubmit,
     register,
-    setValue,
     formState: { errors },
   } = useForm<ManualPaymentProofFormValues>({
     resolver: zodResolver(manualPaymentProofSchema),
@@ -93,7 +95,7 @@ export const ManualPaymentProofModalContent = (
     submitProofMutation.mutate(
       {
         orderId,
-        ntpn: values.ntpn.toUpperCase().trim(),
+        ntpn: (values.ntpn || "").toUpperCase().trim(),
         paidAt: values.paidAt,
         paymentProofFile: values.paymentProof,
       },
@@ -110,10 +112,12 @@ export const ManualPaymentProofModalContent = (
     <Modal.Content>
       <Modal.Header>
         <Modal.CloseButton />
+
         <VStack gap={"2xs"}>
           <Modal.Title>{"Konfirmasi & Unggah Bukti Pembayaran"}</Modal.Title>
-          <P fontSize={"xs"} textAlign={"center"} color={"fg.muted"}>
-            {`Kode Billing: ${billingCode}`}
+
+          <P fontSize={"sm"} textAlign={"center"} color={"fg.muted"}>
+            {`Kode Billing: ${billingCode ?? "-"}`}
           </P>
         </VStack>
       </Modal.Header>
@@ -121,35 +125,31 @@ export const ManualPaymentProofModalContent = (
       <VStack as={"form"} onSubmit={handleSubmit(onSubmit)} align={"stretch"}>
         <Modal.Body>
           <VStack align={"stretch"} gap={"md"}>
-            <Alert.Root status={"info"} colorPalette={"blue"} variant={"subtle"}>
+            <Alert.Root
+              status={"info"}
+              colorPalette={"blue"}
+              variant={"subtle"}
+            >
               <AppIcon icon={InfoIcon} />
               <Alert.Description>
                 {
-                  "Unggah struk atau bukti transfer pembayaran PNBP dan cantumkan 16 digit NTPN resmi dari bank/pos persepsi untuk diverifikasi petugas ATR/BPN."
+                  "Unggah bukti transfer atau struk pembayaran PNBP untuk diverifikasi oleh petugas ATR/BPN."
                 }
               </Alert.Description>
             </Alert.Root>
 
-            {/* Field NTPN */}
+            {/* Field NTPN / Referensi */}
             <Field
-              label={"Nomor Transaksi Penerimaan Negara (NTPN)"}
+              label={"Nomor Referensi Transaksi / NTPN (Opsional)"}
               invalid={Boolean(errors.ntpn)}
               errorText={errors.ntpn?.message}
-              helperText={"16 karakter alfanumerik huruf kapital dan angka"}
+              helperText={
+                "Nomor transaksi bank, referensi transfer, atau NTPN jika ada"
+              }
             >
               <Input
-                {...register("ntpn", {
-                  onChange: (e) => {
-                    const uppercaseVal = (e.target.value as string)
-                      .toUpperCase()
-                      .replace(/[^A-Z0-9]/g, "")
-                      .slice(0, 16);
-                    setValue("ntpn", uppercaseVal, { shouldValidate: true });
-                  },
-                })}
-                placeholder={"Contoh: 8B4F19E3A7029CD1".replace("Contoh: ", "")}
-                maxLength={16}
-                autoCapitalize={"characters"}
+                {...register("ntpn")}
+                placeholder={"8B4F19E3A7029CD1"}
                 fontFamily={"mono"}
                 w={"full"}
               />
@@ -167,7 +167,9 @@ export const ManualPaymentProofModalContent = (
                 >
                   <DateInput
                     modalKey={`${parentModalKey}.paidAt`}
-                    datePickerSubtitle={"Pilih tanggal penyetoran pembayaran PNBP"}
+                    datePickerSubtitle={
+                      "Pilih tanggal penyetoran pembayaran PNBP"
+                    }
                     value={field.value}
                     onValueChange={(val) => {
                       field.onChange(val ?? "");

@@ -319,8 +319,7 @@ export const InternalOrderReviewInputBillingModalContent = (
               }
             >
               <Input
-                placeholder={"Contoh: 820261029000123"}
-                maxLength={15}
+                placeholder={"820261029000123"}
                 autoFocus={true}
                 {...register("billingCode")}
               />
