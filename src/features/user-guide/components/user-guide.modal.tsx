@@ -15,6 +15,7 @@ import { ExternalLink } from "@/design-system/components/navigation/ui/link";
 import { usePopModal } from "@/design-system/components/overlay/hooks/use-pop-modal";
 import { Modal } from "@/design-system/components/overlay/ui/modal";
 import { Badge } from "@/design-system/components/typography/ui/badge";
+import { Heading } from "@/design-system/components/typography/ui/heading";
 import { ClampedP, P } from "@/design-system/components/typography/ui/p";
 import { DownloadTrigger } from "@/design-system/components/utilities/ui/download-trigger";
 import { useMountTimeout } from "@/design-system/hooks/use-mount-timeout";
@@ -233,9 +234,7 @@ const UserGuideModalContent = (props: {
                         flex={1}
                         minW={0}
                       >
-                        <ClampedP fontWeight={"semibold"} lineClamp={1}>
-                          {guide.title}
-                        </ClampedP>
+                        <Heading>{guide.title}</Heading>
 
                         <P fontSize={"sm"} color={"fg.muted"}>
                           {guide.version}

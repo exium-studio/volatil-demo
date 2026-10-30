@@ -260,14 +260,15 @@ export type CheckoutOrderRequest = {
 
 export type CheckoutOrderResponse = {
   orderId: string;
-  transactionNumber: string;
-  orderNumber: string;
-  billingCode: string;
+  transactionNumber?: string;
+  orderNumber?: string;
+  billingCode?: string | null;
   paymentMethod?: string;
-  totalAmount: number;
-  status: "pending";
-  createdAt: string;
-  billingExpiredAt: string;
+  totalAmount?: number;
+  status: string;
+  orderStatus?: CartOrderStatus;
+  createdAt?: string;
+  billingExpiredAt?: string | null;
 };
 
 export type CheckPaymentStatusResponse = {
