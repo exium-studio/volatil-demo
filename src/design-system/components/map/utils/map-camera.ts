@@ -58,16 +58,20 @@ export const fitBoundsSafe = (
       return;
     }
 
+    const fitBoundsOptions: maplibregl.FitBoundsOptions = {
+      padding: options?.padding ?? 80,
+      duration: options?.duration ?? 1200,
+    };
+    if (options?.maxZoom !== undefined) {
+      fitBoundsOptions.maxZoom = options.maxZoom;
+    }
+
     map.fitBounds(
       [
         [minLng, minLat],
         [maxLng, maxLat],
       ],
-      {
-        padding: options?.padding ?? 80,
-        maxZoom: options?.maxZoom ?? 16,
-        duration: options?.duration ?? 1200,
-      },
+      fitBoundsOptions,
     );
   } catch (error) {
     console.warn("fitBoundsSafe failed:", error);

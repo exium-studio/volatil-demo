@@ -53,5 +53,7 @@ export type FocusSelectInputProps = Omit<
   children?:
     | React.ReactNode
     | ((params: FocusSelectTriggerRenderParams) => React.ReactNode);
+  /** When true, automatically focuses the search input when modal opens. Defaults to false. */
+  autoFocusSearch?: boolean;
   renderOption?: (option: FocusSelectOption) => React.ReactNode;
 };

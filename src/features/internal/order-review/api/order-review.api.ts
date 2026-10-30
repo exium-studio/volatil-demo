@@ -201,6 +201,10 @@ export const fetchInternalOrdersApi = async (
   params?: InternalOrderListQueryParams,
   signal?: AbortSignal,
 ): Promise<InternalOrderListResponse> => {
+  if (isDummyDataEnabled()) {
+    return getDummyOrderList(params);
+  }
+
   try {
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     const response: any = await apiClient.get("/api/internal/interop/orders", {
@@ -295,6 +299,14 @@ export const fetchInternalOrderDetailApi = async (
   orderId: string,
   signal?: AbortSignal,
 ): Promise<InternalOrderItem | null> => {
+  if (isDummyDataEnabled()) {
+    return (
+      DUMMY_INTERNAL_ORDERS.find((b) => b.orderId === orderId) ??
+      getDummyOrderList().items[0] ??
+      null
+    );
+  }
+
   try {
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     const response: any = await apiClient.get(
@@ -394,6 +406,21 @@ export const approveOrderApi = async (
   signal?: AbortSignal,
 ): Promise<ApiResponse<void>> => {
   const { orderId, workspaceInteropUrl } = payload;
+  if (isDummyDataEnabled()) {
+    const target = DUMMY_INTERNAL_ORDERS.find((b) => b.orderId === orderId);
+    if (target) {
+      target.status = "paid";
+      target.workspaceInteropUrl = workspaceInteropUrl;
+      target.paymentVerificationStatus = "approved";
+    }
+    return {
+      success: true,
+      data: undefined,
+      message: "Pesanan berhasil disetujui.",
+      timestamp: new Date().toISOString(),
+    };
+  }
+
   try {
     return await apiClient.put<ApiResponse<void>>(
       `/api/internal/interop/orders/${orderId}/approve`,
@@ -423,6 +450,20 @@ export const approveManualPaymentApi = async (
   orderId: string,
   signal?: AbortSignal,
 ): Promise<ApiResponse<void>> => {
+  if (isDummyDataEnabled()) {
+    const target = DUMMY_INTERNAL_ORDERS.find((b) => b.orderId === orderId);
+    if (target) {
+      target.status = "paid";
+      target.paymentVerificationStatus = "approved";
+    }
+    return {
+      success: true,
+      data: undefined,
+      message: "Pembayaran manual berhasil disetujui.",
+      timestamp: new Date().toISOString(),
+    };
+  }
+
   try {
     return await apiClient.post<ApiResponse<void>>(
       `/api/internal/orders/${orderId}/approve-payment`,
@@ -452,6 +493,20 @@ export const inputBillingCodeApi = async (
   signal?: AbortSignal,
 ): Promise<ApiResponse<void>> => {
   const { orderId, billingCode, billingExpiredAt } = payload;
+  if (isDummyDataEnabled()) {
+    const target = DUMMY_INTERNAL_ORDERS.find((b) => b.orderId === orderId);
+    if (target) {
+      target.billingCode = billingCode;
+      target.status = "manual_pending_payment";
+    }
+    return {
+      success: true,
+      data: undefined,
+      message: "Kode billing berhasil diinput.",
+      timestamp: new Date().toISOString(),
+    };
+  }
+
   try {
     return await apiClient.patch<ApiResponse<void>>(
       `/api/internal/orders/${orderId}/billing-code`,
@@ -480,6 +535,27 @@ export const syncSimponiApi = async (
   orderId: string,
   signal?: AbortSignal,
 ): Promise<ApiResponse<{ billingCode: string; billingExpiredAt: string }>> => {
+  if (isDummyDataEnabled()) {
+    const target = DUMMY_INTERNAL_ORDERS.find((b) => b.orderId === orderId);
+    const generatedCode = `8${new Date().toISOString().slice(0, 10).replace(/-/g, "")}${Math.floor(100000 + Math.random() * 900000)}`;
+    const expDate = new Date();
+    expDate.setDate(expDate.getDate() + 7);
+    if (target) {
+      target.billingCode = generatedCode;
+      target.billingExpiredAt = expDate.toISOString();
+      target.status = "pending_payment";
+    }
+    return {
+      success: true,
+      data: {
+        billingCode: generatedCode,
+        billingExpiredAt: expDate.toISOString(),
+      },
+      message: "Kode billing berhasil di-sync dari SIMPONI.",
+      timestamp: new Date().toISOString(),
+    };
+  }
+
   try {
     return await apiClient.post<
       ApiResponse<{ billingCode: string; billingExpiredAt: string }>
@@ -514,6 +590,20 @@ export const rejectOrderApi = async (
   signal?: AbortSignal,
 ): Promise<ApiResponse<void>> => {
   const { orderId, reason } = payload;
+  if (isDummyDataEnabled()) {
+    const target = DUMMY_INTERNAL_ORDERS.find((b) => b.orderId === orderId);
+    if (target) {
+      target.status = "rejected";
+      target.rejectionReason = reason;
+    }
+    return {
+      success: true,
+      data: undefined,
+      message: "Pesanan berhasil ditolak.",
+      timestamp: new Date().toISOString(),
+    };
+  }
+
   try {
     return await apiClient.put<ApiResponse<void>>(
       `/api/internal/interop/orders/${orderId}/reject`,
@@ -526,7 +616,6 @@ export const rejectOrderApi = async (
       if (target) {
         target.status = "rejected";
         target.rejectionReason = reason;
-        target.paymentVerificationStatus = "rejected";
       }
       return {
         success: true,

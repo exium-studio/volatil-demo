@@ -156,45 +156,25 @@ export const InternalOrderReviewInputBillingModalContent = (
           <VStack align={"stretch"} gap={"md"}>
             {/* Sync SIMPONI Option (Jika Integrasi Aktif) */}
             {isSimponiEnabled && (
-              <VStack
-                align={"stretch"}
-                gap={"xs"}
-                p={"sm"}
-                bg={"blue.subtle"}
-                rounded={"md"}
-                borderWidth={"1px"}
-                borderColor={"blue.muted"}
-              >
-                <HStack
-                  justify={"space-between"}
-                  align={"center"}
-                  flexWrap={"wrap"}
-                  gap={"xs"}
+              <VStack gap={"xs"}>
+                <VStack color={"blue.fg"}>
+                  <P fontSize={"sm"} color={"fg.subtle"} textAlign={"center"}>
+                    {
+                      "Integrasi SIMPONI Aktif, dapat diterbitkan otomatis langsung."
+                    }
+                  </P>
+                </VStack>
+
+                <Button
+                  size={"sm"}
+                  colorPalette={"blue"}
+                  variant={"solid"}
+                  loading={syncSimponiMutation.isPending}
+                  onClick={handleSyncSimponi}
                 >
-                  <VStack align={"start"} gap={0}>
-                    <P
-                      fontWeight={"semibold"}
-                      fontSize={"xs"}
-                      color={"blue.fg"}
-                    >
-                      {"Integrasi SIMPONI Aktif"}
-                    </P>
-
-                    <P fontSize={"2xs"} color={"fg.muted"}>
-                      {"Dapat diterbitkan otomatis langsung via API Kemenkeu"}
-                    </P>
-                  </VStack>
-
-                  <Button
-                    size={"sm"}
-                    colorPalette={"blue"}
-                    loading={syncSimponiMutation.isPending}
-                    onClick={handleSyncSimponi}
-                  >
-                    <AppIcon icon={SparklesIcon} />
-                    {"Generate via SIMPONI"}
-                  </Button>
-                </HStack>
+                  <AppIcon icon={SparklesIcon} />
+                  {"Generate via SIMPONI"}
+                </Button>
               </VStack>
             )}
 

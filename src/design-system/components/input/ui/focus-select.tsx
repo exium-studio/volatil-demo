@@ -50,6 +50,7 @@ export function FocusSelectInput(props: FocusSelectInputProps) {
     errorTitle,
     errorMessage,
     customOption = false,
+    autoFocusSearch = false,
     size = "md",
     variant = "outline",
     w = "full",
@@ -91,14 +92,14 @@ export function FocusSelectInput(props: FocusSelectInputProps) {
   // Refs
   const searchInputRef = useRef<HTMLInputElement>(null);
 
-  // Effects — auto focus search input when modal opens
+  // Effects — focus search input when modal opens only if autoFocusSearch is true
   useEffect(() => {
-    if (!isOpen || isFetchingLoading || isError) return;
+    if (!autoFocusSearch || !isOpen || isFetchingLoading || isError) return;
     const timer = setTimeout(() => {
       searchInputRef.current?.focus({ preventScroll: true });
     }, 50);
     return () => clearTimeout(timer);
-  }, [isOpen, isFetchingLoading, isError]);
+  }, [autoFocusSearch, isOpen, isFetchingLoading, isError]);
 
   const filteredOptions = useMemo(() => {
     const query = searchQuery.trim().toLowerCase();
@@ -371,7 +372,7 @@ export function FocusSelectInput(props: FocusSelectInputProps) {
                   placeholder={t["action.search"]()}
                   onValueChange={setSearchQuery}
                   w={"full"}
-                  autoFocus={true}
+                  autoFocus={autoFocusSearch}
                 />
               </Field>
             </VStack>
