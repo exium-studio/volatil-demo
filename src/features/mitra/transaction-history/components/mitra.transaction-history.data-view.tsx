@@ -309,10 +309,7 @@ export const TransactionHistoryDataView = () => {
     const itemActions: DataViewItemActionsGenerator<TransactionRecord>[] = [
       {
         key: "pay-billing",
-        label: (transaction: TransactionRecord) =>
-          transaction.orderStatus === "pending_billing_code"
-            ? "Lihat Status"
-            : "Bayar",
+        label: "Bayar",
         icon: CreditCardIcon,
         colorPalette: "blue",
         hidden: (transaction: TransactionRecord) =>

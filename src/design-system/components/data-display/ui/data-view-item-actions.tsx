@@ -306,7 +306,7 @@ export const DataViewSpreadActions = <
     <HStack
       gap={"2xs"}
       align={"center"}
-      justify={"end"}
+      justify={"start"}
       wrap={"nowrap"}
       flexShrink={0}
       w={"full"}

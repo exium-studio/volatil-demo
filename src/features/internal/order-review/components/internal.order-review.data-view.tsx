@@ -52,6 +52,7 @@ import {
 import { useNavigate } from "@tanstack/react-router";
 import {
   CheckCircleIcon,
+  CreditCardPlusIcon,
   FileCheckIcon,
   LayersIcon,
   MapPlusIcon,
@@ -319,7 +320,7 @@ export const InternalOrderReviewDataView = () => {
       {
         key: "input-billing-code",
         label: "Input Kode Billing",
-        icon: ReceiptTextIcon,
+        icon: CreditCardPlusIcon,
         colorPalette: "blue",
         hidden: (order: InternalOrderItem) =>
           order.status !== "pending_billing_code",
