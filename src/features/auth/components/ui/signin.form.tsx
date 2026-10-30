@@ -54,7 +54,8 @@ export const MitraSignin = (props: StackProps) => {
   const { user, isAuthenticated } = useAuthSession();
   const signinMutation = useSigninMutation();
   const ssoSigninMutation = useSsoSigninMutation("mitra");
-  const { data: ssoStatus } = usePublicSsoStatusQuery();
+  const { data: ssoStatus, isLoading: isSsoStatusLoading } =
+    usePublicSsoStatusQuery();
 
   const {
     register,
@@ -70,7 +71,8 @@ export const MitraSignin = (props: StackProps) => {
 
   // Derived Values
   const isDevMode = isDevModeEnabled();
-  const isSsoEnabled = ssoStatus?.mitra?.isEnabled ?? true;
+  const isSsoLoading = isSsoStatusLoading || ssoSigninMutation.isPending;
+  const isSsoEnabled = Boolean(ssoStatus?.mitra?.isEnabled);
 
   // Handlers
   const handleLogin = (values: SigninFormValues) => {
@@ -82,6 +84,7 @@ export const MitraSignin = (props: StackProps) => {
   };
 
   const handleSsoClick = () => {
+    if (!isSsoEnabled || isSsoLoading) return;
     ssoSigninMutation.mutate("mitra");
   };
 
@@ -124,21 +127,20 @@ export const MitraSignin = (props: StackProps) => {
       </VStack>
 
       {/* SSO Login Action */}
-      {isSsoEnabled && (
-        <VStack w={"full"} gap={3}>
-          <Button
-            primary={true}
-            type={"button"}
-            w={"full"}
-            size={"lg"}
-            loading={ssoSigninMutation.isPending}
-            onClick={handleSsoClick}
-          >
-            <AppIcon icon={HandshakeIcon} />
-            {"Masuk dengan SSO Mitra"}
-          </Button>
-        </VStack>
-      )}
+      <VStack w={"full"} gap={3}>
+        <Button
+          primary={true}
+          type={"button"}
+          w={"full"}
+          size={"lg"}
+          loading={isSsoLoading}
+          disabled={!isSsoLoading && !isSsoEnabled}
+          onClick={handleSsoClick}
+        >
+          <AppIcon icon={HandshakeIcon} />
+          {"Masuk dengan SSO Mitra"}
+        </Button>
+      </VStack>
 
       {/* Divider Dev / Fallback & Development / Fallback Login Form */}
       {isDevMode && (
@@ -246,7 +248,8 @@ export const InternalSignin = (props: StackProps) => {
   const step1Mutation = useInternalSigninStep1Mutation();
   const setupMutation = useInternalTotpSetupMutation();
   const ssoSigninMutation = useSsoSigninMutation("internal");
-  const { data: ssoStatus } = usePublicSsoStatusQuery();
+  const { data: ssoStatus, isLoading: isSsoStatusLoading } =
+    usePublicSsoStatusQuery();
   const search = useSearch({ strict: false }) as AdminSigninSearch;
 
   // States
@@ -271,7 +274,8 @@ export const InternalSignin = (props: StackProps) => {
   });
 
   // Derived Values
-  const isSsoEnabled = ssoStatus?.internal?.isEnabled ?? true;
+  const isSsoLoading = isSsoStatusLoading || ssoSigninMutation.isPending;
+  const isSsoEnabled = Boolean(ssoStatus?.internal?.isEnabled);
 
   const errorMessage =
     search.reason === "session_expired"
@@ -333,6 +337,7 @@ export const InternalSignin = (props: StackProps) => {
   };
 
   const handleSsoClick = () => {
+    if (!isSsoEnabled || isSsoLoading) return;
     ssoSigninMutation.mutate("internal");
   };
 
@@ -427,30 +432,29 @@ export const InternalSignin = (props: StackProps) => {
       )}
 
       {/* SSO Login Action */}
-      {isSsoEnabled && (
-        <VStack w={"full"} gap={3}>
-          <Button
-            primary={true}
-            type={"button"}
-            w={"full"}
-            size={"lg"}
-            loading={ssoSigninMutation.isPending}
-            onClick={handleSsoClick}
-          >
-            <AppIcon icon={UsersIcon} />
-            {"Masuk dengan SSO Pegawai ATR/BPN"}
-          </Button>
+      <VStack w={"full"} gap={3}>
+        <Button
+          primary={true}
+          type={"button"}
+          w={"full"}
+          size={"lg"}
+          loading={isSsoLoading}
+          disabled={!isSsoLoading && !isSsoEnabled}
+          onClick={handleSsoClick}
+        >
+          <AppIcon icon={UsersIcon} />
+          {"Masuk dengan SSO Pegawai ATR/BPN"}
+        </Button>
 
-          {/* Divider */}
-          <HStack w={"full"} align={"center"} my={1}>
-            <Separator flex={1} />
-            <P fontSize={"xs"} color={"fg.muted"} px={2}>
-              {"atau gunakan akun lokal"}
-            </P>
-            <Separator flex={1} />
-          </HStack>
-        </VStack>
-      )}
+        {/* Divider */}
+        <HStack w={"full"} align={"center"} my={1}>
+          <Separator flex={1} />
+          <P fontSize={"xs"} color={"fg.muted"} px={2}>
+            {"atau gunakan akun lokal"}
+          </P>
+          <Separator flex={1} />
+        </HStack>
+      </VStack>
 
       {/* Standard Internal Email/Password Form */}
       <Fieldset>
