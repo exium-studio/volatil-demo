@@ -22,7 +22,7 @@ import { simponiFormSchema } from "@/features/internal/integrations/schemas/inte
 import type { SimponiFormValues } from "@/features/internal/integrations/types/integration.type";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { InfoIcon, LandmarkIcon, SaveIcon } from "lucide-react";
-import { useEffect } from "react";
+import { useMemo } from "react";
 import { Controller, useForm, useWatch } from "react-hook-form";
 
 export const SimponiConfigForm = () => {
@@ -33,49 +33,37 @@ export const SimponiConfigForm = () => {
   const { data: config, isLoading } = useSimponiIntegrationQuery();
   const updateMutation = useUpdateSimponiIntegrationMutation();
 
+  // Derived Values
+  const formValues = useMemo<SimponiFormValues>(() => {
+    return {
+      baseUrl: config?.baseUrl ?? "",
+      kodeKl: config?.kodeKl ?? "056",
+      kodeSatker: config?.kodeSatker ?? "",
+      kodeAkun: config?.kodeAkun ?? "425311",
+      apiKey: config?.apiKey ?? "",
+      billingExpiryHours: config?.billingExpiryHours ?? 24,
+      isSimulator: config?.isSimulator ?? false,
+      isEnabled: config?.isEnabled ?? false,
+    };
+  }, [config]);
+
   // Form (RHF + Zod)
   const form = useForm<SimponiFormValues>({
     resolver: zodResolver(simponiFormSchema),
-    defaultValues: {
-      baseUrl: "",
-      kodeKl: "056",
-      kodeSatker: "",
-      kodeAkun: "425311",
-      apiKey: "",
-      billingExpiryHours: 24,
-      isSimulator: false,
-      isEnabled: true,
-    },
+    values: formValues,
   });
 
-  // Derived Values
   const isEnabled = useWatch({
     control: form.control,
     name: "isEnabled",
   });
-
-  // Effects
-  useEffect(() => {
-    if (config) {
-      form.reset({
-        baseUrl: config.baseUrl ?? "",
-        kodeKl: config.kodeKl ?? "056",
-        kodeSatker: config.kodeSatker ?? "",
-        kodeAkun: config.kodeAkun ?? "425311",
-        apiKey: config.apiKey ?? "",
-        billingExpiryHours: config.billingExpiryHours ?? 24,
-        isSimulator: config.isSimulator ?? false,
-        isEnabled: config.isEnabled ?? true,
-      });
-    }
-  }, [config, form]);
 
   // Handlers
   const onSubmit = (values: SimponiFormValues) => {
     updateMutation.mutate(values);
   };
 
-  if (isLoading) {
+  if (isLoading || !config) {
     return (
       <VStack gap={4} w={"full"} align={"stretch"}>
         <Skeleton h={"72px"} w={"full"} rounded={theme.radii.component} />

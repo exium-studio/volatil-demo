@@ -28,6 +28,7 @@ export const Button = forwardRef<HTMLButtonElement, ButtonProps>(
       children,
       minW = 0,
       maxW = "full",
+      tooltip,
       ...restProps
     } = props;
 
@@ -62,7 +63,7 @@ export const Button = forwardRef<HTMLButtonElement, ButtonProps>(
             </Span>
           );
 
-          if (typeof combinedText === "string" && combinedText.trim()) {
+          if (!tooltip && typeof combinedText === "string" && combinedText.trim()) {
             result.push(
               <Tooltip
                 key={`button-tooltip-${result.length}`}
@@ -90,9 +91,9 @@ export const Button = forwardRef<HTMLButtonElement, ButtonProps>(
       flushTextGroup();
 
       return result;
-    }, [children, lineClamp, restProps?.fontSize]);
+    }, [children, lineClamp, restProps?.fontSize, tooltip]);
 
-    return (
+    const buttonNode = (
       <ChakraButton
         ref={ref}
         variant={
@@ -119,18 +120,34 @@ export const Button = forwardRef<HTMLButtonElement, ButtonProps>(
         {formattedChildren}
       </ChakraButton>
     );
+
+    if (tooltip) {
+      return (
+        <Tooltip content={tooltip} w={maxW}>
+          {restProps.disabled ? (
+            <Span display={"inline-block"} w={maxW} cursor={"not-allowed"}>
+              {buttonNode}
+            </Span>
+          ) : (
+            buttonNode
+          )}
+        </Tooltip>
+      );
+    }
+
+    return buttonNode;
   },
 );
 
 export const IconButton = forwardRef<HTMLButtonElement, IconButtonProps>(
   function Iconbutton(props, ref) {
     // Props
-    const { primary, variant, colorPalette, ...restProps } = props;
+    const { primary, variant, colorPalette, tooltip, ...restProps } = props;
 
     // Stores
     const { theme } = useThemeStore();
 
-    return (
+    const buttonNode = (
       <ChakraIconButton
         ref={ref}
         variant={
@@ -146,5 +163,21 @@ export const IconButton = forwardRef<HTMLButtonElement, IconButtonProps>(
         {...restProps}
       />
     );
+
+    if (tooltip) {
+      return (
+        <Tooltip content={tooltip}>
+          {restProps.disabled ? (
+            <Span display={"inline-block"} cursor={"not-allowed"}>
+              {buttonNode}
+            </Span>
+          ) : (
+            buttonNode
+          )}
+        </Tooltip>
+      );
+    }
+
+    return buttonNode;
   },
 );

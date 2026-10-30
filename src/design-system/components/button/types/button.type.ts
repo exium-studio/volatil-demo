@@ -4,6 +4,7 @@ import type {
   ButtonProps as ChakraButtonProps,
   IconButtonProps as ChakraIconButtonProps,
 } from "@chakra-ui/react";
+import type { ReactNode } from "react";
 
 export type ButtonProps = Omit<ChakraButtonProps, "variant"> & {
   primary?: boolean;
@@ -15,6 +16,7 @@ export type ButtonProps = Omit<ChakraButtonProps, "variant"> & {
     | (string & {});
   lineClamp?: ChakraButtonProps["lineClamp"];
   clicky?: boolean;
+  tooltip?: ReactNode;
 };
 
 export type IconButtonProps = ChakraIconButtonProps &

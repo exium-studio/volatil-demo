@@ -46,7 +46,7 @@ import {
   ShieldCheckIcon,
   UsersIcon,
 } from "lucide-react";
-import { useState } from "react";
+import { useMemo, useState } from "react";
 import { useForm } from "react-hook-form";
 
 export const MitraSignin = (props: StackProps) => {
@@ -54,7 +54,7 @@ export const MitraSignin = (props: StackProps) => {
   const { user, isAuthenticated } = useAuthSession();
   const signinMutation = useSigninMutation();
   const ssoSigninMutation = useSsoSigninMutation("mitra");
-  const { data: ssoStatus, isLoading: isSsoStatusLoading } =
+  const { data: ssoStatus, isLoading: isSsoStatusLoading, isError: isSsoError } =
     usePublicSsoStatusQuery();
 
   const {
@@ -73,6 +73,11 @@ export const MitraSignin = (props: StackProps) => {
   const isDevMode = isDevModeEnabled();
   const isSsoLoading = isSsoStatusLoading || ssoSigninMutation.isPending;
   const isSsoEnabled = Boolean(ssoStatus?.mitra?.isEnabled);
+  const ssoDisabledTooltip = useMemo(() => {
+    if (isSsoLoading || isSsoEnabled) return undefined;
+    if (isSsoError) return "Tidak dapat terhubung ke server autentikasi SSO";
+    return "Layanan SSO Mitra dinonaktifkan oleh administrator";
+  }, [isSsoLoading, isSsoEnabled, isSsoError]);
 
   // Handlers
   const handleLogin = (values: SigninFormValues) => {
@@ -135,6 +140,7 @@ export const MitraSignin = (props: StackProps) => {
           size={"lg"}
           loading={isSsoLoading}
           disabled={!isSsoLoading && !isSsoEnabled}
+          tooltip={ssoDisabledTooltip}
           onClick={handleSsoClick}
         >
           <AppIcon icon={HandshakeIcon} />
@@ -248,7 +254,7 @@ export const InternalSignin = (props: StackProps) => {
   const step1Mutation = useInternalSigninStep1Mutation();
   const setupMutation = useInternalTotpSetupMutation();
   const ssoSigninMutation = useSsoSigninMutation("internal");
-  const { data: ssoStatus, isLoading: isSsoStatusLoading } =
+  const { data: ssoStatus, isLoading: isSsoStatusLoading, isError: isSsoError } =
     usePublicSsoStatusQuery();
   const search = useSearch({ strict: false }) as AdminSigninSearch;
 
@@ -276,6 +282,11 @@ export const InternalSignin = (props: StackProps) => {
   // Derived Values
   const isSsoLoading = isSsoStatusLoading || ssoSigninMutation.isPending;
   const isSsoEnabled = Boolean(ssoStatus?.internal?.isEnabled);
+  const ssoDisabledTooltip = useMemo(() => {
+    if (isSsoLoading || isSsoEnabled) return undefined;
+    if (isSsoError) return "Tidak dapat terhubung ke server autentikasi SSO";
+    return "Layanan SSO Pegawai dinonaktifkan oleh administrator";
+  }, [isSsoLoading, isSsoEnabled, isSsoError]);
 
   const errorMessage =
     search.reason === "session_expired"
@@ -440,6 +451,7 @@ export const InternalSignin = (props: StackProps) => {
           size={"lg"}
           loading={isSsoLoading}
           disabled={!isSsoLoading && !isSsoEnabled}
+          tooltip={ssoDisabledTooltip}
           onClick={handleSsoClick}
         >
           <AppIcon icon={UsersIcon} />

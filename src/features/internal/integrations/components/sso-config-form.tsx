@@ -27,7 +27,7 @@ import { ssoFormSchema } from "@/features/internal/integrations/schemas/integrat
 import type { SsoFormValues } from "@/features/internal/integrations/types/integration.type";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { HandshakeIcon, InfoIcon, SaveIcon, UsersIcon } from "lucide-react";
-import { useEffect } from "react";
+import { useMemo } from "react";
 import { Controller, useForm, useWatch } from "react-hook-form";
 
 export const SsoConfigForm = () => {
@@ -38,24 +38,29 @@ export const SsoConfigForm = () => {
   const { data: config, isLoading } = useSsoIntegrationQuery();
   const updateMutation = useUpdateSsoIntegrationMutation();
 
+  // Derived Values
+  const formValues = useMemo<SsoFormValues>(() => {
+    return {
+      mitra: {
+        issuerUrl: config?.mitra?.issuerUrl ?? "",
+        clientId: config?.mitra?.clientId ?? "",
+        clientSecret: config?.mitra?.clientSecret ?? "",
+        redirectUri: config?.mitra?.redirectUri ?? "",
+      },
+      internal: {
+        isEnabled: config?.internal?.isEnabled ?? false,
+        issuerUrl: config?.internal?.issuerUrl ?? "",
+        clientId: config?.internal?.clientId ?? "",
+        clientSecret: config?.internal?.clientSecret ?? "",
+        redirectUri: config?.internal?.redirectUri ?? "",
+      },
+    };
+  }, [config]);
+
   // Form (RHF + Zod)
   const form = useForm<SsoFormValues>({
     resolver: zodResolver(ssoFormSchema),
-    defaultValues: {
-      mitra: {
-        issuerUrl: "",
-        clientId: "",
-        clientSecret: "",
-        redirectUri: "",
-      },
-      internal: {
-        isEnabled: false,
-        issuerUrl: "",
-        clientId: "",
-        clientSecret: "",
-        redirectUri: "",
-      },
-    },
+    values: formValues,
   });
 
   const isInternalEnabled = useWatch({
@@ -64,33 +69,12 @@ export const SsoConfigForm = () => {
     defaultValue: false,
   });
 
-  // Effects
-  useEffect(() => {
-    if (config) {
-      form.reset({
-        mitra: {
-          issuerUrl: config.mitra?.issuerUrl ?? "",
-          clientId: config.mitra?.clientId ?? "",
-          clientSecret: config.mitra?.clientSecret ?? "",
-          redirectUri: config.mitra?.redirectUri ?? "",
-        },
-        internal: {
-          isEnabled: config.internal?.isEnabled ?? false,
-          issuerUrl: config.internal?.issuerUrl ?? "",
-          clientId: config.internal?.clientId ?? "",
-          clientSecret: config.internal?.clientSecret ?? "",
-          redirectUri: config.internal?.redirectUri ?? "",
-        },
-      });
-    }
-  }, [config, form]);
-
   // Handlers
   const onSubmit = (values: SsoFormValues) => {
     updateMutation.mutate(values);
   };
 
-  if (isLoading) {
+  if (isLoading || !config) {
     return (
       <VStack gap={4} w={"full"} align={"stretch"}>
         <Skeleton h={"80px"} w={"full"} rounded={theme.radii.component} />

@@ -26,7 +26,7 @@ import type {
 } from "@/features/internal/integrations/types/integration.type";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { MailCheckIcon, SaveIcon } from "lucide-react";
-import { useEffect } from "react";
+import { useMemo } from "react";
 import { Controller, useForm } from "react-hook-form";
 
 const SECURITY_OPTIONS = [
@@ -46,43 +46,32 @@ export const SmtpConfigForm = () => {
   const updateMutation = useUpdateSmtpIntegrationMutation();
   const { open: openTestModal } = usePopModal({ modalKey: TEST_MODAL_KEY });
 
+  // Derived Values
+  const formValues = useMemo<SmtpFormValues>(() => {
+    return {
+      host: config?.host ?? "",
+      port: config?.port ?? 587,
+      security: config?.security ?? "STARTTLS",
+      user: config?.user ?? "",
+      password: config?.password ?? "",
+      fromEmail: config?.fromEmail ?? "",
+      fromName: config?.fromName ?? "Volatil ATR/BPN",
+      rejectUnauthorized: config?.rejectUnauthorized ?? true,
+    };
+  }, [config]);
+
   // Form (RHF + Zod)
   const form = useForm<SmtpFormValues>({
     resolver: zodResolver(smtpFormSchema),
-    defaultValues: {
-      host: "",
-      port: 587,
-      security: "STARTTLS",
-      user: "",
-      password: "",
-      fromEmail: "",
-      fromName: "Volatil ATR/BPN",
-      rejectUnauthorized: true,
-    },
+    values: formValues,
   });
-
-  // Effects
-  useEffect(() => {
-    if (config) {
-      form.reset({
-        host: config.host ?? "",
-        port: config.port ?? 587,
-        security: config.security ?? "STARTTLS",
-        user: config.user ?? "",
-        password: config.password ?? "",
-        fromEmail: config.fromEmail ?? "",
-        fromName: config.fromName ?? "Volatil ATR/BPN",
-        rejectUnauthorized: config.rejectUnauthorized ?? true,
-      });
-    }
-  }, [config, form]);
 
   // Handlers
   const onSubmit = (values: SmtpFormValues) => {
     updateMutation.mutate(values);
   };
 
-  if (isLoading) {
+  if (isLoading || !config) {
     return (
       <VStack gap={4} w={"full"} align={"stretch"}>
         <Skeleton h={"72px"} w={"full"} rounded={theme.radii.component} />
