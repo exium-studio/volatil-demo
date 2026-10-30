@@ -227,7 +227,7 @@ export const InternalMasterIgtLayerDataView = () => {
     const headers: FormattedTableHeader[] = [
       { th: "Nama Layer IGT", sortable: true },
       { th: "Status", sortable: true, align: "center" },
-      { th: "Workspace / Typename", sortable: true },
+      { th: "Typename", sortable: true },
       { th: "Basis IGT", sortable: true },
       { th: "Urutan (Z-Index)", sortable: true, align: "center" },
       { th: "Min Zoom", sortable: true, align: "center" },

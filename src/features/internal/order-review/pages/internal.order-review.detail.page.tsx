@@ -26,6 +26,8 @@ import { ClampedHeading } from "@/design-system/components/typography/ui/heading
 import { P } from "@/design-system/components/typography/ui/p";
 import { Url } from "@/design-system/components/typography/ui/url";
 import { InternalOrderReviewApproveTrigger } from "@/features/internal/order-review/components/internal.order-review.approve-modal";
+import { InternalOrderReviewDetailTrigger } from "@/features/internal/order-review/components/internal.order-review.detail-modal";
+import { InternalOrderReviewInputBillingTrigger } from "@/features/internal/order-review/components/internal.order-review.input-billing-modal";
 import {
   useInternalOrderDetailQuery,
   useOrdersProvisionStream,
@@ -62,7 +64,9 @@ import {
   FocusIcon,
   HandshakeIcon,
   MapPlusIcon,
+  ReceiptTextIcon,
   RefreshCwIcon,
+  ShieldCheckIcon,
 } from "lucide-react";
 import { useCallback, useEffect, useMemo, useRef } from "react";
 
@@ -432,6 +436,30 @@ export const InternalOrderReviewDetailPage = () => {
                       {"Buat Ulang WMS"}
                     </Button>
                   </ConfirmationTrigger>
+                )}
+
+                {order.status === "pending_billing_code" && (
+                  <InternalOrderReviewInputBillingTrigger
+                    order={order}
+                    modalKey={`input-billing-detail-header-${order.orderId}`}
+                  >
+                    <Button primary={true} colorPalette={"blue"}>
+                      <AppIcon icon={ReceiptTextIcon} />
+                      {"Input Kode Billing"}
+                    </Button>
+                  </InternalOrderReviewInputBillingTrigger>
+                )}
+
+                {order.status === "pending_manual_payment_verification" && (
+                  <InternalOrderReviewDetailTrigger
+                    order={order}
+                    modalKey={`verify-payment-detail-header-${order.orderId}`}
+                  >
+                    <Button primary={true} colorPalette={"purple"}>
+                      <AppIcon icon={ShieldCheckIcon} />
+                      {"Verifikasi Pembayaran"}
+                    </Button>
+                  </InternalOrderReviewDetailTrigger>
                 )}
 
                 {order.status === "pending_review" && (

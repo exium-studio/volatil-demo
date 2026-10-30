@@ -3,12 +3,13 @@
 import { Button } from "@/design-system/components/button/ui/button";
 import { Alert } from "@/design-system/components/feedback/ui/alert";
 import { AppIcon } from "@/design-system/components/icon/ui/app-icon";
+import { DateInput } from "@/design-system/components/input/ui/date-input";
 import { Field } from "@/design-system/components/input/ui/field";
 import { FileInput } from "@/design-system/components/input/ui/file-input";
 import { Input } from "@/design-system/components/input/ui/input";
 import { HStack, VStack } from "@/design-system/components/layout/ui/flex-box";
 import { usePopModal } from "@/design-system/components/overlay/hooks/use-pop-modal";
-import { Modal } from "@/design-system/components/overlay/ui/modal";
+import { Modal, useModalContext } from "@/design-system/components/overlay/ui/modal";
 import { P } from "@/design-system/components/typography/ui/p";
 import { useSubmitManualPaymentProof } from "@/features/mitra/cart/hooks/use-mitra-cart";
 import {
@@ -62,6 +63,9 @@ export const ManualPaymentProofTrigger = (
 export const ManualPaymentProofModalContent = (
   props: ManualPaymentProofModalContentProps,
 ) => {
+  // Contexts
+  const { modalKey: parentModalKey } = useModalContext();
+
   // Props
   const { orderId, billingCode, close, onSuccess } = props;
 
@@ -152,17 +156,27 @@ export const ManualPaymentProofModalContent = (
             </Field>
 
             {/* Field Paid At Date */}
-            <Field
-              label={"Tanggal Penyetoran / Bayar"}
-              invalid={Boolean(errors.paidAt)}
-              errorText={errors.paidAt?.message}
-            >
-              <Input
-                type={"date"}
-                {...register("paidAt")}
-                w={"full"}
-              />
-            </Field>
+            <Controller
+              control={control}
+              name={"paidAt"}
+              render={({ field }) => (
+                <Field
+                  label={"Tanggal Penyetoran / Bayar"}
+                  invalid={Boolean(errors.paidAt)}
+                  errorText={errors.paidAt?.message}
+                >
+                  <DateInput
+                    modalKey={`${parentModalKey}.paidAt`}
+                    datePickerSubtitle={"Pilih tanggal penyetoran pembayaran PNBP"}
+                    value={field.value}
+                    onValueChange={(val) => {
+                      field.onChange(val ?? "");
+                    }}
+                    w={"full"}
+                  />
+                </Field>
+              )}
+            />
 
             {/* Field Payment Proof File */}
             <Controller

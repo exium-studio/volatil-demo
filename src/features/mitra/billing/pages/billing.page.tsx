@@ -276,8 +276,9 @@ const BillingPageBillingCode = () => {
                     billingCode={effectiveBillingCode}
                     modalKey={`upload-proof-${targetOrderId}`}
                   >
-                    <Button colorPalette={"blue"} variant={"outline"}>
+                    <Button colorPalette={"blue"} variant={"solid"}>
                       <AppIcon icon={UploadCloudIcon} />
+
                       {"Konfirmasi & Unggah Bukti Pembayaran"}
                     </Button>
                   </ManualPaymentProofTrigger>
@@ -297,8 +298,8 @@ const BillingPageBillingCode = () => {
                 </ManualPaymentProofTrigger>
               )}
 
-              {/* Cek Status Pembayaran button (untuk SIMPONI otomatis / settled check) */}
-              {!isPendingBillingCode && (
+              {/* Cek Status Pembayaran button (hanya untuk SIMPONI otomatis / mode inkuiri aktif) */}
+              {!isPendingBillingCode && !isManualVerificationMode && (
                 <Button
                   primary={true}
                   loading={checkPaymentMutation.isPending}

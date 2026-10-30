@@ -54,7 +54,7 @@ const StatGridItem = (props: StatGridItemProps) => {
       h={"full"}
       p={"md"}
       borderRight={isLastInRow ? undefined : "2px solid"}
-      borderTop={isNotFirstRow ? "2px solid" : undefined}
+      borderTop={isNotFirstRow ? "1px solid" : undefined}
       borderColor={"bg.canvas"}
       {...restProps}
     >

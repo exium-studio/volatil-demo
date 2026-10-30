@@ -16,7 +16,6 @@ import type {
   CartSummaryResponse,
   CheckoutResponse,
 } from "@/features/mitra/cart/types/cart.type";
-import { dummyMitraWorkspaces } from "@/shared/constants/dummy-data/dummy-my-data";
 import { getStorage, setStorage } from "@/shared/utils/client/client.storage";
 
 const LOCAL_STORAGE_KEY = "mitra_cart_ids";
@@ -547,92 +546,8 @@ export async function checkOrderPaymentStatus(
   orderId: string,
   signal?: AbortSignal,
 ): Promise<OrderPaymentStatusResponse> {
-  try {
-    const response = await fetchOrderPaymentStatusApi(orderId, signal);
-    if (response.data) return response.data;
-    if (isDummyDataEnabled()) {
-      const baseUrl =
-        import.meta.env.VITE_API_BASE_URL || "https://volatil-be.exium.web.id";
-      const targetOrder = localDummyOrders.find((b) => b.orderId === orderId);
-      if (targetOrder) {
-        targetOrder.status = "paid";
-        targetOrder.invoiceUrl = `${baseUrl}/invoices/INV-${orderId}.pdf`;
-        targetOrder.tteInvoiceUrl = null;
-        targetOrder.tte = false;
-      }
-      if (orderId.startsWith("ord-renew-") || orderId.startsWith("renew-")) {
-        const uuidMatch = orderId.match(
-          /(?:ord-renew-|renew-\d+-)?([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12})/,
-        );
-        const workspaceId = uuidMatch
-          ? uuidMatch[1]
-          : orderId.replace(/^ord-renew-|^renew-\d+-/, "").replace(/-\d+$/, "");
-        const ws = dummyMitraWorkspaces.find((w) => w.id === workspaceId);
-        if (ws) {
-          ws.status = "ready";
-          const currentExp = new Date(ws.expiresAt).getTime();
-          const baseTime =
-            !Number.isNaN(currentExp) && currentExp > Date.now()
-              ? currentExp
-              : Date.now();
-          ws.expiresAt = new Date(
-            baseTime + 365 * 24 * 60 * 60 * 1000,
-          ).toISOString();
-          ws.layers.forEach((l) => {
-            l.status = "ready";
-            l.expiresAt = ws.expiresAt;
-          });
-        }
-      }
-    }
-    return {
-      orderId,
-      transactionStatus: "paid",
-      paidAt: new Date().toISOString(),
-    };
-  } catch (error) {
-    if (isDummyDataEnabled()) {
-      const baseUrl =
-        import.meta.env.VITE_API_BASE_URL || "https://volatil-be.exium.web.id";
-      const targetOrder = localDummyOrders.find((b) => b.orderId === orderId);
-      if (targetOrder) {
-        targetOrder.status = "paid";
-        targetOrder.invoiceUrl = `${baseUrl}/invoices/INV-${orderId}.pdf`;
-        targetOrder.tteInvoiceUrl = null;
-        targetOrder.tte = false;
-      }
-      if (orderId.startsWith("ord-renew-") || orderId.startsWith("renew-")) {
-        const uuidMatch = orderId.match(
-          /(?:ord-renew-|renew-\d+-)?([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12})/,
-        );
-        const workspaceId = uuidMatch
-          ? uuidMatch[1]
-          : orderId.replace(/^ord-renew-|^renew-\d+-/, "").replace(/-\d+$/, "");
-        const ws = dummyMitraWorkspaces.find((w) => w.id === workspaceId);
-        if (ws) {
-          ws.status = "ready";
-          const currentExp = new Date(ws.expiresAt).getTime();
-          const baseTime =
-            !Number.isNaN(currentExp) && currentExp > Date.now()
-              ? currentExp
-              : Date.now();
-          ws.expiresAt = new Date(
-            baseTime + 365 * 24 * 60 * 60 * 1000,
-          ).toISOString();
-          ws.layers.forEach((l) => {
-            l.status = "ready";
-            l.expiresAt = ws.expiresAt;
-          });
-        }
-      }
-      return {
-        orderId,
-        transactionStatus: "paid",
-        paidAt: new Date().toISOString(),
-      };
-    }
-    throw error;
-  }
+  const response = await fetchOrderPaymentStatusApi(orderId, signal);
+  return response.data;
 }
 
 export async function submitManualPaymentProof(
