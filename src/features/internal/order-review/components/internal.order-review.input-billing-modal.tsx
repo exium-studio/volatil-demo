@@ -140,7 +140,7 @@ export const InternalOrderReviewInputBillingModalContent = (
         <VStack gap={"2xs"}>
           <Modal.Title>{"Input Kode Billing SIMPONI"}</Modal.Title>
 
-          <P fontSize={"xs"} color={"fg.muted"} textAlign={"center"}>
+          <P fontSize={"sm"} color={"fg.muted"} textAlign={"center"}>
             {"Penerbitan manual kode billing PNBP dari portal Kemenkeu"}
           </P>
         </VStack>
@@ -172,9 +172,14 @@ export const InternalOrderReviewInputBillingModalContent = (
                   gap={"xs"}
                 >
                   <VStack align={"start"} gap={0}>
-                    <P fontWeight={"semibold"} fontSize={"xs"} color={"blue.fg"}>
+                    <P
+                      fontWeight={"semibold"}
+                      fontSize={"xs"}
+                      color={"blue.fg"}
+                    >
                       {"Integrasi SIMPONI Aktif"}
                     </P>
+
                     <P fontSize={"2xs"} color={"fg.muted"}>
                       {"Dapat diterbitkan otomatis langsung via API Kemenkeu"}
                     </P>
