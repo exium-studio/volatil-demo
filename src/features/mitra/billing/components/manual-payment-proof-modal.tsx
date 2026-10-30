@@ -7,7 +7,7 @@ import { DateInput } from "@/design-system/components/input/ui/date-input";
 import { Field } from "@/design-system/components/input/ui/field";
 import { FileInput } from "@/design-system/components/input/ui/file-input";
 import { Input } from "@/design-system/components/input/ui/input";
-import { HStack, VStack } from "@/design-system/components/layout/ui/flex-box";
+import { VStack } from "@/design-system/components/layout/ui/flex-box";
 import { usePopModal } from "@/design-system/components/overlay/hooks/use-pop-modal";
 import {
   Modal,
@@ -22,7 +22,7 @@ import {
 } from "@/features/mitra/billing/types/manual-payment.type";
 import { useSubmitManualPaymentProof } from "@/features/mitra/cart/hooks/use-mitra-cart";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { InfoIcon, UploadCloudIcon } from "lucide-react";
+import { InfoIcon } from "lucide-react";
 import { Controller, useForm } from "react-hook-form";
 
 export const ManualPaymentProofTrigger = (
@@ -218,19 +218,19 @@ export const ManualPaymentProofModalContent = (
         </Modal.Body>
 
         <Modal.Footer>
-          <HStack justify={"end"} gap={"sm"} w={"full"}>
-            <Button variant={"outline"} onClick={close}>
-              {"Batal"}
-            </Button>
+          <VStack gap={"xs"} w={"full"}>
             <Button
               primary={true}
               type={"submit"}
               loading={submitProofMutation.isPending}
             >
-              <AppIcon icon={UploadCloudIcon} />
               {"Kirim Konfirmasi Pembayaran"}
             </Button>
-          </HStack>
+
+            <Button variant={"outline"} onClick={close}>
+              {"Batal"}
+            </Button>
+          </VStack>
         </Modal.Footer>
       </VStack>
     </Modal.Content>
