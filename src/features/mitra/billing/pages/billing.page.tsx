@@ -154,7 +154,7 @@ const BillingPageBillingCode = () => {
 
   return (
     <VStack align={"stretch"} gap={"md"}>
-      {/* 1. Alert: Menunggu Penerbitan Kode Billing oleh Internal ATR/BPN */}
+      {/* Alert: Menunggu Penerbitan Kode Billing oleh Internal ATR/BPN */}
       {isPendingBillingCode && (
         <Alert.Root
           status={"warning"}
@@ -175,13 +175,9 @@ const BillingPageBillingCode = () => {
         </Alert.Root>
       )}
 
-      {/* 2. Alert: Penolakan Bukti Pembayaran Sebelumnya (Mitra dapat mengunggah ulang) */}
+      {/* Alert: Penolakan Bukti Pembayaran Sebelumnya (Mitra dapat mengunggah ulang) */}
       {orderDetail?.rejectionReason && (
-        <Alert.Root
-          status={"warning"}
-          colorPalette={"red"}
-          variant={"subtle"}
-        >
+        <Alert.Root status={"warning"} colorPalette={"red"} variant={"subtle"}>
           <AppIcon icon={AlertCircleIcon} />
           <Alert.Content>
             <Alert.Title fontWeight={"semibold"}>
@@ -194,34 +190,9 @@ const BillingPageBillingCode = () => {
         </Alert.Root>
       )}
 
-      {/* 3. Conditional Banner Alert: Verifikasi Manual Bukti Setor PNBP */}
-      {isManualVerificationMode && !isPendingBillingCode && (
-        <Alert.Root
-          status={"warning"}
-          colorPalette={"orange"}
-          variant={"subtle"}
-        >
-          <AppIcon icon={InfoIcon} />
-          <Alert.Content>
-            <Alert.Title fontWeight={"semibold"}>
-              {"Verifikasi Manual Bukti Setor PNBP"}
-            </Alert.Title>
-            <Alert.Description>
-              {
-                "Layanan inkuiri otomatis SIMPONI sedang dalam mode manual. Silakan lakukan pembayaran di bank/teller/ATM menggunakan Kode Billing di bawah, kemudian unggah bukti transfer beserta Nomor Transaksi Penerimaan Negara (NTPN)."
-              }
-            </Alert.Description>
-          </Alert.Content>
-        </Alert.Root>
-      )}
-
-      {/* 4. Status Alert jika bukti bayar sedang diverifikasi petugas */}
+      {/* Status Alert jika bukti bayar sedang diverifikasi petugas */}
       {isPendingManualVerification && (
-        <Alert.Root
-          status={"info"}
-          colorPalette={"blue"}
-          variant={"subtle"}
-        >
+        <Alert.Root status={"info"} colorPalette={"blue"} variant={"subtle"}>
           <AppIcon icon={ClockIcon} />
           <Alert.Content>
             <Alert.Title fontWeight={"semibold"}>
@@ -236,7 +207,7 @@ const BillingPageBillingCode = () => {
         </Alert.Root>
       )}
 
-      {/* 5. Container Billing Code & Actions */}
+      {/* Container Billing Code & Actions */}
       <Container.Root>
         <Container.Body>
           <HStack
@@ -305,10 +276,7 @@ const BillingPageBillingCode = () => {
                     billingCode={effectiveBillingCode}
                     modalKey={`upload-proof-${targetOrderId}`}
                   >
-                    <Button
-                      colorPalette={"blue"}
-                      variant={"outline"}
-                    >
+                    <Button colorPalette={"blue"} variant={"outline"}>
                       <AppIcon icon={UploadCloudIcon} />
                       {"Konfirmasi & Unggah Bukti Pembayaran"}
                     </Button>
@@ -322,10 +290,7 @@ const BillingPageBillingCode = () => {
                   billingCode={effectiveBillingCode}
                   modalKey={`upload-proof-${targetOrderId}`}
                 >
-                  <Button
-                    colorPalette={"gray"}
-                    variant={"outline"}
-                  >
+                  <Button colorPalette={"gray"} variant={"outline"}>
                     <AppIcon icon={FileCheck2Icon} />
                     {"Perbarui Bukti Pembayaran"}
                   </Button>
@@ -345,6 +310,29 @@ const BillingPageBillingCode = () => {
               )}
             </HStack>
           </HStack>
+
+          <Box p={"md"}>
+            {isManualVerificationMode && !isPendingBillingCode && (
+              <Alert.Root
+                status={"warning"}
+                colorPalette={"orange"}
+                variant={"subtle"}
+              >
+                <AppIcon icon={InfoIcon} />
+                <Alert.Content>
+                  <Alert.Title fontWeight={"semibold"}>
+                    {"Verifikasi Manual Bukti Setor PNBP"}
+                  </Alert.Title>
+
+                  <Alert.Description>
+                    {
+                      "Layanan inkuiri otomatis SIMPONI sedang dalam mode manual. Silakan lakukan pembayaran di bank/teller/ATM menggunakan Kode Billing di bawah, kemudian unggah bukti transfer beserta Nomor Transaksi Penerimaan Negara (NTPN)."
+                    }
+                  </Alert.Description>
+                </Alert.Content>
+              </Alert.Root>
+            )}
+          </Box>
         </Container.Body>
       </Container.Root>
     </VStack>

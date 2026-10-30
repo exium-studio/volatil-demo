@@ -8,7 +8,7 @@ export const fetchPublicSimponiStatusApi = async (
   signal?: AbortSignal,
 ): Promise<ApiResponse<PublicSimponiStatus>> => {
   return apiClient.get<ApiResponse<PublicSimponiStatus>>(
-    "/api/integrations/simponi/status",
+    "/api/mitra/billing/simponi/status",
     { signal },
   );
 };
