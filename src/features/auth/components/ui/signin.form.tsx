@@ -53,7 +53,7 @@ export const MitraSignin = (props: StackProps) => {
   // Hooks
   const { user, isAuthenticated } = useAuthSession();
   const signinMutation = useSigninMutation();
-  const ssoSigninMutation = useSsoSigninMutation();
+  const ssoSigninMutation = useSsoSigninMutation("mitra");
   const { data: ssoStatus } = usePublicSsoStatusQuery();
 
   const {
@@ -82,7 +82,7 @@ export const MitraSignin = (props: StackProps) => {
   };
 
   const handleSsoClick = () => {
-    ssoSigninMutation.mutate();
+    ssoSigninMutation.mutate("mitra");
   };
 
   if (isAuthenticated && user && user.role === "mitra") {
@@ -245,7 +245,7 @@ export const InternalSignin = (props: StackProps) => {
   const navigate = useNavigate();
   const step1Mutation = useInternalSigninStep1Mutation();
   const setupMutation = useInternalTotpSetupMutation();
-  const ssoSigninMutation = useSsoSigninMutation();
+  const ssoSigninMutation = useSsoSigninMutation("internal");
   const { data: ssoStatus } = usePublicSsoStatusQuery();
   const search = useSearch({ strict: false }) as AdminSigninSearch;
 
@@ -333,7 +333,7 @@ export const InternalSignin = (props: StackProps) => {
   };
 
   const handleSsoClick = () => {
-    ssoSigninMutation.mutate();
+    ssoSigninMutation.mutate("internal");
   };
 
   if (isAuthenticated && user && user.role === "internal") {

@@ -3,7 +3,6 @@
 import type { Role } from "@/shared/types/auth.type";
 import type {
   ApiResponse,
-  InternalUser,
   User,
 } from "@/shared/types/common-response.type";
 
@@ -96,7 +95,7 @@ export type SsoInternalCallbackData = {
   token?: string;
   expiresIn?: number;
   keycloakIdToken: string;
-  user: InternalUser;
+  user: User;
 };
 
 export type SsoInternalCallbackResponse = ApiResponse<SsoInternalCallbackData>;

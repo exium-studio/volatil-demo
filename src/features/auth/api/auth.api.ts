@@ -26,7 +26,11 @@ import type {
   ResetPasswordVerifyTotpPayload,
   ResetPasswordVerifyTotpResponse,
 } from "@/features/auth/types/reset-password.type";
-import type { PublicSsoStatus } from "@/features/auth/types/sso.type";
+import type {
+  PublicSsoStatus,
+  SsoCallbackPayload,
+  SsoUrlParams,
+} from "@/features/auth/types/sso.type";
 import { apiClient } from "@/shared/libs/api-client/api-client";
 
 import type { ApiResponse, User } from "@/shared/types/common-response.type";
@@ -105,31 +109,58 @@ export const fetchPublicSsoStatusApi = async (
   });
 };
 
-export const getSsoInternalUrlApi = async (
-  params: SsoInternalUrlParams,
+export const getSsoUrlApi = async (
+  params: SsoUrlParams,
   signal?: AbortSignal,
 ): Promise<SsoInternalUrlResponse> => {
-  return apiClient.get<SsoInternalUrlResponse>("/api/auth/sso/internal/url", {
+  const endpoint =
+    params.portal === "mitra"
+      ? "/api/auth/sso/mitra/url"
+      : params.portal === "internal"
+        ? "/api/auth/sso/internal/url"
+        : "/api/auth/sso/url";
+
+  return apiClient.get<SsoInternalUrlResponse>(endpoint, {
     params: {
       redirectUri: params.redirectUri,
       state: params.state,
+      portal: params.portal,
     },
     signal,
   });
 };
 
-export const postSsoInternalCallbackApi = async (
-  payload: SsoInternalCallbackPayload,
+export const getSsoInternalUrlApi = async (
+  params: SsoInternalUrlParams,
+  signal?: AbortSignal,
+): Promise<SsoInternalUrlResponse> => {
+  return getSsoUrlApi({ ...params, portal: "internal" }, signal);
+};
+
+export const postSsoCallbackApi = async (
+  payload: SsoCallbackPayload,
   signal?: AbortSignal,
 ): Promise<SsoInternalCallbackResponse> => {
+  const endpoint =
+    payload.portal === "mitra"
+      ? "/api/auth/sso/mitra/callback"
+      : "/api/auth/sso/callback";
+
   return apiClient.post<SsoInternalCallbackResponse>(
-    "/api/auth/sso/internal/callback",
+    endpoint,
     payload,
     {
       credentials: "include",
       signal,
     },
   );
+};
+
+export const postSsoInternalCallbackApi = async (
+  payload: SsoInternalCallbackPayload,
+  signal?: AbortSignal,
+): Promise<SsoInternalCallbackResponse> => {
+  return postSsoCallbackApi({ ...payload, portal: "internal" }, signal);
 };
 
 export const postSsoInternalLogoutUrlApi = async (

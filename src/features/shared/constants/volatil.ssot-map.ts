@@ -246,7 +246,8 @@ export const ORDER_STATUS_MAP: Record<OrderStatus, OrderStatusConfig> = {
     colorPalette: "yellow",
     icon: ClockIcon,
     iconColor: "yellow.fg",
-    noticeDescription: "Menunggu penerbitan Kode Billing oleh Petugas ATR/BPN...",
+    noticeDescription:
+      "Menunggu penerbitan Kode Billing oleh Petugas ATR/BPN...",
   },
   manual_pending_payment: {
     label: "Menunggu Pembayaran (Manual)",
@@ -465,7 +466,8 @@ export const SYSTEM_POLICY_MAP: Record<string, SystemPolicyConfig> = {
       "Interval waktu untuk sinkronisasi otomatis layer spasial mitra dari master IGT ATR/BPN.",
     colorPalette: "purple",
     icon: RefreshCwIcon,
-    helperText: "Pembaruan otomatis dieksekusi secara berkala sesuai durasi yang ditentukan.",
+    helperText:
+      "Pembaruan otomatis dieksekusi secara berkala sesuai durasi yang ditentukan.",
   },
   mitra_sync_schedule: {
     label: "Siklus Pembaruan Data Mitra",

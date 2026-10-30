@@ -2,8 +2,9 @@
 
 import { useMapLayerStore } from "@/design-system/components/map/stores/map.layer.store";
 import {
+  fetchPublicSsoStatusApi,
   getAuthMeApi,
-  getSsoInternalUrlApi,
+  getSsoUrlApi,
   getTotpSetupApi,
   postLoginApi,
   postLoginTotpVerifyApi,
@@ -12,7 +13,7 @@ import {
   postResetPasswordRequestApi,
   postResetPasswordVerifyOtpApi,
   postResetPasswordVerifyTotpApi,
-  postSsoInternalCallbackApi,
+  postSsoCallbackApi,
   postSsoInternalLogoutUrlApi,
   postTotpSetupConfirmApi,
 } from "@/features/auth/api/auth.api";
@@ -23,6 +24,7 @@ import type {
   TotpSetupData,
   TotpVerifyPayload,
 } from "@/features/auth/types/auth.service.type";
+import type { SsoPortal } from "@/features/auth/types/sso.type";
 import type {
   ResetPasswordConfirmData,
   ResetPasswordConfirmPayload,
@@ -305,7 +307,10 @@ export const authService = {
     }
   },
 
-  getSsoLoginUrl: async (signal?: AbortSignal): Promise<string> => {
+  getSsoLoginUrl: async (
+    portalType: SsoPortal = "internal",
+    signal?: AbortSignal,
+  ): Promise<string> => {
     localStorage.removeItem("auth_token");
     removeStorage("user");
     sessionStorage.removeItem("keycloakIdToken");
@@ -314,17 +319,50 @@ export const authService = {
     const callbackUrl = `${window.location.origin}/auth/callback/keycloak`;
 
     sessionStorage.setItem("sso_state", state);
+    sessionStorage.setItem("sso_portal", portalType);
     sessionStorage.setItem("sso_redirect_uri", callbackUrl);
 
-    const response = await getSsoInternalUrlApi(
-      {
-        redirectUri: callbackUrl,
-        state,
-      },
-      signal,
-    );
+    try {
+      const response = await getSsoUrlApi(
+        {
+          redirectUri: callbackUrl,
+          state,
+          portal: portalType,
+        },
+        signal,
+      );
 
-    return response.data.loginUrl;
+      if (response.data?.loginUrl) {
+        return response.data.loginUrl;
+      }
+    } catch {
+      // Fallback: fetch from public SSO status if direct url generation endpoint fails
+    }
+
+    try {
+      const statusRes = await fetchPublicSsoStatusApi(signal);
+      const portalConfig = statusRes.data?.[portalType];
+      if (portalConfig?.authEndpoint && portalConfig?.clientId) {
+        const params = new URLSearchParams({
+          client_id: portalConfig.clientId,
+          response_type: "code",
+          scope: "openid profile email",
+          redirect_uri: callbackUrl,
+          state,
+        });
+        return `${portalConfig.authEndpoint}?${params.toString()}`;
+      }
+    } catch {
+      // Ignore fallback error
+    }
+
+    if (isDummyDataEnabled()) {
+      return `${callbackUrl}?code=mock_code_${Date.now()}&state=${state}`;
+    }
+
+    throw new Error(
+      `Gagal membuat URL login SSO untuk ${portalType}. Pastikan konfigurasi SSO aktif.`,
+    );
   },
 
   handleSsoCallback: async (
@@ -333,6 +371,8 @@ export const authService = {
     signal?: AbortSignal,
   ): Promise<User> => {
     const stateFromStorage = sessionStorage.getItem("sso_state");
+    const storedPortal =
+      (sessionStorage.getItem("sso_portal") as SsoPortal) || "internal";
     const storedRedirectUri = sessionStorage.getItem("sso_redirect_uri");
     const callbackUrl =
       storedRedirectUri || `${window.location.origin}/auth/callback/keycloak`;
@@ -340,6 +380,7 @@ export const authService = {
     // Clear state after usage
     sessionStorage.removeItem("sso_state");
     sessionStorage.removeItem("sso_redirect_uri");
+    sessionStorage.removeItem("sso_portal");
 
     if (!code || !state || !stateFromStorage || state !== stateFromStorage) {
       throw new Error(
@@ -347,25 +388,74 @@ export const authService = {
       );
     }
 
-    const response = await postSsoInternalCallbackApi(
-      {
-        code,
-        redirectUri: callbackUrl,
-      },
-      signal,
-    );
+    try {
+      const response = await postSsoCallbackApi(
+        {
+          code,
+          redirectUri: callbackUrl,
+          portal: storedPortal,
+        },
+        signal,
+      );
 
-    if (response.data.accessToken) {
-      localStorage.setItem("auth_token", response.data.accessToken);
-    }
-    if (response.data.keycloakIdToken) {
-      sessionStorage.setItem("keycloakIdToken", response.data.keycloakIdToken);
-    }
-    if (response.data.user) {
-      setStorage("user", JSON.stringify(response.data.user));
-    }
+      if (response.data.accessToken) {
+        localStorage.setItem("auth_token", response.data.accessToken);
+      }
+      if (response.data.keycloakIdToken) {
+        sessionStorage.setItem("keycloakIdToken", response.data.keycloakIdToken);
+      }
+      if (response.data.user) {
+        setStorage("user", JSON.stringify(response.data.user));
+      }
 
-    return response.data.user;
+      return response.data.user;
+    } catch (error) {
+      if (error instanceof ApiError) {
+        throw error;
+      }
+
+      if (!isDummyDataEnabled()) {
+        throw error;
+      }
+
+      // Mock fallback when dummy data is enabled
+      const mockToken = `mock-sso-token-${Date.now()}`;
+      localStorage.setItem("auth_token", mockToken);
+
+      if (storedPortal === "mitra") {
+        const dummyMitraUser: MitraUser = {
+          id: "1",
+          email: "mitra.sso@example.com",
+          name: "Mitra SSO Demo",
+          role: "mitra",
+          companyName: "PT Nusantara Citra Mandiri",
+          companyRegistrationNumber: "REG-987654321",
+          purchasedQuota: 100,
+          tier: "premium",
+          createdAt: new Date().toISOString(),
+          updatedAt: new Date().toISOString(),
+        };
+        setStorage("user", JSON.stringify(dummyMitraUser));
+        return dummyMitraUser;
+      }
+
+      const dummyInternalUser: InternalUser = {
+        id: "2",
+        email: "pegawai.sso@atrbpn.go.id",
+        name: "Pegawai SSO Demo",
+        role: "internal",
+        createdAt: new Date().toISOString(),
+        updatedAt: new Date().toISOString(),
+        nip: "198805202010121002",
+        kantorId: "94efc28c-e837-4581-9bd2-a16fcf7c79d1",
+        namaKantor: "Kantah Kota Adm. Jakarta Pusat",
+        tipeKantor: "KANTAH",
+        tipeUser: "PNS",
+        internalRoles: ["operator_warkah", "verifikator_kadastral"],
+      };
+      setStorage("user", JSON.stringify(dummyInternalUser));
+      return dummyInternalUser;
+    }
   },
 
   verifyMe: async (signal?: AbortSignal): Promise<User | null> => {
@@ -436,6 +526,7 @@ export const authService = {
       sessionStorage.removeItem("keycloakIdToken");
       sessionStorage.removeItem("sso_state");
       sessionStorage.removeItem("sso_redirect_uri");
+      sessionStorage.removeItem("sso_portal");
       useMapLayerStore.getState().resetLayers();
       useAdministrativeFilterStore
         .getState()
