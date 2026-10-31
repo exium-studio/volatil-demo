@@ -69,10 +69,12 @@ const ORDER_STATUS_OPTIONS = [
     value: "pending_manual_payment_verification",
     label: "Perlu Verifikasi Pembayaran",
   },
-  { value: "manual_pending_payment", label: "Menunggu Pembayaran Mitra" },
+  { value: "pending_payment", label: "Menunggu Pembayaran (SIMPONI)" },
+  { value: "manual_pending_payment", label: "Menunggu Pembayaran (Manual)" },
   { value: "paid", label: "Terbayar" },
   { value: "processing", label: "Menyiapkan Layanan WMS" },
   { value: "pending_review", label: "Menunggu Validasi Admin" },
+  { value: "wms_failed", label: "Kendala / Gagal WMS" },
 ];
 
 export const InternalOrderReviewDataView = () => {
@@ -319,11 +321,13 @@ export const InternalOrderReviewDataView = () => {
       },
       {
         key: "input-billing-code",
-        label: "Input Kode Billing",
+        label: "Input / Sync Kode Billing",
         icon: CreditCardPlusIcon,
         colorPalette: "blue",
         hidden: (order: InternalOrderItem) =>
-          order.status !== "pending_billing_code",
+          order.status !== "pending_billing_code" &&
+          order.status !== "manual_pending_payment" &&
+          order.status !== "pending_payment",
         modal: {
           triggerComponent: (order: InternalOrderItem) => (
             <InternalOrderReviewInputBillingTrigger

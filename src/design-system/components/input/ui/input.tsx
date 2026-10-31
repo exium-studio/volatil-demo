@@ -44,9 +44,10 @@ export const Input = forwardRef<HTMLInputElement, InputProps>((props, ref) => {
   const [hasValueState, setHasValueState] = useState<boolean>(
     Boolean(restProps.value) || Boolean(restProps.defaultValue),
   );
+  const [isMounted, setIsMounted] = useState<boolean>(false);
 
   // Effects
-  // Detect DOM value on mount or when defaultValue/value updates (e.g. React Hook Form register)
+  // Detect DOM value before paint and mark component as mounted
   useEffect(() => {
     if (
       internalInputRef.current &&
@@ -54,6 +55,7 @@ export const Input = forwardRef<HTMLInputElement, InputProps>((props, ref) => {
     ) {
       setHasValueState(Boolean(internalInputRef.current.value));
     }
+    setIsMounted(true);
   }, [hasValueState, restProps.defaultValue, restProps.value]);
 
   // Derived Values
@@ -187,7 +189,9 @@ export const Input = forwardRef<HTMLInputElement, InputProps>((props, ref) => {
           pointerEvents={"none"}
           transform={isLabelFloating ? "translateY(0)" : "translateY(12px)"}
           transition={
-            "transform 0.18s cubic-bezier(0.4, 0, 0.2, 1), font-size 0.18s cubic-bezier(0.4, 0, 0.2, 1), color 0.18s ease"
+            isMounted
+              ? "transform 0.18s cubic-bezier(0.4, 0, 0.2, 1), font-size 0.18s cubic-bezier(0.4, 0, 0.2, 1), color 0.18s ease"
+              : "none"
           }
         >
           <HStack align={"center"} gap={2}>
@@ -195,7 +199,11 @@ export const Input = forwardRef<HTMLInputElement, InputProps>((props, ref) => {
               fontSize={isLabelFloating ? "xs" : "md"}
               fontWeight={"medium"}
               color={"fg.subtle"}
-              transition={"font-size 0.18s cubic-bezier(0.4, 0, 0.2, 1)"}
+              transition={
+                isMounted
+                  ? "font-size 0.18s cubic-bezier(0.4, 0, 0.2, 1)"
+                  : "none"
+              }
             >
               {floatingLabel}
             </ClampedP>

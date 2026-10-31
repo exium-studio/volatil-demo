@@ -69,6 +69,7 @@ export const NumberInput = (props: NumberInputProps) => {
       checkHasValue(inputProps?.value) ||
       checkHasValue(inputProps?.defaultValue),
   );
+  const [isMounted, setIsMounted] = useState<boolean>(false);
 
   // Effects
   useEffect(() => {
@@ -78,6 +79,7 @@ export const NumberInput = (props: NumberInputProps) => {
         setHasValueState(domHasValue);
       }
     }
+    setIsMounted(true);
   }, [hasValueState, restProps.value, restProps.defaultValue]);
 
   // Derived Values
@@ -188,7 +190,9 @@ export const NumberInput = (props: NumberInputProps) => {
           pointerEvents={"none"}
           transform={isLabelFloating ? "translateY(0)" : "translateY(12px)"}
           transition={
-            "transform 0.18s cubic-bezier(0.4, 0, 0.2, 1), font-size 0.18s cubic-bezier(0.4, 0, 0.2, 1), color 0.18s ease"
+            isMounted
+              ? "transform 0.18s cubic-bezier(0.4, 0, 0.2, 1), font-size 0.18s cubic-bezier(0.4, 0, 0.2, 1), color 0.18s ease"
+              : "none"
           }
         >
           <HStack align={"center"} gap={2}>
@@ -196,7 +200,11 @@ export const NumberInput = (props: NumberInputProps) => {
               fontSize={isLabelFloating ? "xs" : "md"}
               fontWeight={"medium"}
               color={"fg.subtle"}
-              transition={"font-size 0.18s cubic-bezier(0.4, 0, 0.2, 1)"}
+              transition={
+                isMounted
+                  ? "font-size 0.18s cubic-bezier(0.4, 0, 0.2, 1)"
+                  : "none"
+              }
             >
               {floatingLabel}
             </ClampedP>

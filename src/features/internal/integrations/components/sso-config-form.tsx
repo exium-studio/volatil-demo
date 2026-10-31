@@ -144,6 +144,7 @@ export const SsoConfigForm = () => {
                 placeholder={
                   "https://loginmitradev.atrbpn.go.id/auth/realms/mitra"
                 }
+                defaultValue={formValues.mitra.issuerUrl}
                 {...form.register("mitra.issuerUrl")}
                 w={"full"}
               />
@@ -159,6 +160,7 @@ export const SsoConfigForm = () => {
             >
               <Input
                 placeholder={"volatil-mitra-client"}
+                defaultValue={formValues.mitra.clientId}
                 {...form.register("mitra.clientId")}
                 w={"full"}
               />
@@ -174,6 +176,7 @@ export const SsoConfigForm = () => {
             >
               <PasswordInput
                 placeholder={"••••••••"}
+                defaultValue={formValues.mitra.clientSecret}
                 {...form.register("mitra.clientSecret")}
                 w={"full"}
               />
@@ -191,6 +194,7 @@ export const SsoConfigForm = () => {
                 placeholder={
                   "https://volatil-demo.vercel.app/auth/callback/keycloak-mitra"
                 }
+                defaultValue={formValues.mitra.redirectUri}
                 {...form.register("mitra.redirectUri")}
                 w={"full"}
               />
@@ -274,6 +278,7 @@ export const SsoConfigForm = () => {
                   placeholder={
                     "https://logininternaldev.atrbpn.go.id/auth/realms/internal"
                   }
+                  defaultValue={formValues.internal.issuerUrl}
                   {...form.register("internal.issuerUrl")}
                   w={"full"}
                 />
@@ -289,6 +294,7 @@ export const SsoConfigForm = () => {
               >
                 <Input
                   placeholder={"dotnet-web-multiotp"}
+                  defaultValue={formValues.internal.clientId}
                   {...form.register("internal.clientId")}
                   w={"full"}
                 />
@@ -306,6 +312,7 @@ export const SsoConfigForm = () => {
               >
                 <PasswordInput
                   placeholder={"••••••••••••••••••••••••"}
+                  defaultValue={formValues.internal.clientSecret}
                   {...form.register("internal.clientSecret")}
                   w={"full"}
                 />
@@ -323,6 +330,7 @@ export const SsoConfigForm = () => {
                   placeholder={
                     "https://volatil-demo.vercel.app/auth/callback/keycloak"
                   }
+                  defaultValue={formValues.internal.redirectUri}
                   {...form.register("internal.redirectUri")}
                   w={"full"}
                 />

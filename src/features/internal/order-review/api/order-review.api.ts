@@ -674,15 +674,17 @@ const getDummyOrderList = (
   if (params?.status && params.status !== "all") {
     filtered = filtered.filter((b) => b.status === params.status);
   } else {
-    // Default: review permintaan menampilkan status paid, processing, pending_review, dan manual flow
+    // Default: review permintaan menampilkan seluruh status yang dikelola admin internal
     filtered = filtered.filter(
       (b) =>
         b.status === "paid" ||
         b.status === "processing" ||
         b.status === "pending_review" ||
         b.status === "pending_billing_code" ||
+        b.status === "pending_payment" ||
         b.status === "manual_pending_payment" ||
-        b.status === "pending_manual_payment_verification",
+        b.status === "pending_manual_payment_verification" ||
+        b.status === "wms_failed",
     );
   }
   if (params?.search) {

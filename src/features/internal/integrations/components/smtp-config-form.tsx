@@ -148,6 +148,7 @@ export const SmtpConfigForm = () => {
               >
                 <Input
                   placeholder={"smtp.atrbpn.go.id"}
+                  defaultValue={formValues.host}
                   {...form.register("host")}
                   w={"full"}
                 />
@@ -248,6 +249,7 @@ export const SmtpConfigForm = () => {
               >
                 <Input
                   placeholder={"noreply@atrbpn.go.id"}
+                  defaultValue={formValues.user}
                   {...form.register("user")}
                   w={"full"}
                 />
@@ -261,6 +263,7 @@ export const SmtpConfigForm = () => {
               >
                 <PasswordInput
                   placeholder={"••••••••••••••••••••••••"}
+                  defaultValue={formValues.password}
                   {...form.register("password")}
                   w={"full"}
                 />
@@ -280,6 +283,7 @@ export const SmtpConfigForm = () => {
               >
                 <Input
                   placeholder={"noreply@atrbpn.go.id"}
+                  defaultValue={formValues.fromEmail}
                   {...form.register("fromEmail")}
                   w={"full"}
                 />
@@ -293,6 +297,7 @@ export const SmtpConfigForm = () => {
               >
                 <Input
                   placeholder={"Volatil ATR/BPN"}
+                  defaultValue={formValues.fromName}
                   {...form.register("fromName")}
                   w={"full"}
                 />

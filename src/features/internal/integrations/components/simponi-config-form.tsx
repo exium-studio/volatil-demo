@@ -198,6 +198,7 @@ export const SimponiConfigForm = () => {
             >
               <Input
                 placeholder={"https://simponi.kemenkeu.go.id/api/ws"}
+                defaultValue={formValues.baseUrl}
                 {...form.register("baseUrl")}
                 w={"full"}
               />
@@ -213,6 +214,7 @@ export const SimponiConfigForm = () => {
             >
               <PasswordInput
                 placeholder={"••••••••••••••••••••••••"}
+                defaultValue={formValues.apiKey}
                 {...form.register("apiKey")}
                 w={"full"}
               />
@@ -234,6 +236,7 @@ export const SimponiConfigForm = () => {
               <Input
                 maxLength={3}
                 placeholder={"056"}
+                defaultValue={formValues.kodeKl}
                 {...form.register("kodeKl")}
                 w={"full"}
               />
@@ -248,6 +251,7 @@ export const SimponiConfigForm = () => {
               <Input
                 maxLength={6}
                 placeholder={"430123"}
+                defaultValue={formValues.kodeSatker}
                 {...form.register("kodeSatker")}
                 w={"full"}
               />
@@ -262,6 +266,7 @@ export const SimponiConfigForm = () => {
               <Input
                 maxLength={6}
                 placeholder={"425311"}
+                defaultValue={formValues.kodeAkun}
                 {...form.register("kodeAkun")}
                 w={"full"}
               />

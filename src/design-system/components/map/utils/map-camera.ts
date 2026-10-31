@@ -109,8 +109,8 @@ export const zoomToFeatureSafe = (
         });
       } else {
         fitBoundsSafe(map, bbox as [number, number, number, number], {
-          padding: { top: 80, bottom: 80, left: 80, right: 380 },
-          maxZoom: 18,
+          padding: { top: 60, bottom: 60, left: 60, right: 420 },
+          maxZoom: 19.5,
           duration: 1000,
         });
       }
@@ -129,7 +129,7 @@ export const zoomToFeatureSafe = (
   if (targetCenter) {
     flyToSafe(map, {
       center: targetCenter,
-      zoom: isSmallViewport ? 14.5 : 17,
+      zoom: isSmallViewport ? 14.5 : 18.5,
       duration: 1000,
     });
   }
