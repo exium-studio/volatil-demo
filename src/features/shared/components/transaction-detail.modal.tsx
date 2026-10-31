@@ -153,7 +153,7 @@ export const TransactionDetailModalContent = (
               ? `Billing: ${transaction.billingCode}`
               : "Menunggu pembayaran",
         icon: isPaid
-          ? ORDER_STATUS_MAP.paid.icon
+          ? ORDER_STATUS_MAP.ready.icon
           : isExpired
             ? ORDER_STATUS_MAP.rejected.icon
             : ORDER_STATUS_MAP.pending_payment.icon,
@@ -167,8 +167,9 @@ export const TransactionDetailModalContent = (
       {
         id: "pending_review" as OrderStatus,
         title: "Validasi Admin Internal",
-        description:
-          isReady || isProcessing
+        description: isExpired
+          ? "Tidak dapat diproses karena pembayaran kedaluwarsa"
+          : isReady || isProcessing
             ? "Pesanan disetujui admin internal"
             : isPendingReview
               ? ORDER_STATUS_MAP.pending_review.label
@@ -177,8 +178,9 @@ export const TransactionDetailModalContent = (
                 : isPaid
                   ? "Menunggu validasi admin"
                   : "Diproses setelah pembayaran",
-        icon:
-          isReady || isProcessing
+        icon: isExpired
+          ? ORDER_STATUS_MAP.pending_payment.icon
+          : isReady || isProcessing
             ? ORDER_STATUS_MAP.ready.icon
             : isPendingReview
               ? ORDER_STATUS_MAP.pending_review.icon
@@ -186,44 +188,49 @@ export const TransactionDetailModalContent = (
                 ? ORDER_STATUS_MAP.rejected.icon
                 : ORDER_STATUS_MAP.pending_payment.icon,
         colorPalette:
-          isReady || isProcessing
+          !isExpired && (isReady || isProcessing)
             ? ORDER_STATUS_MAP.ready.colorPalette
-            : isPendingReview
+            : !isExpired && isPendingReview
               ? ORDER_STATUS_MAP.pending_review.colorPalette
-              : isRejected
+              : !isExpired && isRejected
                 ? ORDER_STATUS_MAP.rejected.colorPalette
                 : "gray",
-        isMuted: !isPaid && !isExpired,
+        isMuted: isExpired || isRejected || !isPaid,
       },
       {
         id: "processing" as OrderStatus,
         title: ORDER_STATUS_MAP.processing.label,
-        description: isReady
-          ? "Sinkronisasi layer spasial berhasil"
-          : isProcessing
-            ? "Sistem memproses sinkronisasi layer di background"
-            : "Diproses setelah validasi admin",
-        icon: isReady
+        description: isExpired || isRejected
+          ? "Proses dibatalkan"
+          : isReady
+            ? "Sinkronisasi layer spasial berhasil"
+            : isProcessing
+              ? "Sistem memproses sinkronisasi layer di background"
+              : "Diproses setelah validasi admin",
+        icon: !isExpired && !isRejected && isReady
           ? ORDER_STATUS_MAP.ready.icon
-          : isProcessing
+          : !isExpired && !isRejected && isProcessing
             ? ORDER_STATUS_MAP.processing.icon
             : Layers2Icon,
-        colorPalette: isReady
-          ? ORDER_STATUS_MAP.ready.colorPalette
-          : isProcessing
-            ? ORDER_STATUS_MAP.processing.colorPalette
-            : "gray",
-        isMuted: !isProcessing && !isReady,
+        colorPalette:
+          !isExpired && !isRejected && isReady
+            ? ORDER_STATUS_MAP.ready.colorPalette
+            : !isExpired && !isRejected && isProcessing
+              ? ORDER_STATUS_MAP.processing.colorPalette
+              : "gray",
+        isMuted: isExpired || isRejected || (!isProcessing && !isReady),
       },
       {
         id: "ready" as OrderStatus,
         title: ORDER_STATUS_MAP.ready.label,
-        description: isReady
-          ? "Layer IGT aktif dan dapat diakses di menu Data Saya"
-          : "Layanan WMS siap diakses setelah selesai diproses",
+        description: isExpired || isRejected
+          ? "Layanan tidak dapat diakses"
+          : isReady
+            ? "Layer IGT aktif dan dapat diakses di menu Data Saya"
+            : "Layanan WMS siap diakses setelah selesai diproses",
         icon: ORDER_STATUS_MAP.ready.icon,
-        colorPalette: isReady ? ORDER_STATUS_MAP.ready.colorPalette : "gray",
-        isMuted: !isReady,
+        colorPalette: !isExpired && !isRejected && isReady ? ORDER_STATUS_MAP.ready.colorPalette : "gray",
+        isMuted: isExpired || isRejected || !isReady,
       },
     ];
   }, [effectiveOrderStatus, isExpired, isPaid, preferredTimezone, transaction]);
