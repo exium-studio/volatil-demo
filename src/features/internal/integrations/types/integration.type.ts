@@ -69,7 +69,6 @@ export type SimponiIntegrationConfig = {
   kodeSatker: string;
   kodeAkun: string;
   apiKey?: string;
-  billingExpiryHours: number;
   isSimulator: boolean;
   isEnabled: boolean;
   updatedAt?: string;
@@ -81,9 +80,12 @@ export type SimponiFormValues = {
   kodeSatker: string;
   kodeAkun: string;
   apiKey?: string;
-  billingExpiryHours: number;
   isSimulator: boolean;
   isEnabled: boolean;
+};
+
+export type SimponiPaymentPolicyCardProps = {
+  className?: string;
 };
 
 // Common Backend Integration Response

@@ -19,6 +19,7 @@ import {
   useSyncSimponiOrder,
 } from "@/features/internal/order-review/hooks/use-order-review";
 import { useSimponiIntegrationQuery } from "@/features/internal/integrations/hooks/use-integration.query";
+import { useInternalSystemPoliciesQuery } from "@/features/internal/system-policies/hooks/use-internal-system-policies";
 import {
   inputBillingCodeSchema,
   type InputBillingCodeFormValues,
@@ -73,6 +74,7 @@ export const InternalOrderReviewInputBillingModalContent = (
 
   // Hooks
   const { data: simponiConfig } = useSimponiIntegrationQuery();
+  const { items: systemPolicies } = useInternalSystemPoliciesQuery();
 
   // Mutations
   const inputBillingMutation = useInputBillingCode();
@@ -80,15 +82,21 @@ export const InternalOrderReviewInputBillingModalContent = (
 
   // Derived Values
   const isSimponiEnabled = Boolean(simponiConfig?.isEnabled);
+  const paymentPolicy = systemPolicies.find(
+    (p) => p.key === "payment_timeout_fallback_hours",
+  );
+  const timeoutHours = paymentPolicy ? Number(paymentPolicy.value) : undefined;
 
   // States
   const [initialBillingExpiredAt] = useState(() => {
     if (order.billingExpiredAt) {
       return new Date(order.billingExpiredAt).toISOString().split("T")[0];
     }
-    const defaultDate = new Date();
-    defaultDate.setDate(defaultDate.getDate() + 7);
-    return defaultDate.toISOString().split("T")[0];
+    if (timeoutHours !== undefined) {
+      const defaultDate = new Date(Date.now() + timeoutHours * 3600 * 1000);
+      return defaultDate.toISOString().split("T")[0];
+    }
+    return new Date().toISOString().split("T")[0];
   });
 
   // Forms

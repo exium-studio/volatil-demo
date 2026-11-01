@@ -92,7 +92,7 @@ export const DUMMY_INTERNAL_ORDERS: InternalOrderItem[] = [
     isManualPayment: true,
     billingCode: "820261029883901",
     billingIssuedAt: new Date(now.getTime() - 1000 * 60 * 60 * 2).toISOString(),
-    billingExpiredAt: new Date(now.getTime() + 1000 * 60 * 60 * 24 * 7).toISOString(),
+    billingExpiredAt: new Date(now.getTime() + 1000 * 60 * 60 * 24).toISOString(),
     invoiceUrl:
       "https://volatil-be.exium.web.id/uploads/invoices/invoice-ord-manual-pending-payment-02.pdf",
     tteInvoiceUrl: null,

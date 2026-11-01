@@ -539,7 +539,7 @@ export const syncSimponiApi = async (
     const target = DUMMY_INTERNAL_ORDERS.find((b) => b.orderId === orderId);
     const generatedCode = `8${new Date().toISOString().slice(0, 10).replace(/-/g, "")}${Math.floor(100000 + Math.random() * 900000)}`;
     const expDate = new Date();
-    expDate.setDate(expDate.getDate() + 7);
+    expDate.setTime(expDate.getTime() + 24 * 3600 * 1000);
     if (target) {
       target.billingCode = generatedCode;
       target.billingExpiredAt = expDate.toISOString();
@@ -565,7 +565,7 @@ export const syncSimponiApi = async (
       const target = DUMMY_INTERNAL_ORDERS.find((b) => b.orderId === orderId);
       const generatedCode = `8${new Date().toISOString().slice(0, 10).replace(/-/g, "")}${Math.floor(100000 + Math.random() * 900000)}`;
       const expDate = new Date();
-      expDate.setDate(expDate.getDate() + 7);
+      expDate.setTime(expDate.getTime() + 24 * 3600 * 1000);
       if (target) {
         target.billingCode = generatedCode;
         target.billingExpiredAt = expDate.toISOString();

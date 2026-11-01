@@ -8,6 +8,7 @@ import { HeaderContainer } from "@/design-system/components/shell/ui/header-cont
 import { ClampedHeading } from "@/design-system/components/typography/ui/heading";
 import { P } from "@/design-system/components/typography/ui/p";
 import { SimponiConfigForm } from "@/features/internal/integrations/components/simponi-config-form";
+import { SimponiPaymentPolicyCard } from "@/features/internal/integrations/components/simponi-payment-policy-card";
 
 export const InternalIntegrationsSimponiPage = () => {
   return (
@@ -35,7 +36,7 @@ export const InternalIntegrationsSimponiPage = () => {
           <VStack
             flex={1}
             align={"stretch"}
-            gap={"xl"}
+            gap={"md"}
             w={"full"}
             p={"md"}
             overflowY={"auto"}
@@ -46,6 +47,10 @@ export const InternalIntegrationsSimponiPage = () => {
               }
             </P>
 
+            {/* SSOT Batas Waktu Pembayaran */}
+            <SimponiPaymentPolicyCard />
+
+            {/* Form Konfigurasi SIMPONI */}
             <SimponiConfigForm />
           </VStack>
         </Container.Body>

@@ -54,11 +54,6 @@ export const simponiFormSchema = z
     kodeSatker: z.string(),
     kodeAkun: z.string(),
     apiKey: z.string().optional(),
-    billingExpiryHours: z
-      .number()
-      .int("Masa berlaku harus berupa angka bulat")
-      .min(1, "Masa berlaku minimal 1 jam")
-      .max(720, "Masa berlaku maksimal 720 jam (30 hari)"),
     isSimulator: z.boolean(),
     isEnabled: z.boolean(),
   })
