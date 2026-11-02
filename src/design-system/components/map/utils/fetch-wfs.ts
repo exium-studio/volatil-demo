@@ -171,9 +171,13 @@ export const getLayerGeometryColumnName = async (
       headers["Authorization"] = `Bearer ${authToken}`;
     }
 
+    const credentialsMode: RequestCredentials = isWorkspaceEndpoint
+      ? "same-origin"
+      : "include";
+
     const res = await fetch(url.toString(), {
       headers,
-      credentials: "include",
+      credentials: credentialsMode,
       signal,
     });
     if (res.ok) {
@@ -240,11 +244,15 @@ const fetchWfsPost = async (
     ...(params.headers ?? {}),
   };
 
+  const credentialsMode: RequestCredentials = isWorkspaceEndpoint
+    ? "same-origin"
+    : "include";
+
   return fetch(baseUrl, {
     method: "POST",
     headers,
     body,
-    credentials: "include",
+    credentials: credentialsMode,
     signal: params.signal,
   });
 };
@@ -273,6 +281,10 @@ export const fetchWfs = async (
   const authToken =
     typeof window !== "undefined" ? localStorage.getItem("auth_token") : null;
 
+  const credentialsMode: RequestCredentials = isWorkspaceEndpoint
+    ? "same-origin"
+    : "include";
+
   const getHeaders: Record<string, string> = {
     ...(params.apiKey && isWorkspaceEndpoint
       ? { "X-API-Key": params.apiKey }
@@ -286,7 +298,7 @@ export const fetchWfs = async (
       ? await fetchWfsPost(params, true)
       : await fetch(url.toString(), {
           headers: Object.keys(getHeaders).length > 0 ? getHeaders : undefined,
-          credentials: "include",
+          credentials: credentialsMode,
           signal,
         });
   } catch (err: unknown) {
@@ -365,7 +377,7 @@ export const fetchWfs = async (
           : await fetch(url.toString(), {
               headers:
                 Object.keys(getHeaders).length > 0 ? getHeaders : undefined,
-              credentials: "include",
+              credentials: credentialsMode,
               signal,
             });
     } else {
@@ -381,7 +393,7 @@ export const fetchWfs = async (
           : await fetch(url.toString(), {
               headers:
                 Object.keys(getHeaders).length > 0 ? getHeaders : undefined,
-              credentials: "include",
+              credentials: credentialsMode,
               signal,
             });
     }
@@ -438,7 +450,7 @@ export const fetchWfs = async (
           : await fetch(retryUrl.toString(), {
               headers:
                 Object.keys(getHeaders).length > 0 ? getHeaders : undefined,
-              credentials: "include",
+              credentials: credentialsMode,
               signal,
             });
       if (retryRes.ok) {

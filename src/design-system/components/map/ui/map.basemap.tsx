@@ -98,7 +98,14 @@ export const BaseMap = ({ styleUrl, children }: BaseMapProps) => {
       pitchWithRotate: true,
       attributionControl: false,
       transformRequest: (url: string) => {
-        if (url.includes("/api/proxy/")) {
+        // Workspace proxy requests (mitra data) authenticate via apiKey and have Access-Control-Allow-Origin: *
+        // Do NOT use credentials: "include" for them to comply with CORS spec
+        const isWorkspaceProxy =
+          url.includes("/api/proxy/workspace/") ||
+          url.includes("/workspace/") ||
+          url.includes("apiKey=");
+
+        if (url.includes("/api/proxy/") && !isWorkspaceProxy) {
           const token =
             typeof window !== "undefined"
               ? localStorage.getItem("auth_token")
