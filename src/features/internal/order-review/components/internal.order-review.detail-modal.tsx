@@ -33,9 +33,12 @@ import {
 } from "@/shared/utils/formatter/date.formatter";
 import { formatNumber } from "@/shared/utils/formatter/number.formatter";
 import { useNavigate } from "@tanstack/react-router";
+import { Collapsible } from "@/design-system/components/disclosure/ui/collapsible";
 import {
   CalendarIcon,
   CheckCircleIcon,
+  ChevronDownIcon,
+  ChevronUpIcon,
   ExternalLinkIcon,
   FileTextIcon,
   HashIcon,
@@ -45,7 +48,7 @@ import {
   ReceiptTextIcon,
   XCircleIcon,
 } from "lucide-react";
-import { useMemo } from "react";
+import { useMemo, useState } from "react";
 
 export const InternalOrderReviewDetailTrigger = (
   props: InternalOrderReviewDetailTriggerProps,
@@ -82,6 +85,9 @@ const InternalOrderReviewDetailModalContent = (
   const pricingPolicy = usePricingPolicy();
 
   const navigate = useNavigate();
+
+  // States
+  const [isLayerListOpen, setIsLayerListOpen] = useState(false);
 
   const isPaid = order.status === "paid";
   const isProcessing = order.status === "processing";
@@ -519,52 +525,103 @@ const InternalOrderReviewDetailModalContent = (
             </HStack>
           </VStack>
 
-          {/* Daftar Layer IGT */}
-          <VStack align={"stretch"} gap={"xs"}>
-            <P fontSize={"xs"} fontWeight={"semibold"}>
-              {`Daftar Layer IGT (${order.items.length})`}
-            </P>
-
+          {/* Daftar Layer IGT (Collapsible) */}
+          <Collapsible.Root
+            opened={isLayerListOpen}
+            onOpenChange={(e) => setIsLayerListOpen(e.open)}
+          >
             <VStack
               align={"stretch"}
-              gap={0}
+              gap={"xs"}
+              p={"sm"}
+              bg={"bg.subtle"}
               rounded={"md"}
               border={"1px solid"}
               borderColor={"border.subtle"}
-              overflow={"hidden"}
             >
-              {order.items.map((item, idx) => {
-                const basis = item.igtBasis ?? item.spatialBasis ?? "kawasan";
+              <HStack
+                justify={"space-between"}
+                align={"center"}
+                cursor={"pointer"}
+                onClick={() => setIsLayerListOpen((prev) => !prev)}
+              >
+                <HStack gap={"xs"} align={"center"}>
+                  <AppIcon
+                    icon={LayersIcon}
+                    size={"xs"}
+                    color={"fg.muted"}
+                  />
+                  <P fontSize={"xs"} fontWeight={"semibold"}>
+                    {`Total Layer IGT: ${order.items.length} Layer`}
+                  </P>
+                </HStack>
 
-                return (
-                  <Box
-                    key={item.id || item.sourceLayerId || idx}
-                    p={"xs"}
-                    bg={idx % 2 === 0 ? "bg.subtle" : "transparent"}
-                    borderTop={idx > 0 ? "1px solid" : undefined}
-                    borderColor={"border.subtle"}
-                  >
-                    <HStack justify={"space-between"} align={"center"}>
-                      <HStack gap={"xs"} flex={1} minW={0}>
-                        <IgtBasisBadge size={"xs"}>{basis}</IgtBasisBadge>
-                        <VStack align={"start"} gap={0} flex={1} minW={0}>
-                          <P fontSize={"xs"} fontWeight={"medium"} truncate>
-                            {item.sourceLayerTitle || item.sourceLayerId}
-                          </P>
-                          {item.sourceLayerTitle &&
-                            item.sourceLayerTitle !== item.sourceLayerId && (
-                              <P fontSize={"2xs"} color={"fg.subtle"} truncate>
-                                {item.sourceLayerId}
+                <HStack gap={"2xs"} align={"center"}>
+                  <P fontSize={"2xs"} color={"fg.muted"}>
+                    {isLayerListOpen ? "Sembunyikan" : "Lihat Detail"}
+                  </P>
+                  <AppIcon
+                    icon={isLayerListOpen ? ChevronUpIcon : ChevronDownIcon}
+                    size={"xs"}
+                    color={"fg.muted"}
+                  />
+                </HStack>
+              </HStack>
+
+              <Collapsible.Content>
+                <VStack
+                  align={"stretch"}
+                  gap={0}
+                  mt={"xs"}
+                  rounded={"sm"}
+                  border={"1px solid"}
+                  borderColor={"border.subtle"}
+                  overflow={"hidden"}
+                >
+                  {order.items.map((item, idx) => {
+                    const basis =
+                      item.igtBasis ?? item.spatialBasis ?? "kawasan";
+
+                    return (
+                      <Box
+                        key={item.id || item.sourceLayerId || idx}
+                        p={"xs"}
+                        bg={idx % 2 === 0 ? "bg.subtle" : "transparent"}
+                        borderTop={idx > 0 ? "1px solid" : undefined}
+                        borderColor={"border.subtle"}
+                      >
+                        <HStack justify={"space-between"} align={"center"}>
+                          <HStack gap={"xs"} flex={1} minW={0}>
+                            <IgtBasisBadge size={"xs"}>{basis}</IgtBasisBadge>
+                            <VStack align={"start"} gap={0} flex={1} minW={0}>
+                              <P
+                                fontSize={"xs"}
+                                fontWeight={"medium"}
+                                truncate
+                              >
+                                {item.sourceLayerTitle || item.sourceLayerId}
                               </P>
-                            )}
-                        </VStack>
-                      </HStack>
-                    </HStack>
-                  </Box>
-                );
-              })}
+                              {item.sourceLayerTitle &&
+                                item.sourceLayerTitle !==
+                                  item.sourceLayerId && (
+                                  <P
+                                    fontSize={"2xs"}
+                                    color={"fg.subtle"}
+                                    truncate
+                                  >
+                                    {item.sourceLayerId}
+                                  </P>
+                                )}
+                            </VStack>
+                          </HStack>
+                        </HStack>
+                      </Box>
+                    );
+                  })}
+                </VStack>
+              </Collapsible.Content>
             </VStack>
-          </VStack>
+          </Collapsible.Root>
         </VStack>
       </Modal.Body>
 
