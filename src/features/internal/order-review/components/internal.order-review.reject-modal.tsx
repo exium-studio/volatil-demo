@@ -5,7 +5,7 @@ import { AppIcon } from "@/design-system/components/icon/ui/app-icon";
 import { Alert } from "@/design-system/components/feedback/ui/alert";
 import { Field } from "@/design-system/components/input/ui/field";
 import { Textarea } from "@/design-system/components/input/ui/textarea";
-import { VStack } from "@/design-system/components/layout/ui/flex-box";
+import { HStack, VStack } from "@/design-system/components/layout/ui/flex-box";
 import { usePopModal } from "@/design-system/components/overlay/hooks/use-pop-modal";
 import { Modal } from "@/design-system/components/overlay/ui/modal";
 import { P } from "@/design-system/components/typography/ui/p";
@@ -83,16 +83,25 @@ const InternalOrderReviewRejectModalContent = (
     );
   };
 
+  const isManualPaymentVerification =
+    order.status === "pending_manual_payment_verification";
+
   return (
     <Modal.Content>
       <Modal.Header>
         <Modal.CloseButton />
 
         <VStack gap={"xs"}>
-          <Modal.Title>{"Tolak Permintaan Pesanan"}</Modal.Title>
+          <Modal.Title>
+            {isManualPaymentVerification
+              ? "Tolak Bukti Pembayaran"
+              : "Tolak Permintaan Pesanan"}
+          </Modal.Title>
 
           <P fontSize={"xs"} textAlign={"center"} color={"fg.muted"}>
-            {`ID Pesanan: ${order.orderId} (${order.mitraName})`}
+            {order.orderNumber
+              ? `${order.orderNumber} (${order.mitraName})`
+              : `ID: ${order.orderId} (${order.mitraName})`}
           </P>
         </VStack>
       </Modal.Header>
@@ -103,9 +112,9 @@ const InternalOrderReviewRejectModalContent = (
             <Alert.Indicator />
             <Alert.Content>
               <Alert.Description>
-                {
-                  "Alasan penolakan ini akan langsung masuk ke inbox notifikasi mitra pemohon. Pastikan alasan ditulis secara jelas dan akurat."
-                }
+                {isManualPaymentVerification
+                  ? "Alasan penolakan akan dikirimkan ke mitra dan status order dikembalikan ke 'manual_pending_payment' agar mitra dapat mengunggah ulang bukti pembayaran."
+                  : "Alasan penolakan ini akan langsung masuk ke inbox notifikasi mitra pemohon. Pastikan alasan ditulis secara jelas dan akurat."}
               </Alert.Description>
             </Alert.Content>
           </Alert.Root>
@@ -113,13 +122,19 @@ const InternalOrderReviewRejectModalContent = (
           <Field
             label={"Alasan Penolakan"}
             helperText={
-              "Contoh: Area AOI tumpang tindih dengan kawasan lindung nasional / data tidak memenuhi ketentuan"
+              isManualPaymentVerification
+                ? "Contoh: Nomor NTPN tidak valid di kas negara / bukti transfer buram"
+                : "Contoh: Area AOI tumpang tindih dengan kawasan lindung / data tidak memenuhi ketentuan"
             }
           >
             <Textarea
               value={reason}
               onChange={(e) => setReason(e.target.value)}
-              placeholder={"Tuliskan alasan penolakan secara detail..."}
+              placeholder={
+                isManualPaymentVerification
+                  ? "Tuliskan alasan penolakan bukti pembayaran..."
+                  : "Tuliskan alasan penolakan secara detail..."
+              }
               rows={4}
             />
           </Field>
@@ -127,7 +142,11 @@ const InternalOrderReviewRejectModalContent = (
       </Modal.Body>
 
       <Modal.Footer>
-        <VStack gap={"xs"} w={"full"}>
+        <HStack justify={"end"} gap={"sm"} w={"full"}>
+          <Button variant={"outline"} onClick={back}>
+            {"Batal"}
+          </Button>
+
           <Button
             variant={"solid"}
             colorPalette={"red"}
@@ -136,11 +155,11 @@ const InternalOrderReviewRejectModalContent = (
             onClick={handleReject}
           >
             <AppIcon icon={XCircleIcon} />
-            {"Tolak Pesanan"}
+            {isManualPaymentVerification
+              ? "Tolak Bukti Pembayaran"
+              : "Tolak Pesanan"}
           </Button>
-
-          <Button onClick={back}>{"Batal"}</Button>
-        </VStack>
+        </HStack>
       </Modal.Footer>
     </Modal.Content>
   );
