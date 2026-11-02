@@ -163,7 +163,7 @@ const InternalOrderReviewDetailModalContent = (
 
         <VStack gap={"2xs"}>
           <Modal.Title>{"Detail Permintaan Pesanan"}</Modal.Title>
-          <P fontSize={"xs"} textAlign={"center"} color={"fg.muted"}>
+          <P textAlign={"center"} color={"fg.muted"}>
             {order.orderNumber || order.orderId}
           </P>
         </VStack>
@@ -191,51 +191,34 @@ const InternalOrderReviewDetailModalContent = (
           {/* Informasi Pesanan (Clean Key-Value Rows) */}
           <VStack align={"stretch"} gap={"xs"} py={"xs"}>
             <HStack justify={"space-between"} align={"center"}>
-              <P fontSize={"xs"} color={"fg.muted"}>
-                {"Pemohon"}
-              </P>
-              <P fontSize={"xs"} fontWeight={"medium"}>
-                {order.mitraName}
-              </P>
+              <P color={"fg.muted"}>{"Pemohon"}</P>
+              <P fontWeight={"medium"}>{order.mitraName}</P>
             </HStack>
 
             <HStack justify={"space-between"} align={"center"}>
-              <P fontSize={"xs"} color={"fg.muted"}>
-                {"Status Pesanan"}
-              </P>
-              <OrderStatusBadge size={"xs"}>{order.status}</OrderStatusBadge>
+              <P color={"fg.muted"}>{"Status Pesanan"}</P>
+              <OrderStatusBadge>{order.status}</OrderStatusBadge>
             </HStack>
 
             <HStack justify={"space-between"} align={"center"}>
-              <P fontSize={"xs"} color={"fg.muted"}>
-                {"Metode Pengajuan"}
-              </P>
-              <SelectionTypeBadge size={"xs"}>
-                {order.selectionType}
-              </SelectionTypeBadge>
+              <P color={"fg.muted"}>{"Metode Pengajuan"}</P>
+              <SelectionTypeBadge>{order.selectionType}</SelectionTypeBadge>
             </HStack>
 
             <HStack justify={"space-between"} align={"center"}>
-              <P fontSize={"xs"} color={"fg.muted"}>
-                {"Waktu Dibuat"}
-              </P>
-              <P fontSize={"xs"}>
-                {formatUtcDateTime(order.createdAt, preferredTimezone)}
-              </P>
+              <P color={"fg.muted"}>{"Waktu Dibuat"}</P>
+              <P>{formatUtcDateTime(order.createdAt, preferredTimezone)}</P>
             </HStack>
 
             {Boolean(order.billingCode) && (
               <HStack justify={"space-between"} align={"center"}>
-                <P fontSize={"xs"} color={"fg.muted"}>
-                  {"Kode Billing"}
-                </P>
+                <P color={"fg.muted"}>{"Kode Billing"}</P>
                 <HStack align={"center"} gap={"xs"}>
-                  <P fontSize={"xs"} fontFamily={"mono"} fontWeight={"semibold"}>
+                  <P fontFamily={"mono"} fontWeight={"semibold"}>
                     <TNum>{order.billingCode}</TNum>
                   </P>
                   <ClipboardButton
                     value={order.billingCode ?? ""}
-                    size={"2xs"}
                     variant={"ghost"}
                   />
                 </HStack>
@@ -244,9 +227,7 @@ const InternalOrderReviewDetailModalContent = (
 
             {(order.invoiceUrl || order.tteInvoiceUrl) && (
               <HStack justify={"space-between"} align={"center"}>
-                <P fontSize={"xs"} color={"fg.muted"}>
-                  {"Dokumen & Faktur"}
-                </P>
+                <P color={"fg.muted"}>{"Dokumen & Faktur"}</P>
                 <TteBadge
                   tte={order.tte}
                   invoiceUrl={order.invoiceUrl}
@@ -264,13 +245,10 @@ const InternalOrderReviewDetailModalContent = (
           ) && (
             <VStack align={"stretch"} gap={"xs"} py={"xs"}>
               <HStack justify={"space-between"} align={"center"}>
-                <P fontSize={"xs"} fontWeight={"semibold"}>
-                  {"Bukti Pembayaran PNBP"}
-                </P>
+                <P fontWeight={"semibold"}>{"Bukti Pembayaran PNBP"}</P>
 
                 {order.paymentVerificationStatus && (
                   <Badge
-                    size={"xs"}
                     colorPalette={
                       order.paymentVerificationStatus === "approved"
                         ? "green"
@@ -291,20 +269,17 @@ const InternalOrderReviewDetailModalContent = (
 
               <HStack justify={"space-between"} align={"center"}>
                 <HStack gap={1} align={"center"}>
-                  <AppIcon icon={HashIcon} size={"xs"} color={"fg.muted"} />
-                  <P fontSize={"xs"} color={"fg.muted"}>
-                    {"Nomor NTPN"}
-                  </P>
+                  <AppIcon icon={HashIcon} color={"fg.muted"} />
+                  <P color={"fg.muted"}>{"Nomor NTPN"}</P>
                 </HStack>
 
                 <HStack align={"center"} gap={"xs"}>
-                  <P fontSize={"xs"} fontFamily={"mono"} fontWeight={"bold"}>
+                  <P fontFamily={"mono"} fontWeight={"bold"}>
                     {order.ntpn || "-"}
                   </P>
                   {order.ntpn && (
                     <ClipboardButton
                       value={order.ntpn}
-                      size={"2xs"}
                       variant={"ghost"}
                     />
                   )}
@@ -316,16 +291,11 @@ const InternalOrderReviewDetailModalContent = (
                   <HStack gap={1} align={"center"}>
                     <AppIcon
                       icon={CalendarIcon}
-                      size={"xs"}
                       color={"fg.muted"}
                     />
-                    <P fontSize={"xs"} color={"fg.muted"}>
-                      {"Tanggal Setor"}
-                    </P>
+                    <P color={"fg.muted"}>{"Tanggal Setor"}</P>
                   </HStack>
-                  <P fontSize={"xs"}>
-                    {formatUtcDateTime(order.paidAt, preferredTimezone)}
-                  </P>
+                  <P>{formatUtcDateTime(order.paidAt, preferredTimezone)}</P>
                 </HStack>
               )}
 
@@ -334,10 +304,9 @@ const InternalOrderReviewDetailModalContent = (
                   <HStack gap={"xs"} align={"center"}>
                     <AppIcon
                       icon={FileTextIcon}
-                      size={"xs"}
                       color={"fg.muted"}
                     />
-                    <P fontSize={"xs"} color={"fg.muted"} truncate maxW={"220px"}>
+                    <P color={"fg.muted"} truncate maxW={"260px"}>
                       {order.paymentProofName || "Berkas Bukti Bayar"}
                     </P>
                   </HStack>
@@ -345,7 +314,6 @@ const InternalOrderReviewDetailModalContent = (
                   <Button
                     asChild={true}
                     variant={"outline"}
-                    size={"xs"}
                   >
                     <a
                       href={order.paymentProofUrl}
@@ -365,18 +333,14 @@ const InternalOrderReviewDetailModalContent = (
 
           {/* Ringkasan Biaya PNBP */}
           <VStack align={"stretch"} gap={"xs"} py={"xs"}>
-            <P fontSize={"xs"} fontWeight={"semibold"}>
-              {"Ringkasan Biaya PNBP"}
-            </P>
+            <P fontWeight={"semibold"}>{"Ringkasan Biaya PNBP"}</P>
 
             {coverageBidangCount > 0 && (
               <HStack justify={"space-between"} align={"center"}>
                 <VStack align={"start"} gap={0}>
-                  <P fontSize={"xs"} color={"fg.muted"}>
-                    {"Cakupan Bidang"}
-                  </P>
+                  <P color={"fg.muted"}>{"Cakupan Bidang"}</P>
                   {unitPriceBidang > 0 && (
-                    <P fontSize={"2xs"} color={"fg.subtle"}>
+                    <P color={"fg.subtle"}>
                       <TNum>{formatNumber(coverageBidangCount)}</TNum>
                       {" bidang × "}
                       <FormatNumber
@@ -389,7 +353,7 @@ const InternalOrderReviewDetailModalContent = (
                   )}
                 </VStack>
 
-                <P fontSize={"xs"} fontWeight={"medium"}>
+                <P fontWeight={"medium"}>
                   <FormatNumber
                     value={subtotalBidang}
                     style={"currency"}
@@ -403,11 +367,9 @@ const InternalOrderReviewDetailModalContent = (
             {coverageKawasanHa > 0 && (
               <HStack justify={"space-between"} align={"center"}>
                 <VStack align={"start"} gap={0}>
-                  <P fontSize={"xs"} color={"fg.muted"}>
-                    {"Cakupan Kawasan"}
-                  </P>
+                  <P color={"fg.muted"}>{"Cakupan Kawasan"}</P>
                   {unitPriceKawasan > 0 && (
-                    <P fontSize={"2xs"} color={"fg.subtle"}>
+                    <P color={"fg.subtle"}>
                       <TNum>
                         {formatNumber(coverageKawasanHa, {
                           maximumFractionDigits: 2,
@@ -424,7 +386,7 @@ const InternalOrderReviewDetailModalContent = (
                   )}
                 </VStack>
 
-                <P fontSize={"xs"} fontWeight={"medium"}>
+                <P fontWeight={"medium"}>
                   <FormatNumber
                     value={subtotalKawasan}
                     style={"currency"}
@@ -436,10 +398,8 @@ const InternalOrderReviewDetailModalContent = (
             )}
 
             <HStack justify={"space-between"} align={"center"} pt={"xs"}>
-              <P fontWeight={"semibold"} fontSize={"xs"}>
-                {"Total Tagihan"}
-              </P>
-              <P fontWeight={"bold"} fontSize={"sm"} color={"green.500"}>
+              <P fontWeight={"semibold"}>{"Total Tagihan"}</P>
+              <P fontWeight={"bold"} color={"green.500"}>
                 <FormatNumber
                   value={totalCalculated}
                   style={"currency"}
@@ -466,23 +426,18 @@ const InternalOrderReviewDetailModalContent = (
                 py={"2xs"}
               >
                 <HStack gap={"xs"} align={"center"}>
-                  <AppIcon
-                    icon={LayersIcon}
-                    size={"xs"}
-                    color={"fg.muted"}
-                  />
-                  <P fontSize={"xs"} fontWeight={"medium"}>
+                  <AppIcon icon={LayersIcon} color={"fg.muted"} />
+                  <P fontWeight={"medium"}>
                     {`Total Layer: ${order.items.length} IGT Layer`}
                   </P>
                 </HStack>
 
                 <HStack gap={"2xs"} align={"center"}>
-                  <P fontSize={"2xs"} color={"fg.muted"}>
+                  <P color={"fg.muted"}>
                     {isLayerListOpen ? "Tutup" : "Lihat Daftar"}
                   </P>
                   <AppIcon
                     icon={isLayerListOpen ? ChevronUpIcon : ChevronDownIcon}
-                    size={"xs"}
                     color={"fg.muted"}
                   />
                 </HStack>
@@ -510,12 +465,8 @@ const InternalOrderReviewDetailModalContent = (
                       >
                         <HStack justify={"space-between"} align={"center"}>
                           <HStack gap={"xs"} flex={1} minW={0}>
-                            <IgtBasisBadge size={"xs"}>{basis}</IgtBasisBadge>
-                            <P
-                              fontSize={"xs"}
-                              fontWeight={"medium"}
-                              truncate
-                            >
+                            <IgtBasisBadge>{basis}</IgtBasisBadge>
+                            <P fontWeight={"medium"} truncate>
                               {item.sourceLayerTitle || item.sourceLayerId}
                             </P>
                           </HStack>

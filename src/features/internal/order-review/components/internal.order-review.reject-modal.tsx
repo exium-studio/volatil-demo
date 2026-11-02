@@ -98,7 +98,7 @@ const InternalOrderReviewRejectModalContent = (
               : "Tolak Permintaan Pesanan"}
           </Modal.Title>
 
-          <P fontSize={"xs"} textAlign={"center"} color={"fg.muted"}>
+          <P textAlign={"center"} color={"fg.muted"}>
             {order.orderNumber
               ? `${order.orderNumber} (${order.mitraName})`
               : `ID: ${order.orderId} (${order.mitraName})`}
@@ -108,7 +108,7 @@ const InternalOrderReviewRejectModalContent = (
 
       <Modal.Body>
         <VStack align={"stretch"} gap={"md"}>
-          <Alert.Root status={"warning"} size={"sm"}>
+          <Alert.Root status={"warning"}>
             <Alert.Indicator />
             <Alert.Content>
               <Alert.Description>
