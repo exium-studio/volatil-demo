@@ -224,7 +224,7 @@ export async function fetchCartOrderDetailApi(
   signal?: AbortSignal,
 ): Promise<ApiResponse<CartOrder | null>> {
   return apiClient.get<ApiResponse<CartOrder | null>>(
-    `/api/mitra/cart/orders/${orderId}`,
+    `/api/mitra/orders/${orderId}`,
     { signal },
   );
 }

@@ -1563,9 +1563,9 @@ type OrderListResponse = {
 };
 ```
 
-### Ambil Detail Order di Keranjang
+### Ambil Detail Order di Keranjang & Riwayat Transaksi
 
-- **Endpoint**: `GET /api/mitra/cart/orders/{orderId}`
+- **Endpoint**: `GET /api/mitra/orders/{orderId}` _(alias `GET /api/mitra/cart/orders/{orderId}`)_
 - **Akses**: `Mitra Only`
 - **Response (200 OK)**:
 
