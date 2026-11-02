@@ -4,6 +4,7 @@ import { Button } from "@/design-system/components/button/ui/button";
 import { ClipboardButton } from "@/design-system/components/data-display/ui/clipboard-button";
 import { Accordion } from "@/design-system/components/disclosure/ui/accordion";
 import { Alert } from "@/design-system/components/feedback/ui/alert";
+import { Skeleton } from "@/design-system/components/feedback/ui/skeleton";
 import { FocusAlertItem } from "@/design-system/components/focus-alert/ui/focus-alert";
 import { focusAlert } from "@/design-system/components/focus-alert/utils/focus-alert";
 import { AppIcon } from "@/design-system/components/icon/ui/app-icon";
@@ -59,8 +60,11 @@ const BillingPageBillingCode = () => {
   // Queries
   const { data: simponiConfig } = usePublicSimponiStatusQuery();
   const targetOrderId = search?.orderId || billingCode;
-  const { orderDetail, refetch: refetchOrderDetail } =
-    useCartOrderDetailQuery(targetOrderId);
+  const {
+    orderDetail,
+    isLoading: isOrderLoading,
+    refetch: refetchOrderDetail,
+  } = useCartOrderDetailQuery(targetOrderId);
 
   // Derived Values
   const isRenewal =
@@ -88,10 +92,8 @@ const BillingPageBillingCode = () => {
     isPendingManualVerification ||
     Boolean(orderDetail?.isManualPayment);
 
-  // Effective billing code string: only show if not equal to orderId
-  const effectiveBillingCode =
-    orderDetail?.billingCode ||
-    (billingCode && billingCode !== targetOrderId ? billingCode : "");
+  // SSOT: Kode billing bersumber dari data order backend
+  const effectiveBillingCode = orderDetail?.billingCode || "";
 
   const hasBillingActions =
     isPendingBillingCode ||
@@ -243,7 +245,9 @@ const BillingPageBillingCode = () => {
               </HStack>
 
               <HStack align={"center"} gap={"sm"}>
-                {effectiveBillingCode ? (
+                {isOrderLoading ? (
+                  <Skeleton h={"28px"} w={"180px"} />
+                ) : effectiveBillingCode ? (
                   <>
                     <Heading fontSize={"xl"} color={`${theme.colorPalette}.fg`}>
                       <TNum>{effectiveBillingCode}</TNum>
