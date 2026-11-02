@@ -237,6 +237,7 @@ export const fetchInternalOrdersApi = async (
         pageSize: params?.pageSize,
         search: params?.search,
         status: params?.status === "all" ? undefined : params?.status,
+        sortOrder: "ASC",
       },
       signal,
     });
@@ -290,6 +291,14 @@ export const fetchInternalOrdersApi = async (
         ("orders" in rawData || "items" in rawData))
     ) {
       const items = rawOrders.map(normalizeInternalOrderItem);
+
+      // Enforce FIFO order (oldest request date first)
+      items.sort((a, b) => {
+        const timeA = a.createdAt ? new Date(a.createdAt).getTime() : 0;
+        const timeB = b.createdAt ? new Date(b.createdAt).getTime() : 0;
+        return timeA - timeB;
+      });
+
       const page = params?.page ?? 1;
       const pageSize = params?.pageSize ?? 10;
 

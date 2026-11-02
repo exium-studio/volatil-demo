@@ -158,6 +158,7 @@ export const InternalOrderReviewDataView = () => {
         columns: [
           {
             value: order.createdAt,
+            dataType: "date" as const,
             td: (
               <HStack gap={2} whiteSpace={"nowrap"}>
                 <P fontSize={"sm"} color={"fg.muted"}>
@@ -503,6 +504,8 @@ export const InternalOrderReviewDataView = () => {
                 headers={dataList.headers}
                 items={dataList.items}
                 itemActions={dataList.itemActions}
+                initialSortColumnIndex={0}
+                initialSortOrder={"asc"}
                 withNumbering={true}
                 virtualized={false}
                 page={params.page}
