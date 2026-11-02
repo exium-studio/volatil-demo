@@ -42,16 +42,23 @@ export type InternalOrderReviewApproveModalContentProps = {
   close: () => void;
 };
 
-export type InternalOrderReviewDetailTriggerProps = {
+export type InternalOrderManualPaymentVerificationTriggerProps = {
   modalKey?: string;
   order: InternalOrderItem;
   children?: ReactNode;
 };
 
-export type InternalOrderReviewDetailModalContentProps = {
+export type InternalOrderManualPaymentVerificationModalContentProps = {
   order: InternalOrderItem;
+  modalKey: string;
   close: () => void;
 };
+
+export type InternalOrderReviewDetailTriggerProps =
+  InternalOrderManualPaymentVerificationTriggerProps;
+
+export type InternalOrderReviewDetailModalContentProps =
+  InternalOrderManualPaymentVerificationModalContentProps;
 
 export type InternalOrderReviewTteTriggerProps = {
   modalKey?: string;

@@ -5,7 +5,7 @@ import { AppIcon } from "@/design-system/components/icon/ui/app-icon";
 import { Alert } from "@/design-system/components/feedback/ui/alert";
 import { Field } from "@/design-system/components/input/ui/field";
 import { Textarea } from "@/design-system/components/input/ui/textarea";
-import { HStack, VStack } from "@/design-system/components/layout/ui/flex-box";
+import { VStack } from "@/design-system/components/layout/ui/flex-box";
 import { usePopModal } from "@/design-system/components/overlay/hooks/use-pop-modal";
 import { Modal } from "@/design-system/components/overlay/ui/modal";
 import { P } from "@/design-system/components/typography/ui/p";
@@ -98,7 +98,7 @@ const InternalOrderReviewRejectModalContent = (
               : "Tolak Permintaan Pesanan"}
           </Modal.Title>
 
-          <P textAlign={"center"} color={"fg.muted"}>
+          <P fontSize={"sm"} textAlign={"center"} color={"fg.muted"}>
             {order.orderNumber
               ? `${order.orderNumber} (${order.mitraName})`
               : `ID: ${order.orderId} (${order.mitraName})`}
@@ -123,8 +123,8 @@ const InternalOrderReviewRejectModalContent = (
             label={"Alasan Penolakan"}
             helperText={
               isManualPaymentVerification
-                ? "Contoh: Nomor NTPN tidak valid di kas negara / bukti transfer buram"
-                : "Contoh: Area AOI tumpang tindih dengan kawasan lindung / data tidak memenuhi ketentuan"
+                ? "Nomor NTPN tidak valid di kas negara / bukti transfer buram"
+                : "Area AOI tumpang tindih dengan kawasan lindung / data tidak memenuhi ketentuan"
             }
           >
             <Textarea
@@ -142,13 +142,9 @@ const InternalOrderReviewRejectModalContent = (
       </Modal.Body>
 
       <Modal.Footer>
-        <HStack justify={"end"} gap={"sm"} w={"full"}>
-          <Button variant={"outline"} onClick={back}>
-            {"Batal"}
-          </Button>
-
+        <VStack gap={"xs"} w={"full"}>
           <Button
-            variant={"solid"}
+            primary={true}
             colorPalette={"red"}
             disabled={!reason.trim() || rejectMutation.isPending}
             loading={rejectMutation.isPending}
@@ -159,7 +155,11 @@ const InternalOrderReviewRejectModalContent = (
               ? "Tolak Bukti Pembayaran"
               : "Tolak Pesanan"}
           </Button>
-        </HStack>
+
+          <Button onClick={back}>
+            {"Batal"}
+          </Button>
+        </VStack>
       </Modal.Footer>
     </Modal.Content>
   );

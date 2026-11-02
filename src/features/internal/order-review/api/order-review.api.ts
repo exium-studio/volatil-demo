@@ -723,6 +723,13 @@ const getDummyOrderList = (
     );
   }
 
+  // FIFO sorting: oldest requests first for public service workflow
+  filtered.sort((a, b) => {
+    const timeA = a.createdAt ? new Date(a.createdAt).getTime() : 0;
+    const timeB = b.createdAt ? new Date(b.createdAt).getTime() : 0;
+    return timeA - timeB;
+  });
+
   const page = params?.page ?? 1;
   const pageSize = params?.pageSize ?? 10;
   const start = (page - 1) * pageSize;

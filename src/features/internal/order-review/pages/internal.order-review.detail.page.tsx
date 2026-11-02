@@ -26,7 +26,7 @@ import { ClampedHeading } from "@/design-system/components/typography/ui/heading
 import { P } from "@/design-system/components/typography/ui/p";
 import { Url } from "@/design-system/components/typography/ui/url";
 import { InternalOrderReviewApproveTrigger } from "@/features/internal/order-review/components/internal.order-review.approve-modal";
-import { InternalOrderReviewDetailTrigger } from "@/features/internal/order-review/components/internal.order-review.detail-modal";
+import { InternalOrderReviewDetailTrigger } from "@/features/internal/order-review/components/internal.order-manual-payment-verification-modal";
 import { InternalOrderReviewInputBillingTrigger } from "@/features/internal/order-review/components/internal.order-review.input-billing-modal";
 import {
   useInternalOrderDetailQuery,
