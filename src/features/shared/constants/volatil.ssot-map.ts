@@ -252,7 +252,7 @@ export const ORDER_STATUS_MAP: Record<OrderStatus, OrderStatusConfig> = {
   manual_pending_payment: {
     label: "Menunggu Pembayaran (Manual)",
     colorPalette: "orange",
-    icon: LandmarkIcon,
+    icon: CreditCardIcon,
     iconColor: "orange.fg",
     noticeDescription:
       "Silakan lakukan pembayaran dengan Kode Billing dan unggah bukti bayar.",

@@ -23,7 +23,6 @@ import { Separator } from "@/design-system/components/layout/ui/separator";
 import { P, TNum } from "@/design-system/components/typography/ui/p";
 import { FormatNumber } from "@/design-system/components/utilities/ui/fornat-number";
 import { useDebouncedValue } from "@/design-system/hooks/use-debounced-value";
-import { usePublicSimponiStatusQuery } from "@/features/mitra/billing/hooks/use-simponi-status.query";
 import { useTransactionHistoryQuery } from "@/features/mitra/transaction-history/hooks/use-transaction-history";
 import type {
   TransactionHistoryQueryParams,
@@ -56,12 +55,10 @@ import {
   HistoryIcon,
   ReceiptTextIcon,
   SquarePen,
-  UploadCloudIcon,
 } from "lucide-react";
 import { useMemo, useState, useTransition } from "react";
 
 import { Countdown } from "@/design-system/components/data-display/ui/countdown";
-import { ManualPaymentProofTrigger } from "@/features/mitra/billing/components/manual-payment-proof-modal";
 
 const ITEMS_PER_PAGE_DEFAULT = DEFAULT_PAGE_SIZE_OPTIONS[0];
 
@@ -98,9 +95,6 @@ export const TransactionHistoryDataView = () => {
   }, [debouncedSearch, params.status]);
 
   // Queries
-  const { data: simponiConfig } = usePublicSimponiStatusQuery();
-  const isSimponiDisabled = simponiConfig?.isEnabled === false;
-
   const { transactionHistory, isLoading, isFetching, isError, error, refetch } =
     useTransactionHistoryQuery({
       page: params.page,
@@ -332,46 +326,6 @@ export const TransactionHistoryDataView = () => {
         },
       },
       {
-        key: "upload-payment-proof",
-        label: "Unggah Bukti Bayar",
-        icon: UploadCloudIcon,
-        colorPalette: "blue",
-        hidden: (transaction: TransactionRecord) => {
-          if (
-            transaction.transactionStatus === "paid" ||
-            Boolean(transaction.paidAt) ||
-            transaction.transactionStatus === "expired"
-          ) {
-            return true;
-          }
-
-          // Case 1: Manual pending payment order
-          if (transaction.orderStatus === "manual_pending_payment") {
-            return false;
-          }
-
-          // Case 2: Edge case - SIMPONI was ON when order created (pending_payment), but now SIMPONI is OFF
-          if (
-            isSimponiDisabled &&
-            transaction.orderStatus === "pending_payment"
-          ) {
-            return false;
-          }
-
-          return true;
-        },
-        modal: {
-          triggerComponent: (transaction: TransactionRecord) => (
-            <ManualPaymentProofTrigger
-              modalKey={`upload-proof-${transaction.orderId || transaction.id}`}
-              orderId={transaction.orderId || transaction.id}
-              billingCode={transaction.billingCode}
-            />
-          ),
-        },
-      },
-
-      {
         key: "view-invoice",
         label: "Lihat Faktur",
         icon: ReceiptTextIcon,
@@ -415,7 +369,7 @@ export const TransactionHistoryDataView = () => {
       batchActions: [],
       itemActions,
     };
-  }, [transactionHistory.items, preferredTimezone, navigate, isSimponiDisabled]);
+  }, [transactionHistory.items, preferredTimezone, navigate]);
 
   return (
     <VStack flex={1} overflowY={"auto"} w={"full"}>

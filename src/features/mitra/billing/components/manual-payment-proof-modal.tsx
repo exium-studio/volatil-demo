@@ -140,7 +140,8 @@ export const ManualPaymentProofModalContent = (
 
             {/* Field NTPN / Referensi */}
             <Field
-              label={"Nomor Referensi Transaksi / NTPN (Opsional)"}
+              optional
+              label={"Nomor Referensi Transaksi / NTPN"}
               invalid={Boolean(errors.ntpn)}
               errorText={errors.ntpn?.message}
               helperText={
