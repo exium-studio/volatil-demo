@@ -270,12 +270,7 @@ export async function postSubmitManualPaymentProofApi(
   return apiClient.post<ApiResponse<{ orderId: string; status: "pending_review" }>>(
     `/api/mitra/orders/${orderId}/manual-payment-proof`,
     formData,
-    {
-      signal,
-      headers: {
-        "Content-Type": "multipart/form-data",
-      },
-    },
+    { signal },
   );
 }
 
