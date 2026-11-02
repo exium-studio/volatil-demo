@@ -12,10 +12,7 @@ import type {
   OrderedIgtLayersPreviewModalContentProps,
 } from "@/features/shared/types/ordered-igt-layers-preview.type";
 import { isEmptyArray } from "@/shared/utils/data/array";
-import {
-  formatCurrency,
-  formatNumber,
-} from "@/shared/utils/formatter/number.formatter";
+import { formatNumber } from "@/shared/utils/formatter/number.formatter";
 import { useId, useMemo } from "react";
 
 export const OrderedIgtLayers = (props: OrderedIgtLayersPreviewCellProps) => {
@@ -130,11 +127,6 @@ export const OrderedIgtLayersPreviewModalContent = (
       ? bidangCoverageCount
       : computedTotalBidang;
 
-  const hasTotalPrice = useMemo(
-    () => items.some((it) => (it.subtotalPrice ?? 0) > 0),
-    [items],
-  );
-
   return (
     <Modal.Content>
       <Modal.Header>
@@ -235,12 +227,6 @@ export const OrderedIgtLayersPreviewModalContent = (
                       >
                         {countOrAreaDetail}
                       </P>
-
-                      {hasTotalPrice && (item.subtotalPrice ?? 0) > 0 && (
-                        <P fontSize={"sm"} fontWeight={"semibold"}>
-                          {formatCurrency(item.subtotalPrice ?? 0)}
-                        </P>
-                      )}
                     </VStack>
                   </HStack>
                 </VStack>

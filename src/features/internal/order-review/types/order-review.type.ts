@@ -99,6 +99,10 @@ export type InternalOrderItem = {
   kawasanCoverageHa?: number | null;
   featuresCount?: number | null;
   bidangCoverageCount?: number | null;
+  subtotalBidangPrice?: number;
+  subtotalKawasanPrice?: number;
+  subtotalBidang?: number;
+  subtotalKawasan?: number;
   items: CartOrderItem[];
   aoiPolygon?: GeoJSON.MultiPolygon | GeoJSON.Polygon | null;
   invoiceUrl?: string | null;

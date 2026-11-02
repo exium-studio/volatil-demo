@@ -142,6 +142,30 @@ const normalizeInternalOrderItem = (raw: any): InternalOrderItem => {
         : raw.bidang_coverage_count != null
           ? Number(raw.bidang_coverage_count)
           : null,
+    subtotalBidangPrice:
+      raw.subtotalBidangPrice != null
+        ? Number(raw.subtotalBidangPrice)
+        : raw.subtotal_bidang_price != null
+          ? Number(raw.subtotal_bidang_price)
+          : undefined,
+    subtotalKawasanPrice:
+      raw.subtotalKawasanPrice != null
+        ? Number(raw.subtotalKawasanPrice)
+        : raw.subtotal_kawasan_price != null
+          ? Number(raw.subtotal_kawasan_price)
+          : undefined,
+    subtotalBidang:
+      raw.subtotalBidang != null
+        ? Number(raw.subtotalBidang)
+        : raw.subtotal_bidang != null
+          ? Number(raw.subtotal_bidang)
+          : undefined,
+    subtotalKawasan:
+      raw.subtotalKawasan != null
+        ? Number(raw.subtotalKawasan)
+        : raw.subtotal_kawasan != null
+          ? Number(raw.subtotal_kawasan)
+          : undefined,
     items,
     aoiPolygon,
     invoiceUrl: raw.invoiceUrl ?? raw.invoice_url ?? null,

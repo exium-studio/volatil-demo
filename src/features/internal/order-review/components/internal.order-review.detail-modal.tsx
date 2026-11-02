@@ -1,18 +1,17 @@
 import { Button } from "@/design-system/components/button/ui/button";
 import { ClipboardButton } from "@/design-system/components/data-display/ui/clipboard-button";
 import { Alert } from "@/design-system/components/feedback/ui/alert";
-import { AppIcon } from "@/design-system/components/icon/ui/app-icon";
 import { ConfirmationTrigger } from "@/design-system/components/feedback/ui/confirmation-trigger";
+import { AppIcon } from "@/design-system/components/icon/ui/app-icon";
+import { Box } from "@/design-system/components/layout/ui/box";
 import { HStack, VStack } from "@/design-system/components/layout/ui/flex-box";
+import { SimpleGrid } from "@/design-system/components/layout/ui/grid";
+import { Separator } from "@/design-system/components/layout/ui/separator";
 import { usePopModal } from "@/design-system/components/overlay/hooks/use-pop-modal";
 import { Modal } from "@/design-system/components/overlay/ui/modal";
-import { P } from "@/design-system/components/typography/ui/p";
-import { Separator } from "@/design-system/components/layout/ui/separator";
 import { Badge } from "@/design-system/components/typography/ui/badge";
-import { IgtBasisBadge } from "@/features/shared/components/igt-basis.badge";
-import { OrderStatusBadge } from "@/features/shared/components/order-status.badge";
-import { SelectionTypeBadge } from "@/features/shared/components/selection-type.badge";
-import { TteBadge } from "@/features/shared/components/tte.badge";
+import { P, TNum } from "@/design-system/components/typography/ui/p";
+import { FormatNumber } from "@/design-system/components/utilities/ui/fornat-number";
 import { InternalOrderReviewInputBillingTrigger } from "@/features/internal/order-review/components/internal.order-review.input-billing-modal";
 import { InternalOrderReviewRejectTrigger } from "@/features/internal/order-review/components/internal.order-review.reject-modal";
 import {
@@ -23,11 +22,16 @@ import type {
   InternalOrderReviewDetailModalContentProps,
   InternalOrderReviewDetailTriggerProps,
 } from "@/features/internal/order-review/types/order-review.type";
+import { usePricingPolicy } from "@/features/mitra/data-request/hooks/use-pricing-policy";
+import { IgtBasisBadge } from "@/features/shared/components/igt-basis.badge";
+import { OrderStatusBadge } from "@/features/shared/components/order-status.badge";
+import { SelectionTypeBadge } from "@/features/shared/components/selection-type.badge";
+import { TteBadge } from "@/features/shared/components/tte.badge";
 import {
   formatUtcDateTime,
   getPreferredUserTimezone,
 } from "@/shared/utils/formatter/date.formatter";
-import { formatCurrency } from "@/shared/utils/formatter/number.formatter";
+import { formatNumber } from "@/shared/utils/formatter/number.formatter";
 import { useNavigate } from "@tanstack/react-router";
 import {
   CalendarIcon,
@@ -75,6 +79,7 @@ const InternalOrderReviewDetailModalContent = (
   const preferredTimezone = useMemo(() => getPreferredUserTimezone(), []);
   const provisionOrderMutation = useProvisionOrder();
   const approveManualPaymentMutation = useApproveManualPayment();
+  const pricingPolicy = usePricingPolicy();
 
   const navigate = useNavigate();
 
@@ -84,6 +89,67 @@ const InternalOrderReviewDetailModalContent = (
   const isPendingManualVerification =
     order.status === "pending_manual_payment_verification";
   const isPendingReview = order.status === "pending_review";
+
+  // Coverage Bidang Count
+  const coverageBidangCount = useMemo(() => {
+    if (order.bidangCoverageCount != null) {
+      return order.bidangCoverageCount;
+    }
+    if (order.featuresCount != null) {
+      return order.featuresCount;
+    }
+    return (order.items || [])
+      .filter((it) => (it.igtBasis ?? it.spatialBasis) === "bidang")
+      .reduce((sum, it) => sum + (it.featuresCount ?? 0), 0);
+  }, [order]);
+
+  // Coverage Kawasan Ha
+  const coverageKawasanHa = useMemo(() => {
+    if (order.kawasanCoverageHa != null) {
+      return order.kawasanCoverageHa;
+    }
+    if (order.coverageHa != null) {
+      return order.coverageHa;
+    }
+    const kawasanItems = (order.items || []).filter(
+      (it) => (it.igtBasis ?? it.spatialBasis) === "kawasan",
+    );
+    if (kawasanItems.length === 0) return 0;
+    return Math.max(...kawasanItems.map((it) => it.areaHa ?? 0), 0);
+  }, [order]);
+
+  // Unit Prices
+  const unitPriceBidang = useMemo(() => {
+    const itemWithPrice = (order.items || []).find(
+      (it) => (it.igtBasis ?? it.spatialBasis) === "bidang" && (it.unitPrice ?? 0) > 0,
+    );
+    return itemWithPrice?.unitPrice ?? pricingPolicy.pricePerBidang ?? 0;
+  }, [order, pricingPolicy.pricePerBidang]);
+
+  const unitPriceKawasan = useMemo(() => {
+    const itemWithPrice = (order.items || []).find(
+      (it) => (it.igtBasis ?? it.spatialBasis) === "kawasan" && (it.unitPrice ?? 0) > 0,
+    );
+    return itemWithPrice?.unitPrice ?? pricingPolicy.pricePerKawasanHa ?? 0;
+  }, [order, pricingPolicy.pricePerKawasanHa]);
+
+  // Subtotals
+  const subtotalBidang = useMemo(() => {
+    if (order.subtotalBidangPrice != null) return order.subtotalBidangPrice;
+    if (order.subtotalBidang != null) return order.subtotalBidang;
+    return coverageBidangCount * unitPriceBidang;
+  }, [order, coverageBidangCount, unitPriceBidang]);
+
+  const subtotalKawasan = useMemo(() => {
+    if (order.subtotalKawasanPrice != null) return order.subtotalKawasanPrice;
+    if (order.subtotalKawasan != null) return order.subtotalKawasan;
+    return coverageKawasanHa * unitPriceKawasan;
+  }, [order, coverageKawasanHa, unitPriceKawasan]);
+
+  const totalCalculated =
+    (order.totalPrice ?? 0) > 0
+      ? (order.totalPrice ?? 0)
+      : subtotalBidang + subtotalKawasan;
 
   return (
     <Modal.Content>
@@ -117,57 +183,119 @@ const InternalOrderReviewDetailModalContent = (
             </Alert.Root>
           )}
 
-          {/* Metadata */}
-          <VStack
-            align={"stretch"}
-            gap={"xs"}
-            p={"sm"}
-            bg={"bg.subtle"}
-            rounded={"md"}
-            border={"1px solid"}
-            borderColor={"border.subtle"}
-          >
-            <HStack justify={"space-between"}>
+          {/* Ringkasan Informasi Pesanan */}
+          <SimpleGrid columns={{ base: 1, sm: 2 }} gap={"sm"}>
+            <VStack
+              align={"start"}
+              gap={"2xs"}
+              p={"sm"}
+              bg={"bg.subtle"}
+              rounded={"md"}
+              border={"1px solid"}
+              borderColor={"border.subtle"}
+            >
               <P fontSize={"xs"} color={"fg.muted"}>
-                {"Pemohon:"}
+                {"Pemohon"}
               </P>
-              <P fontWeight={"semibold"} fontSize={"xs"}>
+              <P fontSize={"sm"} fontWeight={"semibold"}>
                 {order.mitraName}
               </P>
-            </HStack>
-            <HStack justify={"space-between"}>
+            </VStack>
+
+            <VStack
+              align={"start"}
+              gap={"2xs"}
+              p={"sm"}
+              bg={"bg.subtle"}
+              rounded={"md"}
+              border={"1px solid"}
+              borderColor={"border.subtle"}
+            >
               <P fontSize={"xs"} color={"fg.muted"}>
-                {"Metode Pengajuan:"}
-              </P>
-              <SelectionTypeBadge>{order.selectionType}</SelectionTypeBadge>
-            </HStack>
-            <HStack justify={"space-between"}>
-              <P fontSize={"xs"} color={"fg.muted"}>
-                {"Status Pesanan:"}
+                {"Status Pesanan"}
               </P>
               <OrderStatusBadge>{order.status}</OrderStatusBadge>
-            </HStack>
-            <HStack justify={"space-between"}>
+            </VStack>
+
+            <VStack
+              align={"start"}
+              gap={"2xs"}
+              p={"sm"}
+              bg={"bg.subtle"}
+              rounded={"md"}
+              border={"1px solid"}
+              borderColor={"border.subtle"}
+            >
               <P fontSize={"xs"} color={"fg.muted"}>
-                {"Waktu Dibuat:"}
+                {"Metode Pengajuan"}
               </P>
-              <P fontSize={"xs"}>
+              <SelectionTypeBadge>{order.selectionType}</SelectionTypeBadge>
+            </VStack>
+
+            <VStack
+              align={"start"}
+              gap={"2xs"}
+              p={"sm"}
+              bg={"bg.subtle"}
+              rounded={"md"}
+              border={"1px solid"}
+              borderColor={"border.subtle"}
+            >
+              <P fontSize={"xs"} color={"fg.muted"}>
+                {"Waktu Dibuat"}
+              </P>
+              <P fontSize={"sm"}>
                 {formatUtcDateTime(order.createdAt, preferredTimezone)}
               </P>
-            </HStack>
-            <HStack justify={"space-between"} align={"center"} wrap={"wrap"}>
+            </VStack>
+
+            {Boolean(order.billingCode) && (
+              <VStack
+                align={"start"}
+                gap={"2xs"}
+                p={"sm"}
+                bg={"bg.subtle"}
+                rounded={"md"}
+                border={"1px solid"}
+                borderColor={"border.subtle"}
+              >
+                <P fontSize={"xs"} color={"fg.muted"}>
+                  {"Kode Billing"}
+                </P>
+                <HStack align={"center"} gap={"xs"}>
+                  <P fontSize={"sm"} fontFamily={"mono"} fontWeight={"bold"}>
+                    <TNum>{order.billingCode}</TNum>
+                  </P>
+                  <ClipboardButton
+                    value={order.billingCode ?? ""}
+                    size={"2xs"}
+                    variant={"ghost"}
+                  />
+                </HStack>
+              </VStack>
+            )}
+
+            <VStack
+              align={"start"}
+              gap={"2xs"}
+              p={"sm"}
+              bg={"bg.subtle"}
+              rounded={"md"}
+              border={"1px solid"}
+              borderColor={"border.subtle"}
+            >
               <P fontSize={"xs"} color={"fg.muted"}>
-                {"Dokumen & TTE:"}
+                {"Dokumen & Faktur"}
               </P>
               <TteBadge
                 tte={order.tte}
                 invoiceUrl={order.invoiceUrl}
                 tteInvoiceUrl={order.tteInvoiceUrl}
               />
-            </HStack>
-          </VStack>
+            </VStack>
+          </SimpleGrid>
 
-          {/* Bukti Pembayaran Manual (SIMPONI Off / Verifikasi Manual) */}
+          {/* Bukti Pembayaran Manual */}
           {Boolean(
             order.isManualPayment || order.ntpn || order.paymentProofUrl,
           ) && (
@@ -210,7 +338,6 @@ const InternalOrderReviewDetailModalContent = (
                 )}
               </HStack>
 
-              {/* Nomor NTPN */}
               <HStack justify={"space-between"} align={"center"}>
                 <HStack gap={1} align={"center"}>
                   <AppIcon icon={HashIcon} size={"xs"} color={"fg.muted"} />
@@ -233,7 +360,6 @@ const InternalOrderReviewDetailModalContent = (
                 </HStack>
               </HStack>
 
-              {/* Tanggal Penyetoran */}
               {order.paidAt && (
                 <HStack justify={"space-between"} align={"center"}>
                   <HStack gap={1} align={"center"}>
@@ -252,7 +378,6 @@ const InternalOrderReviewDetailModalContent = (
                 </HStack>
               )}
 
-              {/* Preview & Link Berkas Bukti Pembayaran */}
               {order.paymentProofUrl && (
                 <HStack
                   justify={"space-between"}
@@ -293,83 +418,153 @@ const InternalOrderReviewDetailModalContent = (
             </VStack>
           )}
 
-          {/* Layer List */}
+          {/* Ringkasan Volume & Skema Tarif PNBP */}
+          <VStack
+            align={"stretch"}
+            gap={"xs"}
+            p={"sm"}
+            bg={"bg.subtle"}
+            rounded={"md"}
+            border={"1px solid"}
+            borderColor={"border.subtle"}
+          >
+            <P fontSize={"xs"} fontWeight={"semibold"}>
+              {"Ringkasan Biaya PNBP"}
+            </P>
+
+            <VStack align={"stretch"} gap={"xs"} fontSize={"xs"}>
+              {/* Basis Bidang */}
+              <HStack justify={"space-between"} align={"center"}>
+                <VStack align={"start"} gap={0}>
+                  <P color={"fg.muted"}>{"Cakupan Bidang"}</P>
+                  {coverageBidangCount > 0 && unitPriceBidang > 0 && (
+                    <P fontSize={"2xs"} color={"fg.subtle"}>
+                      <TNum>{formatNumber(coverageBidangCount)}</TNum>
+                      {" bidang × "}
+                      <FormatNumber
+                        value={unitPriceBidang}
+                        style={"currency"}
+                        currency={"IDR"}
+                        maximumFractionDigits={0}
+                      />
+                    </P>
+                  )}
+                </VStack>
+
+                <P fontWeight={"medium"}>
+                  {coverageBidangCount > 0 ? (
+                    <FormatNumber
+                      value={subtotalBidang}
+                      style={"currency"}
+                      currency={"IDR"}
+                      maximumFractionDigits={0}
+                    />
+                  ) : (
+                    "-"
+                  )}
+                </P>
+              </HStack>
+
+              {/* Basis Kawasan */}
+              <HStack justify={"space-between"} align={"center"}>
+                <VStack align={"start"} gap={0}>
+                  <P color={"fg.muted"}>{"Cakupan Kawasan"}</P>
+                  {coverageKawasanHa > 0 && unitPriceKawasan > 0 && (
+                    <P fontSize={"2xs"} color={"fg.subtle"}>
+                      <TNum>
+                        {formatNumber(coverageKawasanHa, {
+                          maximumFractionDigits: 2,
+                        })}
+                      </TNum>
+                      {" ha × "}
+                      <FormatNumber
+                        value={unitPriceKawasan}
+                        style={"currency"}
+                        currency={"IDR"}
+                        maximumFractionDigits={0}
+                      />
+                    </P>
+                  )}
+                </VStack>
+
+                <P fontWeight={"medium"}>
+                  {coverageKawasanHa > 0 ? (
+                    <FormatNumber
+                      value={subtotalKawasan}
+                      style={"currency"}
+                      currency={"IDR"}
+                      maximumFractionDigits={0}
+                    />
+                  ) : (
+                    "-"
+                  )}
+                </P>
+              </HStack>
+            </VStack>
+
+            <Separator my={1} />
+
+            <HStack justify={"space-between"} align={"center"}>
+              <P fontWeight={"semibold"} fontSize={"xs"}>
+                {"Total Tagihan"}
+              </P>
+              <P fontWeight={"bold"} fontSize={"sm"} color={"green.500"}>
+                <FormatNumber
+                  value={totalCalculated}
+                  style={"currency"}
+                  currency={"IDR"}
+                  maximumFractionDigits={0}
+                />
+              </P>
+            </HStack>
+          </VStack>
+
+          {/* Daftar Layer IGT */}
           <VStack align={"stretch"} gap={"xs"}>
             <P fontSize={"xs"} fontWeight={"semibold"}>
               {`Daftar Layer IGT (${order.items.length})`}
             </P>
 
-            {order.items.map((item) => {
-              const previewUrl = item.previewWmsUrl || item.wmsUrl || "";
+            <VStack
+              align={"stretch"}
+              gap={0}
+              rounded={"md"}
+              border={"1px solid"}
+              borderColor={"border.subtle"}
+              overflow={"hidden"}
+            >
+              {order.items.map((item, idx) => {
+                const basis = item.igtBasis ?? item.spatialBasis ?? "kawasan";
 
-              return (
-                <VStack
-                  key={item.id}
-                  align={"stretch"}
-                  gap={"2xs"}
-                  p={"xs"}
-                  bg={"bg.subtle"}
-                  rounded={"sm"}
-                  border={"1px solid"}
-                  borderColor={"border.subtle"}
-                >
-                  <HStack justify={"space-between"} align={"center"}>
-                    <HStack gap={"xs"}>
-                      <IgtBasisBadge size={"xs"}>
-                        {item.igtBasis ?? item.spatialBasis ?? "kawasan"}
-                      </IgtBasisBadge>
-                      <P fontSize={"xs"} fontWeight={"medium"}>
-                        {item.sourceLayerTitle}
-                      </P>
+                return (
+                  <Box
+                    key={item.id || item.sourceLayerId || idx}
+                    p={"xs"}
+                    bg={idx % 2 === 0 ? "bg.subtle" : "transparent"}
+                    borderTop={idx > 0 ? "1px solid" : undefined}
+                    borderColor={"border.subtle"}
+                  >
+                    <HStack justify={"space-between"} align={"center"}>
+                      <HStack gap={"xs"} flex={1} minW={0}>
+                        <IgtBasisBadge size={"xs"}>{basis}</IgtBasisBadge>
+                        <VStack align={"start"} gap={0} flex={1} minW={0}>
+                          <P fontSize={"xs"} fontWeight={"medium"} truncate>
+                            {item.sourceLayerTitle || item.sourceLayerId}
+                          </P>
+                          {item.sourceLayerTitle &&
+                            item.sourceLayerTitle !== item.sourceLayerId && (
+                              <P fontSize={"2xs"} color={"fg.subtle"} truncate>
+                                {item.sourceLayerId}
+                              </P>
+                            )}
+                        </VStack>
+                      </HStack>
                     </HStack>
-                    <P fontSize={"xs"} fontWeight={"semibold"}>
-                      {formatCurrency(item.subtotalPrice ?? 0)}
-                    </P>
-                  </HStack>
-
-                  <HStack justify={"space-between"} align={"center"}>
-                    <P fontSize={"2xs"} color={"fg.subtle"}>
-                      {item.sourceLayerId}
-                    </P>
-                    <P fontSize={"2xs"} color={"fg.muted"}>
-                      {(item.igtBasis ?? item.spatialBasis) === "bidang"
-                        ? `${item.featuresCount} bidang`
-                        : `${item.areaHa ?? 0} ha`}
-                    </P>
-                  </HStack>
-
-                  {previewUrl && (
-                    <HStack
-                      justify={"space-between"}
-                      align={"center"}
-                      bg={"bg.canvas"}
-                      p={"2xs"}
-                      rounded={"xs"}
-                    >
-                      <P fontSize={"2xs"} color={"fg.subtle"} truncate>
-                        {previewUrl}
-                      </P>
-                      <ClipboardButton
-                        value={previewUrl}
-                        variant={"ghost"}
-                        size={"2xs"}
-                        aria-label={"Salin URL WMS"}
-                      />
-                    </HStack>
-                  )}
-                </VStack>
-              );
-            })}
+                  </Box>
+                );
+              })}
+            </VStack>
           </VStack>
-
-          <Separator />
-
-          <HStack justify={"space-between"} px={"xs"}>
-            <P fontWeight={"semibold"}>{"Total Estimasi PNBP"}</P>
-            <P fontWeight={"bold"} fontSize={"md"} color={"green.500"}>
-              {formatCurrency(order.totalPrice ?? 0)}
-            </P>
-          </HStack>
         </VStack>
       </Modal.Body>
 
