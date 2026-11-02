@@ -20,7 +20,6 @@ import { HStack, VStack } from "@/design-system/components/layout/ui/flex-box";
 import { Separator } from "@/design-system/components/layout/ui/separator";
 import { HeaderContainer } from "@/design-system/components/shell/ui/header-container";
 import { Heading } from "@/design-system/components/typography/ui/heading";
-import { Badge } from "@/design-system/components/typography/ui/badge";
 import { P, TNum } from "@/design-system/components/typography/ui/p";
 import { InternalOrderReviewDetailTrigger } from "@/features/internal/order-review/components/internal.order-review.detail-modal";
 import { InternalOrderReviewInputBillingTrigger } from "@/features/internal/order-review/components/internal.order-review.input-billing-modal";
@@ -185,13 +184,14 @@ export const InternalOrderReviewDataView = () => {
                 <OrderStatusBadge showIcon={true}>
                   {order.status}
                 </OrderStatusBadge>
-                {Boolean(
+
+                {/* {Boolean(
                   order.isManualPayment || order.ntpn || order.paymentProofUrl,
                 ) && (
                   <Badge colorPalette={"teal"} variant={"subtle"}>
                     {"Verifikasi Manual"}
                   </Badge>
-                )}
+                )} */}
               </VStack>
             ),
             align: "start" as const,
