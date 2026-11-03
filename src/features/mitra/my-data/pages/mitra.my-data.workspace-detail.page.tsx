@@ -312,10 +312,7 @@ export const MitraMyDataWorkspaceDetailPage = () => {
       });
 
       layersToAutoEnable.forEach((layer) => {
-        const wmsLayers =
-          layer.wmsLayers ??
-          layer.wfsTypeName ??
-          layer.id;
+        const wmsLayers = layer.wmsLayers ?? layer.wfsTypeName ?? layer.id;
         if (!wmsLayers) return;
 
         state.setCustomLayerConfig(layer.id, {
@@ -534,10 +531,7 @@ export const MitraMyDataWorkspaceDetailPage = () => {
         const wmsUrl = workspace?.wmsUrl ?? item.wms?.url;
         if (!wmsUrl) return;
 
-        const layerName =
-          item.wmsLayers ??
-          item.wfsTypeName ??
-          item.id;
+        const layerName = item.wmsLayers ?? item.wfsTypeName ?? item.id;
 
         setCustomLayerConfig(item.id, {
           wmsUrl,
