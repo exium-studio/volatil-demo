@@ -52,6 +52,7 @@ import {
   CreditCardIcon,
   EyeIcon,
   FileCheckIcon,
+  FolderOpenIcon,
   HistoryIcon,
   ReceiptTextIcon,
   SquarePen,
@@ -322,6 +323,39 @@ export const TransactionHistoryDataView = () => {
             to: "/mitra/billing/$billingCode",
             params: { billingCode: billingCodeParam },
             search: { orderId: transaction.orderId || transaction.id },
+          });
+        },
+      },
+      {
+        key: "open-workspace",
+        label: "Detail Workspace",
+        icon: FolderOpenIcon,
+        hidden: (transaction: TransactionRecord) => {
+          if (
+            transaction.orderStatus === "rejected" ||
+            transaction.orderStatus === "transaction_failed" ||
+            transaction.orderStatus === "transaction_expired" ||
+            transaction.orderStatus === "pending_payment" ||
+            transaction.orderStatus === "manual_pending_payment" ||
+            transaction.orderStatus === "pending_billing_code" ||
+            transaction.orderStatus === "pending_manual_payment_verification"
+          ) {
+            return true;
+          }
+          return (
+            transaction.orderStatus !== "ready" &&
+            transaction.orderStatus !== "renewed" &&
+            transaction.orderStatus !== "expired" &&
+            transaction.orderStatus !== "processing" &&
+            transaction.orderStatus !== "paid" &&
+            transaction.transactionStatus !== "paid"
+          );
+        },
+        onClick: (transaction: TransactionRecord) => {
+          const workspaceId = transaction.orderId || transaction.id;
+          void navigate({
+            to: "/mitra/my-data/$workspaceId",
+            params: { workspaceId },
           });
         },
       },
