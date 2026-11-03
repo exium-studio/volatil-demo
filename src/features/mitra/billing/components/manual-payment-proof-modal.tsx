@@ -151,7 +151,6 @@ export const ManualPaymentProofModalContent = (
               <Input
                 {...register("ntpn")}
                 placeholder={"8B4F19E3A7029CD1"}
-                fontFamily={"mono"}
                 w={"full"}
               />
             </Field>

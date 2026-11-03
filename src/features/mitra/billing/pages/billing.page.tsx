@@ -18,6 +18,7 @@ import { Heading } from "@/design-system/components/typography/ui/heading";
 import { List } from "@/design-system/components/typography/ui/list";
 import { P, TNum } from "@/design-system/components/typography/ui/p";
 import { useThemeStore } from "@/design-system/stores/theme-store";
+import { toast } from "@/design-system/components/toast/core/toast.manager";
 import { BillingRoute } from "@/shared/libs/tanstack-router/routes";
 import { useNavigate } from "@tanstack/react-router";
 import {
@@ -63,6 +64,7 @@ const BillingPageBillingCode = () => {
   const {
     orderDetail,
     isLoading: isOrderLoading,
+    isFetching: isOrderFetching,
     refetch: refetchOrderDetail,
   } = useCartOrderDetailQuery(targetOrderId);
 
@@ -71,38 +73,72 @@ const BillingPageBillingCode = () => {
     targetOrderId.startsWith("ord-renew-") ||
     targetOrderId.startsWith("renew-");
 
+  // Status tunggal SSOT dari order backend
+  const orderStatus = orderDetail?.orderStatus ?? orderDetail?.status;
+  const transactionStatus = orderDetail?.transactionStatus;
+
+  // Order dianggap sudah lunas / selesai billing jika transaksi paid atau status pemrosesan/ready/renewed
+  const isPaidOrSettled =
+    transactionStatus === "paid" ||
+    orderStatus === "paid" ||
+    orderStatus === "processing" ||
+    orderStatus === "pending_review" ||
+    orderStatus === "pending_tte" ||
+    orderStatus === "ready" ||
+    orderStatus === "renewed";
+
   const isPendingBillingCode =
-    orderDetail?.status === "pending_billing_code" ||
-    orderDetail?.orderStatus === "pending_billing_code";
+    !isPaidOrSettled && orderStatus === "pending_billing_code";
 
   const isPendingManualVerification =
-    orderDetail?.status === "pending_manual_payment_verification" ||
-    orderDetail?.orderStatus === "pending_manual_payment_verification";
+    !isPaidOrSettled && orderStatus === "pending_manual_payment_verification";
 
   const isManualPendingPayment =
-    orderDetail?.status === "manual_pending_payment" ||
-    orderDetail?.orderStatus === "manual_pending_payment";
+    !isPaidOrSettled && orderStatus === "manual_pending_payment";
 
   // Mode manual active if SIMPONI integration is disabled, or order is in manual flow
   const isSimponiDisabled = simponiConfig?.isEnabled === false;
   const isManualVerificationMode =
-    isSimponiDisabled ||
-    isPendingBillingCode ||
-    isManualPendingPayment ||
-    isPendingManualVerification ||
-    Boolean(orderDetail?.isManualPayment);
+    !isPaidOrSettled &&
+    (isSimponiDisabled ||
+      isPendingBillingCode ||
+      isManualPendingPayment ||
+      isPendingManualVerification ||
+      Boolean(orderDetail?.isManualPayment));
 
   // SSOT: Kode billing bersumber dari data order backend
   const effectiveBillingCode = orderDetail?.billingCode || "";
 
+  // Tampilkan action billing hanya jika belum paid/settled
   const hasBillingActions =
-    isPendingBillingCode ||
-    (Boolean(effectiveBillingCode) &&
-      !isPendingBillingCode &&
-      (isManualVerificationMode || !isManualVerificationMode));
+    !isPaidOrSettled &&
+    (isPendingBillingCode ||
+      (Boolean(effectiveBillingCode) &&
+        (isManualVerificationMode || !isManualVerificationMode)));
 
   // Mutations
   const checkPaymentMutation = useCheckOrderPaymentStatus();
+
+  // Redirect mitra jika pesanan sudah dibayar/ready
+  useEffect(() => {
+    if (!orderDetail || !isPaidOrSettled) return;
+
+    toast.success("Pesanan telah terbayar", {
+      group: "Pembayaran",
+    });
+
+    if (isRenewal) {
+      void navigate({
+        to: "/mitra/my-data",
+        replace: true,
+      });
+    } else {
+      void navigate({
+        to: "/mitra/transaction-history",
+        replace: true,
+      });
+    }
+  }, [orderDetail, isPaidOrSettled, isRenewal, navigate]);
 
   // Handlers
   const renderPaymentSuccessAlert = useCallback(
@@ -151,6 +187,10 @@ const BillingPageBillingCode = () => {
         }
       },
     });
+  };
+
+  const handleRefreshStatus = async () => {
+    await refetchOrderDetail();
   };
 
   // Auto trigger payment-success alert if query param contains activeModalKey=payment-success
@@ -265,13 +305,12 @@ const BillingPageBillingCode = () => {
 
             {hasBillingActions && (
               <HStack align={"center"} gap={"sm"} wrap={"wrap"}>
-                {/* Tombol Segarkan saat status pending_billing_code */}
-                {isPendingBillingCode && (
+                {/* Tombol Segarkan saat status pending_billing_code atau verifikasi manual */}
+                {(isPendingBillingCode || isPendingManualVerification) && (
                   <Button
                     variant={"outline"}
-                    onClick={() => {
-                      void refetchOrderDetail();
-                    }}
+                    loading={isOrderFetching}
+                    onClick={handleRefreshStatus}
                   >
                     <AppIcon icon={RefreshCwIcon} />
                     {"Segarkan Status"}
