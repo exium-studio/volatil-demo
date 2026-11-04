@@ -209,14 +209,27 @@ export const MitraMyDataWorkspaceDetailPage = () => {
   // States
   const [isAoiVisible, setIsAoiVisible] = useState(false);
 
-  // Effects — Intercept expired workspace, notify user and redirect to workspaces list
+  // Effects — Intercept non-ready or expired workspace, notify user and redirect
   useEffect(() => {
     if (!workspace) return;
 
+    if (workspace.status !== "ready") {
+      if (workspace.status === "expired") {
+        toast.error(
+          "Workspace telah kedaluwarsa dan tidak dapat diperpanjang atau digunakan kembali.",
+        );
+        void navigate({ to: "/mitra/my-data" });
+        return;
+      }
+
+      toast.warning("Workspace belum siap digunakan.");
+      void navigate({ to: "/mitra/transaction-history" });
+      return;
+    }
+
     const isExpired =
-      workspace.status === "expired" ||
-      (Boolean(workspace.expiresAt) &&
-        new Date(workspace.expiresAt).getTime() <= Date.now());
+      Boolean(workspace.expiresAt) &&
+      new Date(workspace.expiresAt).getTime() <= Date.now();
 
     if (isExpired) {
       toast.error(

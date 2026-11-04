@@ -330,27 +330,9 @@ export const TransactionHistoryDataView = () => {
         key: "open-workspace",
         label: "Detail Workspace",
         icon: FolderOpenIcon,
-        hidden: (transaction: TransactionRecord) => {
-          if (
-            transaction.orderStatus === "rejected" ||
-            transaction.orderStatus === "transaction_failed" ||
-            transaction.orderStatus === "transaction_expired" ||
-            transaction.orderStatus === "pending_payment" ||
-            transaction.orderStatus === "manual_pending_payment" ||
-            transaction.orderStatus === "pending_billing_code" ||
-            transaction.orderStatus === "pending_manual_payment_verification"
-          ) {
-            return true;
-          }
-          return (
-            transaction.orderStatus !== "ready" &&
-            transaction.orderStatus !== "renewed" &&
-            transaction.orderStatus !== "expired" &&
-            transaction.orderStatus !== "processing" &&
-            transaction.orderStatus !== "paid" &&
-            transaction.transactionStatus !== "paid"
-          );
-        },
+        disabled: (transaction: TransactionRecord) =>
+          transaction.orderStatus !== "ready",
+        disabledMessage: "Workspace belum siap digunakan.",
         onClick: (transaction: TransactionRecord) => {
           const workspaceId = transaction.orderId || transaction.id;
           void navigate({
