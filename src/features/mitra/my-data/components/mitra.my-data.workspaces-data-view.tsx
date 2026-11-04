@@ -63,11 +63,11 @@ import {
   CheckCircle2Icon,
   ClockIcon,
   ClockPlusIcon,
-  CopyIcon,
   FileCheckIcon,
   FolderOpenIcon,
   KeyRoundIcon,
   LayersIcon,
+  Link2Icon,
   ReceiptTextIcon,
   RefreshCwIcon,
   SquarePen,
@@ -482,7 +482,7 @@ export const MitraMyDataWorkspacesDataView = (_props: MitraMyDataViewProps) => {
       {
         key: "copy-workspace-url",
         label: "Salin URL WMS Workspace",
-        icon: CopyIcon,
+        icon: Link2Icon,
         onClick: (item: MitraWorkspaceItem) => {
           if (!item.wmsUrl) return;
           void navigator.clipboard.writeText(item.wmsUrl);
