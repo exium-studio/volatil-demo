@@ -15,7 +15,7 @@ import { FormatNumber } from "@/design-system/components/utilities/ui/fornat-num
 import { useInternalPublishStatusQuery } from "@/features/internal/home/hooks/use-internal-home.query";
 import type { InternalHomePublishStatusSummaryProps } from "@/features/internal/home/types/internal.home.publish-status-summary.type";
 import { useNavigate } from "@tanstack/react-router";
-import { Cell, Pie, PieChart, ResponsiveContainer } from "recharts";
+import { Pie, PieChart, ResponsiveContainer, Sector } from "recharts";
 
 export const InternalHomePublishStatusSummary = (
   props: InternalHomePublishStatusSummaryProps,
@@ -34,7 +34,7 @@ export const InternalHomePublishStatusSummary = (
 
   if (isLoading) {
     return (
-      <Container.Root flex={"1 1 240px"} withContext={true} {...props}>
+      <Container.Root flex={"1 1 300px"} withContext={true} {...props}>
         <Skeleton minH={"240px"} w={"full"} />
       </Container.Root>
     );
@@ -62,7 +62,7 @@ export const InternalHomePublishStatusSummary = (
   ];
 
   return (
-    <Container.Root flex={"1 1 240px"} withContext={true} {...props}>
+    <Container.Root flex={"1 1 300px"} withContext={true} {...props}>
       <Container.Body gap={"md"} py={"md"}>
         <HStack justify={"space-between"} align={"center"} px={"md"}>
           <HStack gap={"xs"} align={"center"}>
@@ -77,8 +77,15 @@ export const InternalHomePublishStatusSummary = (
           </HStack>
         </HStack>
 
-        <VStack align={"center"} gap={"xs"} px={"md"}>
-          <Box position={"relative"} w={"150px"} h={"150px"}>
+        <HStack
+          align={"center"}
+          justify={"space-between"}
+          gap={"md"}
+          px={"md"}
+          py={"xs"}
+        >
+          {/* Donut Chart */}
+          <Box position={"relative"} w={"140px"} h={"140px"} flexShrink={0}>
             <ResponsiveContainer width={"100%"} height={"100%"}>
               <PieChart>
                 <ChartTooltip content={<ChartTooltipContent />} />
@@ -88,85 +95,82 @@ export const InternalHomePublishStatusSummary = (
                   nameKey={"name"}
                   cx={"50%"}
                   cy={"50%"}
-                  innerRadius={46}
-                  outerRadius={66}
+                  innerRadius={44}
+                  outerRadius={64}
                   paddingAngle={3}
                   stroke={"none"}
                   isAnimationActive={false}
-                >
-                  {statusData.map((entry) => (
-                    <Cell
-                      key={entry.name}
-                      fill={entry.color}
+                  shape={(props) => (
+                    <Sector
+                      {...props}
+                      fill={
+                        props.fill ||
+                        (props.payload as (typeof statusData)[number])?.color
+                      }
                       cursor={"pointer"}
                       onClick={() =>
-                        handleFilterStatus(entry.name === "Aktif" ? 1 : 0)
+                        handleFilterStatus(
+                          (props.payload as (typeof statusData)[number])
+                            ?.name === "Aktif"
+                            ? 1
+                            : 0,
+                        )
                       }
                     />
-                  ))}
-                </Pie>
+                  )}
+                />
               </PieChart>
             </ResponsiveContainer>
+          </Box>
 
-            {/* Center Label */}
-            <VStack
-              position={"absolute"}
-              inset={0}
-              align={"center"}
-              justify={"center"}
-              gap={0}
-              pointerEvents={"none"}
-            >
-              <P fontSize={"lg"} fontWeight={"bold"} lineHeight={1}>
+          {/* Right Section: Big Percentage & Legend */}
+          <VStack align={"start"} gap={"sm"} flex={1} minW={0}>
+            {/* Big Main Number */}
+            <VStack align={"start"} gap={"xs"}>
+              <P fontSize={"3xl"} fontWeight={"bold"} lineHeight={1}>
                 {`${activePercent}%`}
               </P>
-              <P fontSize={"2xs"} color={"fg.subtle"} textAlign={"center"}>
+              <P fontSize={"xs"} color={"fg.subtle"}>
                 {"Layer Aktif"}
               </P>
             </VStack>
-          </Box>
 
-          {/* Legend */}
-          <HStack
-            gapX={"md"}
-            gapY={"sm"}
-            justify={"center"}
-            wrap={"wrap"}
-            mt={"xs"}
-          >
-            <HStack
-              gap={"xs"}
-              align={"center"}
-              cursor={"pointer"}
-              onClick={() => handleFilterStatus(1)}
-              _hover={{ opacity: 0.8 }}
-            >
-              <Box w={"8px"} h={"8px"} rounded={"full"} bg={"green.solid"} />
-              <P fontSize={"xs"} color={"fg.subtle"}>
-                {"Aktif:"}
-              </P>
-              <P fontSize={"xs"} fontWeight={"semibold"}>
-                <FormatNumber value={igtPublicationStatus.active} />
-              </P>
-            </HStack>
+            {/* Legend List */}
+            <VStack align={"start"} gap={"xs"} w={"full"}>
+              <HStack
+                gap={"xs"}
+                align={"center"}
+                cursor={"pointer"}
+                onClick={() => handleFilterStatus(1)}
+                _hover={{ opacity: 0.8 }}
+              >
+                <Box w={"8px"} h={"8px"} rounded={"full"} bg={"green.solid"} />
+                <P fontSize={"xs"} color={"fg.subtle"}>
+                  {"Aktif:"}
+                </P>
+                <P fontSize={"xs"} fontWeight={"semibold"}>
+                  <FormatNumber value={igtPublicationStatus.active} />
+                </P>
+              </HStack>
 
-            <HStack
-              gap={"xs"}
-              align={"center"}
-              cursor={"pointer"}
-              onClick={() => handleFilterStatus(0)}
-              _hover={{ opacity: 0.8 }}
-            >
-              <Box w={"8px"} h={"8px"} rounded={"full"} bg={"fg.subtle"} />
-              <P fontSize={"xs"} color={"fg.subtle"}>
-                {"Non-aktif:"}
-              </P>
-              <P fontSize={"xs"} fontWeight={"semibold"}>
-                <FormatNumber value={igtPublicationStatus.inactive} />
-              </P>
-            </HStack>
-          </HStack>
-        </VStack>
+              <HStack
+                gap={"xs"}
+                align={"center"}
+                cursor={"pointer"}
+                onClick={() => handleFilterStatus(0)}
+                _hover={{ opacity: 0.8 }}
+              >
+                <Box w={"8px"} h={"8px"} rounded={"full"} bg={"fg.subtle"} />
+                <P fontSize={"xs"} color={"fg.subtle"}>
+                  {"Non-aktif:"}
+                </P>
+                <P fontSize={"xs"} fontWeight={"semibold"}>
+                  <FormatNumber value={igtPublicationStatus.inactive} />
+                </P>
+              </HStack>
+            </VStack>
+          </VStack>
+        </HStack>
       </Container.Body>
     </Container.Root>
   );

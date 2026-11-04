@@ -18,7 +18,14 @@ import type { InternalHomeMitraRegistrationProps } from "@/features/internal/hom
 import type { MitraRegistrationStatus } from "@/features/internal/mitra-registration/types/mitra-registration.type";
 import { Chart, useChart } from "@chakra-ui/charts";
 import { useNavigate } from "@tanstack/react-router";
-import { Bar, BarChart, CartesianGrid, Cell, XAxis, YAxis } from "recharts";
+import {
+  Bar,
+  BarChart,
+  CartesianGrid,
+  Rectangle,
+  XAxis,
+  YAxis,
+} from "recharts";
 
 export const InternalHomeMitraRegistration = (
   props: InternalHomeMitraRegistrationProps,
@@ -127,16 +134,21 @@ const InternalHomeMitraRegistrationChart = (props: {
               name={String(chart.series[0]?.label ?? "Jumlah")}
               radius={[4, 4, 0, 0]}
               barSize={32}
-            >
-              {chartData.map((item) => (
-                <Cell
-                  key={item.status}
-                  fill={chart.color(item.color)}
+              shape={(props) => (
+                <Rectangle
+                  {...props}
+                  fill={chart.color(
+                    (props.payload as (typeof chartData)[number])?.color,
+                  )}
                   cursor={"pointer"}
-                  onClick={() => handleFilterMitra(item.statusKey)}
+                  onClick={() =>
+                    handleFilterMitra(
+                      (props.payload as (typeof chartData)[number])?.statusKey,
+                    )
+                  }
                 />
-              ))}
-            </Bar>
+              )}
+            />
           </BarChart>
         </Chart.Root>
 

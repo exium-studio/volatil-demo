@@ -84,3 +84,25 @@
   background-color: var(--chakra-colors-blue-solid, #2563eb);
   color: #ffffff;
 }
+
+/* Recharts Focus Outline Removal & Smooth Hover Feedback */
+.recharts-surface,
+.recharts-pie-sector,
+.recharts-sector,
+.recharts-bar-rectangle,
+.recharts-rectangle,
+.recharts-wrapper *:focus {
+  outline: none !important;
+}
+
+.recharts-pie-sector,
+.recharts-sector {
+  transition: opacity 0.2s ease, filter 0.2s ease;
+}
+
+.recharts-pie-sector:hover,
+.recharts-sector:hover {
+  opacity: 0.85;
+  filter: brightness(0.92);
+  cursor: pointer;
+}

@@ -14,7 +14,7 @@ import { ActionHeaderScrollContainer } from "@/design-system/components/layout/u
 import { Center } from "@/design-system/components/layout/ui/center";
 import { HStack, VStack } from "@/design-system/components/layout/ui/flex-box";
 import { Separator } from "@/design-system/components/layout/ui/separator";
-import { ClampedP, P, TNum } from "@/design-system/components/typography/ui/p";
+import { ClampedP, P } from "@/design-system/components/typography/ui/p";
 import {
   MITRA_LAYER_SYNC_JOB_STATUS_MAP,
   MITRA_LAYER_SYNC_JOB_STATUS_OPTIONS,
@@ -29,6 +29,7 @@ import type {
   MitraLayerSyncJobStatus,
 } from "@/features/internal/mitra-layer-sync-jobs/types/mitra-layer-sync-job.type";
 import { MitraLayerSyncJobStatusBadge } from "@/features/shared/components/mitra-layer-sync-job-status.badge";
+import { OrderedIgtLayers } from "@/features/shared/components/ordered-igt-layers";
 import { StatusFilterSelect } from "@/features/shared/components/status-filter.select";
 import { t } from "@/shared/libs/i18n";
 import { isEmptyArray } from "@/shared/utils/data/array";
@@ -124,6 +125,25 @@ export const InternalMitraLayerSyncJobTableView = (
     const items = rawItems.map((job: MitraLayerSyncJobItem) => {
       const statusConfig = MITRA_LAYER_SYNC_JOB_STATUS_MAP[job.status];
 
+      const layerItems =
+        job.jobItems && job.jobItems.length > 0
+          ? job.jobItems.map((ji) => ({
+              id: String(ji.orderItemId),
+              sourceLayerId: ji.sourceLayerId,
+              sourceLayerTitle: ji.layerTitle,
+              title: ji.layerTitle,
+            }))
+          : job.layerTitle || job.layerId
+            ? [
+                {
+                  id: job.layerId || job.id,
+                  sourceLayerId: job.layerId,
+                  sourceLayerTitle: job.layerTitle || job.layerId,
+                  title: job.layerTitle || job.layerId,
+                },
+              ]
+            : [];
+
       return {
         id: job.id,
         data: job,
@@ -152,22 +172,13 @@ export const InternalMitraLayerSyncJobTableView = (
             align: "start" as const,
           },
           {
-            value: job.milestoneIndex ?? 0,
+            value: job.layerTitle || job.milestoneIndex || job.id,
             td: (
-              <VStack align={"start"} gap={"2xs"} minW={"120px"}>
-                <P fontSize={"sm"} fontWeight={"medium"}>
-                  {job.milestoneIndex ? (
-                    <TNum>{job.milestoneIndex}</TNum>
-                  ) : (
-                    "-"
-                  )}
-                </P>
-                {job.layerTitle && (
-                  <ClampedP fontSize={"2xs"} color={"fg.subtle"}>
-                    {job.layerTitle}
-                  </ClampedP>
-                )}
-              </VStack>
+              <OrderedIgtLayers
+                items={layerItems}
+                orderNumber={job.orderNumber || job.orderId}
+                modalKey={`mitra-sync-job-layers-${job.id}`}
+              />
             ),
             align: "start" as const,
           },

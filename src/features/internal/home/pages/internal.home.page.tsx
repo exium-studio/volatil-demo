@@ -105,12 +105,14 @@ export const InternalHomePage = () => {
         </Button>
       </HStack>
 
-      {/* Row 1: 3 Dedicated Summary Cards */}
+      {/* Row 1: Donut Summary Cards (Basis IGT & Status Publikasi) */}
       <HStack wrap={"wrap"} gap={"sm"} align={"stretch"} w={"full"}>
         <InternalHomeIgtBasisSummary />
         <InternalHomePublishStatusSummary />
-        <InternalHomeMitraRegistration />
       </HStack>
+
+      {/* Row 2: Registrasi Mitra (Bar Chart) */}
+      <InternalHomeMitraRegistration w={"full"} />
 
       {/* Row 2: Master Tarif & Limit PNBP (Pricing) */}
       <InternalHomePricing w={"full"} />
