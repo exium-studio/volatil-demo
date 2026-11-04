@@ -188,6 +188,7 @@ export const TransactionHistoryDataView = () => {
               td: (
                 <P>
                   <TNum>{item.billingCode || "-"}</TNum>
+                  {/* {item.billingCode || "-"} */}
                 </P>
               ),
               align: "start" as const,
