@@ -6,6 +6,8 @@ import { HStack } from "@/design-system/components/layout/ui/flex-box";
 import { AppContentContainer } from "@/design-system/components/layout/ui/page-container";
 import { toast } from "@/design-system/components/toast";
 import { Heading } from "@/design-system/components/typography/ui/heading";
+import { useIsSmallViewport } from "@/design-system/hooks/use-is-small-viewport";
+import { useAuthSession } from "@/features/auth/hooks/use-auth-session";
 import { InternalHomeIgtBasisSummary } from "@/features/internal/home/components/internal.home.igt-basis-summary";
 import { InternalHomeLeaderboard } from "@/features/internal/home/components/internal.home.leaderboard";
 import { InternalHomeMitraLayerSyncJobsQuickView } from "@/features/internal/home/components/internal.home.mitra-layer-sync-jobs-quick-view";
@@ -15,12 +17,10 @@ import { InternalHomePricing } from "@/features/internal/home/components/interna
 import { InternalHomePublishStatusSummary } from "@/features/internal/home/components/internal.home.publish-status-summary";
 import { InternalHomeTrend } from "@/features/internal/home/components/internal.home.trend";
 import { InternalHomeUserGuideManagement } from "@/features/internal/home/components/internal.home.user-guide-management";
-import { useAuthSession } from "@/features/auth/hooks/use-auth-session";
 import { queryKeys } from "@/shared/libs/tanstack-query/query.keys";
 import { useQueryClient } from "@tanstack/react-query";
 import { RefreshCwIcon } from "lucide-react";
 import { useState } from "react";
-import { useIsSmallViewport } from "@/design-system/hooks/use-is-small-viewport";
 
 export const InternalHomePage = () => {
   // Contexts
@@ -80,6 +80,8 @@ export const InternalHomePage = () => {
 
   return (
     <AppContentContainer position={"relative"} h={"auto"}>
+      {/* <TopBarLoader isFetching /> */}
+
       {/* Dashboard Top Header */}
       <HStack
         justify={"space-between"}

@@ -89,18 +89,30 @@ export const TopBarLoader = (props: TopBarLoaderProps) => {
           h={"full"}
           w={"0%"}
           bg={`${theme.colorPalette}.solid`}
-          boxShadow={`0 0 10px var(--chakra-colors-${theme.colorPalette}-solid), 0 0 5px var(--chakra-colors-${theme.colorPalette}-solid)`}
         >
+          {/* Smooth elongated glow trailing leftwards from right edge */}
           <Box
             position={"absolute"}
             right={0}
-            top={0}
-            bottom={0}
-            w={"100px"}
-            boxShadow={`0 0 10px var(--chakra-colors-${theme.colorPalette}-solid), 0 0 5px var(--chakra-colors-${theme.colorPalette}-solid)`}
-            transform={"rotate(3deg) translate(0px, -4px)"}
-            opacity={1}
+            top={"-4px"}
+            bottom={"-4px"}
+            w={"140px"}
             pointerEvents={"none"}
+            opacity={0.85}
+            bg={`linear-gradient(to right, transparent, var(--chakra-colors-${theme.colorPalette}-solid))`}
+            filter={"blur(3px)"}
+          />
+          {/* Subtle concentrated core glow at the leading edge */}
+          <Box
+            position={"absolute"}
+            right={0}
+            top={"-2px"}
+            bottom={"-2px"}
+            w={"60px"}
+            pointerEvents={"none"}
+            opacity={0.9}
+            bg={`linear-gradient(to right, transparent, var(--chakra-colors-${theme.colorPalette}-solid))`}
+            filter={"blur(1.5px)"}
           />
         </Box>
       </Box>
