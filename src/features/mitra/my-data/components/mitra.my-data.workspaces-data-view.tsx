@@ -103,6 +103,19 @@ export const MitraMyDataWorkspacesDataView = (_props: MitraMyDataViewProps) => {
   const debouncedSearch = useDebouncedValue(params.search ?? "");
   const preferredTimezone = useMemo(() => getPreferredUserTimezone(), []);
 
+  const hasActiveFilter = Boolean(debouncedSearch.trim() || activeStatus !== "all");
+  const filterQuerySummary = useMemo(() => {
+    const parts: string[] = [];
+    if (debouncedSearch.trim()) {
+      parts.push(debouncedSearch.trim());
+    }
+    if (activeStatus !== "all") {
+      const opt = ACTIVE_STATUS_OPTIONS.find((o) => o.value === activeStatus);
+      parts.push(opt?.label ?? activeStatus);
+    }
+    return parts.length > 0 ? parts.join(", ") : undefined;
+  }, [debouncedSearch, activeStatus]);
+
   // Queries
   const {
     workspaces,
@@ -684,11 +697,11 @@ export const MitraMyDataWorkspacesDataView = (_props: MitraMyDataViewProps) => {
             py={"xl"}
             bg={"bg.body"}
           >
-            {debouncedSearch ? (
+            {hasActiveFilter ? (
               <StateNoResult
-                query={debouncedSearch}
+                query={filterQuerySummary}
                 description={
-                  "Tidak ada workspace yang sesuai dengan kata kunci pencarian Anda."
+                  "Tidak ada workspace yang sesuai dengan filter atau kata kunci pencarian Anda."
                 }
               />
             ) : (
