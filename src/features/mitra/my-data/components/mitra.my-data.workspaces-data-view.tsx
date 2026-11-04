@@ -314,10 +314,10 @@ export const MitraMyDataWorkspacesDataView = (_props: MitraMyDataViewProps) => {
                             {item.updatePeriods?.map((period, pIdx) => {
                               const unitLabel =
                                 period.unit === "minutes"
-                                    ? "menit"
-                                    : period.unit === "week"
-                                      ? "minggu"
-                                      : "hari";
+                                  ? "menit"
+                                  : period.unit === "week"
+                                    ? "minggu"
+                                    : "hari";
                               const formattedTarget = period.targetAt
                                 ? formatUtcDateTime(
                                     period.targetAt,
@@ -332,7 +332,6 @@ export const MitraMyDataWorkspacesDataView = (_props: MitraMyDataViewProps) => {
                                   py={3}
                                   borderTop={"1px solid"}
                                   borderColor={"border.subtle"}
-                                  _hover={{ bg: "bg.subtle" }}
                                   transition={"background 0.2s"}
                                 >
                                   <HStack
