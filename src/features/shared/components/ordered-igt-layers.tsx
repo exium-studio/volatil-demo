@@ -151,26 +151,29 @@ export const OrderedIgtLayersPreviewModalContent = (
               fontWeight={"medium"}
             >{`${formatNumber(totalCount)} Total Layer IGT`}</P>
 
-            <HStack
-              wrap={"wrap"}
-              align={"center"}
-              gap={"xs"}
-              color={"fg.muted"}
-            >
-              {effectiveTotalBidang > 0 && (
-                <P
-                  fontSize={"sm"}
-                >{`${formatNumber(effectiveTotalBidang)} Total Bidang`}</P>
-              )}
+            {(effectiveTotalBidang > 0 ||
+              (coverageHa != null && coverageHa > 0)) && (
+              <HStack
+                wrap={"wrap"}
+                align={"center"}
+                gap={"xs"}
+                color={"fg.muted"}
+              >
+                {effectiveTotalBidang > 0 && (
+                  <P
+                    fontSize={"sm"}
+                  >{`${formatNumber(effectiveTotalBidang)} Total Bidang`}</P>
+                )}
 
-              <P color={"fg.subtle"}>{"•"}</P>
+                <P color={"fg.subtle"}>{"•"}</P>
 
-              {coverageHa != null && coverageHa > 0 && (
-                <P fontSize={"sm"}>
-                  {`${formatNumber(coverageHa, { maximumFractionDigits: 2 })} ha Luas Cakupan Kawasan`}
-                </P>
-              )}
-            </HStack>
+                {coverageHa != null && coverageHa > 0 && (
+                  <P fontSize={"sm"}>
+                    {`${formatNumber(coverageHa, { maximumFractionDigits: 2 })} ha Luas Cakupan Kawasan`}
+                  </P>
+                )}
+              </HStack>
+            )}
           </VStack>
 
           {/* List of Ordered Layers */}
