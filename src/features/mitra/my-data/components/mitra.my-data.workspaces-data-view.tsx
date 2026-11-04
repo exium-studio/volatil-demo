@@ -103,7 +103,9 @@ export const MitraMyDataWorkspacesDataView = (_props: MitraMyDataViewProps) => {
   const debouncedSearch = useDebouncedValue(params.search ?? "");
   const preferredTimezone = useMemo(() => getPreferredUserTimezone(), []);
 
-  const hasActiveFilter = Boolean(debouncedSearch.trim() || activeStatus !== "all");
+  const hasActiveFilter = Boolean(
+    debouncedSearch.trim() || activeStatus !== "all",
+  );
   const filterQuerySummary = useMemo(() => {
     const parts: string[] = [];
     if (debouncedSearch.trim()) {
