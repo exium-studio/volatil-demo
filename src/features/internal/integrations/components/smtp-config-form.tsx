@@ -168,12 +168,16 @@ export const SmtpConfigForm = () => {
                   render={({ field }) => (
                     <NumberInput
                       value={
-                        field.value !== undefined && field.value !== null && !Number.isNaN(field.value)
+                        field.value !== undefined &&
+                        field.value !== null &&
+                        !Number.isNaN(field.value)
                           ? String(field.value)
                           : ""
                       }
                       onValueChange={(val) =>
-                        field.onChange(Number.isNaN(val.value) ? "" : Number(val.value))
+                        field.onChange(
+                          Number.isNaN(val.value) ? "" : Number(val.value),
+                        )
                       }
                       placeholder={"587"}
                       w={"full"}

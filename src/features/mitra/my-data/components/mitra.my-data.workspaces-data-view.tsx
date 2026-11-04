@@ -68,7 +68,6 @@ import {
   KeyRoundIcon,
   LayersIcon,
   Link2Icon,
-  LinkIcon,
   ReceiptTextIcon,
   RefreshCwIcon,
   SquarePen,
@@ -219,12 +218,12 @@ export const MitraMyDataWorkspacesDataView = (_props: MitraMyDataViewProps) => {
                     <Button
                       variant={"outline"}
                       colorPalette={"gray"}
+                      size={"xs"}
                     >
-                      <Clipboard.Indicator
-                        copied={<AppIcon icon={CheckCircle2Icon} />}
-                      >
-                        <AppIcon icon={LinkIcon} />
+                      <Clipboard.Indicator>
+                        <AppIcon icon={Link2Icon} />
                       </Clipboard.Indicator>
+
                       <Clipboard.CopyText />
                     </Button>
                   </Clipboard.Trigger>
