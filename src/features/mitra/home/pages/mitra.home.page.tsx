@@ -31,6 +31,9 @@ export const MitraHomePage = () => {
       await Promise.all([
         queryClient.invalidateQueries({ queryKey: queryKeys.mitra.home.all }),
         queryClient.invalidateQueries({ queryKey: queryKeys.mitra.cart.all }),
+        queryClient.invalidateQueries({
+          queryKey: ["mitra", "transaction-history"],
+        }),
         queryClient.invalidateQueries({ queryKey: ["mitra", "transactions"] }),
       ]);
       toast.success("Data dashboard berhasil diperbarui", {

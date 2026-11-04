@@ -80,8 +80,6 @@ export const InternalHomePage = () => {
 
   return (
     <AppContentContainer position={"relative"} h={"auto"}>
-      {/* <TopBarLoader isFetching /> */}
-
       {/* Dashboard Top Header */}
       <HStack
         justify={"space-between"}
