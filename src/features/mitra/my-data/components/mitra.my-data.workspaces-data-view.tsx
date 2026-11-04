@@ -131,16 +131,17 @@ export const MitraMyDataWorkspacesDataView = (_props: MitraMyDataViewProps) => {
   const dataList = useMemo(() => {
     const headers: FormattedTableHeader[] = [
       { th: "Nama Workspace", sortable: true },
+      { th: "Tanggal Dipesan", sortable: true },
+      { th: "Sisa Waktu", sortable: true },
+      { th: "Tanggal Kedaluwarsa", sortable: true },
+      { th: "Periode Pembaruan", sortable: false, align: "start" },
+      { th: "Status Pesanan", sortable: true },
       { th: "WMS URL (Interop)", sortable: false },
       { th: "No. Pesanan", sortable: true },
       { th: "Jumlah Layer", sortable: true },
       { th: "Cakupan Bidang", sortable: true },
       { th: "Cakupan Kawasan", sortable: true },
-      { th: "Periode Pembaruan", sortable: false, align: "start" },
       { th: "TTE & Faktur", sortable: false, align: "start" },
-      { th: "Status Pesanan", sortable: true },
-      { th: "Sisa Waktu", sortable: true },
-      { th: "Tanggal Kedaluwarsa", sortable: true },
     ];
 
     const items: FormattedListItem<MitraWorkspaceItem>[] = workspaces.map(
@@ -210,59 +211,38 @@ export const MitraMyDataWorkspacesDataView = (_props: MitraMyDataViewProps) => {
               align: "start" as const,
             },
             {
-              value: item.wmsUrl ?? "",
+              value: item.createdAt,
               td: (
-                <Url
-                  url={item.wmsUrl}
-                  label={"Salin URL WMS Interop"}
-                  maxW={"280px"}
-                  minW={"280px"}
+                <P whiteSpace={"nowrap"}>
+                  {item.createdAt
+                    ? formatUtcDateTime(item.createdAt, preferredTimezone)
+                    : "-"}
+                </P>
+              ),
+              align: "start" as const,
+            },
+            {
+              value: item.expiresAt,
+              td: item.expiresAt ? (
+                <Countdown
+                  finishedAt={item.expiresAt}
+                  warningThresholdDays={extensionWindowDays}
                 />
+              ) : (
+                <P color={"fg.subtle"}>{"-"}</P>
               ),
               align: "start" as const,
             },
             {
-              value: item.orderNumber || item.orderId,
-              td: <P fontSize={"sm"}>{item.orderNumber || item.orderId}</P>,
+              value: item.expiresAt,
+              td: (
+                <P whiteSpace={"nowrap"}>
+                  {item.expiresAt
+                    ? formatUtcDateTime(item.expiresAt, preferredTimezone)
+                    : "-"}
+                </P>
+              ),
               align: "start" as const,
-            },
-            {
-              value: item.layersCount,
-              td: <P textAlign={"center"}>{`${item.layersCount} Layer`}</P>,
-            },
-            {
-              value: item.bidangCoverageCount,
-              td: (
-                <P>
-                  {item.bidangCoverageCount ? (
-                    <>
-                      <TNum>{formatNumber(item.bidangCoverageCount)}</TNum>{" "}
-                      {"Bidang"}
-                    </>
-                  ) : (
-                    "-"
-                  )}
-                </P>
-              ),
-            },
-            {
-              value: item.kawasanCoverageHa,
-              td: (
-                <P>
-                  {item.kawasanCoverageHa ? (
-                    <>
-                      <TNum>
-                        {formatNumber(item.kawasanCoverageHa, {
-                          maximumFractionDigits: 2,
-                        })}
-                      </TNum>{" "}
-                      {"ha"}
-                    </>
-                  ) : (
-                    "-"
-                  )}
-                </P>
-              ),
             },
             {
               value: updatesLeft,
@@ -318,10 +298,10 @@ export const MitraMyDataWorkspacesDataView = (_props: MitraMyDataViewProps) => {
                             {item.updatePeriods?.map((period, pIdx) => {
                               const unitLabel =
                                 period.unit === "minutes"
-                                  ? "menit"
-                                  : period.unit === "week"
-                                    ? "minggu"
-                                    : "hari";
+                                    ? "menit"
+                                    : period.unit === "week"
+                                      ? "minggu"
+                                      : "hari";
                               const formattedTarget = period.targetAt
                                 ? formatUtcDateTime(
                                     period.targetAt,
@@ -394,6 +374,66 @@ export const MitraMyDataWorkspacesDataView = (_props: MitraMyDataViewProps) => {
               align: "start" as const,
             },
             {
+              value: effectiveStatus,
+              td: <OrderStatusBadge>{effectiveStatus}</OrderStatusBadge>,
+              align: "start" as const,
+            },
+            {
+              value: item.wmsUrl ?? "",
+              td: (
+                <Url
+                  url={item.wmsUrl}
+                  label={"Salin URL WMS Interop"}
+                  maxW={"280px"}
+                  minW={"280px"}
+                />
+              ),
+              align: "start" as const,
+            },
+            {
+              value: item.orderNumber || item.orderId,
+              td: <P fontSize={"sm"}>{item.orderNumber || item.orderId}</P>,
+              align: "start" as const,
+            },
+            {
+              value: item.layersCount,
+              td: <P textAlign={"center"}>{`${item.layersCount} Layer`}</P>,
+            },
+            {
+              value: item.bidangCoverageCount,
+              td: (
+                <P>
+                  {item.bidangCoverageCount ? (
+                    <>
+                      <TNum>{formatNumber(item.bidangCoverageCount)}</TNum>{" "}
+                      {"Bidang"}
+                    </>
+                  ) : (
+                    "-"
+                  )}
+                </P>
+              ),
+            },
+            {
+              value: item.kawasanCoverageHa,
+              td: (
+                <P>
+                  {item.kawasanCoverageHa ? (
+                    <>
+                      <TNum>
+                        {formatNumber(item.kawasanCoverageHa, {
+                          maximumFractionDigits: 2,
+                        })}
+                      </TNum>{" "}
+                      {"ha"}
+                    </>
+                  ) : (
+                    "-"
+                  )}
+                </P>
+              ),
+            },
+            {
               value: item.tte ? "TTE" : "Belum TTE",
               td: (
                 <TteBadge
@@ -401,34 +441,6 @@ export const MitraMyDataWorkspacesDataView = (_props: MitraMyDataViewProps) => {
                   invoiceUrl={item.invoiceUrl}
                   tteInvoiceUrl={item.tteInvoiceUrl}
                 />
-              ),
-              align: "start" as const,
-            },
-            {
-              value: effectiveStatus,
-              td: <OrderStatusBadge>{effectiveStatus}</OrderStatusBadge>,
-              align: "start" as const,
-            },
-            {
-              value: item.expiresAt,
-              td: item.expiresAt ? (
-                <Countdown
-                  finishedAt={item.expiresAt}
-                  warningThresholdDays={extensionWindowDays}
-                />
-              ) : (
-                <P color={"fg.subtle"}>{"-"}</P>
-              ),
-              align: "start" as const,
-            },
-            {
-              value: item.expiresAt,
-              td: (
-                <P whiteSpace={"nowrap"}>
-                  {item.expiresAt
-                    ? formatUtcDateTime(item.expiresAt, preferredTimezone)
-                    : "-"}
-                </P>
               ),
               align: "start" as const,
             },
