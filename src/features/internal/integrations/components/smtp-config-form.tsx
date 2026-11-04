@@ -141,7 +141,7 @@ export const SmtpConfigForm = () => {
               <Field
                 label={"SMTP Host Server"}
                 helperText={
-                  "Contoh: smtp.atrbpn.go.id, smtp.gmail.com, atau mail-relay internal"
+                  "Contoh: smtp.atrbpn.go.id atau mail-relay internal instansi"
                 }
                 errorText={form.formState.errors.host?.message}
                 w={"full"}
@@ -280,7 +280,7 @@ export const SmtpConfigForm = () => {
               <Field
                 label={"Email Pengirim (From Email)"}
                 helperText={
-                  "Gunakan email kedinasan atau domain yang terverifikasi SPF/DKIM di provider SMTP. Jika menggunakan relay seperti Brevo dengan domain publik (@gmail.com), provider otomatis me-rewrite sender domain untuk menghindari penolakan DMARC."
+                  "Gunakan alamat email resmi kedinasan dengan domain resmi yang telah terkonfigurasi catatan SPF, DKIM, dan DMARC pada DNS instansi untuk menjamin keterkiriman email dan mencegah penolakan sistem."
                 }
                 errorText={form.formState.errors.fromEmail?.message}
                 w={"full"}

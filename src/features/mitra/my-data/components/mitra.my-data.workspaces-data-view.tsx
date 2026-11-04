@@ -9,7 +9,7 @@ import type {
   FormattedTableHeader,
 } from "@/design-system/components/data-display/types/data-view-table.type";
 import type { DataViewItemActionsGenerator } from "@/design-system/components/data-display/types/data-view.type";
-import { ClipboardButton } from "@/design-system/components/data-display/ui/clipboard-button";
+import { Clipboard } from "@/design-system/components/data-display/ui/clipboard";
 import { Countdown } from "@/design-system/components/data-display/ui/countdown";
 import { DataViewFooter } from "@/design-system/components/data-display/ui/data-view-footer";
 import { DEFAULT_PAGE_SIZE_OPTIONS } from "@/design-system/components/data-display/ui/data-view-page-size";
@@ -68,6 +68,7 @@ import {
   KeyRoundIcon,
   LayersIcon,
   Link2Icon,
+  LinkIcon,
   ReceiptTextIcon,
   RefreshCwIcon,
   SquarePen,
@@ -213,14 +214,21 @@ export const MitraMyDataWorkspacesDataView = (_props: MitraMyDataViewProps) => {
             {
               value: item.wmsUrl ?? "",
               td: item.wmsUrl ? (
-                <ClipboardButton
-                  value={item.wmsUrl}
-                  isIconButton={false}
-                  variant={"outline"}
-                  colorPalette={"gray"}
-                >
-                  {"Salin URL"}
-                </ClipboardButton>
+                <Clipboard.Root value={item.wmsUrl}>
+                  <Clipboard.Trigger asChild={true}>
+                    <Button
+                      variant={"outline"}
+                      colorPalette={"gray"}
+                    >
+                      <Clipboard.Indicator
+                        copied={<AppIcon icon={CheckCircle2Icon} />}
+                      >
+                        <AppIcon icon={LinkIcon} />
+                      </Clipboard.Indicator>
+                      <Clipboard.CopyText />
+                    </Button>
+                  </Clipboard.Trigger>
+                </Clipboard.Root>
               ) : (
                 <P color={"fg.subtle"}>{"-"}</P>
               ),
