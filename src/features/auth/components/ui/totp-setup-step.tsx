@@ -1,6 +1,7 @@
 // src/features/auth/components/ui/totp-setup-step.tsx
 
 import { Button } from "@/design-system/components/button/ui/button";
+import { ClipboardButton } from "@/design-system/components/data-display/ui/clipboard-button";
 import { AppIcon } from "@/design-system/components/icon/ui/app-icon";
 import { PinInput } from "@/design-system/components/input/ui/pin-input";
 import { Box } from "@/design-system/components/layout/ui/box";
@@ -15,8 +16,6 @@ import {
   AlertTriangleIcon,
   ArrowLeftIcon,
   CheckCircle2Icon,
-  CopyCheckIcon,
-  CopyIcon,
   QrCodeIcon,
   ShieldAlertIcon,
 } from "lucide-react";
@@ -28,22 +27,12 @@ export const TotpSetupStep = (props: TotpSetupStepProps) => {
 
   // States
   const [totpCode, setTotpCode] = useState<string>("");
-  const [isCopied, setIsCopied] = useState<boolean>(false);
   const [customError, setCustomError] = useState<string | null>(null);
 
   // Mutations
   const confirmMutation = useInternalTotpConfirmMutation();
 
   // Handlers
-  const handleCopyKey = () => {
-    if (!setupData?.manualEntryKey) return;
-    void navigator.clipboard.writeText(setupData.manualEntryKey);
-    setIsCopied(true);
-    setTimeout(() => {
-      setIsCopied(false);
-    }, 2000);
-  };
-
   const handleConfirm = (codeToConfirm?: string) => {
     const code = codeToConfirm || totpCode;
     if (code.length !== 6) {
@@ -118,10 +107,6 @@ export const TotpSetupStep = (props: TotpSetupStepProps) => {
         </Badge>
 
         <VStack align={"center"} gap={1}>
-          <P fontSize={"xl"} fontWeight={"semibold"} textAlign={"center"}>
-            {"Aktivasi Keamanan Akun 📱"}
-          </P>
-
           <P color={"fg.muted"} textAlign={"center"} fontSize={"xs"}>
             {"Pindai QR code di bawah menggunakan aplikasi "}
             <P as={"span"} fontWeight={"semibold"} color={"fg.default"}>
@@ -194,7 +179,8 @@ export const TotpSetupStep = (props: TotpSetupStepProps) => {
 
             <HStack
               bg={"bg.subtle"}
-              px={3}
+              pl={3}
+              pr={1}
               py={1}
               rounded={"md"}
               borderColor={"border.subtle"}
@@ -211,18 +197,7 @@ export const TotpSetupStep = (props: TotpSetupStepProps) => {
                 {setupData.manualEntryKey}
               </P>
 
-              <Button
-                size={"2xs"}
-                variant={"ghost"}
-                type={"button"}
-                onClick={handleCopyKey}
-              >
-                <AppIcon
-                  icon={isCopied ? CopyCheckIcon : CopyIcon}
-                  size={"xs"}
-                  color={isCopied ? "fg.success" : "fg.subtle"}
-                />
-              </Button>
+              <ClipboardButton value={setupData.manualEntryKey} size={"xs"} />
             </HStack>
           </VStack>
         )}
@@ -230,13 +205,12 @@ export const TotpSetupStep = (props: TotpSetupStepProps) => {
 
       {/* Pin Input for Confirmation */}
       <VStack align={"center"} gap={1} w={"full"}>
-        <P fontSize={"xs"} fontWeight={"medium"}>
+        <P fontSize={"xs"}>
           {"Masukkan 6 digit kode dari aplikasi untuk konfirmasi:"}
         </P>
 
         <PinInput
           count={6}
-          fluid={true}
           size={"md"}
           otp={true}
           onValueChange={handleValueChange}
@@ -258,13 +232,7 @@ export const TotpSetupStep = (props: TotpSetupStepProps) => {
           {"Konfirmasi & Masuk"}
         </Button>
 
-        <Button
-          variant={"subtle"}
-          type={"button"}
-          w={"full"}
-          size={"sm"}
-          onClick={onBackToLogin}
-        >
+        <Button type={"button"} w={"full"} size={"sm"} onClick={onBackToLogin}>
           <AppIcon icon={ArrowLeftIcon} />
           {"Kembali ke Halaman Masuk"}
         </Button>
