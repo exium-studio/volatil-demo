@@ -97,7 +97,9 @@ export const SidebarRoot = (props: SidebarRootProps) => {
           overflowX={"clip"}
           h={"full"}
           py={"3px"}
-          bg={"bg.body"}
+          layerStyle={"frosted"}
+          bg={"bg.canvasAlpha"}
+          // bg={"bg.body"}
           borderRight={restProps.borderRight ?? "1px solid"}
           borderColor={restProps.borderColor ?? "bg.subtle"}
           align={"stretch"}

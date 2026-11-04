@@ -635,7 +635,9 @@ const MobileBottomNav = () => {
     : APP_NAV_GROUPS_LIST) as unknown as NavGroup<AdminAppNavKey | AppNavKey>[];
   const otherGroups = (role === "internal"
     ? INTERNAL_APP_OTHER_NAV_GROUPS_LIST
-    : APP_OTHER_NAV_GROUPS_LIST) as unknown as NavGroup<AdminAppNavKey | AppNavKey>[];
+    : APP_OTHER_NAV_GROUPS_LIST) as unknown as NavGroup<
+    AdminAppNavKey | AppNavKey
+  >[];
 
   const allNavNodes = useMemo<NavNode<AdminAppNavKey | AppNavKey>[]>(() => {
     const mainNodes = mainGroups.flatMap((g) => g.items);
