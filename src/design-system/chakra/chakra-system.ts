@@ -135,14 +135,14 @@ export const chakraConfig = defineConfig({
         canvasLight: { value: "#f5f6f8" },
         canvasDark: { value: "#161717" },
 
-        canvasLightAlpha: { value: "rgba(245, 246, 248, 0.85)" },
-        canvasDarkAlpha: { value: "rgba(22, 23, 23, 0.85)" },
+        canvasLightAlpha: { value: "#f9fafcd9" },
+        canvasDarkAlpha: { value: "#161717d9" },
 
         bodyLight: { value: "#ffffff" },
         bodyDark: { value: "#1a1b1c" },
 
-        bodyLightAlpha: { value: "rgba(255, 255, 255, 0.75)" },
-        bodyDarkAlpha: { value: "rgba(26, 27, 28, 0.75)" },
+        bodyLightAlpha: { value: "#ffffffbf" },
+        bodyDarkAlpha: { value: "#1a1b1cbf" },
 
         an0: { value: "#6b72800f" },
         an1: { value: "#6b72801f" },
