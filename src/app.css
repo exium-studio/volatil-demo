@@ -90,19 +90,42 @@
 .recharts-pie-sector,
 .recharts-sector,
 .recharts-bar-rectangle,
+.recharts-bar-rectangles,
 .recharts-rectangle,
+.recharts-active-dot,
+.recharts-dot,
+.recharts-area-area,
 .recharts-wrapper *:focus {
   outline: none !important;
 }
 
+/* Global Smooth Transitions for Chart Interactive Elements */
 .recharts-pie-sector,
-.recharts-sector {
-  transition: opacity 0.2s ease, filter 0.2s ease;
+.recharts-sector,
+.recharts-bar-rectangle path,
+.recharts-bar-rectangle rect,
+.recharts-rectangle,
+.recharts-bar-rectangles rect,
+.recharts-active-dot circle,
+.recharts-dot circle {
+  transition: opacity 0.2s ease, filter 0.2s ease, transform 0.2s ease;
+  transform-origin: center;
 }
 
+/* Global Hover Effects for All Chart Types (Pie/Donut, Bar, Area/Line Dots) */
 .recharts-pie-sector:hover,
-.recharts-sector:hover {
-  opacity: 0.85;
-  filter: brightness(0.92);
+.recharts-sector:hover,
+.recharts-bar-rectangle:hover path,
+.recharts-bar-rectangle:hover rect,
+.recharts-rectangle:hover,
+.recharts-bar-rectangles rect:hover {
+  opacity: 0.82;
+  filter: brightness(1.08) drop-shadow(0 2px 6px rgba(0, 0, 0, 0.16));
+  cursor: pointer;
+}
+
+.recharts-active-dot circle:hover,
+.recharts-dot circle:hover {
+  filter: brightness(1.15) drop-shadow(0 0 6px currentColor);
   cursor: pointer;
 }
