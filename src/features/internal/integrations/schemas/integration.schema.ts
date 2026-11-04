@@ -9,10 +9,7 @@ const ssoEntitySchema = z.object({
     .url("Issuer URL harus berupa URL yang valid"),
   clientId: z.string().min(1, "Client ID wajib diisi"),
   clientSecret: z.string().optional(),
-  redirectUri: z
-    .string()
-    .min(1, "Redirect URI wajib diisi")
-    .url("Redirect URI harus berupa URL yang valid"),
+  redirectUri: z.string(),
 });
 
 export const ssoFormSchema = z.object({

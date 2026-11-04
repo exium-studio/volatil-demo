@@ -38,6 +38,11 @@ export const SsoConfigForm = () => {
   const { data: config, isLoading } = useSsoIntegrationQuery();
   const updateMutation = useUpdateSsoIntegrationMutation();
 
+  const canonicalRedirectUri =
+    typeof window !== "undefined"
+      ? `${window.location.origin}/auth/callback/keycloak`
+      : "/auth/callback/keycloak";
+
   // Derived Values
   const formValues = useMemo<SsoFormValues>(() => {
     return {
@@ -45,17 +50,17 @@ export const SsoConfigForm = () => {
         issuerUrl: config?.mitra?.issuerUrl ?? "",
         clientId: config?.mitra?.clientId ?? "",
         clientSecret: config?.mitra?.clientSecret ?? "",
-        redirectUri: config?.mitra?.redirectUri ?? "",
+        redirectUri: canonicalRedirectUri,
       },
       internal: {
         isEnabled: config?.internal?.isEnabled ?? false,
         issuerUrl: config?.internal?.issuerUrl ?? "",
         clientId: config?.internal?.clientId ?? "",
         clientSecret: config?.internal?.clientSecret ?? "",
-        redirectUri: config?.internal?.redirectUri ?? "",
+        redirectUri: canonicalRedirectUri,
       },
     };
-  }, [config]);
+  }, [config, canonicalRedirectUri]);
 
   // Form (RHF + Zod)
   const form = useForm<SsoFormValues>({
@@ -71,7 +76,17 @@ export const SsoConfigForm = () => {
 
   // Handlers
   const onSubmit = (values: SsoFormValues) => {
-    updateMutation.mutate(values);
+    updateMutation.mutate({
+      ...values,
+      mitra: {
+        ...values.mitra,
+        redirectUri: canonicalRedirectUri,
+      },
+      internal: {
+        ...values.internal,
+        redirectUri: canonicalRedirectUri,
+      },
+    });
   };
 
   if (isLoading || !config) {
@@ -183,19 +198,16 @@ export const SsoConfigForm = () => {
             </Field>
 
             <Field
-              label={"Callback Redirect URI"}
+              label={"Callback Redirect URI (Resmi)"}
               helperText={
-                "Alamat redirect kembalian setelah login SSO Mitra berhasil diverifikasi"
+                "URL callback resmi aplikasi (read-only). Salin URL ini dan daftarkan ke 'Valid Redirect URIs' pada client Keycloak ATR/BPN."
               }
-              errorText={form.formState.errors.mitra?.redirectUri?.message}
               w={"full"}
             >
               <Input
-                placeholder={
-                  "https://volatil-demo.vercel.app/auth/callback/keycloak-mitra"
-                }
-                defaultValue={formValues.mitra.redirectUri}
-                {...form.register("mitra.redirectUri")}
+                value={canonicalRedirectUri}
+                readOnly={true}
+                disabled={true}
                 w={"full"}
               />
             </Field>
@@ -319,19 +331,16 @@ export const SsoConfigForm = () => {
               </Field>
 
               <Field
-                label={"Callback Redirect URI"}
+                label={"Callback Redirect URI (Resmi)"}
                 helperText={
-                  "Alamat redirect kembalian setelah login SSO berhasil diverifikasi"
+                  "URL callback resmi aplikasi (read-only). Salin URL ini dan daftarkan ke 'Valid Redirect URIs' pada client Keycloak ATR/BPN."
                 }
-                errorText={form.formState.errors.internal?.redirectUri?.message}
                 w={"full"}
               >
                 <Input
-                  placeholder={
-                    "https://volatil-demo.vercel.app/auth/callback/keycloak"
-                  }
-                  defaultValue={formValues.internal.redirectUri}
-                  {...form.register("internal.redirectUri")}
+                  value={canonicalRedirectUri}
+                  readOnly={true}
+                  disabled={true}
                   w={"full"}
                 />
               </Field>
