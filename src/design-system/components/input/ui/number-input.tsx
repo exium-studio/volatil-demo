@@ -25,13 +25,22 @@ function toSyncValue(valueAsNumber: number): string {
   return Number.isNaN(valueAsNumber) ? "" : String(valueAsNumber);
 }
 
+// Convert NaN, "NaN", null, or undefined to "" so that Chakra/Ark does not render "NaN" when empty
+function normalizeNumberInputValue(val: unknown): string | undefined {
+  if (val === undefined) return undefined;
+  if (val === null || val === "" || val === "NaN" || (typeof val === "number" && Number.isNaN(val))) {
+    return "";
+  }
+  return String(val);
+}
+
 function checkHasValue(val: unknown): boolean {
-  return val !== undefined && val !== null && val !== "";
+  return val !== undefined && val !== null && val !== "" && val !== "NaN" && !Number.isNaN(val);
 }
 
 export const NumberInput = (props: NumberInputProps) => {
   // Props
-  const { placeholder, inputProps, startElement, ...restProps } = props;
+  const { placeholder, inputProps, startElement, value, defaultValue, ...restProps } = props;
 
   // Contexts
   const fieldContext = useFieldContextValue();
@@ -62,10 +71,13 @@ export const NumberInput = (props: NumberInputProps) => {
     }
   }, []);
 
+  const normalizedValue = normalizeNumberInputValue(value);
+  const normalizedDefaultValue = normalizeNumberInputValue(defaultValue);
+
   const [isFocused, setIsFocused] = useState<boolean>(false);
   const [hasValueState, setHasValueState] = useState<boolean>(
-    checkHasValue(restProps.value) ||
-      checkHasValue(restProps.defaultValue) ||
+    checkHasValue(normalizedValue) ||
+      checkHasValue(normalizedDefaultValue) ||
       checkHasValue(inputProps?.value) ||
       checkHasValue(inputProps?.defaultValue),
   );
@@ -80,13 +92,13 @@ export const NumberInput = (props: NumberInputProps) => {
       }
     }
     setIsMounted(true);
-  }, [hasValueState, restProps.value, restProps.defaultValue]);
+  }, [hasValueState, normalizedValue, normalizedDefaultValue]);
 
   // Derived Values
   const hasValue =
     hasValueState ||
-    checkHasValue(restProps.value) ||
-    checkHasValue(restProps.defaultValue) ||
+    checkHasValue(normalizedValue) ||
+    checkHasValue(normalizedDefaultValue) ||
     checkHasValue(inputProps?.value) ||
     checkHasValue(inputProps?.defaultValue) ||
     Boolean(fieldContext?.hasValue);
@@ -95,6 +107,8 @@ export const NumberInput = (props: NumberInputProps) => {
   const numberInputCore = (
     <ChakraNumberInput.Root
       {...restProps}
+      {...(normalizedValue !== undefined && { value: normalizedValue })}
+      {...(normalizedDefaultValue !== undefined && { defaultValue: normalizedDefaultValue })}
       onValueChange={(details) => {
         setHasValueState(details.value !== "");
         restProps.onValueChange?.({
@@ -116,8 +130,8 @@ export const NumberInput = (props: NumberInputProps) => {
         aria-hidden
         defaultValue={
           inputProps?.defaultValue ??
-          (restProps.defaultValue !== undefined
-            ? String(restProps.defaultValue)
+          (normalizedDefaultValue !== undefined
+            ? normalizedDefaultValue
             : undefined)
         }
         {...inputProps}
@@ -237,6 +251,8 @@ export const SteppedNumberInput = (props: SteppedNumberInputProps) => {
     size,
     hiddenInputProps,
     buttonVariant = "outline",
+    value,
+    defaultValue,
     ...restProps
   } = props;
 
@@ -246,11 +262,16 @@ export const SteppedNumberInput = (props: SteppedNumberInputProps) => {
   // Refs
   const hiddenInputRef = useRef<HTMLInputElement>(null);
 
+  const normalizedValue = normalizeNumberInputValue(value);
+  const normalizedDefaultValue = normalizeNumberInputValue(defaultValue);
+
   return (
     <ChakraNumberInput.Root
       size={size}
       w={"min"}
       {...restProps}
+      {...(normalizedValue !== undefined && { value: normalizedValue })}
+      {...(normalizedDefaultValue !== undefined && { defaultValue: normalizedDefaultValue })}
       onValueChange={(details) => {
         restProps.onValueChange?.({
           value: details.valueAsNumber,

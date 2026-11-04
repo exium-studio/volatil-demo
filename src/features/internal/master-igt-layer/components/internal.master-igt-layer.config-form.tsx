@@ -346,8 +346,8 @@ export const InternalMasterIgtLayerConfigForm = (
                   w={"full"}
                   min={1}
                   max={100}
-                  value={String(field.value ?? 1)}
-                  onValueChange={({ value }) => field.onChange(value || 1)}
+                  value={field.value !== undefined && field.value !== null ? String(field.value) : ""}
+                  onValueChange={({ value }) => field.onChange(Number.isNaN(value) ? "" : value)}
                   placeholder={"1"}
                 />
               </Field>
@@ -369,8 +369,8 @@ export const InternalMasterIgtLayerConfigForm = (
                   w={"full"}
                   min={0}
                   max={22}
-                  value={String(field.value ?? 12)}
-                  onValueChange={({ value }) => field.onChange(value ?? 12)}
+                  value={field.value !== undefined && field.value !== null ? String(field.value) : ""}
+                  onValueChange={({ value }) => field.onChange(Number.isNaN(value) ? "" : value)}
                   placeholder={"12"}
                 />
               </Field>

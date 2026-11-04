@@ -30,7 +30,7 @@ import {
   RefreshCwIcon,
   UploadCloudIcon,
 } from "lucide-react";
-import { useCallback, useEffect } from "react";
+import { useCallback, useEffect, useRef } from "react";
 
 import { usePublicSimponiStatusQuery } from "@/features/mitra/billing/hooks/use-simponi-status.query";
 import { ManualPaymentProofTrigger } from "@/features/mitra/billing/components/manual-payment-proof-modal";
@@ -57,6 +57,7 @@ const BillingPageBillingCode = () => {
   const { billingCode } = BillingRoute.useParams();
   const search = BillingRoute.useSearch();
   const navigate = useNavigate();
+  const isInitialMount = useRef(true);
 
   // Queries
   const { data: simponiConfig } = usePublicSimponiStatusQuery();
@@ -119,24 +120,29 @@ const BillingPageBillingCode = () => {
   // Mutations
   const checkPaymentMutation = useCheckOrderPaymentStatus();
 
-  // Redirect mitra jika pesanan sudah dibayar/ready
+  // Redirect mitra jika pesanan sudah dibayar/ready saat pertama kali halaman dimuat / direfresh
   useEffect(() => {
-    if (!orderDetail || !isPaidOrSettled) return;
+    if (!orderDetail) return;
 
-    toast.success("Pesanan telah terbayar", {
-      group: "Pembayaran",
-    });
+    if (isInitialMount.current) {
+      isInitialMount.current = false;
+      if (isPaidOrSettled) {
+        toast.success("Pesanan telah terbayar", {
+          group: "Pembayaran",
+        });
 
-    if (isRenewal) {
-      void navigate({
-        to: "/mitra/my-data",
-        replace: true,
-      });
-    } else {
-      void navigate({
-        to: "/mitra/transaction-history",
-        replace: true,
-      });
+        if (isRenewal) {
+          void navigate({
+            to: "/mitra/my-data",
+            replace: true,
+          });
+        } else {
+          void navigate({
+            to: "/mitra/transaction-history",
+            replace: true,
+          });
+        }
+      }
     }
   }, [orderDetail, isPaidOrSettled, isRenewal, navigate]);
 

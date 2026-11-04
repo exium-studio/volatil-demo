@@ -141,8 +141,8 @@ const InternalPricingEditModalContent = (
                 {`Tarif Satuan (Rp / ${unitLabel})`}
               </P>
               <NumberInput
-                value={String(price)}
-                onValueChange={(val) => setPrice(Number(val.value))}
+                value={Number.isNaN(price) ? "" : String(price)}
+                onValueChange={(val) => setPrice(Number.isNaN(val.value) ? 0 : Number(val.value))}
                 min={0}
                 step={1000}
               />
@@ -154,8 +154,8 @@ const InternalPricingEditModalContent = (
                 {`Minimum Pembelian (${unitLabel})`}
               </P>
               <NumberInput
-                value={String(minimumPurchase)}
-                onValueChange={(val) => setMinimumPurchase(Number(val.value))}
+                value={Number.isNaN(minimumPurchase) ? "" : String(minimumPurchase)}
+                onValueChange={(val) => setMinimumPurchase(Number.isNaN(val.value) ? 0 : Number(val.value))}
                 min={0}
                 step={1}
               />

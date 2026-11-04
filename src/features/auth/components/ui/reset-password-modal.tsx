@@ -229,7 +229,7 @@ const ResetPasswordMethodSelector = ({
   const methodForm = useForm<ResetPasswordMethodFormValues>({
     resolver: zodResolver(createResetPasswordMethodSchema()),
     defaultValues: {
-      method: "email",
+      method: "totp",
     },
   });
 
@@ -250,15 +250,6 @@ const ResetPasswordMethodSelector = ({
           render={({ field }) => (
             <VStack gap={"xs"} align={"stretch"} w={"full"}>
               <ResetMethodRadioItem
-                method={"email"}
-                isSelected={field.value === "email"}
-                onSelect={() => field.onChange("email")}
-                title={"OTP via Email"}
-                description={"Kirim 6-digit kode verifikasi ke email"}
-                icon={MailIcon}
-              />
-
-              <ResetMethodRadioItem
                 method={"totp"}
                 isSelected={field.value === "totp"}
                 onSelect={() => field.onChange("totp")}
@@ -266,6 +257,15 @@ const ResetPasswordMethodSelector = ({
                 description={"Gunakan kode 6 digit dari aplikasi authenticator"}
                 badge={"Instan"}
                 icon={SmartphoneIcon}
+              />
+
+              <ResetMethodRadioItem
+                method={"email"}
+                isSelected={field.value === "email"}
+                onSelect={() => field.onChange("email")}
+                title={"OTP via Email"}
+                description={"Kirim 6-digit kode verifikasi ke email"}
+                icon={MailIcon}
               />
             </VStack>
           )}
