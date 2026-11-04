@@ -31,6 +31,7 @@ export const VNavs = <TNavKey extends string>(props: VNavsProps<TNavKey>) => {
     activeKey,
     expanded = true,
     onNavClick,
+    navNodeProps,
     ...restProps
   } = props;
 
@@ -74,6 +75,7 @@ export const VNavs = <TNavKey extends string>(props: VNavsProps<TNavKey>) => {
                     activePathKeys={activePathKeys}
                     expanded={expanded}
                     onNavClick={onNavClick}
+                    navNodeProps={navNodeProps}
                   />
                 ))}
               </VStack>
@@ -96,6 +98,7 @@ const VNavNode = <TNavKey extends string>(props: VNavNodeProps<TNavKey>) => {
     onNavClick,
     depth = 0,
     isLastChild = false,
+    navNodeProps,
   } = props;
 
   // Stores
@@ -109,6 +112,10 @@ const VNavNode = <TNavKey extends string>(props: VNavNodeProps<TNavKey>) => {
   const navTitle = nav.title || (nav.titleKey ? t[nav.titleKey]() : "");
   const hasChildren = !!node.children?.length;
   const isSubNav = depth > 0;
+  const resolvedNavNodeProps =
+    typeof navNodeProps === "function"
+      ? navNodeProps(node, nav)
+      : (navNodeProps ?? {});
 
   // Derived Values
   const isActive = activeKey === node.key;
@@ -146,6 +153,11 @@ const VNavNode = <TNavKey extends string>(props: VNavNodeProps<TNavKey>) => {
           aria-label={navTitle}
           variant={"ghost"}
           color={isActive ? `${theme.colorPalette}.fg` : undefined}
+          _hover={{
+            bg: "bg.muted",
+            ...resolvedNavNodeProps._hover,
+          }}
+          {...resolvedNavNodeProps}
           onClick={() => onNavClick?.(node.key)}
         >
           <NavIcon
@@ -175,6 +187,11 @@ const VNavNode = <TNavKey extends string>(props: VNavNodeProps<TNavKey>) => {
                 ? `${theme.colorPalette}.fg`
                 : undefined
             }
+            _hover={{
+              bg: "bg.muted",
+              ...resolvedNavNodeProps._hover,
+            }}
+            {...resolvedNavNodeProps}
           >
             <NavIcon
               nav={nav}
@@ -284,8 +301,10 @@ const VNavNode = <TNavKey extends string>(props: VNavNodeProps<TNavKey>) => {
             w={"full"}
             rounded={isSmallViewport ? 0 : theme.radii.component}
             _hover={{
-              bg: "bg.subtle",
+              bg: "bg.muted",
+              ...resolvedNavNodeProps._hover,
             }}
+            {...resolvedNavNodeProps}
             onClick={() => onNavClick?.(node.key)}
           >
             <NavIcon
@@ -340,8 +359,10 @@ const VNavNode = <TNavKey extends string>(props: VNavNodeProps<TNavKey>) => {
               bg: "transparent",
             }}
             _hover={{
-              bg: "bg.subtle",
+              bg: "bg.muted",
+              ...resolvedNavNodeProps._hover,
             }}
+            {...resolvedNavNodeProps}
           >
             <NavIcon
               nav={nav}
@@ -428,6 +449,7 @@ const VNavNode = <TNavKey extends string>(props: VNavNodeProps<TNavKey>) => {
                 onNavClick={onNavClick}
                 depth={depth + 1}
                 isLastChild={index === node.children!.length - 1}
+                navNodeProps={navNodeProps}
               />
             ))}
           </VStack>

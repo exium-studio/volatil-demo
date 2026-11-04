@@ -2,6 +2,7 @@
 
 import type { AppIconProps } from "@/design-system/components/icon/types/app-icon.type";
 import type { StackProps } from "@/design-system/components/layout/types/flex-box.type";
+import type { NavButtonProps } from "@/design-system/components/layout/types/nav.type";
 import type { NavGroup, NavItem, NavNode } from "@/shared/types/nav.type";
 
 export type VNavsProps<TNavKey extends string = string> = StackProps & {
@@ -10,6 +11,9 @@ export type VNavsProps<TNavKey extends string = string> = StackProps & {
   activeKey?: TNavKey;
   expanded?: boolean;
   onNavClick?: (key: TNavKey) => void;
+  navNodeProps?:
+    | NavButtonProps
+    | ((node: NavNode<TNavKey>, nav: NavItem) => NavButtonProps);
 };
 
 export type VNavNodeProps<TNavKey extends string> = {
@@ -21,6 +25,9 @@ export type VNavNodeProps<TNavKey extends string> = {
   onNavClick?: (key: TNavKey) => void;
   depth?: number;
   isLastChild?: boolean;
+  navNodeProps?:
+    | NavButtonProps
+    | ((node: NavNode<TNavKey>, nav: NavItem) => NavButtonProps);
 };
 
 export type VNavIconProps = AppIconProps & {

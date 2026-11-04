@@ -277,6 +277,11 @@ const SidebarFooter = () => {
         navs={navsMap}
         activeKey={activeKey}
         expanded={expanded}
+        navNodeProps={{
+          _hover: {
+            bg: "bg.subtle",
+          },
+        }}
         onNavClick={(key) => {
           navigate({
             to: navsMap[key].pathname,
@@ -292,6 +297,9 @@ const SidebarFooter = () => {
           w={expanded ? "full" : undefined}
           h={"40px"}
           pl={"6px"}
+          _hover={{
+            bg: "bg.subtle",
+          }}
         >
           <Avatar
             name={displayName || "User"}
