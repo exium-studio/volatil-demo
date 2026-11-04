@@ -16,6 +16,7 @@ import { apiClient } from "@/shared/libs/api-client/api-client";
 import type { ApiResponse } from "@/shared/types/common-response.type";
 import { createPaginationMeta } from "@/shared/types/common-response.type";
 import { isDummyDataEnabled } from "@/shared/utils/env/env.utils";
+import { getApiBaseUrl } from "@/shared/utils/url/url.utils";
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 const normalizeCartOrderItem = (raw: any): CartOrderItem => {
@@ -675,9 +676,7 @@ export const uploadOrderTteInvoiceApi = async (
     >(`/api/internal/interop/orders/${orderId}/tte`, formData, { signal });
   } catch (error) {
     if (isDummyDataEnabled()) {
-      const baseUrl =
-        import.meta.env.VITE_API_BASE_URL ||
-        "https://volatil-be.exium.web.id";
+      const baseUrl = getApiBaseUrl();
       const generatedTteUrl = `${baseUrl}/invoices/TTE-${orderId}.pdf`;
       const targetOrder = DUMMY_INTERNAL_ORDERS.find(
         (b) => b.orderId === orderId,
