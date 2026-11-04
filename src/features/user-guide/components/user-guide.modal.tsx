@@ -69,7 +69,7 @@ export const UserGuideModal = (props: UserGuideModalProps) => {
       opened={resolvedIsOpen}
       open={resolvedOpen}
       close={resolvedClose}
-      size={"cover"}
+      size={"4xl"}
     >
       {isMounted && (
         <UserGuideModalContent
@@ -131,8 +131,8 @@ const UserGuideModalContent = (props: {
 
       <Separator borderColor={"bg.canvas"} />
 
-      <Modal.Body p={0}>
-        <VStack gap={"md"} align={"stretch"}>
+      <Modal.Body p={0} display={"flex"} flexDir={"column"} flex={1}>
+        <VStack gap={"md"} align={"stretch"} flex={1}>
           {/* Search & Category Filter Bar */}
           <ActionHeaderScrollContainer
             gap={"xs"}
@@ -159,16 +159,20 @@ const UserGuideModalContent = (props: {
 
           {/* Loading Skeleton */}
           {isLoading && (
-            <SimpleGrid minChildWidth={"320px"} gap={"md"} px={"md"}>
-              <Skeleton height={"180px"} rounded={theme.radii.container} />
-              <Skeleton height={"180px"} rounded={theme.radii.container} />
-              <Skeleton height={"180px"} rounded={theme.radii.container} />
+            <SimpleGrid columns={[1, null, 2]} gap={"md"} px={"md"} pb={"md"}>
+              {Array.from({ length: 2 }).map((_, index) => (
+                <Skeleton
+                  key={`user-guide-skeleton-${index}`}
+                  height={"180px"}
+                  rounded={theme.radii.container}
+                />
+              ))}
             </SimpleGrid>
           )}
 
           {/* Error State */}
           {!isLoading && isError && (
-            <Center p={"xl"}>
+            <Center flex={1} p={"xl"}>
               <StateRetry
                 title={"Gagal Memuat Dokumen Panduan"}
                 description={
@@ -185,7 +189,7 @@ const UserGuideModalContent = (props: {
 
           {/* No Data State */}
           {isNoData && (
-            <Center p={"xl"}>
+            <Center flex={1} p={"xl"}>
               <StateNoData
                 title={"Belum Ada Dokumen Panduan"}
                 description={
@@ -197,14 +201,14 @@ const UserGuideModalContent = (props: {
 
           {/* No Result State */}
           {isNoResult && (
-            <Center p={"xl"}>
+            <Center flex={1} p={"xl"}>
               <StateNoResult query={search} />
             </Center>
           )}
 
           {/* Documents Grid */}
           {!isLoading && !isError && !isEmpty && (
-            <SimpleGrid minChildWidth={"320px"} gap={"md"} px={"md"} pb={"md"}>
+            <SimpleGrid columns={[1, null, 2]} gap={"md"} px={"md"} pb={"md"}>
               {guides.map((guide) => {
                 const catMeta =
                   USER_GUIDE_CATEGORY_MAP[guide.category] ??
@@ -220,7 +224,7 @@ const UserGuideModalContent = (props: {
                     align={"stretch"}
                     justify={"space-between"}
                     p={"md"}
-                    rounded={theme.radii.container}
+                    rounded={theme.radii.component}
                     border={"1px solid"}
                     borderColor={`${catMeta.colorPalette}.muted`}
                     bg={"bg.body"}
