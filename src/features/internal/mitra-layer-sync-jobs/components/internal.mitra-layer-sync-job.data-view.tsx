@@ -1,6 +1,5 @@
 // src/features/internal/mitra-layer-sync-jobs/components/internal.mitra-layer-sync-job.data-view.tsx
 
-import { BackButton } from "@/design-system/components/button/ui/back-button";
 import { DEFAULT_PAGE_SIZE_OPTIONS } from "@/design-system/components/data-display/ui/data-view-page-size";
 import { AppIcon } from "@/design-system/components/icon/ui/app-icon";
 import { InfoTip } from "@/design-system/components/input/ui/toggle-tip";
@@ -37,41 +36,28 @@ export const InternalMitraLayerSyncJobDataView = (
       >
         <Container.Body overflowY={"auto"}>
           {/* Title Header */}
-          <HeaderContainer pl={"xs"}>
-            <HStack
-              justify={"space-between"}
-              align={"center"}
-              gap={"sm"}
-              w={"full"}
-            >
-              <HStack gap={"sm"}>
-                <BackButton />
+          <HeaderContainer>
+            <HStack gap={"xs"} align={"center"}>
+              <ClampedHeading>{"Antrean Pembaruan Data Mitra"}</ClampedHeading>
 
-                <HStack gap={"xs"} align={"center"}>
-                  <ClampedHeading>
-                    {"Antrean Pembaruan Data Mitra"}
-                  </ClampedHeading>
-
-                  <InfoTip
-                    variant={"icon"}
-                    appIconProps={{
-                      size: "xs",
-                      color: "fg.subtle",
-                    }}
-                  >
-                    {
-                      "Memantau antrean tugas latar belakang (antrean job) sinkronisasi layer data mitra saat layer master diperbarui."
-                    }
-                  </InfoTip>
-                </HStack>
-              </HStack>
-
-              <Tooltip content={"Pembaruan realtime"}>
-                <Badge colorPalette={"green"}>
-                  <AppIcon icon={RadioIcon} />
-                </Badge>
-              </Tooltip>
+              <InfoTip
+                variant={"icon"}
+                appIconProps={{
+                  size: "xs",
+                  color: "fg.subtle",
+                }}
+              >
+                {
+                  "Memantau antrean tugas latar belakang (antrean job) sinkronisasi layer data mitra saat layer master diperbarui."
+                }
+              </InfoTip>
             </HStack>
+
+            <Tooltip content={"Pembaruan realtime"}>
+              <Badge colorPalette={"green"}>
+                <AppIcon icon={RadioIcon} />
+              </Badge>
+            </Tooltip>
           </HeaderContainer>
 
           <Separator borderColor={"bg.canvas"} />
