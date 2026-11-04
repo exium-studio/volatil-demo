@@ -1,6 +1,7 @@
 // src/features/internal/integration/components/sso-config-form.tsx
 
 import { Button } from "@/design-system/components/button/ui/button";
+import { ClipboardButton } from "@/design-system/components/data-display/ui/clipboard-button";
 import {
   AlertContent,
   AlertDescription,
@@ -207,8 +208,17 @@ export const SsoConfigForm = () => {
               <Input
                 value={canonicalRedirectUri}
                 readOnly={true}
-                disabled={true}
                 w={"full"}
+                pr={"44px"}
+                endElement={
+                  <ClipboardButton
+                    value={canonicalRedirectUri}
+                    aria-label={"Salin Callback Redirect URI"}
+                    variant={"plain"}
+                    size={"xs"}
+                    mr={"-8px"}
+                  />
+                }
               />
             </Field>
           </VStack>
@@ -340,8 +350,17 @@ export const SsoConfigForm = () => {
                 <Input
                   value={canonicalRedirectUri}
                   readOnly={true}
-                  disabled={true}
                   w={"full"}
+                  pr={"44px"}
+                  endElement={
+                    <ClipboardButton
+                      value={canonicalRedirectUri}
+                      aria-label={"Salin Callback Redirect URI"}
+                      variant={"plain"}
+                      size={"xs"}
+                      mr={"-8px"}
+                    />
+                  }
                 />
               </Field>
             </VStack>

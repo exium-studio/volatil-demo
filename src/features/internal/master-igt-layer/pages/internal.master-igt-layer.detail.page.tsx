@@ -367,4 +367,5 @@ export const InternalMasterIgtLayerDetailPage = () => {
   );
 };
 
-export const InternalDataManagementDetailPage = InternalMasterIgtLayerDetailPage;
+export const InternalDataManagementDetailPage =
+  InternalMasterIgtLayerDetailPage;

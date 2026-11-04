@@ -25,6 +25,7 @@ import { DRAW_FILL_LAYER_ID } from "@/design-system/components/map/hooks/use-map
 import { useMapLayerStore } from "@/design-system/components/map/stores/map.layer.store";
 import { Tooltip } from "@/design-system/components/overlay/ui/tooltip";
 import { HeaderContainer } from "@/design-system/components/shell/ui/header-container";
+import { toast } from "@/design-system/components/toast";
 import { ClampedHeading } from "@/design-system/components/typography/ui/heading";
 import { ClampedP, P } from "@/design-system/components/typography/ui/p";
 import { Url } from "@/design-system/components/typography/ui/url";
@@ -37,7 +38,6 @@ import {
   highlightFeatureOnMap,
   removeFeatureHighlightFromMap,
 } from "@/features/mitra/data-request/utils/highlight-feature-on-map";
-import { toast } from "@/design-system/components/toast";
 import { MitraMyDataEditTrigger } from "@/features/mitra/my-data/components/mitra.my-data.edit-modal";
 import { MitraWorkspaceRenewalTrigger } from "@/features/mitra/my-data/components/mitra.my-data.renewal-modal";
 import {
@@ -792,6 +792,8 @@ export const MitraMyDataWorkspaceDetailPage = () => {
 
   return (
     <AppContentContainer>
+      {/* <TopBarLoader isFetching={true} /> */}
+
       <Container.Root withContext={true} flex={1}>
         <Container.Body overflowY={"auto"}>
           {/* Header */}

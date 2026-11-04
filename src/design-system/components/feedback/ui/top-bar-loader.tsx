@@ -75,7 +75,7 @@ export const TopBarLoader = (props: TopBarLoaderProps) => {
         top={0}
         left={0}
         right={0}
-        h={"4px"}
+        h={"2px"}
         zIndex={"max"}
         pointerEvents={"none"}
         bg={"transparent"}
@@ -85,11 +85,24 @@ export const TopBarLoader = (props: TopBarLoaderProps) => {
       >
         <Box
           ref={barRef}
+          position={"relative"}
           h={"full"}
           w={"0%"}
           bg={`${theme.colorPalette}.solid`}
-          boxShadow={`0 0 8px ${theme.colorPalette}.solid`}
-        />
+          boxShadow={`0 0 10px var(--chakra-colors-${theme.colorPalette}-solid), 0 0 5px var(--chakra-colors-${theme.colorPalette}-solid)`}
+        >
+          <Box
+            position={"absolute"}
+            right={0}
+            top={0}
+            bottom={0}
+            w={"100px"}
+            boxShadow={`0 0 10px var(--chakra-colors-${theme.colorPalette}-solid), 0 0 5px var(--chakra-colors-${theme.colorPalette}-solid)`}
+            transform={"rotate(3deg) translate(0px, -4px)"}
+            opacity={1}
+            pointerEvents={"none"}
+          />
+        </Box>
       </Box>
     </Portal>
   );
