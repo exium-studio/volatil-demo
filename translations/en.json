@@ -23,7 +23,7 @@
       "order_review": "Order Review",
       "mitra_registration": "Mitra Registration",
       "order_statistic": "Order Statistic",
-      "jobs": "Queue Jobs",
+      "jobs": "Mitra Data Updates",
       "integration": "System Integrations",
       "sso_keycloak": "SSO Keycloak",
       "smtp_email": "Email Service (SMTP)",
