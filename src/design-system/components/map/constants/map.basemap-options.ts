@@ -47,7 +47,7 @@ const ESRI_SATELLITE_STYLE: maplibregl.StyleSpecification = {
       ],
       encoding: "terrarium",
       tileSize: 256,
-      maxzoom: 15,
+      maxzoom: 18,
     },
   },
   layers: [
