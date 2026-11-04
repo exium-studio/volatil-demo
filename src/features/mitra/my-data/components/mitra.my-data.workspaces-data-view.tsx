@@ -9,6 +9,7 @@ import type {
   FormattedTableHeader,
 } from "@/design-system/components/data-display/types/data-view-table.type";
 import type { DataViewItemActionsGenerator } from "@/design-system/components/data-display/types/data-view.type";
+import { ClipboardButton } from "@/design-system/components/data-display/ui/clipboard-button";
 import { Countdown } from "@/design-system/components/data-display/ui/countdown";
 import { DataViewFooter } from "@/design-system/components/data-display/ui/data-view-footer";
 import { DEFAULT_PAGE_SIZE_OPTIONS } from "@/design-system/components/data-display/ui/data-view-page-size";
@@ -33,7 +34,6 @@ import { Tooltip } from "@/design-system/components/overlay/ui/tooltip";
 import { toast } from "@/design-system/components/toast/core/toast.manager";
 import { Badge } from "@/design-system/components/typography/ui/badge";
 import { ClampedP, P, TNum } from "@/design-system/components/typography/ui/p";
-import { Url } from "@/design-system/components/typography/ui/url";
 import { useDebouncedValue } from "@/design-system/hooks/use-debounced-value";
 import { usePricingPolicy } from "@/features/mitra/data-request/hooks/use-pricing-policy";
 import { MitraWorkspaceRenewalTrigger } from "@/features/mitra/my-data/components/mitra.my-data.renewal-modal";
@@ -131,12 +131,12 @@ export const MitraMyDataWorkspacesDataView = (_props: MitraMyDataViewProps) => {
   const dataList = useMemo(() => {
     const headers: FormattedTableHeader[] = [
       { th: "Nama Workspace", sortable: true },
+      { th: "URL Workspace", sortable: false, align: "start" },
       { th: "Tanggal Dipesan", sortable: true },
       { th: "Sisa Waktu", sortable: true },
       { th: "Tanggal Kedaluwarsa", sortable: true },
       { th: "Periode Pembaruan", sortable: false, align: "start" },
       { th: "Status Pesanan", sortable: true },
-      { th: "WMS URL (Interop)", sortable: false },
       { th: "No. Pesanan", sortable: true },
       { th: "Jumlah Layer", sortable: true },
       { th: "Cakupan Bidang", sortable: true },
@@ -207,6 +207,22 @@ export const MitraMyDataWorkspacesDataView = (_props: MitraMyDataViewProps) => {
                     </ClampedP>
                   </VStack>
                 </NavLink>
+              ),
+              align: "start" as const,
+            },
+            {
+              value: item.wmsUrl ?? "",
+              td: item.wmsUrl ? (
+                <ClipboardButton
+                  value={item.wmsUrl}
+                  isIconButton={false}
+                  variant={"outline"}
+                  colorPalette={"gray"}
+                >
+                  {"Salin URL"}
+                </ClipboardButton>
+              ) : (
+                <P color={"fg.subtle"}>{"-"}</P>
               ),
               align: "start" as const,
             },
@@ -376,18 +392,6 @@ export const MitraMyDataWorkspacesDataView = (_props: MitraMyDataViewProps) => {
             {
               value: effectiveStatus,
               td: <OrderStatusBadge>{effectiveStatus}</OrderStatusBadge>,
-              align: "start" as const,
-            },
-            {
-              value: item.wmsUrl ?? "",
-              td: (
-                <Url
-                  url={item.wmsUrl}
-                  label={"Salin URL WMS Interop"}
-                  maxW={"280px"}
-                  minW={"280px"}
-                />
-              ),
               align: "start" as const,
             },
             {
