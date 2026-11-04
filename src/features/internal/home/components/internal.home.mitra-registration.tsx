@@ -71,7 +71,7 @@ const InternalHomeMitraRegistrationChart = (props: {
       status: "Mitra Terverifikasi",
       statusKey: "verified" as MitraRegistrationStatus,
       count: mitraRegistration.active,
-      color: "teal.solid",
+      color: "green.solid",
     },
     {
       status: "Pending Verifikasi",
@@ -83,7 +83,7 @@ const InternalHomeMitraRegistrationChart = (props: {
 
   const chart = useChart({
     data: chartData,
-    series: [{ name: "count", label: "Jumlah", color: "teal.solid" }],
+    series: [{ name: "count", label: "Jumlah", color: "green.solid" }],
   });
 
   return (
@@ -167,7 +167,7 @@ const InternalHomeMitraRegistrationChart = (props: {
             onClick={() => handleFilterMitra("verified")}
             _hover={{ opacity: 0.8 }}
           >
-            <Box w={"8px"} h={"8px"} rounded={"full"} bg={"teal.solid"} />
+            <Box w={"8px"} h={"8px"} rounded={"full"} bg={"green.solid"} />
             <P fontSize={"xs"} color={"fg.subtle"}>
               {"Terverifikasi:"}
             </P>
