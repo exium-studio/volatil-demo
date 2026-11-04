@@ -10,6 +10,7 @@ import { SearchInput } from "@/design-system/components/input/ui/search-input";
 import { ActionHeaderScrollContainer } from "@/design-system/components/layout/ui/action-header-scroll-container";
 import { Center } from "@/design-system/components/layout/ui/center";
 import { HStack, VStack } from "@/design-system/components/layout/ui/flex-box";
+import { SimpleGrid } from "@/design-system/components/layout/ui/grid";
 import { Separator } from "@/design-system/components/layout/ui/separator";
 import { ExternalLink } from "@/design-system/components/navigation/ui/link";
 import { usePopModal } from "@/design-system/components/overlay/hooks/use-pop-modal";
@@ -68,7 +69,7 @@ export const UserGuideModal = (props: UserGuideModalProps) => {
       opened={resolvedIsOpen}
       open={resolvedOpen}
       close={resolvedClose}
-      size={"lg"}
+      size={"cover"}
     >
       {isMounted && (
         <UserGuideModalContent
@@ -87,7 +88,7 @@ const UserGuideModalContent = (props: {
   modalKey: string;
 }) => {
   // Props
-  const { close, portalType, modalKey } = props;
+  const { portalType, modalKey } = props;
 
   // Stores
   const { theme } = useThemeStore();
@@ -142,7 +143,7 @@ const UserGuideModalContent = (props: {
             <SearchInput
               value={search}
               onValueChange={setSearch}
-              placeholder={"Cari judul dokumen atau nama berkas..."}
+              placeholder={"Cari dokumen..."}
               flex={1}
             />
 
@@ -158,11 +159,11 @@ const UserGuideModalContent = (props: {
 
           {/* Loading Skeleton */}
           {isLoading && (
-            <VStack gap={"sm"} align={"stretch"} px={"md"}>
-              <Skeleton height={"76px"} rounded={theme.radii.component} />
-              <Skeleton height={"76px"} rounded={theme.radii.component} />
-              <Skeleton height={"76px"} rounded={theme.radii.component} />
-            </VStack>
+            <SimpleGrid minChildWidth={"320px"} gap={"md"} px={"md"}>
+              <Skeleton height={"180px"} rounded={theme.radii.container} />
+              <Skeleton height={"180px"} rounded={theme.radii.container} />
+              <Skeleton height={"180px"} rounded={theme.radii.container} />
+            </SimpleGrid>
           )}
 
           {/* Error State */}
@@ -201,73 +202,113 @@ const UserGuideModalContent = (props: {
             </Center>
           )}
 
-          {/* Documents List */}
+          {/* Documents Grid */}
           {!isLoading && !isError && !isEmpty && (
-            <VStack gap={"md"} overflowY={"auto"} px={"md"}>
-              {guides.map((guide, index) => {
+            <SimpleGrid minChildWidth={"320px"} gap={"md"} px={"md"} pb={"md"}>
+              {guides.map((guide) => {
                 const catMeta =
                   USER_GUIDE_CATEGORY_MAP[guide.category] ??
                   USER_GUIDE_CATEGORY_MAP.manual_book;
 
+                const catIcon = catMeta.icon ?? FileTextIcon;
+
                 return (
-                  <HStack
+                  <VStack
                     key={guide.id}
-                    align={"start"}
+                    position={"relative"}
+                    overflow={"hidden"}
+                    align={"stretch"}
+                    justify={"space-between"}
+                    p={"md"}
+                    rounded={theme.radii.container}
+                    border={"1px solid"}
+                    borderColor={`${catMeta.colorPalette}.muted`}
+                    bg={"bg.body"}
+                    bgGradient={`linear-gradient(135deg, var(--chakra-colors-${catMeta.colorPalette}-subtle) 0%, var(--chakra-colors-bg-body) 60%)`}
                     gap={"sm"}
-                    pb={"md"}
-                    borderBottom={
-                      index < guides.length - 1 ? "1px solid" : "none"
-                    }
-                    borderColor={"bg.canvas"}
+                    transition={"all 0.2s ease"}
                   >
-                    <AppIcon
-                      icon={FileTextIcon}
-                      color={`${catMeta.colorPalette}.fg`}
-                    />
-
-                    <VStack gap={"xs"}>
-                      {/* Header: Title + Category + Version */}
-                      <HStack
-                        wrap={"wrap"}
-                        gap={"xs"}
-                        align={"center"}
-                        flex={1}
-                        minW={0}
-                      >
-                        <Heading>{guide.title}</Heading>
-
-                        <P fontSize={"sm"} color={"fg.muted"}>
-                          {guide.version}
-                        </P>
+                    {/* Top: Icon, Category & Version */}
+                    <VStack align={"stretch"} gap={"xs"}>
+                      <HStack justify={"space-between"} align={"center"}>
+                        <HStack gap={"xs"} align={"center"}>
+                          <AppIcon
+                            icon={catIcon}
+                            color={`${catMeta.colorPalette}.fg`}
+                          />
+                          <Badge
+                            variant={"subtle"}
+                            colorPalette={catMeta.colorPalette}
+                          >
+                            {catMeta.label}
+                          </Badge>
+                        </HStack>
 
                         <Badge
-                          variant={"subtle"}
-                          colorPalette={catMeta.colorPalette}
+                          variant={"outline"}
+                          colorPalette={"gray"}
+                          size={"xs"}
                         >
-                          {catMeta.label}
+                          {guide.version}
                         </Badge>
                       </HStack>
 
+                      {/* Title */}
+                      <Heading lineClamp={2} title={guide.title}>
+                        {guide.title}
+                      </Heading>
+
                       {/* Description */}
-                      <ClampedP color={"fg.subtle"} lineClamp={2}>
+                      <ClampedP
+                        color={"fg.muted"}
+                        fontSize={"sm"}
+                        lineClamp={2}
+                      >
                         {guide.description}
                       </ClampedP>
+                    </VStack>
 
-                      {/* Metadata */}
-                      <HStack gap={"xs"} color={"fg.subtle"} wrap={"wrap"}>
-                        <P color={"fg.subtle"}>{guide.fileName}</P>
-                        <P color={"fg.subtle"}>{"•"}</P>
-                        <P color={"fg.subtle"}>{formatByte(guide.fileSize)}</P>
+                    {/* Bottom: File info & Actions */}
+                    <VStack align={"stretch"} gap={"sm"} pt={"xs"}>
+                      <Separator borderColor={"bg.canvas"} />
+
+                      <HStack
+                        justify={"space-between"}
+                        align={"center"}
+                        color={"fg.subtle"}
+                        fontSize={"xs"}
+                      >
+                        <ClampedP
+                          fontSize={"xs"}
+                          color={"fg.subtle"}
+                          lineClamp={1}
+                          flex={1}
+                          title={guide.fileName}
+                        >
+                          {guide.fileName}
+                        </ClampedP>
+                        <P
+                          fontSize={"xs"}
+                          color={"fg.muted"}
+                          whiteSpace={"nowrap"}
+                        >
+                          {formatByte(guide.fileSize)}
+                        </P>
                       </HStack>
 
                       {/* Actions */}
-                      <HStack gap={"xs"} align={"center"} mt={"xs"}>
+                      <HStack gap={"xs"} align={"center"} w={"full"}>
                         <ExternalLink
                           href={guide.fileUrl}
                           variant={"plain"}
                           colorPalette={"neutral"}
+                          flex={1}
                         >
-                          <Button variant={"outline"}>
+                          <Button
+                            variant={"outline"}
+                            colorPalette={catMeta.colorPalette}
+                            w={"full"}
+                          >
                             <AppIcon icon={ExternalLinkIcon} />
                             {"Pratinjau"}
                           </Button>
@@ -283,6 +324,7 @@ const UserGuideModalContent = (props: {
                         >
                           <Button
                             variant={"outline"}
+                            colorPalette={catMeta.colorPalette}
                             onClick={() => handleDownload(guide)}
                           >
                             <AppIcon icon={DownloadIcon} />
@@ -291,21 +333,15 @@ const UserGuideModalContent = (props: {
                         </DownloadTrigger>
                       </HStack>
                     </VStack>
-                  </HStack>
+                  </VStack>
                 );
               })}
-            </VStack>
+            </SimpleGrid>
           )}
         </VStack>
       </Modal.Body>
 
       <Separator borderColor={"bg.canvas"} />
-
-      <Modal.Footer>
-        <Button flex={1} onClick={close}>
-          {"Tutup"}
-        </Button>
-      </Modal.Footer>
     </Modal.Content>
   );
 };

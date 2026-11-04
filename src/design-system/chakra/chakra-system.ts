@@ -682,7 +682,7 @@ export const chakraConfig = defineConfig({
       },
       fontWeights: {
         normal: { value: "450" },
-        medium: { value: "550" },
+        medium: { value: "500" },
         semibold: { value: "600" },
         bold: { value: "700" },
         extrabold: { value: "800" },
