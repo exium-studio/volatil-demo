@@ -27,6 +27,7 @@ export const INTERNAL_APP_NAV_GROUPS_LIST: NavGroup<AdminAppNavKey>[] = [
       { key: "home" },
       { key: "order_review" },
       { key: "order_statistic" },
+      { key: "jobs" },
       { key: "mitra_registration" },
       { key: "user_management" },
       { key: "help" },
