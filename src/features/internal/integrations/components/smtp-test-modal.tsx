@@ -14,7 +14,7 @@ import type {
   SmtpTestModalProps,
 } from "@/features/internal/integrations/types/integration.type";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { SendIcon } from "lucide-react";
+import { SendHorizontalIcon } from "lucide-react";
 import { useForm } from "react-hook-form";
 
 const SMTP_TEST_TARGET_EMAIL_KEY = "volatil_smtp_test_target_email";
@@ -96,8 +96,8 @@ export const SmtpTestModal = (props: SmtpTestModalProps) => {
               primary={true}
               loading={testMutation.isPending}
             >
-              <AppIcon icon={SendIcon} />
               {"Kirim Email Uji Coba"}
+              <AppIcon icon={SendHorizontalIcon} />
             </Button>
 
             <Button onClick={close}>{"Batal"}</Button>
