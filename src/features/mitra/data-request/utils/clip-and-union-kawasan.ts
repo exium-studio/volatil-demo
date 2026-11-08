@@ -279,9 +279,9 @@ export const clipAndUnionKawasanFeatures = (
   onProgress?.(100, "Selesai");
 
   return {
-    kawasanCoveragePolygon: finalCoveragePolygon,
+    kawasanCoveragePolygon: totalAreaHa > 0 ? finalCoveragePolygon : null,
     totalAreaHa,
     totalIntersectedFeatures: clippedPolygons.length,
-    isEmpty: false,
+    isEmpty: totalAreaHa <= 0,
   };
 };

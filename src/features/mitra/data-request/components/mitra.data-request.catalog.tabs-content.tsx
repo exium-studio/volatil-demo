@@ -98,7 +98,12 @@ export const MitraDataRequestCatalogTabsContent = (
   // Keep AOI, Coverage, and Bidang layers mounted across both layer cards and attribute table view
   useCartAoiCoverageMap(map, {
     aoiPolygon: adminBoundaryQuery.aoiPolygon,
-    kawasanCoveragePolygon: calculationResult?.kawasanCoveragePolygon,
+    kawasanCoveragePolygon:
+      calculationResult?.totalKawasanAreaHa &&
+      calculationResult.totalKawasanAreaHa > 0 &&
+      calculationResult.totalKawasanCount > 0
+        ? (calculationResult.kawasanCoveragePolygon ?? undefined)
+        : undefined,
     bidangFeatures: bidangQueryResult.features,
     selectionType: "catalog",
     isAoiVisible,

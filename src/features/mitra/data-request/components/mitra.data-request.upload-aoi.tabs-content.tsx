@@ -665,7 +665,12 @@ const UploadAoiConfirmedAttributeList = memo(
     // Keep AOI, Coverage, and Bidang layers mounted across both layer list and attribute table view
     useCartAoiCoverageMap(map, {
       aoiPolygon: confirmedPolygon,
-      kawasanCoveragePolygon: calculationResult?.kawasanCoveragePolygon,
+      kawasanCoveragePolygon:
+        calculationResult?.totalKawasanAreaHa &&
+        calculationResult.totalKawasanAreaHa > 0 &&
+        calculationResult.totalKawasanCount > 0
+          ? (calculationResult.kawasanCoveragePolygon ?? undefined)
+          : undefined,
       bidangFeatures: bidangQueryResult.features,
       selectionType: "upload_aoi",
       isAoiVisible,

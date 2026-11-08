@@ -107,15 +107,27 @@ export const normalizeSpatialCalculationResult = (
   const purchaseLimitMessage =
     validation?.message ?? rawData.purchaseLimitMessage;
 
-  const kawasanCoveragePolygon =
-    coverageKawasan?.polygon ??
-    rawData.kawasanCoveragePolygon ??
-    null;
+  const rawCoveragePolygon =
+    coverageKawasan?.polygon ?? rawData.kawasanCoveragePolygon ?? null;
+  const hasValidKawasan =
+    totalKawasanAreaHa > 0 &&
+    totalKawasanCount > 0 &&
+    Boolean(rawCoveragePolygon) &&
+    items.some((i) => (i.igtBasis ?? i.spatialBasis) === "kawasan");
+
+  const kawasanCoveragePolygon = hasValidKawasan ? rawCoveragePolygon : null;
+  const normalizedCoverageKawasan =
+    hasValidKawasan && coverageKawasan && rawCoveragePolygon
+      ? {
+          ...coverageKawasan,
+          polygon: rawCoveragePolygon,
+        }
+      : undefined;
 
   return {
     calculationToken,
     expiresInSeconds,
-    coverageKawasan,
+    coverageKawasan: normalizedCoverageKawasan,
     summary,
     policy,
     validation,

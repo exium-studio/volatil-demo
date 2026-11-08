@@ -122,6 +122,24 @@ const MitraCartContent = () => {
     return hasKawasan && !hasBidang;
   }, [selectedOrder]);
 
+  const isBidangOnly = useMemo(() => {
+    if (!selectedOrder) return false;
+    const basis =
+      selectedOrder.purchasedBasis ?? selectedOrder.purchasedIgtBasis;
+    if (basis === "bidang") return true;
+    if (basis === "kawasan" || basis === "all") return false;
+
+    const items = selectedOrder.items ?? [];
+    if (items.length === 0) return false;
+    const hasBidang = items.some(
+      (it) => (it.spatialBasis ?? it.igtBasis) === "bidang",
+    );
+    const hasKawasan = items.some(
+      (it) => (it.spatialBasis ?? it.igtBasis) === "kawasan",
+    );
+    return hasBidang && !hasKawasan;
+  }, [selectedOrder]);
+
   const selectedOrderItems = selectedOrder?.items;
   const bidangTargetLayers = useMemo(() => {
     if (!selectedOrderItems || isKawasanOnly) return [];
@@ -191,9 +209,13 @@ const MitraCartContent = () => {
   // Map layer synchronization hook for Cart AOI & Coverage Polygon
   useCartAoiCoverageMap(map, {
     aoiPolygon: isOrderSelected ? selectedOrder?.aoiPolygon : null,
-    kawasanCoveragePolygon: isOrderSelected
-      ? selectedOrder?.kawasanCoveragePolygon
-      : null,
+    kawasanCoveragePolygon:
+      isOrderSelected &&
+      selectedOrder &&
+      Number(selectedOrder.coverageHa ?? 0) > 0 &&
+      !isBidangOnly
+        ? (selectedOrder.kawasanCoveragePolygon ?? null)
+        : null,
     bidangFeatures:
       isOrderSelected && !isKawasanOnly ? bidangQueryResult.features : null,
     selectionType: selectedOrder?.selectionType,

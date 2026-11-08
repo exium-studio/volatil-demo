@@ -46,6 +46,8 @@ export const MitraDataRequestSpatialSummary = memo(
       onToggleBidangVisible,
       onFlyToKawasanCoverage,
       onFlyToBidang,
+      calculationError,
+      onRetryCalculation,
     } = props;
 
     // Stores
@@ -57,6 +59,9 @@ export const MitraDataRequestSpatialSummary = memo(
     );
     const storeProgressPercentage = useMitraDataRequestCalculationStore(
       (state) => state.progressPercentage,
+    );
+    const storeCalculationError = useMitraDataRequestCalculationStore(
+      (state) => state.error,
     );
 
     // Hooks
@@ -167,6 +172,19 @@ export const MitraDataRequestSpatialSummary = memo(
             </HStack>
           </VStack>
         </VStack>
+      );
+    }
+
+    const effectiveCalculationError =
+      calculationError ?? storeCalculationError;
+
+    if (effectiveCalculationError) {
+      return (
+        <StateRetry
+          title={"Gagal menghitung cakupan spasial"}
+          description={effectiveCalculationError}
+          onRetry={onRetryCalculation}
+        />
       );
     }
 

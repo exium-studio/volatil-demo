@@ -1,5 +1,6 @@
 // src/features/mitra/data-request/hooks/use-kawasan-coverage.ts
 
+import { toast } from "@/design-system/components/toast";
 import { fetchWfs } from "@/design-system/components/map/utils/fetch-wfs";
 import { geojsonPolygonToWkt } from "@/design-system/components/map/utils/geojson-to-wkt";
 import { getIgtLayers } from "@/features/mitra/data-request/api/mitra.data-request-igt-layers.api";
@@ -159,6 +160,10 @@ export const useKawasanCoverage = (
           console.warn(
             `Failed to fetch features for layer ${layer.typeName}:`,
             err,
+          );
+          toast.error(
+            `Gagal mengambil data WFS layer "${layer.title || layer.typeName}": ${(err as Error)?.message || "Koneksi GeoServer bermasalah"}`,
+            { group: "Layer Spasial" },
           );
           return [] as GeoJSON.Feature[];
         }

@@ -39,5 +39,7 @@ export type MitraDataRequestSpatialSummaryProps = {
   onFlyToAoi?: () => void;
   onFlyToKawasanCoverage?: () => void;
   onFlyToBidang?: () => void;
+  calculationError?: string | null;
+  onRetryCalculation?: () => void;
 };
 

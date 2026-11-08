@@ -50,7 +50,7 @@ import { formatNumber } from "@/shared/utils/formatter/number.formatter";
 import { IconDatabaseOff } from "@tabler/icons-react";
 import { useQuery } from "@tanstack/react-query";
 import { FocusIcon, ShoppingCartIcon, TablePropertiesIcon } from "lucide-react";
-import { memo, useEffect, useMemo, useState } from "react";
+import { memo, useCallback, useEffect, useMemo, useState } from "react";
 
 const BASIS_FILTER_OPTIONS: Array<{ value: BasisFilterType; label: string }> = [
   { value: "all", label: "Semua" },
@@ -316,7 +316,7 @@ export const MitraDataRequestIgtLayerDataView = memo(
         sourceLayerId: layer.id,
         typeName: layer.typeName || layer.wfs?.wfsTypeName || "",
         title: layer.title,
-        spatialBasis: layer.spatialBasis,
+        spatialBasis: layer.spatialBasis ?? layer.igtBasis,
       }));
 
       void calculate(
@@ -335,6 +335,36 @@ export const MitraDataRequestIgtLayerDataView = memo(
       if (!map || !effectiveAoiPolygon || selectionType !== "catalog") return;
       flyToCartGeometry(map, effectiveAoiPolygon);
     }, [map, effectiveAoiPolygon, selectionType]);
+
+    // Handlers
+    const handleRetryCalculation = useCallback(() => {
+      if (!effectiveAoiPolygon || isEmptyArray(validCalculationLayers)) return;
+
+      const resolvedAoi = to2DGeometry(effectiveAoiPolygon);
+      if (!resolvedAoi) return;
+
+      const itemsList = validCalculationLayers.map((layer) => ({
+        sourceLayerId: layer.id,
+        typeName: layer.typeName || layer.wfs?.wfsTypeName || "",
+        title: layer.title,
+        spatialBasis: layer.spatialBasis ?? layer.igtBasis,
+      }));
+
+      void calculate(
+        {
+          selectionType,
+          aoiPolygon: resolvedAoi,
+          items: itemsList,
+        },
+        calcTriggerKey,
+      );
+    }, [
+      calculate,
+      effectiveAoiPolygon,
+      validCalculationLayers,
+      selectionType,
+      calcTriggerKey,
+    ]);
 
     // Handlers — Cart actions (Direct submit to BE with calculationToken)
     const handleAddToCartSelected = () => {
@@ -361,7 +391,11 @@ export const MitraDataRequestIgtLayerDataView = memo(
         purchasedIgtBasis: "all",
         aoiPolygon: resolvedAoi,
         kawasanCoveragePolygon:
-          calculationResult?.kawasanCoveragePolygon ?? undefined,
+          calculationResult?.totalKawasanAreaHa &&
+          calculationResult.totalKawasanAreaHa > 0 &&
+          calculationResult.totalKawasanCount > 0
+            ? (calculationResult.kawasanCoveragePolygon ?? undefined)
+            : undefined,
         layers: validLayers.map((layer) => ({
           layerId: layer.id,
           typeName: layer.wfs?.wfsTypeName ?? "",
@@ -429,7 +463,11 @@ export const MitraDataRequestIgtLayerDataView = memo(
         purchasedIgtBasis: "kawasan",
         aoiPolygon: resolvedAoi,
         kawasanCoveragePolygon:
-          calculationResult?.kawasanCoveragePolygon ?? undefined,
+          calculationResult?.totalKawasanAreaHa &&
+          calculationResult.totalKawasanAreaHa > 0 &&
+          calculationResult.totalKawasanCount > 0
+            ? (calculationResult.kawasanCoveragePolygon ?? undefined)
+            : undefined,
         layers: validLayers.map((layer) => ({
           layerId: layer.id,
           typeName: layer.wfs?.wfsTypeName ?? "",
@@ -592,9 +630,12 @@ export const MitraDataRequestIgtLayerDataView = memo(
           {/* Spatial Calculation Summary Box */}
           {(Boolean(effectiveAoiPolygon) ||
             adminBoundaryQuery.isLoading ||
-            isCalculating) && (
+            isCalculating ||
+            Boolean(calculationError)) && (
             <Box p={"md"} bg={"bg.body"} w={"full"} flexShrink={0}>
               <MitraDataRequestSpatialSummary
+                calculationError={calculationError}
+                onRetryCalculation={handleRetryCalculation}
                 isCalculating={adminBoundaryQuery.isLoading || isCalculating}
                 progressMessage={
                   adminBoundaryQuery.isLoading
@@ -630,7 +671,10 @@ export const MitraDataRequestIgtLayerDataView = memo(
                   calculationResult?.estimatedTotalPrice ?? 0
                 }
                 hasKawasanCoveragePolygon={Boolean(
-                  calculationResult?.kawasanCoveragePolygon,
+                  calculationResult?.totalKawasanAreaHa &&
+                    calculationResult.totalKawasanAreaHa > 0 &&
+                    calculationResult.totalKawasanCount > 0 &&
+                    calculationResult?.kawasanCoveragePolygon,
                 )}
                 hasBidangLayer={bidangLayers.length > 0 || totalBidangCount > 0}
                 hasKawasanLayer={
@@ -659,7 +703,13 @@ export const MitraDataRequestIgtLayerDataView = memo(
                   }
                 }}
                 onFlyToKawasanCoverage={() => {
-                  if (map && calculationResult?.kawasanCoveragePolygon) {
+                  if (
+                    map &&
+                    calculationResult?.totalKawasanAreaHa &&
+                    calculationResult.totalKawasanAreaHa > 0 &&
+                    calculationResult.totalKawasanCount > 0 &&
+                    calculationResult?.kawasanCoveragePolygon
+                  ) {
                     flyToCartGeometry(
                       map,
                       calculationResult.kawasanCoveragePolygon,
@@ -794,7 +844,7 @@ export const MitraDataRequestIgtLayerDataView = memo(
                             sourceLayerId: layer.id,
                             typeName: layer.wfs?.wfsTypeName || layer.id,
                             title: layer.title,
-                            spatialBasis: layer.spatialBasis,
+                            spatialBasis: layer.spatialBasis ?? layer.igtBasis,
                           }),
                         );
                         void calculate(

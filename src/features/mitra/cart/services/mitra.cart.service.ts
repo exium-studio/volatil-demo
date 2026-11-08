@@ -278,7 +278,7 @@ export function simulateCalculationComplete(orderId?: string): boolean {
         coverageHa,
         featuresCount,
         totalPrice: subtotalPrice,
-        kawasanCoveragePolygon: ord.kawasanCoveragePolygon ?? ord.aoiPolygon,
+        kawasanCoveragePolygon: ord.kawasanCoveragePolygon ?? undefined,
         items: ord.items.map((item) => ({
           ...item,
           featuresCount,
