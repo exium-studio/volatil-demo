@@ -92,7 +92,7 @@ export const MitraDataRequestDetailAttributeView = memo(
           </VStack>
         )}
 
-        {!showSkeleton && hasData && (
+        {!showSkeleton && !isError && hasData && (
           <VStack flex={1} gap={0} bg={"bg.body"} minH={0}>
             <SpatialFeaturesDataView
               wfsFeatures={features}

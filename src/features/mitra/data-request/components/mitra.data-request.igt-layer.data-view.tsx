@@ -614,6 +614,36 @@ export const MitraDataRequestIgtLayerDataView = memo(
     const hasFilteredLayers = !isEmptyArray(filteredLayers);
 
     // Derived Values
+    const isError = Boolean(
+      isErrorLayers ||
+        (showFilter && adminBoundaryQuery.isError) ||
+        Boolean(calculationError),
+    );
+    const errorTitle = calculationError
+      ? "Gagal Menghitung Cakupan Spasial IGT"
+      : "Gagal Memuat Data Wilayah / Layer IGT";
+    const errorDescription =
+      calculationError ||
+      errorLayers?.message ||
+      adminBoundaryQuery.error?.message ||
+      "Terjadi kesalahan saat memproses data spasial di server. Silakan coba lagi atau ubah filter area.";
+
+    const handleRetry = useCallback(() => {
+      if (isErrorLayers) void refetchLayers();
+      if (showFilter && adminBoundaryQuery.isError)
+        void adminBoundaryQuery.refetch();
+      if (calculationError) {
+        handleRetryCalculation();
+      }
+    }, [
+      isErrorLayers,
+      refetchLayers,
+      showFilter,
+      adminBoundaryQuery,
+      calculationError,
+      handleRetryCalculation,
+    ]);
+
     const isBidangValid = totalBidangCount >= minBidangCount;
     const isKawasanValid = totalKawasanAreaHa >= minKawasanHa;
 
@@ -628,15 +658,13 @@ export const MitraDataRequestIgtLayerDataView = memo(
       >
         <VStack flex={1} w={"full"} overflowY={"auto"}>
           {/* Spatial Calculation Summary Box */}
-          {(Boolean(effectiveAoiPolygon) ||
-            adminBoundaryQuery.isLoading ||
-            isCalculating ||
-            Boolean(calculationError)) && (
-            <Box p={"md"} bg={"bg.body"} w={"full"} flexShrink={0}>
-              <MitraDataRequestSpatialSummary
-                calculationError={calculationError}
-                onRetryCalculation={handleRetryCalculation}
-                isCalculating={adminBoundaryQuery.isLoading || isCalculating}
+          {!isError &&
+            (Boolean(effectiveAoiPolygon) ||
+              adminBoundaryQuery.isLoading ||
+              isCalculating) && (
+              <Box p={"md"} bg={"bg.body"} w={"full"} flexShrink={0}>
+                <MitraDataRequestSpatialSummary
+                  isCalculating={adminBoundaryQuery.isLoading || isCalculating}
                 progressMessage={
                   adminBoundaryQuery.isLoading
                     ? "Memuat batas wilayah administrasi..."
@@ -759,43 +787,49 @@ export const MitraDataRequestIgtLayerDataView = memo(
             </Box>
           )}
 
-          <Separator borderColor={"bg.canvas"} flexShrink={0} />
+          {!isError && (
+            <Separator borderColor={"bg.canvas"} flexShrink={0} />
+          )}
 
           {/* Actions Header: Search Bar & Basis IGT Filter */}
-          <ActionHeaderScrollContainer
-            align={"center"}
-            justify={"space-between"}
-            gap={"sm"}
-            w={"full"}
-            p={"md"}
-            bg={"bg.body"}
-            flexShrink={0}
-          >
-            {/* Left: Search Bar */}
-            <HStack gap={"sm"} flex={1} w={"240px"} maxW={"240px"}>
-              <SearchInput
-                w={"full"}
-                placeholder={"Cari nama / layer IGT"}
-                value={searchRaw}
-                onValueChange={(val) => setSearchRaw(val)}
-              />
-            </HStack>
+          {!isError && (
+            <ActionHeaderScrollContainer
+              align={"center"}
+              justify={"space-between"}
+              gap={"sm"}
+              w={"full"}
+              p={"md"}
+              bg={"bg.body"}
+              flexShrink={0}
+            >
+              {/* Left: Search Bar */}
+              <HStack gap={"sm"} flex={1} w={"240px"} maxW={"240px"}>
+                <SearchInput
+                  w={"full"}
+                  placeholder={"Cari nama / layer IGT"}
+                  value={searchRaw}
+                  onValueChange={(val) => setSearchRaw(val)}
+                />
+              </HStack>
 
-            {/* Right: Basis IGT Filter SegmentGroup */}
-            <HStack align={"center"} gap={"sm"} flexShrink={0}>
-              <SegmentGroupInput
-                value={basisFilter}
-                onValueChange={(details) => {
-                  if (details.value) {
-                    setBasisFilter(details.value as BasisFilterType);
-                  }
-                }}
-                options={BASIS_FILTER_OPTIONS}
-              />
-            </HStack>
-          </ActionHeaderScrollContainer>
+              {/* Right: Basis IGT Filter SegmentGroup */}
+              <HStack align={"center"} gap={"sm"} flexShrink={0}>
+                <SegmentGroupInput
+                  value={basisFilter}
+                  onValueChange={(details) => {
+                    if (details.value) {
+                      setBasisFilter(details.value as BasisFilterType);
+                    }
+                  }}
+                  options={BASIS_FILTER_OPTIONS}
+                />
+              </HStack>
+            </ActionHeaderScrollContainer>
+          )}
 
-          <Separator borderColor={"bg.canvas"} flexShrink={0} />
+          {!isError && (
+            <Separator borderColor={"bg.canvas"} flexShrink={0} />
+          )}
 
           {/* DataList Table with Multi-Selection Checkbox */}
           <VStack flex={1} w={"full"} bg={"bg.body"}>
@@ -809,59 +843,17 @@ export const MitraDataRequestIgtLayerDataView = memo(
               />
             )}
 
-            {!isShowLoading &&
-              (isErrorLayers ||
-                (showFilter && adminBoundaryQuery.isError) ||
-                Boolean(calculationError && !calculationResult)) && (
-                <VStack flex={1} justify={"center"} align={"center"} p={"xl"}>
-                  <StateRetry
-                    title={
-                      calculationError && !calculationResult
-                        ? "Gagal Menghitung Cakupan Spasial IGT"
-                        : "Gagal Memuat Data Wilayah / Layer IGT"
-                    }
-                    description={
-                      (calculationError && !calculationResult
-                        ? calculationError
-                        : undefined) ||
-                      errorLayers?.message ||
-                      adminBoundaryQuery.error?.message ||
-                      "Terjadi kesalahan saat memproses kalkulasi spasial di server. Silakan coba lagi atau ubah filter area."
-                    }
-                    onRetry={() => {
-                      if (isErrorLayers) void refetchLayers();
-                      if (showFilter && adminBoundaryQuery.isError)
-                        void adminBoundaryQuery.refetch();
-                      if (calculationError && !calculationResult) {
-                        useMitraDataRequestStore
-                          .getState()
-                          .resetCalculation(selectionType);
-                        const resolvedAoi = to2DGeometry(effectiveAoiPolygon);
-                        if (!resolvedAoi) return;
+            {!isShowLoading && isError && (
+              <VStack flex={1} justify={"center"} align={"center"} p={"xl"}>
+                <StateRetry
+                  title={errorTitle}
+                  description={errorDescription}
+                  onRetry={handleRetry}
+                />
+              </VStack>
+            )}
 
-                        const itemsList = validCalculationLayers.map(
-                          (layer) => ({
-                            sourceLayerId: layer.id,
-                            typeName: layer.wfs?.wfsTypeName || layer.id,
-                            title: layer.title,
-                            spatialBasis: layer.spatialBasis ?? layer.igtBasis,
-                          }),
-                        );
-                        void calculate(
-                          {
-                            selectionType,
-                            aoiPolygon: resolvedAoi,
-                            items: itemsList,
-                          },
-                          `${calcTriggerKey}|retry-${Date.now()}`,
-                        );
-                      }
-                    }}
-                  />
-                </VStack>
-              )}
-
-            {!isShowLoading && !isErrorLayers && !hasIntersectingLayers && (
+            {!isShowLoading && !isError && !hasIntersectingLayers && (
               <VStack flex={1} justify={"center"} align={"center"} p={"xl"}>
                 <StateNoData
                   icon={IconDatabaseOff}
@@ -874,7 +866,7 @@ export const MitraDataRequestIgtLayerDataView = memo(
             )}
 
             {!isShowLoading &&
-              !isErrorLayers &&
+              !isError &&
               hasIntersectingLayers &&
               !hasFilteredLayers && (
                 <VStack flex={1} justify={"center"} align={"center"} p={"xl"}>
@@ -895,7 +887,7 @@ export const MitraDataRequestIgtLayerDataView = memo(
                 </VStack>
               )}
 
-            {!isShowLoading && !isErrorLayers && hasFilteredLayers && (
+            {!isShowLoading && !isError && hasFilteredLayers && (
               <DataViewTable.Root<IgtLayerItem>
                 headers={dataList.headers}
                 items={dataList.items}
@@ -915,10 +907,13 @@ export const MitraDataRequestIgtLayerDataView = memo(
           </VStack>
         </VStack>
 
-        <Separator borderColor={"bg.canvas"} flexShrink={0} />
+        {!isError && (
+          <Separator borderColor={"bg.canvas"} flexShrink={0} />
+        )}
 
         {/* Action Bar Footer */}
-        <VStack gap={"sm"} w={"full"} p={"md"} bg={"bg.body"} flexShrink={0}>
+        {!isError && (
+          <VStack gap={"sm"} w={"full"} p={"md"} bg={"bg.body"} flexShrink={0}>
           {/* Action Buttons */}
           {!isBidangValid || !isKawasanValid ? (
             <Tooltip
@@ -1054,6 +1049,7 @@ export const MitraDataRequestIgtLayerDataView = memo(
             )}
           </HStack>
         </VStack>
+        )}
       </VStack>
     );
   },
