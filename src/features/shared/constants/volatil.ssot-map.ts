@@ -96,9 +96,15 @@ export const getSelectionTypeMapColors = (
   fillColor: string;
   lineColor: string;
 } => {
-  const normalized = (selectionType ?? "catalog") as SelectionType;
+  const normalizedKey =
+    selectionType === "upload" || selectionType === "upload_aoi"
+      ? "upload_aoi"
+      : selectionType === "draw" || selectionType === "draw_aoi"
+        ? "draw_aoi"
+        : (selectionType ?? "catalog");
   const color =
-    SELECTION_TYPE_MAP_COLOR[normalized] ?? SELECTION_TYPE_MAP_COLOR.catalog;
+    SELECTION_TYPE_MAP_COLOR[normalizedKey as SelectionType] ??
+    SELECTION_TYPE_MAP_COLOR.catalog;
   return {
     fill: color.fill,
     line: color.line,
