@@ -162,7 +162,9 @@ export const getLayerGeometryColumnName = async (
     url.searchParams.set("outputFormat", "application/json");
 
     const authToken =
-      typeof window !== "undefined" ? localStorage.getItem("auth_token") : null;
+      typeof window !== "undefined" && isWorkspaceEndpoint
+        ? localStorage.getItem("auth_token")
+        : null;
     const headers: Record<string, string> = {};
     if (apiKey && isWorkspaceEndpoint) {
       headers["X-API-Key"] = apiKey;
@@ -172,8 +174,8 @@ export const getLayerGeometryColumnName = async (
     }
 
     const credentialsMode: RequestCredentials = isWorkspaceEndpoint
-      ? "same-origin"
-      : "include";
+      ? "include"
+      : "omit";
 
     const res = await fetch(url.toString(), {
       headers,
@@ -233,7 +235,9 @@ const fetchWfsPost = async (
   const body = url.searchParams.toString();
 
   const authToken =
-    typeof window !== "undefined" ? localStorage.getItem("auth_token") : null;
+    typeof window !== "undefined" && isWorkspaceEndpoint
+      ? localStorage.getItem("auth_token")
+      : null;
 
   const headers: Record<string, string> = {
     "Content-Type": "application/x-www-form-urlencoded",
@@ -245,8 +249,8 @@ const fetchWfsPost = async (
   };
 
   const credentialsMode: RequestCredentials = isWorkspaceEndpoint
-    ? "same-origin"
-    : "include";
+    ? "include"
+    : "omit";
 
   return fetch(baseUrl, {
     method: "POST",
@@ -279,11 +283,13 @@ export const fetchWfs = async (
     (params.wfsUrl && params.wfsUrl.includes("workspace="));
 
   const authToken =
-    typeof window !== "undefined" ? localStorage.getItem("auth_token") : null;
+    typeof window !== "undefined" && isWorkspaceEndpoint
+      ? localStorage.getItem("auth_token")
+      : null;
 
   const credentialsMode: RequestCredentials = isWorkspaceEndpoint
-    ? "same-origin"
-    : "include";
+    ? "include"
+    : "omit";
 
   const getHeaders: Record<string, string> = {
     ...(params.apiKey && isWorkspaceEndpoint

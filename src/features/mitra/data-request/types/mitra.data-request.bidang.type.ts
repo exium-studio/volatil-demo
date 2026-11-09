@@ -7,6 +7,7 @@ export type BidangAoiLayerItem = {
   typeName: string;
   wfsUrl?: string;
   title?: string;
+  minZoom?: number;
 };
 
 export type UseBidangAoiFeaturesParams = {
@@ -25,4 +26,5 @@ export type UseBidangAoiFeaturesResult = {
   isLoading: boolean;
   isError: boolean;
   error: Error | null;
+  minZoom: number;
 };

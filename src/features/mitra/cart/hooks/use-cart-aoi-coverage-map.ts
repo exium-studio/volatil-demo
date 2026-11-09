@@ -86,8 +86,8 @@ export const getBidangColor = (selectionType?: string) =>
   getSelectionTypeMapColors(selectionType);
 
 export const BIDANG_MAP_COLOR = {
-  fill: "#a855f7",
-  line: "#7c3aed",
+  fill: "#f59e0b",
+  line: "#d97706",
 };
 
 import { FEATURE_INFO_FILL_LAYER_ID } from "@/design-system/components/map/hooks/use-map-feature-info";
@@ -378,13 +378,15 @@ export const renderCartMapLayers = (
       map.setLayoutProperty(covIds.lineId, "visibility", "visible");
     }
 
-    // Guarantee Coverage layers stay above WMS/WFS but below AOI
+    // Guarantee Coverage layers stay below Bidang and AOI, but above WMS raster
     try {
-      const covBefore = map.getLayer(aoiIds.fillId)
-        ? aoiIds.fillId
-        : beforeId && map.getLayer(beforeId)
-          ? beforeId
-          : undefined;
+      const covBefore = map.getLayer(bidIds.fillId)
+        ? bidIds.fillId
+        : map.getLayer(aoiIds.fillId)
+          ? aoiIds.fillId
+          : beforeId && map.getLayer(beforeId)
+            ? beforeId
+            : undefined;
       if (map.getLayer(covIds.fillId)) {
         map.moveLayer(covIds.fillId, covBefore);
       }
@@ -442,8 +444,8 @@ export const renderCartMapLayers = (
             type: "fill",
             source: bidIds.sourceId,
             paint: {
-              "fill-color": colors.fill,
-              "fill-opacity": 0,
+              "fill-color": BIDANG_MAP_COLOR.fill,
+              "fill-opacity": 0.25,
             },
           } as maplibregl.LayerSpecification,
           beforeId,
@@ -452,8 +454,8 @@ export const renderCartMapLayers = (
         console.warn(`Failed to add layer ${bidIds.fillId}:`, err);
       }
     } else {
-      map.setPaintProperty(bidIds.fillId, "fill-color", colors.fill);
-      map.setPaintProperty(bidIds.fillId, "fill-opacity", 0);
+      map.setPaintProperty(bidIds.fillId, "fill-color", BIDANG_MAP_COLOR.fill);
+      map.setPaintProperty(bidIds.fillId, "fill-opacity", 0.25);
       map.setLayoutProperty(bidIds.fillId, "visibility", "visible");
     }
 
@@ -465,9 +467,9 @@ export const renderCartMapLayers = (
             type: "line",
             source: bidIds.sourceId,
             paint: {
-              "line-color": colors.line,
+              "line-color": BIDANG_MAP_COLOR.line,
               "line-width": 1.8,
-              "line-opacity": 0.9,
+              "line-opacity": 0.95,
             },
           } as maplibregl.LayerSpecification,
           beforeId,
@@ -476,19 +478,17 @@ export const renderCartMapLayers = (
         console.warn(`Failed to add layer ${bidIds.lineId}:`, err);
       }
     } else {
-      map.setPaintProperty(bidIds.lineId, "line-color", colors.line);
+      map.setPaintProperty(bidIds.lineId, "line-color", BIDANG_MAP_COLOR.line);
       map.setLayoutProperty(bidIds.lineId, "visibility", "visible");
     }
 
-    // Stack Bidang below Coverage and AOI
+    // Stack Bidang above Coverage and below AOI
     try {
-      const bidBefore = map.getLayer(covIds.fillId)
-        ? covIds.fillId
-        : map.getLayer(aoiIds.fillId)
-          ? aoiIds.fillId
-          : beforeId && map.getLayer(beforeId)
-            ? beforeId
-            : undefined;
+      const bidBefore = map.getLayer(aoiIds.fillId)
+        ? aoiIds.fillId
+        : beforeId && map.getLayer(beforeId)
+          ? beforeId
+          : undefined;
       if (map.getLayer(bidIds.fillId)) {
         map.moveLayer(bidIds.fillId, bidBefore);
       }

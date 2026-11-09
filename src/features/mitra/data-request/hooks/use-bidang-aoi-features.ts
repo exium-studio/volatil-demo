@@ -1,6 +1,5 @@
 // src/features/mitra/data-request/hooks/use-bidang-aoi-features.ts
 
-import { toast } from "@/design-system/components/toast";
 import { fetchWfs } from "@/design-system/components/map/utils/fetch-wfs";
 import { geojsonPolygonToWkt } from "@/design-system/components/map/utils/geojson-to-wkt";
 import { getIgtLayers } from "@/features/mitra/data-request/api/mitra.data-request-igt-layers.api";
@@ -130,10 +129,6 @@ export const useBidangAoiFeatures = (
             `Failed to fetch WFS features for layer ${layer.typeName}:`,
             err,
           );
-          toast.error(
-            `Gagal mengambil data WFS layer "${layer.title || layer.typeName}": ${(err as Error)?.message || "Koneksi GeoServer bermasalah"}`,
-            { group: "Layer Spasial" },
-          );
           return [];
         }
       });
@@ -142,15 +137,26 @@ export const useBidangAoiFeatures = (
       const combinedFeatures: GeoJSON.Feature[] = featureArrays.flat();
 
       // Strict spatial intersection filter executed in Web Worker with exact unsimplified AOI
-      const intersectedFeatures = await runFilterBidangAoiInWorker(
-        combinedFeatures,
-        aoiFeature,
-        signal,
-      );
+      let finalFeatures = combinedFeatures;
+      try {
+        const intersectedFeatures = await runFilterBidangAoiInWorker(
+          combinedFeatures,
+          aoiFeature,
+          signal,
+        );
+        if (intersectedFeatures && intersectedFeatures.length > 0) {
+          finalFeatures = intersectedFeatures;
+        }
+      } catch (workerErr) {
+        console.warn(
+          "Web Worker spatial filter error, falling back to GeoServer features:",
+          workerErr,
+        );
+      }
 
       return {
         type: "FeatureCollection",
-        features: intersectedFeatures,
+        features: finalFeatures,
       };
     },
     enabled: isEnabled,
@@ -165,5 +171,6 @@ export const useBidangAoiFeatures = (
     isLoading: isEnabled && (isLoading || isFetching),
     isError,
     error: error as Error | null,
+    minZoom: 12,
   };
 };

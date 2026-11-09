@@ -96,7 +96,7 @@ const InternalMasterIgtLayerCreateModalContent = (
       description: "",
       igtBasis: "kawasan",
       zIndex: 1,
-      minZoom: 12,
+      minZoom: 10,
       geoserverId: "",
       workspaceName: "",
       layerName: null,
@@ -355,7 +355,11 @@ const InternalMasterIgtLayerCreateModalContent = (
                       value={field.value}
                       onValueChange={({ value }) => {
                         if (value) {
-                          field.onChange(value as IgtBasisType);
+                          const nextBasis = value as IgtBasisType;
+                          field.onChange(nextBasis);
+                          setValue("minZoom", nextBasis === "kawasan" ? 10 : 8, {
+                            shouldValidate: true,
+                          });
                         }
                       }}
                       w={"full"}
