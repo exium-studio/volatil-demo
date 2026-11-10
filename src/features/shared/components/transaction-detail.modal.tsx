@@ -200,18 +200,20 @@ export const TransactionDetailModalContent = (
       {
         id: "processing" as OrderStatus,
         title: ORDER_STATUS_MAP.processing.label,
-        description: isExpired || isRejected
-          ? "Proses dibatalkan"
-          : isReady
-            ? "Sinkronisasi layer spasial berhasil"
-            : isProcessing
-              ? "Sistem memproses sinkronisasi layer di background"
-              : "Diproses setelah validasi admin",
-        icon: !isExpired && !isRejected && isReady
-          ? ORDER_STATUS_MAP.ready.icon
-          : !isExpired && !isRejected && isProcessing
-            ? ORDER_STATUS_MAP.processing.icon
-            : Layers2Icon,
+        description:
+          isExpired || isRejected
+            ? "Proses dibatalkan"
+            : isReady
+              ? "Sinkronisasi layer spasial berhasil"
+              : isProcessing
+                ? "Sistem memproses sinkronisasi layer di background"
+                : "Diproses setelah validasi admin",
+        icon:
+          !isExpired && !isRejected && isReady
+            ? ORDER_STATUS_MAP.ready.icon
+            : !isExpired && !isRejected && isProcessing
+              ? ORDER_STATUS_MAP.processing.icon
+              : Layers2Icon,
         colorPalette:
           !isExpired && !isRejected && isReady
             ? ORDER_STATUS_MAP.ready.colorPalette
@@ -223,13 +225,17 @@ export const TransactionDetailModalContent = (
       {
         id: "ready" as OrderStatus,
         title: ORDER_STATUS_MAP.ready.label,
-        description: isExpired || isRejected
-          ? "Layanan tidak dapat diakses"
-          : isReady
-            ? "Layer IGT aktif dan dapat diakses di menu Data Saya"
-            : "Layanan WMS siap diakses setelah selesai diproses",
+        description:
+          isExpired || isRejected
+            ? "Layanan tidak dapat diakses"
+            : isReady
+              ? "Layer IGT aktif dan dapat diakses di menu Data Saya"
+              : "Layanan WMS siap diakses setelah selesai diproses",
         icon: ORDER_STATUS_MAP.ready.icon,
-        colorPalette: !isExpired && !isRejected && isReady ? ORDER_STATUS_MAP.ready.colorPalette : "gray",
+        colorPalette:
+          !isExpired && !isRejected && isReady
+            ? ORDER_STATUS_MAP.ready.colorPalette
+            : "gray",
         isMuted: isExpired || isRejected || !isReady,
       },
     ];
