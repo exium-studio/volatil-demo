@@ -369,7 +369,7 @@ export const MitraMyDataWorkspacesDataView = (_props: MitraMyDataViewProps) => {
                                           variant={"subtle"}
                                           colorPalette={"gray"}
                                         >
-                                          {`+${period.offset} ${unitLabel}`}
+                                          {`${unitLabel} ke-${period.offset}`}
                                         </Badge>
                                       </HStack>
 
