@@ -6,6 +6,7 @@ import type {
   FormattedTableHeader,
 } from "@/design-system/components/data-display/types/data-view-table.type";
 import { DataViewTable } from "@/design-system/components/data-display/ui/data-view-table";
+import { Collapsible } from "@/design-system/components/disclosure/ui/collapsible";
 import { Skeleton } from "@/design-system/components/feedback/ui/skeleton";
 import { StateNoData } from "@/design-system/components/feedback/ui/state.no-data";
 import { StateNoResult } from "@/design-system/components/feedback/ui/state.no-result";
@@ -49,7 +50,14 @@ import { isEmptyArray } from "@/shared/utils/data/array";
 import { formatNumber } from "@/shared/utils/formatter/number.formatter";
 import { IconDatabaseOff } from "@tabler/icons-react";
 import { useQuery } from "@tanstack/react-query";
-import { FocusIcon, ShoppingCartIcon, TablePropertiesIcon } from "lucide-react";
+import {
+  ChevronDownIcon,
+  ChevronUpIcon,
+  FocusIcon,
+  InfoIcon,
+  ShoppingCartIcon,
+  TablePropertiesIcon,
+} from "lucide-react";
 import { memo, useCallback, useEffect, useMemo, useState } from "react";
 
 const BASIS_FILTER_OPTIONS: Array<{ value: BasisFilterType; label: string }> = [
@@ -142,6 +150,8 @@ export const MitraDataRequestIgtLayerDataView = memo(
     // States
     const [searchRaw, setSearchRaw] = useState<string>("");
     const [basisFilter, setBasisFilter] = useState<BasisFilterType>("all");
+    const [isZeroVolumeCollapsed, setIsZeroVolumeCollapsed] =
+      useState<boolean>(true);
 
     // Mutations
     const addToCartMultipleMutation = useAddToCartMultipleLayers();
@@ -476,6 +486,75 @@ export const MitraDataRequestIgtLayerDataView = memo(
       });
     };
 
+    // Filter active (non-zero volume) layers for main table and zero-volume layers for collapsible section
+    const nonZeroVolumeLayers = useMemo(() => {
+      return filteredLayers.filter((layer) => {
+        const calcItem = calculationResult?.items?.find(
+          (it) =>
+            it.sourceLayerId === layer.id ||
+            it.layerId === layer.id ||
+            it.sourceLayerId === layer.typeName ||
+            it.layerId === layer.typeName ||
+            it.sourceLayerId === layer.wfs?.wfsTypeName ||
+            it.layerId === layer.wfs?.wfsTypeName,
+        );
+
+        if (layer.spatialBasis === "bidang") {
+          const bidangFeatureCount =
+            calcItem?.featuresCount && calcItem.featuresCount > 0
+              ? calcItem.featuresCount
+              : (bidangQueryResult.features?.features?.filter(
+                  (f) =>
+                    f.properties?.__sourceLayerId === layer.id ||
+                    f.properties?.__sourceLayerTitle === layer.title ||
+                    f.properties?.__sourceLayerTitle === layer.typeName,
+                ).length ?? 0);
+          return bidangFeatureCount > 0;
+        }
+
+        const areaHa = calcItem?.areaHa ?? 0;
+        return areaHa > 0;
+      });
+    }, [
+      filteredLayers,
+      calculationResult,
+      bidangQueryResult.features?.features,
+    ]);
+
+    const zeroVolumeLayers = useMemo(() => {
+      return filteredLayers.filter((layer) => {
+        const calcItem = calculationResult?.items?.find(
+          (it) =>
+            it.sourceLayerId === layer.id ||
+            it.layerId === layer.id ||
+            it.sourceLayerId === layer.typeName ||
+            it.layerId === layer.typeName ||
+            it.sourceLayerId === layer.wfs?.wfsTypeName ||
+            it.layerId === layer.wfs?.wfsTypeName,
+        );
+
+        if (layer.spatialBasis === "bidang") {
+          const bidangFeatureCount =
+            calcItem?.featuresCount && calcItem.featuresCount > 0
+              ? calcItem.featuresCount
+              : (bidangQueryResult.features?.features?.filter(
+                  (f) =>
+                    f.properties?.__sourceLayerId === layer.id ||
+                    f.properties?.__sourceLayerTitle === layer.title ||
+                    f.properties?.__sourceLayerTitle === layer.typeName,
+                ).length ?? 0);
+          return bidangFeatureCount === 0;
+        }
+
+        const areaHa = calcItem?.areaHa ?? 0;
+        return areaHa === 0;
+      });
+    }, [
+      filteredLayers,
+      calculationResult,
+      bidangQueryResult.features?.features,
+    ]);
+
     // Derived Values - DataList headers, items, itemActions
     const dataList = useMemo(() => {
       const headers: FormattedTableHeader[] = [
@@ -484,7 +563,7 @@ export const MitraDataRequestIgtLayerDataView = memo(
         { th: "Jumlah / Luas", sortable: true, align: "start" },
       ];
 
-      const items: FormattedListItem<IgtLayerItem>[] = filteredLayers.map(
+      const items: FormattedListItem<IgtLayerItem>[] = nonZeroVolumeLayers.map(
         (layer: IgtLayerItem) => {
           const layerDisplayName =
             layer.title ||
@@ -585,7 +664,7 @@ export const MitraDataRequestIgtLayerDataView = memo(
         itemActions,
       };
     }, [
-      filteredLayers,
+      nonZeroVolumeLayers,
       calculationResult,
       combinedCqlFilter,
       effectiveAoiPolygon,
@@ -884,23 +963,128 @@ export const MitraDataRequestIgtLayerDataView = memo(
                 </VStack>
               )}
 
-            {!isShowLoading && !isError && hasFilteredLayers && (
-              <DataViewTable.Root<IgtLayerItem>
-                headers={dataList.headers}
-                items={dataList.items}
-                itemActions={dataList.itemActions}
-                virtualized={false}
-                withNumbering={true}
-                roundedTop={0}
-                overflowY={"visible"}
-                overflowX={"auto"}
-                maxH={"none"}
-                flex={"unset"}
-              >
-                <DataViewTable.Header />
-                <DataViewTable.Body />
-              </DataViewTable.Root>
-            )}
+            {!isShowLoading &&
+              !isError &&
+              hasFilteredLayers &&
+              nonZeroVolumeLayers.length > 0 && (
+                <DataViewTable.Root<IgtLayerItem>
+                  headers={dataList.headers}
+                  items={dataList.items}
+                  itemActions={dataList.itemActions}
+                  virtualized={false}
+                  withNumbering={true}
+                  roundedTop={0}
+                  overflowY={"visible"}
+                  overflowX={"auto"}
+                  maxH={"none"}
+                  flex={"unset"}
+                >
+                  <DataViewTable.Header />
+                  <DataViewTable.Body />
+                </DataViewTable.Root>
+              )}
+
+            {/* Collapsible Section for 0 Volume Layers */}
+            {!isShowLoading &&
+              !isError &&
+              hasFilteredLayers &&
+              zeroVolumeLayers.length > 0 && (
+                <VStack w={"full"} gap={0} p={"md"}>
+                  <Collapsible.Root
+                    opened={!isZeroVolumeCollapsed}
+                    w={"full"}
+                  >
+                    <HStack
+                      justify={"space-between"}
+                      align={"center"}
+                      w={"full"}
+                      p={"sm"}
+                      bg={"bg.subtle"}
+                      rounded={theme.radii.component}
+                      cursor={"pointer"}
+                      onClick={() => setIsZeroVolumeCollapsed((prev) => !prev)}
+                    >
+                      <HStack gap={"xs"} align={"center"}>
+                        <AppIcon icon={InfoIcon} color={"fg.muted"} />
+                        <P fontSize={"sm"} fontWeight={"medium"}>
+                          {`Layer tanpa data spasial pada AOI (${formatNumber(zeroVolumeLayers.length)})`}
+                        </P>
+                      </HStack>
+
+                      <HStack gap={"2xs"} align={"center"}>
+                        <P fontSize={"xs"} color={"fg.muted"}>
+                          {isZeroVolumeCollapsed ? "Lihat Layer" : "Tutup"}
+                        </P>
+                        <AppIcon
+                          icon={
+                            isZeroVolumeCollapsed
+                              ? ChevronDownIcon
+                              : ChevronUpIcon
+                          }
+                          color={"fg.muted"}
+                        />
+                      </HStack>
+                    </HStack>
+
+                    <Collapsible.Content>
+                      <VStack
+                        align={"stretch"}
+                        gap={0}
+                        mt={"xs"}
+                        rounded={theme.radii.component}
+                        border={"1px solid"}
+                        borderColor={"border.subtle"}
+                        bg={"bg.body"}
+                        overflow={"hidden"}
+                      >
+                        <Box p={"sm"} bg={"bg.subtle"}>
+                          <P fontSize={"xs"} color={"fg.muted"}>
+                            {
+                              "Layer di bawah ini tidak memiliki objek spasial (0 bidang / 0 ha) pada area AOI yang dipilih, namun Anda tetap mendapatkan datanya saat melakukan pemesanan."
+                            }
+                          </P>
+                        </Box>
+                        <Separator borderColor={"bg.canvas"} />
+                        {zeroVolumeLayers.map((layer, idx) => {
+                          const layerDisplayName =
+                            layer.title ||
+                            layer.id.split(":")[1] ||
+                            layer.wfs?.wfsTypeName?.split(":")[1] ||
+                            layer.wfs?.wfsTypeName ||
+                            layer.id;
+                          const formattedTitle = layerDisplayName.replace(
+                            /_/g,
+                            " ",
+                          );
+                          const basis = layer.spatialBasis ?? layer.igtBasis;
+
+                          return (
+                            <HStack
+                              key={layer.id || idx}
+                              p={"sm"}
+                              justify={"space-between"}
+                              align={"center"}
+                              borderTop={idx > 0 ? "1px solid" : undefined}
+                              borderColor={"border.subtle"}
+                            >
+                              <HStack gap={"sm"} align={"center"}>
+                                <P fontSize={"sm"}>{formattedTitle}</P>
+                              </HStack>
+
+                              <HStack gap={"sm"} align={"center"}>
+                                <IgtBasisBadge>{basis}</IgtBasisBadge>
+                                <P fontSize={"xs"} color={"fg.muted"}>
+                                  {basis === "bidang" ? "0 bidang" : "0 ha"}
+                                </P>
+                              </HStack>
+                            </HStack>
+                          );
+                        })}
+                      </VStack>
+                    </Collapsible.Content>
+                  </Collapsible.Root>
+                </VStack>
+              )}
           </VStack>
         </VStack>
 
