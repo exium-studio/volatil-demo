@@ -168,6 +168,7 @@ export type AddToCartOrderRequest = {
     kodeDesa?: string;
   };
   cqlFilter?: string;
+  items?: CartOrderItemPayload[];
 };
 
 export type AddToCartOrderResponse = {

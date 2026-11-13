@@ -183,6 +183,14 @@ export const useAddToCartMultipleLayers = () => {
       kawasanCoveragePolygon?: GeoJSON.MultiPolygon | GeoJSON.Polygon;
     }) => {
       const basis: PurchasedIgtBasis = params.purchasedIgtBasis ?? "all";
+      const itemsPayload =
+        Array.isArray(params.layers) && params.layers.length > 0
+          ? params.layers.map((l) => ({
+              sourceLayerId: l.layerId,
+              cqlFilter: l.cqlFilter,
+            }))
+          : undefined;
+
       const payload: AddToCartOrderRequest = {
         calculationToken:
           params.calculationToken ?? params.layers?.[0]?.calculationToken,
@@ -197,6 +205,7 @@ export const useAddToCartMultipleLayers = () => {
             ? undefined
             : (params.kawasanCoveragePolygon ??
               params.layers?.[0]?.kawasanCoveragePolygon),
+        items: itemsPayload,
       };
       return createCartOrder(payload);
     },
