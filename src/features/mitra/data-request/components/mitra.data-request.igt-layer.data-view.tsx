@@ -75,6 +75,7 @@ export const MitraDataRequestIgtLayerDataView = memo(
       aoiPolygon: propAoiPolygon,
       onSelectIgtLayer,
       showFilter = true,
+      isActive = true,
     } = props;
 
     // Stores
@@ -337,11 +338,11 @@ export const MitraDataRequestIgtLayerDataView = memo(
       // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [calcTriggerKey]);
 
-    // Effects — Auto-fit map camera when administrative boundary AOI polygon is resolved
+    // Effects — Auto-fit map camera when tab becomes active and AOI polygon is resolved
     useEffect(() => {
-      if (!map || !effectiveAoiPolygon || selectionType !== "catalog") return;
+      if (!map || !effectiveAoiPolygon || !isActive) return;
       flyToCartGeometry(map, effectiveAoiPolygon);
-    }, [map, effectiveAoiPolygon, selectionType]);
+    }, [map, effectiveAoiPolygon, isActive]);
 
     // Handlers
     const handleRetryCalculation = useCallback(() => {
