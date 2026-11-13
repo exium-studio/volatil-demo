@@ -21,6 +21,7 @@ import { useBidangAoiFeatures } from "@/features/mitra/data-request/hooks/use-bi
 import { useSelectedIgtLayer } from "@/features/mitra/data-request/hooks/use-selected-igt-layer";
 import { useMitraDataRequestStore } from "@/features/mitra/data-request/stores/mitra.data-request.store";
 import type { MitraDataRequestCatalogTabsContentProps } from "@/features/mitra/data-request/types/mitra.data-request.catalog.type";
+import { useIsSmallViewport } from "@/design-system/hooks/use-is-small-viewport";
 import { FilterAdministrativeAreaTrigger } from "@/features/shared/components/filter.administrative-area";
 import { FilterAdministrativeAreaForm } from "@/features/shared/components/filter.administrative-area.form";
 import { LayerAttributeTableView } from "@/features/shared/components/layer-attribute-table.view";
@@ -64,6 +65,7 @@ export const MitraDataRequestCatalogTabsContent = (
   const resetCatalog = useMitraDataRequestStore((state) => state.resetCatalog);
 
   // Hooks
+  const isSmallViewport = useIsSmallViewport();
   const { layerId, selectedIgtLayer, selectLayer } = useSelectedIgtLayer();
   const adminBoundaryQuery = useAdminBoundaryAoi(appliedAdministrativeFilters, {
     enabled: isActive,
@@ -154,7 +156,7 @@ export const MitraDataRequestCatalogTabsContent = (
       flex={1}
       display={"flex"}
       flexDir={"column"}
-      overflowY={"auto"}
+      overflowY={isSmallViewport ? "visible" : "auto"}
       {...restProps}
       value={"catalog"}
     >
@@ -162,7 +164,7 @@ export const MitraDataRequestCatalogTabsContent = (
         <VStack
           flex={1}
           w={"full"}
-          overflowY={"auto"}
+          overflowY={isSmallViewport ? "visible" : "auto"}
           p={"md"}
           justify={"space-between"}
           align={"stretch"}
@@ -183,7 +185,7 @@ export const MitraDataRequestCatalogTabsContent = (
         <VStack
           flex={1}
           gap={0}
-          overflow={"hidden"}
+          overflow={isSmallViewport ? "visible" : "hidden"}
           bg={"bg.canvas"}
           position={"relative"}
           w={"full"}

@@ -8,6 +8,7 @@ import { HStack } from "@/design-system/components/layout/ui/flex-box";
 import { AppContentContainer } from "@/design-system/components/layout/ui/page-container";
 import { Separator } from "@/design-system/components/layout/ui/separator";
 import { AppNavTitle } from "@/design-system/components/shell/ui/app-nav-title";
+import { useIsSmallViewport } from "@/design-system/hooks/use-is-small-viewport";
 import { useMapDrawStore } from "@/design-system/components/map/stores/map.draw.store";
 import { useMitraDataRequestStore } from "@/features/mitra/data-request/stores/mitra.data-request.store";
 import type { MitraDataRequestTab } from "@/features/mitra/data-request/types/mitra.data-request.type";
@@ -71,6 +72,7 @@ export const MitraDataRequestPage = () => {
   const [_isPending, startTransition] = useTransition();
   const navigate = useNavigate();
   const search = useSearch({ from: "/_private/mitra/data-request" });
+  const isSmallViewport = useIsSmallViewport();
 
   // Derived Values
   const activeTab: MitraDataRequestTab = search.tab ?? "catalog";
@@ -100,9 +102,19 @@ export const MitraDataRequestPage = () => {
   };
 
   return (
-    <AppContentContainer overflowY={"auto"}>
-      <Container.Root flex={1} overflowY={"auto"}>
-        <Container.Body flex={1} overflowY={"auto"}>
+    <AppContentContainer
+      h={isSmallViewport ? "auto" : undefined}
+      minH={isSmallViewport ? "100%" : 0}
+      overflowY={isSmallViewport ? "visible" : "auto"}
+    >
+      <Container.Root
+        flex={1}
+        overflowY={isSmallViewport ? "visible" : "auto"}
+      >
+        <Container.Body
+          flex={1}
+          overflowY={isSmallViewport ? "visible" : "auto"}
+        >
           <HStack wrap={"wrap"} justify={"space-between"} align={"center"}>
             <AppNavTitle navsMap={APP_NAVS_MAP} />
           </HStack>
@@ -114,12 +126,18 @@ export const MitraDataRequestPage = () => {
             flex={1}
             display={"flex"}
             flexDir={"column"}
-            overflowY={"auto"}
+            overflowY={isSmallViewport ? "visible" : "auto"}
             onValueChange={(details) => {
               handleTabChange(details.value);
             }}
           >
-            <Tabs.List borderColor={"bg.canvas"}>
+            <Tabs.List
+              borderColor={"bg.canvas"}
+              pos={isSmallViewport ? "sticky" : undefined}
+              top={isSmallViewport ? 0 : undefined}
+              zIndex={isSmallViewport ? 10 : undefined}
+              bg={isSmallViewport ? "bg.body" : undefined}
+            >
               {REQUEST_METHOD_OPTIONS.map((method) => {
                 return (
                   <Tabs.Trigger

@@ -531,10 +531,11 @@ const Content = (_props: GisContentProps) => {
     >
       <VStack
         flex={1}
-        overflow={"auto"}
+        overflowY={isSmallViewport ? "auto" : "auto"}
         minW={isSmallViewport ? 0 : [0, null, "360px"]}
         w={"full"}
-        minH={isSmallViewport ? 0 : "300px"}
+        h={isSmallViewport ? "auto" : undefined}
+        minH={isSmallViewport ? "100%" : "300px"}
         layerStyle={"frosted"}
         bg={"bg.canvasAlpha"}
         // bg={"bg.canvas"}

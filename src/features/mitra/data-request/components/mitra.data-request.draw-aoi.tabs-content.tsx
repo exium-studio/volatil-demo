@@ -39,6 +39,7 @@ import {
   XIcon,
 } from "lucide-react";
 import { memo, useMemo } from "react";
+import { useIsSmallViewport } from "@/design-system/hooks/use-is-small-viewport";
 
 export const MitraDataRequestDrawAoiTabsContent = memo(
   (props: MitraDataRequestDrawAoiTabsContentProps) => {
@@ -46,6 +47,7 @@ export const MitraDataRequestDrawAoiTabsContent = memo(
     const { isActive = false, ...restProps } = props;
 
     // Hooks
+    const isSmallViewport = useIsSmallViewport();
     const { selectedIgtLayer } = useSelectedIgtLayer();
 
     // Hooks
@@ -72,7 +74,7 @@ export const MitraDataRequestDrawAoiTabsContent = memo(
         display={"flex"}
         flex={1}
         flexDir={"column"}
-        overflowY={"auto"}
+        overflowY={isSmallViewport ? "visible" : "auto"}
         p={0}
         {...restProps}
       >
@@ -281,6 +283,7 @@ const DrawAoiAttributeList = memo((props: DrawAoiAttributeViewProps) => {
   });
 
   // Hooks
+  const isSmallViewport = useIsSmallViewport();
   const { layerId, selectedIgtLayer, selectLayer } = useSelectedIgtLayer();
 
   // Derived Values
@@ -294,7 +297,7 @@ const DrawAoiAttributeList = memo((props: DrawAoiAttributeViewProps) => {
       <VStack
         flex={1}
         gap={0}
-        overflow={"hidden"}
+        overflow={isSmallViewport ? "visible" : "hidden"}
         bg={"bg.canvas"}
         position={"relative"}
         w={"full"}

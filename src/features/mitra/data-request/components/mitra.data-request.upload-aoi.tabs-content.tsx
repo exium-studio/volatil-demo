@@ -39,6 +39,7 @@ import type {
   MitraDataRequestUploadAoiTabsContentProps,
   UploadAoiFeatureListProps,
 } from "@/features/mitra/data-request/types/mitra.data-request.upload-aoi.type";
+import { useIsSmallViewport } from "@/design-system/hooks/use-is-small-viewport";
 import { calculateFeatureAreaInHectares } from "@/features/mitra/data-request/utils/calculate-feature-area";
 import {
   getGeometryBounds,
@@ -145,6 +146,9 @@ export const MitraDataRequestUploadAoiTabsContent = (
 ) => {
   // Props
   const { isActive = false, ...restProps } = props;
+
+  // Hooks
+  const isSmallViewport = useIsSmallViewport();
 
   // Stores
   const map = useMapInstanceStore((state) => state.map);
@@ -348,7 +352,7 @@ export const MitraDataRequestUploadAoiTabsContent = (
       display={"flex"}
       flex={1}
       flexDir={"column"}
-      overflowY={"auto"}
+      overflowY={isSmallViewport ? "visible" : "auto"}
       p={0}
       {...restProps}
     >
@@ -679,6 +683,7 @@ const UploadAoiConfirmedAttributeList = memo(
     });
 
     // Hooks
+    const isSmallViewport = useIsSmallViewport();
     const { layerId, selectedIgtLayer, selectLayer } = useSelectedIgtLayer();
 
     // Derived Values
@@ -692,7 +697,7 @@ const UploadAoiConfirmedAttributeList = memo(
         <VStack
           flex={1}
           gap={0}
-          overflow={"hidden"}
+          overflow={isSmallViewport ? "visible" : "hidden"}
           bg={"bg.canvas"}
           position={"relative"}
           w={"full"}

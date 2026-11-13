@@ -25,6 +25,7 @@ import { to2DGeometry } from "@/design-system/components/map/utils/geometry";
 import { Tooltip } from "@/design-system/components/overlay/ui/tooltip";
 import { P } from "@/design-system/components/typography/ui/p";
 import { useDebouncedValue } from "@/design-system/hooks/use-debounced-value";
+import { useIsSmallViewport } from "@/design-system/hooks/use-is-small-viewport";
 import { useThemeStore } from "@/design-system/stores/theme-store";
 import { flyToCartGeometry } from "@/features/mitra/cart/hooks/use-cart-aoi-coverage-map";
 import { getIgtLayers } from "@/features/mitra/data-request/api/mitra.data-request-igt-layers.api";
@@ -77,6 +78,9 @@ export const MitraDataRequestIgtLayerDataView = memo(
       showFilter = true,
       isActive = true,
     } = props;
+
+    // Hooks
+    const isSmallViewport = useIsSmallViewport();
 
     // Stores
     const { theme } = useThemeStore();
@@ -728,12 +732,16 @@ export const MitraDataRequestIgtLayerDataView = memo(
       <VStack
         flex={1}
         position={"relative"}
-        overflow={"hidden"}
+        overflow={isSmallViewport ? "visible" : "hidden"}
         w={"full"}
         bg={"bg.body"}
         roundedBottom={theme.radii.container}
       >
-        <VStack flex={1} w={"full"} overflowY={"auto"}>
+        <VStack
+          flex={1}
+          w={"full"}
+          overflowY={isSmallViewport ? "visible" : "auto"}
+        >
           {/* Spatial Calculation Summary Box */}
           {!isError &&
             (Boolean(effectiveAoiPolygon) ||
