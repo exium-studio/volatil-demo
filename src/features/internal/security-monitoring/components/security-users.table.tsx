@@ -12,12 +12,9 @@ import { StateNoData } from "@/design-system/components/feedback/ui/state.no-dat
 import { StateNoResult } from "@/design-system/components/feedback/ui/state.no-result";
 import { SearchInput } from "@/design-system/components/input/ui/search-input";
 import { ActionHeaderScrollContainer } from "@/design-system/components/layout/ui/action-header-scroll-container";
-import { Container } from "@/design-system/components/layout/ui/container";
 import { HStack, VStack } from "@/design-system/components/layout/ui/flex-box";
 import { Separator } from "@/design-system/components/layout/ui/separator";
-import { HeaderContainer } from "@/design-system/components/shell/ui/header-container";
 import { Badge } from "@/design-system/components/typography/ui/badge";
-import { Heading } from "@/design-system/components/typography/ui/heading";
 import { P } from "@/design-system/components/typography/ui/p";
 import {
   useExecuteSecurityAction,
@@ -71,32 +68,26 @@ export const SecurityUsersTable = () => {
       (item: UserRiskItem) => {
         const score = item.currentScore;
         const badgePalette =
-          score >= 90
-            ? "red"
-            : score >= 70
-              ? "orange"
-              : score >= 40
-                ? "yellow"
-                : "green";
+          score >= 70 ? "red" : score >= 40 ? "orange" : "green";
 
         return {
           id: item.id,
           data: item,
           columns: [
             {
-              value: item.user?.name || "User",
+              value: item.user?.name || item.userId,
               td: (
-                <VStack align={"start"} gap={"2xs"}>
-                  <P fontWeight={"semibold"}>{item.user?.name || "User"}</P>
+                <VStack align={"start"} gap={0}>
+                  <P fontWeight={"medium"}>{item.user?.name || item.userId}</P>
                   <P fontSize={"xs"} color={"fg.muted"}>
-                    {item.user?.email}
+                    {item.user?.email || item.userId}
                   </P>
                 </VStack>
               ),
               align: "start",
             },
             {
-              value: String(score),
+              value: score,
               td: (
                 <HStack gap={"xs"} align={"center"}>
                   <Badge colorPalette={badgePalette} variant={"subtle"} size={"sm"}>
@@ -158,7 +149,7 @@ export const SecurityUsersTable = () => {
     const itemActions: DataViewItemActionsGenerator<UserRiskItem>[] = [
       {
         key: "reset",
-        label: "Reset Skor Risiko",
+        label: "Reset Skor Risiko ke 0",
         icon: RotateCcwIcon,
         onClick: (raw: UserRiskItem) => {
           executeAction({
@@ -204,65 +195,55 @@ export const SecurityUsersTable = () => {
   }, [items, executeAction]);
 
   return (
-    <Container.Root w={"full"} withContext={true}>
-      <Container.Body gap={"md"}>
-        <HeaderContainer>
-          <HStack align={"center"} gap={"xs"}>
-            <Heading size={"md"}>{"Peringkat Risiko Pengguna"}</Heading>
-            <Badge colorPalette={"red"} variant={"subtle"} size={"sm"}>
-              {"Sistem Deteksi Anomali"}
-            </Badge>
-          </HStack>
+    <VStack w={"full"} align={"stretch"} gap={"md"}>
+      {/* Search Header only */}
+      <ActionHeaderScrollContainer px={"md"} py={"sm"}>
+        <SearchInput
+          value={params.search ?? ""}
+          onChange={handleSearchChange}
+          placeholder={"Cari nama atau email..."}
+          w={"240px"}
+        />
+      </ActionHeaderScrollContainer>
 
-          <ActionHeaderScrollContainer>
-            <SearchInput
-              value={params.search ?? ""}
-              onChange={handleSearchChange}
-              placeholder={"Cari nama atau email..."}
-              w={"240px"}
-            />
-          </ActionHeaderScrollContainer>
-        </HeaderContainer>
+      <Separator borderColor={"bg.canvas"} />
 
-        <Separator borderColor={"bg.canvas"} />
-
-        {isLoading ? (
-          <Skeleton minH={"300px"} w={"full"} />
-        ) : items.length === 0 ? (
-          params.search ? (
-            <StateNoResult query={params.search} />
-          ) : (
-            <StateNoData title={"Belum ada data risiko pengguna"} />
-          )
+      {isLoading ? (
+        <Skeleton minH={"300px"} w={"full"} />
+      ) : items.length === 0 ? (
+        params.search ? (
+          <StateNoResult query={params.search} />
         ) : (
-          <VStack w={"full"} align={"stretch"} gap={"sm"}>
-            <DataViewTable.Root
-              headers={dataList.headers}
-              items={dataList.items}
-              itemActions={dataList.itemActions}
-              page={params.page}
-              pageSize={params.limit}
-              roundedTop={0}
-            >
-              <DataViewTable.Header />
-              <DataViewTable.Body />
-            </DataViewTable.Root>
+          <StateNoData title={"Belum ada data risiko pengguna"} />
+        )
+      ) : (
+        <VStack w={"full"} align={"stretch"} gap={"sm"}>
+          <DataViewTable.Root
+            headers={dataList.headers}
+            items={dataList.items}
+            itemActions={dataList.itemActions}
+            page={params.page}
+            pageSize={params.limit}
+            roundedTop={0}
+          >
+            <DataViewTable.Header />
+            <DataViewTable.Body />
+          </DataViewTable.Root>
 
-            <Separator borderColor={"bg.canvas"} />
+          <Separator borderColor={"bg.canvas"} />
 
-            {pagination && (
-              <DataViewFooter
-                page={pagination.currentPage}
-                totalPage={pagination.totalPages}
-                totalData={pagination.totalItems}
-                currentDataLength={items.length}
-                pageSize={pagination.limit}
-                setPage={handlePageChange}
-              />
-            )}
-          </VStack>
-        )}
-      </Container.Body>
-    </Container.Root>
+          {pagination && (
+            <DataViewFooter
+              page={pagination.currentPage}
+              totalPage={pagination.totalPages}
+              totalData={pagination.totalItems}
+              currentDataLength={items.length}
+              pageSize={pagination.limit}
+              setPage={handlePageChange}
+            />
+          )}
+        </VStack>
+      )}
+    </VStack>
   );
 };

@@ -8,14 +8,12 @@ import { DataViewFooter } from "@/design-system/components/data-display/ui/data-
 import { DataViewTable } from "@/design-system/components/data-display/ui/data-view-table";
 import { Skeleton } from "@/design-system/components/feedback/ui/skeleton";
 import { StateNoData } from "@/design-system/components/feedback/ui/state.no-data";
+import { StateNoResult } from "@/design-system/components/feedback/ui/state.no-result";
 import { SearchInput } from "@/design-system/components/input/ui/search-input";
 import { ActionHeaderScrollContainer } from "@/design-system/components/layout/ui/action-header-scroll-container";
-import { Container } from "@/design-system/components/layout/ui/container";
 import { HStack, VStack } from "@/design-system/components/layout/ui/flex-box";
 import { Separator } from "@/design-system/components/layout/ui/separator";
-import { HeaderContainer } from "@/design-system/components/shell/ui/header-container";
 import { Badge } from "@/design-system/components/typography/ui/badge";
-import { Heading } from "@/design-system/components/typography/ui/heading";
 import { P } from "@/design-system/components/typography/ui/p";
 import { useSecurityLogsQuery } from "@/features/internal/security-monitoring/hooks/use-security-monitoring.query";
 import type {
@@ -78,54 +76,60 @@ export const SecurityActivityLogsTable = () => {
               align: "start",
             },
             {
-              value: log.user?.name || log.clientIp || "Anonymous",
+              value: log.user?.name || log.clientIp || "-",
               td: (
-                <VStack align={"start"} gap={"2xs"}>
-                  <P fontWeight={"semibold"}>
-                    {log.user?.name || "Unauthenticated"}
+                <VStack align={"start"} gap={0}>
+                  <P fontSize={"xs"} fontWeight={"medium"}>
+                    {log.user?.name || "Anonim / Direct API"}
                   </P>
-                  <P fontSize={"xs"} color={"fg.muted"}>
-                    {log.clientIp || "-"}
+                  <P fontSize={"2xs"} color={"fg.subtle"}>
+                    {log.clientIp ?? "-"}
                   </P>
                 </VStack>
               ),
               align: "start",
             },
             {
-              value: log.layerName || log.endpoint,
+              value: `${log.serviceType} ${log.layerName ?? ""}`,
               td: (
-                <VStack align={"start"} gap={"2xs"}>
-                  <Badge variant={"subtle"} size={"xs"}>
-                    {log.serviceType}
-                  </Badge>
-                  <P fontSize={"xs"} color={"fg.muted"}>
-                    {log.layerName || log.endpoint}
-                  </P>
+                <VStack align={"start"} gap={0}>
+                  <HStack gap={"2xs"} align={"center"}>
+                    <Badge colorPalette={"teal"} variant={"outline"} size={"xs"}>
+                      {log.serviceType}
+                    </Badge>
+                    <P fontSize={"xs"} fontWeight={"semibold"}>
+                      {log.layerName || log.endpoint}
+                    </P>
+                  </HStack>
+                  {log.isSuspicious && (
+                    <Badge colorPalette={"red"} variant={"solid"} size={"xs"} mt={"2xs"}>
+                      {"Mencurigakan"}
+                    </Badge>
+                  )}
                 </VStack>
               ),
               align: "start",
             },
             {
-              value: String(log.featureCount || 0),
+              value: `${log.featureCount} / ${kbSize} KB`,
               td: (
                 <P fontSize={"xs"}>
-                  {`${log.featureCount || 0} fitur (${kbSize} KB)`}
+                  {`${new Intl.NumberFormat("id-ID").format(log.featureCount)} fitur · ${kbSize} KB`}
                 </P>
               ),
               align: "start",
             },
             {
-              value: String(log.statusCode),
+              value: log.statusCode,
               td: (
                 <Badge
                   colorPalette={
-                    log.statusCode === 200
+                    log.statusCode >= 200 && log.statusCode < 300
                       ? "green"
                       : log.statusCode === 429
                         ? "orange"
                         : "red"
                   }
-                  variant={"solid"}
                   size={"sm"}
                 >
                   {log.statusCode}
@@ -134,7 +138,7 @@ export const SecurityActivityLogsTable = () => {
               align: "start",
             },
             {
-              value: String(log.durationMs),
+              value: log.durationMs,
               td: (
                 <P fontSize={"xs"} color={"fg.muted"}>
                   {`${log.durationMs} ms`}
@@ -155,60 +159,54 @@ export const SecurityActivityLogsTable = () => {
   }, [items]);
 
   return (
-    <Container.Root w={"full"} withContext={true}>
-      <Container.Body gap={"md"}>
-        <HeaderContainer>
-          <HStack align={"center"} gap={"xs"}>
-            <Heading size={"md"}>{"Log Aktivitas Layanan Peta"}</Heading>
-            <Badge colorPalette={"blue"} variant={"subtle"} size={"sm"}>
-              {"Retensi 90 Hari"}
-            </Badge>
-          </HStack>
+    <VStack w={"full"} align={"stretch"} gap={"md"}>
+      {/* Search Header only */}
+      <ActionHeaderScrollContainer px={"md"} py={"sm"}>
+        <SearchInput
+          value={params.layerName ?? ""}
+          onChange={handleSearchLayer}
+          placeholder={"Filter nama layer..."}
+          w={"240px"}
+        />
+      </ActionHeaderScrollContainer>
 
-          <ActionHeaderScrollContainer>
-            <SearchInput
-              value={params.layerName ?? ""}
-              onChange={handleSearchLayer}
-              placeholder={"Filter nama layer..."}
-              w={"240px"}
-            />
-          </ActionHeaderScrollContainer>
-        </HeaderContainer>
+      <Separator borderColor={"bg.canvas"} />
 
-        <Separator borderColor={"bg.canvas"} />
-
-        {isLoading ? (
-          <Skeleton minH={"300px"} w={"full"} />
-        ) : items.length === 0 ? (
-          <StateNoData title={"Belum ada log aktivitas layanan peta"} />
+      {isLoading ? (
+        <Skeleton minH={"300px"} w={"full"} />
+      ) : items.length === 0 ? (
+        params.layerName ? (
+          <StateNoResult query={params.layerName} />
         ) : (
-          <VStack w={"full"} align={"stretch"} gap={"sm"}>
-            <DataViewTable.Root
-              headers={dataList.headers}
-              items={dataList.items}
-              page={params.page}
-              pageSize={params.limit}
-              roundedTop={0}
-            >
-              <DataViewTable.Header />
-              <DataViewTable.Body />
-            </DataViewTable.Root>
+          <StateNoData title={"Belum ada log aktivitas layanan peta"} />
+        )
+      ) : (
+        <VStack w={"full"} align={"stretch"} gap={"sm"}>
+          <DataViewTable.Root
+            headers={dataList.headers}
+            items={dataList.items}
+            page={params.page}
+            pageSize={params.limit}
+            roundedTop={0}
+          >
+            <DataViewTable.Header />
+            <DataViewTable.Body />
+          </DataViewTable.Root>
 
-            <Separator borderColor={"bg.canvas"} />
+          <Separator borderColor={"bg.canvas"} />
 
-            {pagination && (
-              <DataViewFooter
-                page={pagination.currentPage}
-                totalPage={pagination.totalPages}
-                totalData={pagination.totalItems}
-                currentDataLength={items.length}
-                pageSize={pagination.limit}
-                setPage={handlePageChange}
-              />
-            )}
-          </VStack>
-        )}
-      </Container.Body>
-    </Container.Root>
+          {pagination && (
+            <DataViewFooter
+              page={pagination.currentPage}
+              totalPage={pagination.totalPages}
+              totalData={pagination.totalItems}
+              currentDataLength={items.length}
+              pageSize={pagination.limit}
+              setPage={handlePageChange}
+            />
+          )}
+        </VStack>
+      )}
+    </VStack>
   );
 };
