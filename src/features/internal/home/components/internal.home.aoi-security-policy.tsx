@@ -96,9 +96,7 @@ const InternalHomeAoiSecurityPolicyContent = () => {
     <Container.Body>
       <HeaderContainer justify={"space-between"}>
         <HStack align={"center"} gap={"xs"}>
-          <Heading size={"md"}>
-            {"Proteksi Geospasial & Pemantauan Keamanan"}
-          </Heading>
+          <Heading size={"md"}>{"Proteksi Geospasial"}</Heading>
 
           <InfoTip
             variant={"icon"}
@@ -115,7 +113,7 @@ const InternalHomeAoiSecurityPolicyContent = () => {
 
         <Button asChild={true} variant={"ghost"} size={"xs"}>
           <NavLink to={"/internal/security-monitoring"}>
-            {"Buka Pemantauan Keamanan"}
+            {"Lihat Detail"}
             <AppIcon icon={ArrowRightIcon} size={"xs"} />
           </NavLink>
         </Button>
