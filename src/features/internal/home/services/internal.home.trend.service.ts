@@ -20,6 +20,6 @@ export const getInternalTrend = async (
     if (isDummyDataEnabled() && error instanceof ApiError && error.statusCode === 404) {
       return dummyInternalTrends[period] ?? [];
     }
-    return [];
+    throw error;
   }
 };

@@ -29,6 +29,6 @@ export const getInternalLeaderboard = async (
     if (isDummyDataEnabled() && error instanceof ApiError && error.statusCode === 404) {
       return DUMMY;
     }
-    return EMPTY;
+    throw error;
   }
 };

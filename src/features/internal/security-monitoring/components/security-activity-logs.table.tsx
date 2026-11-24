@@ -44,7 +44,8 @@ export const SecurityActivityLogsTable = () => {
     setParams((prev) => ({ ...prev, layerName: val, page: 1 }));
   };
 
-  const items = data?.items ?? [];
+  // Derived Values
+  const items = useMemo(() => data?.items ?? [], [data?.items]);
   const pagination = data?.pagination;
 
   // Derived Values - DataList Pattern (1 useMemo implicit return)

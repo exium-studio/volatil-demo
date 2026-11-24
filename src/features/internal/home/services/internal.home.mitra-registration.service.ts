@@ -20,6 +20,6 @@ export const getMitraRegistration = async (
     if (isDummyDataEnabled() && error instanceof ApiError && error.statusCode === 404) {
       return dummyMitraRegistration;
     }
-    return EMPTY;
+    throw error;
   }
 };

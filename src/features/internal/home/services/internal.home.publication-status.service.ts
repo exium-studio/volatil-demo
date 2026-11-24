@@ -20,6 +20,6 @@ export const getPublicationStatus = async (
     if (isDummyDataEnabled() && error instanceof ApiError && error.statusCode === 404) {
       return dummyIgtPublicationStatus;
     }
-    return EMPTY;
+    throw error;
   }
 };

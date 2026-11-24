@@ -20,6 +20,6 @@ export const getIgtBasis = async (
     if (isDummyDataEnabled() && error instanceof ApiError && error.statusCode === 404) {
       return dummyIgtBasis;
     }
-    return EMPTY;
+    throw error;
   }
 };
