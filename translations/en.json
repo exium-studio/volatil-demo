@@ -28,6 +28,7 @@
       "sso_keycloak": "SSO Keycloak",
       "smtp_email": "Email Service (SMTP)",
       "simponi_pnbp": "SIMPONI Billing",
+      "security_monitoring": "Security Monitoring",
       "help": "Support Tickets",
       "notification": "Notification",
       "profile": "Profile"

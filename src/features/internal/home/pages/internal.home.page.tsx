@@ -106,10 +106,11 @@ export const InternalHomePage = () => {
         </Button>
       </HStack>
 
-      {/* Row 1: Donut Summary Cards (Basis IGT & Status Publikasi) */}
+      {/* Row 1: Summary Cards (Basis IGT, Status Publikasi, & Batas AOI) */}
       <HStack wrap={"wrap"} gap={"sm"} align={"stretch"} w={"full"}>
         <InternalHomeIgtBasisSummary />
         <InternalHomePublishStatusSummary />
+        <InternalHomeAoiSecurityPolicy />
       </HStack>
 
       {/* Row 2: Registrasi Mitra (Bar Chart) */}
@@ -120,9 +121,6 @@ export const InternalHomePage = () => {
 
       {/* Row 3: Kebijakan Siklus & Perpanjangan Pesanan (Policy) */}
       <InternalHomePolicies w={"full"} />
-
-      {/* Row 4: Kebijakan Proteksi Geospasial & Batas Maksimum AOI (Terpisah) */}
-      <InternalHomeAoiSecurityPolicy w={"full"} />
 
       {/* Row 5: Grafik Tren Akuisisi Data IGT */}
       <InternalHomeTrend />

@@ -17,6 +17,7 @@ import {
   MailIcon,
   ReceiptTextIcon,
   ServerIcon,
+  ShieldAlertIcon,
   ShoppingCartIcon,
   SquarePen,
   UsersIcon,
@@ -121,6 +122,11 @@ export const INTERNAL_APP_NAVS_MAP = {
     icon: ListChecksIcon,
     titleKey: "app.admin_navs.jobs",
     pathname: "/internal/jobs",
+  },
+  security_monitoring: {
+    icon: ShieldAlertIcon,
+    titleKey: "app.admin_navs.security_monitoring",
+    pathname: "/internal/security-monitoring",
   },
   help: {
     icon: HeadsetIcon,

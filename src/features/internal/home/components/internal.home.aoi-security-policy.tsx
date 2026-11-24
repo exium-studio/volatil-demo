@@ -5,13 +5,8 @@ import { Skeleton } from "@/design-system/components/feedback/ui/skeleton";
 import { AppIcon } from "@/design-system/components/icon/ui/app-icon";
 import { InfoTip } from "@/design-system/components/input/ui/toggle-tip";
 import { Circle } from "@/design-system/components/layout/ui/box";
-import {
-  Container,
-  useContainerContext,
-} from "@/design-system/components/layout/ui/container";
+import { Container } from "@/design-system/components/layout/ui/container";
 import { HStack, VStack } from "@/design-system/components/layout/ui/flex-box";
-import { Separator } from "@/design-system/components/layout/ui/separator";
-import { HeaderContainer } from "@/design-system/components/shell/ui/header-container";
 import { Heading } from "@/design-system/components/typography/ui/heading";
 import { P } from "@/design-system/components/typography/ui/p";
 import { InternalSystemPolicyModalTrigger } from "@/features/internal/system-policies/components/internal.system-policies.modal";
@@ -20,18 +15,7 @@ import type { SystemPolicyItem } from "@/features/mitra/data-request/types/mitra
 import { PencilIcon, ShieldCheckIcon } from "lucide-react";
 import { useMemo } from "react";
 
-export const InternalHomeAoiSecurityPolicy = (props: { w?: string }) => {
-  return (
-    <Container.Root flex={"1 1 350px"} withContext={true} {...props}>
-      <InternalHomeAoiSecurityPolicyContent />
-    </Container.Root>
-  );
-};
-
-const InternalHomeAoiSecurityPolicyContent = () => {
-  // Contexts
-  const { isSmContainer } = useContainerContext();
-
+export const InternalHomeAoiSecurityPolicy = (props: { flex?: string; w?: string }) => {
   // Queries
   const { items: rawPolicies, isLoading } = useInternalSystemPoliciesQuery();
 
@@ -52,7 +36,11 @@ const InternalHomeAoiSecurityPolicyContent = () => {
   }, [rawPolicies]);
 
   if (isLoading) {
-    return <Skeleton minH={isSmContainer ? "140px" : "110px"} w={"full"} />;
+    return (
+      <Container.Root flex={"1 1 300px"} withContext={true} {...props}>
+        <Skeleton minH={"240px"} w={"full"} />
+      </Container.Root>
+    );
   }
 
   const numericValue = Number(aoiPolicy.value) || 50000;
@@ -60,77 +48,60 @@ const InternalHomeAoiSecurityPolicyContent = () => {
   const kmSq = (numericValue / 100).toFixed(0);
 
   return (
-    <Container.Body>
-      <HeaderContainer>
-        <HStack align={"center"} gap={"xs"}>
-          <Heading size={"md"}>
-            {"Kebijakan Proteksi Geospasial & Batas AOI"}
-          </Heading>
+    <Container.Root flex={"1 1 300px"} withContext={true} {...props}>
+      <Container.Body gap={"md"} py={"md"}>
+        <HStack justify={"space-between"} align={"center"} px={"md"}>
+          <HStack gap={"xs"} align={"center"}>
+            <Heading>{"Batas AOI Geospasial"}</Heading>
+            <InfoTip
+              variant={"icon"}
+              appIconProps={{ size: "xs", color: "fg.subtle" }}
+            >
+              {aoiPolicy.description}
+            </InfoTip>
+          </HStack>
 
-          <InfoTip
-            variant={"icon"}
-            appIconProps={{
-              size: "xs",
-              color: "fg.subtle",
-            }}
-          >
-            {
-              "Batas maksimum luas area of interest (AOI) yang diizinkan untuk query spasial dan pemesanan mitra."
-            }
-          </InfoTip>
-        </HStack>
-
-        <HStack align={"center"} gap={"xs"}>
           <InternalSystemPolicyModalTrigger policy={aoiPolicy}>
             <IconButton
               variant={"ghost"}
               size={"xs"}
-              aria-label={"Ubah Kebijakan AOI"}
+              aria-label={"Ubah Batas AOI"}
             >
               <AppIcon icon={PencilIcon} />
             </IconButton>
           </InternalSystemPolicyModalTrigger>
         </HStack>
-      </HeaderContainer>
 
-      <Separator borderColor={"bg.canvas"} />
-
-      <HStack
-        p={"md"}
-        borderWidth={"1px"}
-        borderRadius={"md"}
-        borderColor={"border.muted"}
-        bg={"bg.subtle"}
-        justify={"space-between"}
-        align={"center"}
-        wrap={"wrap"}
-        gap={"sm"}
-        w={"full"}
-      >
-        <HStack gap={"sm"}>
-          <Circle size={"40px"} bg={"blue.subtle"} color={"blue.fg"}>
-            <AppIcon icon={ShieldCheckIcon} size={"md"} />
-          </Circle>
-          <VStack align={"start"} gap={"2xs"}>
-            <HStack gap={"2xs"}>
-              <P fontWeight={"semibold"}>{aoiPolicy.label}</P>
-              <InfoTip content={aoiPolicy.description} />
-            </HStack>
-            <P fontSize={"xs"} color={"fg.muted"}>
-              {`Setara dengan ±${kmSq} km² luas jangkauan wilayah`}
-            </P>
-          </VStack>
+        <HStack
+          align={"center"}
+          justify={"space-between"}
+          gap={"md"}
+          px={"md"}
+          py={"md"}
+        >
+          <HStack gap={"md"}>
+            <Circle size={"48px"} bg={"blue.subtle"} color={"blue.fg"}>
+              <AppIcon icon={ShieldCheckIcon} size={"lg"} />
+            </Circle>
+            <VStack align={"start"} gap={"2xs"}>
+              <P fontSize={"xs"} color={"fg.muted"}>
+                {"Luas Maksimal Per Permintaan"}
+              </P>
+              <HStack gap={"xs"} align={"baseline"}>
+                <Heading size={"2xl"} color={"blue.fg"}>
+                  {formattedHa}
+                </Heading>
+                <P fontSize={"sm"} fontWeight={"medium"} color={"fg.muted"}>
+                  {"ha"}
+                </P>
+              </HStack>
+              <P fontSize={"xs"} color={"fg.subtle"}>
+                {`Setara ±${kmSq} km² cakupan area`}
+              </P>
+            </VStack>
+          </HStack>
         </HStack>
-
-        <HStack gap={"xs"}>
-          <Heading size={"xl"} color={"blue.fg"}>
-            {formattedHa}
-          </Heading>
-          <P fontSize={"sm"} fontWeight={"medium"} color={"fg.muted"}>
-            {"Hektar (ha)"}
-          </P>
-        </HStack>
-      </HStack>
-    </Container.Body>
+      </Container.Body>
+    </Container.Root>
   );
 };

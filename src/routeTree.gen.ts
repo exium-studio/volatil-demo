@@ -26,6 +26,7 @@ import { Route as PrivateMitraDataRequestRouteImport } from './routes/_private/m
 import { Route as PrivateMitraCartRouteImport } from './routes/_private/mitra/cart'
 import { Route as PrivateInternalWelcomeRouteImport } from './routes/_private/internal/welcome'
 import { Route as PrivateInternalUserManagementRouteImport } from './routes/_private/internal/user-management'
+import { Route as PrivateInternalSecurityMonitoringRouteImport } from './routes/_private/internal/security-monitoring'
 import { Route as PrivateInternalOrderStatisticRouteImport } from './routes/_private/internal/order-statistic'
 import { Route as PrivateInternalOrderReviewRouteImport } from './routes/_private/internal/order-review'
 import { Route as PrivateInternalNotificationRouteImport } from './routes/_private/internal/notification'
@@ -139,6 +140,12 @@ const PrivateInternalUserManagementRoute =
   PrivateInternalUserManagementRouteImport.update({
     id: '/internal/user-management',
     path: '/internal/user-management',
+    getParentRoute: () => PrivateRouteRoute,
+  } as any)
+const PrivateInternalSecurityMonitoringRoute =
+  PrivateInternalSecurityMonitoringRouteImport.update({
+    id: '/internal/security-monitoring',
+    path: '/internal/security-monitoring',
     getParentRoute: () => PrivateRouteRoute,
   } as any)
 const PrivateInternalOrderStatisticRoute =
@@ -310,6 +317,7 @@ export interface FileRoutesByFullPath {
   '/internal/notification': typeof PrivateInternalNotificationRoute
   '/internal/order-review': typeof PrivateInternalOrderReviewRouteWithChildren
   '/internal/order-statistic': typeof PrivateInternalOrderStatisticRoute
+  '/internal/security-monitoring': typeof PrivateInternalSecurityMonitoringRoute
   '/internal/user-management': typeof PrivateInternalUserManagementRoute
   '/internal/welcome': typeof PrivateInternalWelcomeRoute
   '/mitra/cart': typeof PrivateMitraCartRoute
@@ -351,6 +359,7 @@ export interface FileRoutesByTo {
   '/internal/master-geoserver': typeof PrivateInternalMasterGeoserverRoute
   '/internal/notification': typeof PrivateInternalNotificationRoute
   '/internal/order-statistic': typeof PrivateInternalOrderStatisticRoute
+  '/internal/security-monitoring': typeof PrivateInternalSecurityMonitoringRoute
   '/internal/user-management': typeof PrivateInternalUserManagementRoute
   '/internal/welcome': typeof PrivateInternalWelcomeRoute
   '/mitra/cart': typeof PrivateMitraCartRoute
@@ -395,6 +404,7 @@ export interface FileRoutesById {
   '/_private/internal/notification': typeof PrivateInternalNotificationRoute
   '/_private/internal/order-review': typeof PrivateInternalOrderReviewRouteWithChildren
   '/_private/internal/order-statistic': typeof PrivateInternalOrderStatisticRoute
+  '/_private/internal/security-monitoring': typeof PrivateInternalSecurityMonitoringRoute
   '/_private/internal/user-management': typeof PrivateInternalUserManagementRoute
   '/_private/internal/welcome': typeof PrivateInternalWelcomeRoute
   '/_private/mitra/cart': typeof PrivateMitraCartRoute
@@ -441,6 +451,7 @@ export interface FileRouteTypes {
     | '/internal/notification'
     | '/internal/order-review'
     | '/internal/order-statistic'
+    | '/internal/security-monitoring'
     | '/internal/user-management'
     | '/internal/welcome'
     | '/mitra/cart'
@@ -482,6 +493,7 @@ export interface FileRouteTypes {
     | '/internal/master-geoserver'
     | '/internal/notification'
     | '/internal/order-statistic'
+    | '/internal/security-monitoring'
     | '/internal/user-management'
     | '/internal/welcome'
     | '/mitra/cart'
@@ -525,6 +537,7 @@ export interface FileRouteTypes {
     | '/_private/internal/notification'
     | '/_private/internal/order-review'
     | '/_private/internal/order-statistic'
+    | '/_private/internal/security-monitoring'
     | '/_private/internal/user-management'
     | '/_private/internal/welcome'
     | '/_private/mitra/cart'
@@ -685,6 +698,13 @@ declare module '@tanstack/react-router' {
       path: '/internal/user-management'
       fullPath: '/internal/user-management'
       preLoaderRoute: typeof PrivateInternalUserManagementRouteImport
+      parentRoute: typeof PrivateRouteRoute
+    }
+    '/_private/internal/security-monitoring': {
+      id: '/_private/internal/security-monitoring'
+      path: '/internal/security-monitoring'
+      fullPath: '/internal/security-monitoring'
+      preLoaderRoute: typeof PrivateInternalSecurityMonitoringRouteImport
       parentRoute: typeof PrivateRouteRoute
     }
     '/_private/internal/order-statistic': {
@@ -965,6 +985,7 @@ interface PrivateRouteRouteChildren {
   PrivateInternalNotificationRoute: typeof PrivateInternalNotificationRoute
   PrivateInternalOrderReviewRoute: typeof PrivateInternalOrderReviewRouteWithChildren
   PrivateInternalOrderStatisticRoute: typeof PrivateInternalOrderStatisticRoute
+  PrivateInternalSecurityMonitoringRoute: typeof PrivateInternalSecurityMonitoringRoute
   PrivateInternalUserManagementRoute: typeof PrivateInternalUserManagementRoute
   PrivateInternalWelcomeRoute: typeof PrivateInternalWelcomeRoute
   PrivateMitraCartRoute: typeof PrivateMitraCartRoute
@@ -995,6 +1016,8 @@ const PrivateRouteRouteChildren: PrivateRouteRouteChildren = {
   PrivateInternalNotificationRoute: PrivateInternalNotificationRoute,
   PrivateInternalOrderReviewRoute: PrivateInternalOrderReviewRouteWithChildren,
   PrivateInternalOrderStatisticRoute: PrivateInternalOrderStatisticRoute,
+  PrivateInternalSecurityMonitoringRoute:
+    PrivateInternalSecurityMonitoringRoute,
   PrivateInternalUserManagementRoute: PrivateInternalUserManagementRoute,
   PrivateInternalWelcomeRoute: PrivateInternalWelcomeRoute,
   PrivateMitraCartRoute: PrivateMitraCartRoute,
