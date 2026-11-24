@@ -109,14 +109,16 @@ export const InternalHomePage = () => {
         </Button>
       </HStack>
 
-      {/* Row 1: Summary Cards (Basis IGT, Status Publikasi, & Batas AOI) */}
+      {/* Row 1: Summary Cards (Basis IGT & Status Publikasi) */}
       <HStack wrap={"wrap"} gap={"sm"} align={"stretch"} w={"full"}>
-        <InternalHomeIgtBasisSummary />
-        <InternalHomePublishStatusSummary />
-        <InternalHomeAoiSecurityPolicy />
+        <InternalHomeIgtBasisSummary flex={"1 1 350px"} />
+        <InternalHomePublishStatusSummary flex={"1 1 350px"} />
       </HStack>
 
-      {/* Row 2: Registrasi Mitra (Bar Chart) */}
+      {/* Row 2: Proteksi Geospasial & Pemantauan Keamanan (AOI + Security Monitoring) */}
+      <InternalHomeAoiSecurityPolicy w={"full"} />
+
+      {/* Row 3: Registrasi Mitra (Bar Chart) */}
       <InternalHomeMitraRegistration w={"full"} />
 
       {/* Row 2: Master Tarif & Limit PNBP (Pricing) */}

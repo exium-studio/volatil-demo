@@ -1,18 +1,20 @@
 // src/features/internal/home/components/internal.home.aoi-security-policy.tsx
 
 import { Button, IconButton } from "@/design-system/components/button/ui/button";
+import { StatGrid } from "@/design-system/components/data-display/ui/stat-grid";
 import { Skeleton } from "@/design-system/components/feedback/ui/skeleton";
 import { AppIcon } from "@/design-system/components/icon/ui/app-icon";
 import { InfoTip } from "@/design-system/components/input/ui/toggle-tip";
-import { Box } from "@/design-system/components/layout/ui/box";
-import { Container } from "@/design-system/components/layout/ui/container";
-import { HStack, VStack } from "@/design-system/components/layout/ui/flex-box";
+import { Circle } from "@/design-system/components/layout/ui/box";
+import {
+  Container,
+  useContainerContext,
+} from "@/design-system/components/layout/ui/container";
+import { HStack } from "@/design-system/components/layout/ui/flex-box";
 import { Separator } from "@/design-system/components/layout/ui/separator";
 import { NavLink } from "@/design-system/components/navigation/ui/link";
 import { HeaderContainer } from "@/design-system/components/shell/ui/header-container";
-import { Badge } from "@/design-system/components/typography/ui/badge";
 import { Heading } from "@/design-system/components/typography/ui/heading";
-import { ClampedP, P } from "@/design-system/components/typography/ui/p";
 import type { InternalHomeAoiSecurityWidgetProps } from "@/features/internal/home/types/internal.home.security-widget.type";
 import {
   useSecurityOverviewQuery,
@@ -24,7 +26,7 @@ import type { SystemPolicyItem } from "@/features/mitra/data-request/types/mitra
 import {
   AlertTriangleIcon,
   ArrowRightIcon,
-  MapPinIcon,
+  Maximize2Icon,
   PencilIcon,
   ShieldAlertIcon,
   ShieldCheckIcon,
@@ -34,6 +36,17 @@ import { useMemo } from "react";
 export const InternalHomeAoiSecurityPolicy = (
   props: InternalHomeAoiSecurityWidgetProps,
 ) => {
+  return (
+    <Container.Root withContext={true} {...props}>
+      <InternalHomeAoiSecurityPolicyContent />
+    </Container.Root>
+  );
+};
+
+const InternalHomeAoiSecurityPolicyContent = () => {
+  // Contexts
+  const { isSmContainer } = useContainerContext();
+
   // Queries
   const { items: rawPolicies, isLoading: isPoliciesLoading } =
     useInternalSystemPoliciesQuery();
@@ -41,7 +54,7 @@ export const InternalHomeAoiSecurityPolicy = (
     useSecurityOverviewQuery();
   const { data: usersData, isLoading: isUsersLoading } = useSecurityUsersQuery({
     page: 1,
-    limit: 3,
+    limit: 1,
   });
 
   // Derived Values
@@ -62,16 +75,12 @@ export const InternalHomeAoiSecurityPolicy = (
     };
   }, [rawPolicies]);
 
-  const topRiskUsers = useMemo(() => {
-    return (usersData?.items ?? []).slice(0, 3);
+  const topRiskUser = useMemo(() => {
+    return usersData?.items?.[0] ?? null;
   }, [usersData]);
 
   if (isPoliciesLoading || isOverviewLoading || isUsersLoading) {
-    return (
-      <Container.Root flex={"1 1 340px"} withContext={true} {...props}>
-        <Skeleton minH={"240px"} w={"full"} />
-      </Container.Root>
-    );
+    return <Skeleton minH={isSmContainer ? "240px" : "180px"} w={"full"} />;
   }
 
   const numericValue = Number(aoiPolicy.value) || 50000;
@@ -81,228 +90,168 @@ export const InternalHomeAoiSecurityPolicy = (
   const highRiskCount = overview?.highRiskUserCount ?? 0;
   const rateLimitCount = overview?.rateLimitedCount24h ?? 0;
 
+  const cols = isSmContainer ? 1 : 4;
+
   return (
-    <Container.Root flex={"1 1 340px"} withContext={true} {...props}>
-      <Container.Body gap={"md"} py={"md"}>
-        {/* Header */}
-        <HeaderContainer justify={"space-between"} px={"md"}>
-          <HStack gap={"xs"} align={"center"}>
-            <Heading>{"Proteksi & Batas AOI"}</Heading>
-            <InfoTip
-              variant={"icon"}
-              appIconProps={{ size: "xs", color: "fg.subtle" }}
-            >
-              {
-                "Monitoring profil risiko akses map service geospasial dan konfigurasi batas luas AOI query spasial."
-              }
-            </InfoTip>
-          </HStack>
+    <Container.Body>
+      <HeaderContainer justify={"space-between"}>
+        <HStack align={"center"} gap={"xs"}>
+          <Heading size={"md"}>
+            {"Proteksi Geospasial & Pemantauan Keamanan"}
+          </Heading>
 
-          <Button asChild={true} variant={"ghost"} size={"xs"}>
-            <NavLink to={"/internal/security-monitoring"}>
-              {"Lihat Detail"}
-              <AppIcon icon={ArrowRightIcon} size={"xs"} />
-            </NavLink>
-          </Button>
-        </HeaderContainer>
-
-        <Separator borderColor={"bg.canvas"} />
-
-        {/* Top Metric: AOI Max Limit & Key Security Indicators */}
-        <HStack
-          align={"stretch"}
-          justify={"space-between"}
-          gap={"md"}
-          px={"md"}
-          wrap={"wrap"}
-        >
-          {/* Left: AOI Limit Tile */}
-          <HStack
-            flex={"1 1 180px"}
-            p={"sm"}
-            rounded={"md"}
-            bg={"bg.subtle"}
-            justify={"space-between"}
-            align={"center"}
+          <InfoTip
+            variant={"icon"}
+            appIconProps={{
+              size: "xs",
+              color: "fg.subtle",
+            }}
           >
-            <HStack gap={"xs"} align={"center"}>
-              <AppIcon icon={MapPinIcon} size={"sm"} color={"blue.fg"} />
-              <VStack align={"start"} gap={0}>
-                <HStack gap={"2xs"} align={"center"}>
-                  <P fontSize={"2xs"} color={"fg.muted"}>
-                    {"Batas AOI Permintaan"}
-                  </P>
-                  <InfoTip
-                    variant={"icon"}
-                    appIconProps={{ size: "xs", color: "fg.subtle" }}
-                  >
-                    {aoiPolicy.description}
-                  </InfoTip>
-                </HStack>
-                <HStack gap={"2xs"} align={"baseline"}>
-                  <Heading size={"lg"} color={"blue.fg"}>
-                    {formattedHa}
-                  </Heading>
-                  <P fontSize={"2xs"} fontWeight={"medium"} color={"fg.muted"}>
-                    {"ha"}
-                  </P>
-                </HStack>
-                <P fontSize={"2xs"} color={"fg.subtle"}>
-                  {`±${kmSq} km²`}
-                </P>
-              </VStack>
+            {
+              "Pengawasan ringkas keamanan layanan peta, anomali akses WFS/WMS, batas AOI, serta peringkat risiko mitra."
+            }
+          </InfoTip>
+        </HStack>
+
+        <Button asChild={true} variant={"ghost"} size={"xs"}>
+          <NavLink to={"/internal/security-monitoring"}>
+            {"Buka Pemantauan Keamanan"}
+            <AppIcon icon={ArrowRightIcon} size={"xs"} />
+          </NavLink>
+        </Button>
+      </HeaderContainer>
+
+      <Separator borderColor={"bg.canvas"} />
+
+      <StatGrid.Root columns={cols}>
+        {/* Item 1: Batas AOI Geospasial */}
+        <StatGrid.Item index={0} columns={cols}>
+          <StatGrid.Header>
+            <HStack gap={"2xs"} align={"center"}>
+              <Circle bg={"blue.subtle"} p={"2xs"}>
+                <AppIcon icon={Maximize2Icon} size={"xs"} color={"blue.fg"} />
+              </Circle>
+
+              <StatGrid.Label>{"Batas Maksimum AOI"}</StatGrid.Label>
+
+              <InfoTip
+                variant={"icon"}
+                appIconProps={{
+                  size: "xs",
+                  color: "fg.subtle",
+                }}
+              >
+                {aoiPolicy.description}
+              </InfoTip>
             </HStack>
 
             <InternalSystemPolicyModalTrigger policy={aoiPolicy}>
               <IconButton
                 variant={"ghost"}
-                size={"xs"}
-                aria-label={"Ubah Batas AOI"}
+                aria-label={"Ubah Batas AOI Geospasial"}
               >
-                <AppIcon icon={PencilIcon} size={"xs"} />
+                <AppIcon icon={PencilIcon} />
               </IconButton>
             </InternalSystemPolicyModalTrigger>
-          </HStack>
+          </StatGrid.Header>
 
-          {/* Right: Security Health Quick Summary */}
-          <HStack flex={"1 1 130px"} gap={"xs"} align={"center"}>
-            {/* High Risk Counter */}
-            <VStack
-              flex={1}
-              p={"xs"}
-              rounded={"md"}
-              bg={highRiskCount > 0 ? "red.subtle" : "green.subtle"}
-              align={"start"}
-              gap={0}
-            >
-              <HStack gap={"2xs"} align={"center"}>
+          <StatGrid.Value value={`${formattedHa} ha`} />
+
+          <StatGrid.Description>
+            {`Setara ±${kmSq} km² cakupan per permintaan`}
+          </StatGrid.Description>
+        </StatGrid.Item>
+
+        {/* Item 2: Mitra Risiko Tinggi */}
+        <StatGrid.Item index={1} columns={cols}>
+          <StatGrid.Header>
+            <HStack gap={"2xs"} align={"center"}>
+              <Circle
+                bg={highRiskCount > 0 ? "red.subtle" : "green.subtle"}
+                p={"2xs"}
+              >
                 <AppIcon
                   icon={highRiskCount > 0 ? ShieldAlertIcon : ShieldCheckIcon}
                   size={"xs"}
                   color={highRiskCount > 0 ? "red.fg" : "green.fg"}
                 />
-                <P fontSize={"2xs"} color={"fg.muted"}>
-                  {"Risiko Tinggi"}
-                </P>
-              </HStack>
-              <Heading
-                size={"md"}
-                color={highRiskCount > 0 ? "red.fg" : "green.fg"}
-              >
-                {highRiskCount}
-              </Heading>
-            </VStack>
+              </Circle>
 
-            {/* Rate-limit Violations 24h */}
-            <VStack
-              flex={1}
-              p={"xs"}
-              rounded={"md"}
-              bg={"orange.subtle"}
-              align={"start"}
-              gap={0}
-            >
-              <HStack gap={"2xs"} align={"center"}>
+              <StatGrid.Label>{"Mitra Risiko Tinggi"}</StatGrid.Label>
+            </HStack>
+          </StatGrid.Header>
+
+          <StatGrid.Value
+            value={highRiskCount}
+            color={highRiskCount > 0 ? "red.fg" : "fg"}
+          />
+
+          <StatGrid.Description>
+            {"Skor risiko >= 70 (Throttled/Suspended)"}
+          </StatGrid.Description>
+        </StatGrid.Item>
+
+        {/* Item 3: Pelanggaran Rate Limit 24 Jam */}
+        <StatGrid.Item index={2} columns={cols}>
+          <StatGrid.Header>
+            <HStack gap={"2xs"} align={"center"}>
+              <Circle bg={"orange.subtle"} p={"2xs"}>
                 <AppIcon
                   icon={AlertTriangleIcon}
                   size={"xs"}
                   color={"orange.fg"}
                 />
-                <P fontSize={"2xs"} color={"fg.muted"}>
-                  {"Throttled 24j"}
-                </P>
-              </HStack>
-              <Heading size={"md"} color={"orange.fg"}>
-                {rateLimitCount}
-              </Heading>
-            </VStack>
-          </HStack>
-        </HStack>
+              </Circle>
 
-        {/* Bottom Section: Top Riskiest Users Mini-List */}
-        <VStack align={"stretch"} gap={"xs"} px={"md"}>
-          <P fontSize={"2xs"} fontWeight={"semibold"} color={"fg.subtle"}>
-            {"Peringkat Risiko Mitra Tertinggi"}
-          </P>
+              <StatGrid.Label>{"Pelanggaran Rate Limit"}</StatGrid.Label>
+            </HStack>
+          </StatGrid.Header>
 
-          {topRiskUsers.length === 0 ? (
-            <Box py={"xs"}>
-              <P fontSize={"xs"} color={"fg.subtle"}>
-                {"Belum ada rekam jejak aktivitas berisiko."}
-              </P>
-            </Box>
-          ) : (
-            <VStack align={"stretch"} gap={"2xs"}>
-              {topRiskUsers.map((item, index) => {
-                const score = item.currentScore;
-                const badgePalette =
-                  score >= 70 ? "red" : score >= 40 ? "orange" : "green";
+          <StatGrid.Value value={rateLimitCount} color={"orange.fg"} />
 
-                return (
-                  <HStack
-                    key={item.id}
-                    justify={"space-between"}
-                    align={"center"}
-                    p={"xs"}
-                    rounded={"md"}
-                    border={"1px solid"}
-                    borderColor={"bg.canvas"}
-                    _hover={{ bg: "bg.subtle" }}
-                  >
-                    <HStack gap={"xs"} align={"center"} minW={0} flex={1}>
-                      <P
-                        fontSize={"xs"}
-                        fontWeight={"bold"}
-                        color={"fg.subtle"}
-                        w={"16px"}
-                      >
-                        {`#${index + 1}`}
-                      </P>
-                      <VStack align={"start"} gap={0} minW={0} flex={1}>
-                        <ClampedP
-                          fontSize={"xs"}
-                          fontWeight={"medium"}
-                          maxLines={1}
-                        >
-                          {item.user?.name || "Mitra / Pengguna"}
-                        </ClampedP>
-                        <ClampedP fontSize={"2xs"} color={"fg.subtle"} maxLines={1}>
-                          {item.user?.email || item.userId}
-                        </ClampedP>
-                      </VStack>
-                    </HStack>
+          <StatGrid.Description>
+            {"Total request ditahan dalam 24 jam terakhir"}
+          </StatGrid.Description>
+        </StatGrid.Item>
 
-                    <HStack gap={"xs"} align={"center"} flexShrink={0}>
-                      <Badge
-                        colorPalette={badgePalette}
-                        variant={"subtle"}
-                        size={"xs"}
-                      >
-                        {`Skor ${score}`}
-                      </Badge>
-                      <Badge
-                        colorPalette={
-                          item.standingStatus === "SUSPENDED"
-                            ? "red"
-                            : item.standingStatus === "THROTTLED"
-                              ? "orange"
-                              : item.standingStatus === "MONITORED"
-                                ? "yellow"
-                                : "blue"
-                        }
-                        variant={"solid"}
-                        size={"xs"}
-                      >
-                        {item.standingStatus}
-                      </Badge>
-                    </HStack>
-                  </HStack>
-                );
-              })}
-            </VStack>
-          )}
-        </VStack>
-      </Container.Body>
-    </Container.Root>
+        {/* Item 4: Peringkat #1 Risiko Teratas */}
+        <StatGrid.Item index={3} columns={cols}>
+          <StatGrid.Header>
+            <HStack gap={"2xs"} align={"center"}>
+              <Circle bg={"purple.subtle"} p={"2xs"}>
+                <AppIcon
+                  icon={ShieldAlertIcon}
+                  size={"xs"}
+                  color={"purple.fg"}
+                />
+              </Circle>
+
+              <StatGrid.Label>{"Risiko Teratas (#1)"}</StatGrid.Label>
+            </HStack>
+          </StatGrid.Header>
+
+          <StatGrid.Value
+            value={
+              topRiskUser
+                ? `Skor ${topRiskUser.currentScore}`
+                : "Aman (0)"
+            }
+            color={
+              topRiskUser && topRiskUser.currentScore >= 70
+                ? "red.fg"
+                : topRiskUser && topRiskUser.currentScore >= 40
+                  ? "orange.fg"
+                  : "green.fg"
+            }
+          />
+
+          <StatGrid.Description>
+            {topRiskUser
+              ? `${topRiskUser.user?.name || topRiskUser.userId} · ${topRiskUser.standingStatus}`
+              : "Belum ada mitra terdeteksi anomali"}
+          </StatGrid.Description>
+        </StatGrid.Item>
+      </StatGrid.Root>
+    </Container.Body>
   );
 };
