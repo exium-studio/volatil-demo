@@ -483,6 +483,14 @@ export const SYSTEM_POLICY_MAP: Record<string, SystemPolicyConfig> = {
     icon: RefreshCwIcon,
     helperText: "Tentukan jatah dan titik waktu pembaruan otomatis data mitra.",
   },
+  security_max_aoi_hectares: {
+    label: "Batas Maksimum Luas AOI",
+    description:
+      "Batas luas area of interest (AOI) maksimum yang diizinkan untuk query spasial dan pemesanan data mitra.",
+    colorPalette: "blue",
+    icon: ShieldCheckIcon,
+    helperText: "Nilai dalam satuan hektar (ha). Contoh: 50000 untuk 500 km².",
+  },
 };
 
 export const getSystemPolicyConfig = (key: string): SystemPolicyConfig => {

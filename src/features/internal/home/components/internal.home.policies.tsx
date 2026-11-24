@@ -88,6 +88,7 @@ const InternalHomePoliciesContent = () => {
         : rawPolicies
     )
       .filter((it) => it.key !== "order_max_extension_count")
+      .filter((it) => it.key !== "security_max_aoi_hectares")
       .filter((it) => !it.key.startsWith("integration_") && !it.key.startsWith("config_"));
 
     const existingKeys = new Set(filteredRaw.map((p) => p.key));

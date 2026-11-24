@@ -12,6 +12,7 @@ import { InternalHomeIgtBasisSummary } from "@/features/internal/home/components
 import { InternalHomeLeaderboard } from "@/features/internal/home/components/internal.home.leaderboard";
 import { InternalHomeMitraLayerSyncJobsQuickView } from "@/features/internal/home/components/internal.home.mitra-layer-sync-jobs-quick-view";
 import { InternalHomeMitraRegistration } from "@/features/internal/home/components/internal.home.mitra-registration";
+import { InternalHomeAoiSecurityPolicy } from "@/features/internal/home/components/internal.home.aoi-security-policy";
 import { InternalHomePolicies } from "@/features/internal/home/components/internal.home.policies";
 import { InternalHomePricing } from "@/features/internal/home/components/internal.home.pricing";
 import { InternalHomePublishStatusSummary } from "@/features/internal/home/components/internal.home.publish-status-summary";
@@ -120,7 +121,10 @@ export const InternalHomePage = () => {
       {/* Row 3: Kebijakan Siklus & Perpanjangan Pesanan (Policy) */}
       <InternalHomePolicies w={"full"} />
 
-      {/* Row 2: Grafik Tren Akuisisi Data IGT */}
+      {/* Row 4: Kebijakan Proteksi Geospasial & Batas Maksimum AOI (Terpisah) */}
+      <InternalHomeAoiSecurityPolicy w={"full"} />
+
+      {/* Row 5: Grafik Tren Akuisisi Data IGT */}
       <InternalHomeTrend />
 
       {/* Row 3: Leaderboard Mitra Teraktif & Layer Paling Diminati */}
