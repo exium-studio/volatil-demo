@@ -66,6 +66,9 @@ export const InternalHomePage = () => {
         queryClient.invalidateQueries({
           queryKey: queryKeys.internal.systemPolicies.all,
         }),
+        queryClient.invalidateQueries({
+          queryKey: ["internal", "security"],
+        }),
       ]);
       toast.success("Data dashboard berhasil diperbarui", {
         group: "Dashboard",
